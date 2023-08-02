@@ -1,19 +1,22 @@
-import { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
+import { UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
 
 export type BaseResponse<T> = {
-  success: boolean
-  data?: T
-  errors?: ApiError
-}
+  success: boolean;
+  data?: T;
+  errors?: ApiError;
+};
 
-type ApiError = string[]
+type ApiError = {
+  code: string;
+  message: string;
+};
 
-export type BaseError = Required<Omit<BaseResponse<void>, 'data'>>
+export type BaseError = Required<Omit<BaseResponse<void>, "data">>;
 
 export type MutationOptions<Input = unknown, Response = unknown> = Omit<
   UseMutationOptions<Response, ApiError, Input, unknown>,
-  'mutationFn'
->
+  "mutationFn"
+>;
 
 export type QueryOptions<
   Output,
@@ -21,28 +24,28 @@ export type QueryOptions<
   Input = Output,
   Err = ApiError
 > = UseQueryOptions<Output, Err, Input, Key> & {
-  page?: number
-  pageSize?: number
-}
+  page?: number;
+  pageSize?: number;
+};
 
 export type PaginationOptions = {
-  totalDeElementos: number
-  tamanhoDaPagina: number
-  numeroDaPagina: number
-  totalPaginas: number
-  ultimaPagina: number
-  possuiPaginaAnterior: boolean
-  possuiPaginaSeguinte: boolean
-  paginaAnterior: number
-  paginaSeguinte: number
-}
+  totalItems: number;
+  pageSize: number;
+  pageNumber: number;
+  totalPages: number;
+  previousPage: number;
+  nextPage: number;
+  lastPage: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+};
 
 export type Paginated<T> = {
-  itens: T[]
-  paginacao: PaginationOptions
-}
+  items: T[];
+  pagination: PaginationOptions;
+};
 
-export type PageParams = {
-  TamanhoDaPagina?: number
-  NumeroDaPagina?: number
-}
+export type PaginationParams = {
+  "page-number"?: number;
+  "page-size"?: number;
+};

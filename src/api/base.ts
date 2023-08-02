@@ -4,7 +4,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { useUserStore } from "../stores/user-store";
+import { useUserStore } from "../stores/user";
 import { BaseError, BaseResponse } from "./api-types";
 
 export class API {
@@ -16,7 +16,7 @@ export class API {
     this.api.interceptors.request.use(this.appendToken);
 
   private static readonly _rtiid = this.api.interceptors.response.use(
-    this.transformResponse,
+    undefined,
     this.transformError
   );
 
@@ -32,15 +32,10 @@ export class API {
     } as InternalAxiosRequestConfig<unknown>;
   }
 
-  private static transformResponse(res: AxiosResponse<BaseResponse<unknown>>) {
-    const { data: actualData, errors } = res.data;
-    return { ...res, data: actualData, errors };
-  }
-
   private static async transformError(err: AxiosError<BaseError>) {
     if (err.response) {
       if (err.response?.status === 401) {
-        return await API.checkToken();
+        // return await API.checkToken();
       }
 
       if (err.response?.status === 403) {
@@ -59,24 +54,24 @@ export class API {
 
       // showErrorNotification(err.response.data.errors);
 
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw err.response.data.errors;
+
+      throw err.response.data;
     } else throw err;
   }
 
-  private static async checkToken() {
-    try {
-      const { accessToken } = useUserStore.getState();
-      if (!accessToken) throw Error();
+  // private static async checkToken() {
+  //   try {
+  //     const { accessToken } = useUserStore.getState();
+  //     if (!accessToken) throw Error();
 
-      const { data } = await this.api.get<{ valido: boolean }>(
-        "login/token-valido"
-      );
+  //     const { data } = await this.api.get<{ valido: boolean }>(
+  //       "login/token-valido"
+  //     );
 
-      if (!data.valido) throw Error();
-    } catch {
-      useUserStore.setState({ accessToken: "" });
-      window.location.pathname = "/login";
-    }
-  }
+  //     if (!data.valido) throw Error();
+  //   } catch {
+  //     useUserStore.setState({ accessToken: "" });
+  //     window.location.pathname = "/login";
+  //   }
+  // }
 }

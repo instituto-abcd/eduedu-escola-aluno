@@ -16,13 +16,23 @@ const useStyles = createStyles({
 type componentsProps = {
     image?: string;
     name?: string;
+    customWidth?: string;
+    customHeigth?: string;
 }
 
-export function GrayCard({ image, name }: componentsProps) {
+export function GrayCard({ customWidth, customHeigth, image, name }: componentsProps) {
     const { classes } = useStyles();
     return (
-        <div className={classes.card}>
-            <Image src={image} height={110} />
+        <div
+            className={classes.card}
+            style={{
+                width: customWidth ? customWidth : '170px',
+                height: customHeigth ? customHeigth : '200px'
+            }}
+        >
+            {image &&
+                <Image src={image} height={110} />
+            }
             {name}
         </div>
     )

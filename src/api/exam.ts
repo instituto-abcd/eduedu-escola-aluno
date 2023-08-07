@@ -68,9 +68,17 @@ export type Question = {
     | "MODEL6"
     | "MODEL7"
     | "MODEL8"
-    | "MODEL9";
+    | "MODEL9"
+    | "QME2x2Audio"
+    | "QME2x2Text"
+    | "QME2x2Text2"
+    | "QMES5"
+    | "QME2x2Video"
+    | "QME2x3Video"
+    | "QORD3x2";
   options: {
     order: number;
+    position: number;
     description: string;
     isCorrect: boolean;
     imageUrl?: string;

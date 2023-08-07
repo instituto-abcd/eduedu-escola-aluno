@@ -1,45 +1,57 @@
-import { Button, ButtonProps, createStyles } from "@mantine/core";
+import { createStyles } from "@mantine/core";
 
 const useStyles = createStyles(() => ({
-  root: {
-    borderRadius: 8,
-    border: "1px solid #228BE6",
-    backgroundColor: "#fff",
+  button: {
+    all: "unset",
     cursor: "pointer",
+    width: "max-content",
+    minWidth: 113,
+    height: 20,
+    backgroundColor: "#47cdff",
+    boxShadow: "0px 4px 0px 0px #25abe6",
+    paddingBlock: 10,
     paddingInline: 22,
-    paddingBlock: 8,
-    boxShadow: "0px 1px 0px 0px #006AC6",
-  },
-  inner: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    lineHeight: 0,
     gap: 10,
-  },
-  label: {
-    color: "#228BE6",
-  },
-  icon: {
-    color: "#228BE6",
+    borderRadius: 8,
+    color: "#fff",
+    userSelect: "none",
+    ":disabled": {
+      backgroundColor: "#E9E9E9",
+      color: "#C4C4C4",
+      boxShadow: "0px 4px 0px 0px #c4c4c4",
+      cursor: "not-allowed",
+      pointerEvents: "none",
+    },
+    ":active": {
+      boxShadow: "0px 4px 0px 0px #25abe6",
+      transform: "translateY(2px)",
+      transition: "all 0.1s ease",
+    },
   },
 }));
 
-type EduButtonProps = ButtonProps;
+type EduButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  rightIcon?: JSX.Element;
+  leftIcon?: JSX.Element;
+};
 
-export function EduButton(props: EduButtonProps) {
+export function EduButton({
+  children,
+  rightIcon,
+  leftIcon,
+  ...props
+}: EduButtonProps) {
   const { classes, cx } = useStyles();
 
   return (
-    <Button
-      {...props}
-      unstyled
-      classNames={{
-        inner: cx(classes.inner, props.classNames?.inner),
-        root: cx(classes.root, props.classNames?.root),
-        label: cx(classes.label, props.classNames?.label),
-        rightIcon: cx(classes.icon, props.classNames?.rightIcon),
-        leftIcon: cx(classes.icon, props.classNames?.leftIcon),
-      }}
-    />
+    <button {...props} className={cx(classes.button, props.className)}>
+      {leftIcon}
+      {children}
+      {rightIcon}
+    </button>
   );
 }

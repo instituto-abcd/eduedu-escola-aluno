@@ -1,12 +1,17 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
+import { MessageDots } from "tabler-icons-react";
 import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
+import { IconButton } from "~/components/EduButton";
 
 export function Model11({ question }: { question: Question }) {
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      <Group>
+        <IconButton icon={<OuvirIcon />} />
+        <IconButton icon={<MessageDots size={34} />} variant="yellow" />
+      </Group>
 
       <Group position="apart" spacing={137}>
         <Image src="https://place-hold.it/362" width={362} height={362} />
@@ -16,7 +21,7 @@ export function Model11({ question }: { question: Question }) {
           </Title>
           <Group>
             {question.options.map((o) => (
-              <EduButton key={o.order}>{o.description}</EduButton>
+              <DraggableLetters key={o.order}>{o.description}</DraggableLetters>
             ))}
           </Group>
         </Stack>

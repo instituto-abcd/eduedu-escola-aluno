@@ -1,0 +1,1 @@
+export { GrayCard } from "./GrayCard";

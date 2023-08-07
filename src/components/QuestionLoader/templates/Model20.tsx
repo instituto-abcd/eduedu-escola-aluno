@@ -12,6 +12,7 @@ export function Model20({ question }: { question: Question }) {
       <Group position="apart" spacing={137}>
         <SimpleGrid>
           <Image src="https://place-hold.it/220" width={220} />
+          {/* TODO: textarea com draggable */}
           <Flex>
             <DraggableCard
               name="Caiu"

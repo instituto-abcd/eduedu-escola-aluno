@@ -22,7 +22,7 @@ type Props = React.DetailedHTMLProps<
 >;
 
 type Custom = {
-  customWidth: string;
+  customWidth?: string;
 }
 
 export function DraggableCard({ customWidth }: Custom, props: Props) {

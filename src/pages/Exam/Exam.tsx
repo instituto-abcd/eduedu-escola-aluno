@@ -4,6 +4,8 @@ import { useState } from "react";
 import { produce } from "immer";
 import { Question } from "~/api/exam";
 import { QuestionLoader } from "~/components/QuestionLoader/QuestionLoader";
+import { EduButton } from "~/components/EduButton";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 type Answers = {
   [key: string]: {
@@ -46,21 +48,43 @@ export function ExamPage() {
   }
 
   return (
-    <Stack align="center" justify="space-between" h="100%">
+    <Stack
+      align="center"
+      justify="space-between"
+      h="100%"
+      style={{ position: "relative" }}
+    >
       {isLoading && <Loader />}
       <Stack spacing={65} align="center" h="100%" w="100%" px={54}>
         <QuestionLoader question={getQuestion()} onAnswer={onAnswer} />
       </Stack>
       <Stack align="center" py="lg">
         <Group align="center">
-          <Button onClick={prevQuestion} disabled={!hasPrev}>
+          <EduButton
+            leftIcon={<IconChevronLeft size={18} />}
+            disabled={!hasPrev}
+            onClick={prevQuestion}
+          >
             Anterior
-          </Button>
-          <Button onClick={nextQuestion} disabled={!hasNext}>
-            Próximo
-          </Button>
+          </EduButton>
+          <EduButton
+            rightIcon={<IconChevronRight size={18} />}
+            disabled={!hasNext}
+            onClick={nextQuestion}
+          >
+            Continuar
+          </EduButton>
         </Group>
-        <Text color="dimmed" size="xs">
+        <Text
+          color="dimmed"
+          size="xs"
+          style={{
+            position: "absolute",
+            bottom: -10,
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        >
           {exam.questions[currentIndex].model}
         </Text>
       </Stack>

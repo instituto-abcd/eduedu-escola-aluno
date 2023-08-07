@@ -1,4 +1,5 @@
 import { createStyles } from "@mantine/core";
+import { useDrop } from "react-dnd";
 
 const useStyles = createStyles({
   card: {
@@ -20,5 +21,37 @@ type Props = React.DetailedHTMLProps<
 export function DragSlotCard(props: Props) {
   const { classes } = useStyles();
 
-  return <div {...props} className={classes.card} />;
+  const [{ canDrop, didDrop }, drop] = useDrop(
+    () => ({
+      accept: "ANSWER_CARD",
+
+      hover: (item, monitor) => {
+        // console.log("HOVER ITEM", item, monitor.getItemType());
+      },
+
+      drop: (item, monitor) => {
+        console.log("DROP ITEM", item, monitor.getDropResult());
+        return { id: "asd123" };
+      },
+
+      collect: (monitor) => ({
+        didDrop: !!monitor.didDrop(),
+        isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
+      }),
+    }),
+    []
+  );
+
+  return (
+    <>
+      <div
+        {...props}
+        className={classes.card}
+        style={{ backgroundColor: canDrop ? "red" : undefined }}
+        ref={drop}
+      />
+      <p>{didDrop ? "DROPPED" : "NOT DROPPED"}</p>
+    </>
+  );
 }

@@ -30,7 +30,7 @@ const useStyles = createStyles(
 
 type IconButtonProps = {
   icon: JSX.Element;
-  variant?: "primary" | "gray" | "black";
+  variant?: "primary" | "gray" | "black" | "yellow";
 } & React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
@@ -56,6 +56,11 @@ export function IconButton({
       bg: "#3f4040",
       accent: "#111314",
       text: "#c4c4c4",
+    },
+    yellow: {
+      bg: "#ffb802",
+      accent: "#be8800",
+      text: "#ffe071",
     },
   };
 

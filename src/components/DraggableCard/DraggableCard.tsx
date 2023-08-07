@@ -1,4 +1,5 @@
 import { createStyles } from "@mantine/core";
+import { useDrag } from "react-dnd";
 
 const useStyles = createStyles({
   card: {
@@ -6,7 +7,7 @@ const useStyles = createStyles({
     height: 200,
     borderRadius: 16,
     backgroundColor: "#fff",
-    boxShadow: "0 1px 0 0 #006AC6",
+    boxShadow: "0 4px 0 0 #228BE6",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#228BE6",
@@ -19,10 +20,29 @@ const useStyles = createStyles({
 type Props = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
->;
+> & {
+  id: string;
+};
 
 export function DraggableCard(props: Props) {
   const { classes } = useStyles();
 
-  return <div className={classes.card} {...props} draggable />;
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "ANSWER_CARD",
+      item: () => ({ id: props.id }),
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
+    }),
+    [props.id]
+  );
+  return (
+    <div
+      className={classes.card}
+      style={{ cursor: isDragging ? "grabbing" : "grab" }}
+      {...props}
+      ref={drag}
+    />
+  );
 }

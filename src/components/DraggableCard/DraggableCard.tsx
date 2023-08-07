@@ -1,4 +1,4 @@
-import { Text, createStyles } from "@mantine/core";
+import { Image, Text, createStyles } from "@mantine/core";
 
 const useStyles = createStyles({
   card: {
@@ -21,12 +21,14 @@ type Props = React.DetailedHTMLProps<
 >;
 
 type Custom = {
+  image?: string;
+  imageWidth?: string;
+  name?: string;
   customWidth?: string;
   customHeigth?: string;
-  name?: string;
 }
 
-export function DraggableCard({ customWidth, customHeigth, name }: Custom, props: Props) {
+export function DraggableCard({ customWidth, customHeigth, image, imageWidth, name }: Custom, props: Props) {
   const { classes } = useStyles();
 
   return (
@@ -39,6 +41,9 @@ export function DraggableCard({ customWidth, customHeigth, name }: Custom, props
         height: customHeigth ? customHeigth : '200px'
       }}
     >
+      {image &&
+        <Image src={image} width={imageWidth ? imageWidth : 120} />
+      }
       <Text c="blue.6">{name}</Text>
     </div>
   );

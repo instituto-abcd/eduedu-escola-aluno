@@ -2,7 +2,6 @@ import { Text, createStyles } from "@mantine/core";
 
 const useStyles = createStyles({
   card: {
-    height: 200,
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: "0 1px 0 0 #006AC6",
@@ -23,10 +22,11 @@ type Props = React.DetailedHTMLProps<
 
 type Custom = {
   customWidth?: string;
+  customHeigth?: string;
   name?: string;
 }
 
-export function DraggableCard({ customWidth, name }: Custom, props: Props) {
+export function DraggableCard({ customWidth, customHeigth, name }: Custom, props: Props) {
   const { classes } = useStyles();
 
   return (
@@ -35,7 +35,8 @@ export function DraggableCard({ customWidth, name }: Custom, props: Props) {
       {...props}
       draggable
       style={{
-        width: customWidth ? customWidth : '170px'
+        width: customWidth ? customWidth : '170px',
+        height: customHeigth ? customHeigth : '200px'
       }}
     >
       <Text c="blue.6">{name}</Text>

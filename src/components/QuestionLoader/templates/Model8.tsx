@@ -14,9 +14,13 @@ export function Model8({ question }: { question: Question }) {
       </Title>
 
       <Stack align="stretch" spacing={40} w={555}>
-        {question.options.map((o) => (
-          <TextOptionButton key={o.order}>{o.description}</TextOptionButton>
-        ))}
+        {question.options
+          .sort((a, b) => a.position - b.position)
+          .map((option) => (
+            <TextOptionButton key={option.description}>
+              {option.description}
+            </TextOptionButton>
+          ))}
       </Stack>
     </>
   );

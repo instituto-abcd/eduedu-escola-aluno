@@ -11,6 +11,7 @@ import { IconButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
 
 export function QME2x2Audio({ question }: { question: Question }) {
+  const cols = question.options.length < 6 ? question.options.length / 2 : 3;
   return (
     <>
       <Group>
@@ -21,7 +22,7 @@ export function QME2x2Audio({ question }: { question: Question }) {
 
       <IconButton icon={<OuvirIcon />} variant="gray" />
 
-      <SimpleGrid cols={3}>
+      <SimpleGrid cols={cols}>
         {question.options.map((o) => (
           <OptionButton key={o.position}>
             <Stack justify="space-evenly">

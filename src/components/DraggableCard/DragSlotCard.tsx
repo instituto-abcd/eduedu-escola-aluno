@@ -1,5 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
+import { CardItem, DraggableCard } from "./DraggableCard";
 
 const useStyles = createStyles({
   card: {
@@ -13,45 +14,36 @@ const useStyles = createStyles({
   },
 });
 
-type Props = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
->;
+type Props = Omit<
+  React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  "onDrop"
+> & {
+  onDrop: (item: CardItem) => void;
+  accept: string | string[];
+  item: CardItem | null;
+  onClear?: () => void;
+};
 
-export function DragSlotCard(props: Props) {
+export function DragSlotCard({
+  onDrop,
+  accept,
+  item,
+  onClear,
+  ...props
+}: Props) {
   const { classes } = useStyles();
 
-  const [{ canDrop, didDrop }, drop] = useDrop(
+  const [, drop] = useDrop(
     () => ({
-      accept: "ANSWER_CARD",
-
-      hover: (item, monitor) => {
-        // console.log("HOVER ITEM", item, monitor.getItemType());
-      },
-
-      drop: (item, monitor) => {
-        console.log("DROP ITEM", item, monitor.getDropResult());
-        return { id: "asd123" };
-      },
-
+      accept,
+      drop: onDrop,
       collect: (monitor) => ({
-        didDrop: !!monitor.didDrop(),
         isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
       }),
     }),
     []
   );
 
-  return (
-    <>
-      <div
-        {...props}
-        className={classes.card}
-        style={{ backgroundColor: canDrop ? "red" : undefined }}
-        ref={drop}
-      />
-      <p>{didDrop ? "DROPPED" : "NOT DROPPED"}</p>
-    </>
-  );
+  if (item !== null) return <DraggableCard item={item} onClear={onClear} />;
+  return <div {...props} className={classes.card} style={{}} ref={drop} />;
 }

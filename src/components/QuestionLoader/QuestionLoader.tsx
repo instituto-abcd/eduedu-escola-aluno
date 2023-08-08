@@ -22,7 +22,7 @@ export function QuestionLoader({ question, onAnswer }: QuestionLoaderProps) {
     onAnswer,
   };
 
-  switch (question.model) {
+  switch (question.model_id) {
     case "MODEL2":
       return <Model2 {...commonProps} />;
     case "MODEL4":
@@ -49,7 +49,7 @@ export function QuestionLoader({ question, onAnswer }: QuestionLoaderProps) {
       return <QMES5 {...commonProps} />;
     case "QME2x2Video":
       return <QME2x2Video {...commonProps} />;
-    case "QME2x3Video":
+    case "QMES2x3Video":
       return <QME2x3Video {...commonProps} />;
     case "QORD3x2":
       return <QORD3x2 {...commonProps} />;

@@ -15,6 +15,7 @@ const useStyles = createStyles({
     fontWeight: 600,
     color: "#228BE6",
     userSelect: "none",
+    wordBreak: "break-all",
     ":active": {
       boxShadow: "0px 2px 0px 0px #228BE6",
       transform: "translateY(3px)",

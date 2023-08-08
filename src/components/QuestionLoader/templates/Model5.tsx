@@ -15,9 +15,11 @@ export function Model5({ question }: { question: Question }) {
 
       <SimpleGrid cols={2} w="full">
         {question.options
-          .sort((a, b) => a.order - b.order)
-          .map((o) => (
-            <TextOptionButton key={o.order}>{o.description}</TextOptionButton>
+          .sort((a, b) => a.position - b.position)
+          .map((option) => (
+            <TextOptionButton key={option.position}>
+              {option.description}
+            </TextOptionButton>
           ))}
       </SimpleGrid>
     </>

@@ -4,11 +4,36 @@ import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { IconReload } from "@tabler/icons-react";
 import { DragSlotCard, DraggableCard } from "~/components/DraggableCard";
 import { IconButton } from "~/components/EduButton";
-import { useDrag, useDrop } from "react-dnd";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { produce } from "immer";
+import type { CardItem } from "~/components/DraggableCard/DraggableCard";
+
+type Slot = CardItem | null;
 
 export function Model2({ question }: ModelProps) {
-  const [droped, setDropped] = useState();
+  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
+
+  const [options] = useState<CardItem[]>(
+    question.options.map((option) => ({
+      id: option.position,
+      type: "ANSWER_CARD",
+      imageUrl: option.image_url ?? "",
+      description: option.description,
+      position: option.position,
+    }))
+  );
+
+  const handleDrop = useCallback(function (
+    item: CardItem | null,
+    index: number
+  ) {
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index] = item;
+      })
+    );
+  },
+  []);
 
   return (
     <>
@@ -18,17 +43,28 @@ export function Model2({ question }: ModelProps) {
       </Group>
 
       <Stack>
-        <SimpleGrid cols={3} spacing={24}>
-          <DragSlotCard />
-        </SimpleGrid>
-        <SimpleGrid cols={3} spacing={24}>
-          <DraggableCard id={"asd123"}>
-            <Image
-              src="https://place-hold.it/220"
-              w="100%"
-              style={{ pointerEvents: "none", userSelect: "none" }}
+        <SimpleGrid cols={options.length} spacing={24}>
+          {slots.map((slot, inx) => (
+            <DragSlotCard
+              key={inx}
+              accept="ANSWER_CARD"
+              onDrop={(item) => handleDrop(item, inx)}
+              item={slot}
+              onClear={() => handleDrop(null, inx)}
             />
-          </DraggableCard>
+          ))}
+        </SimpleGrid>
+
+        <SimpleGrid cols={options.length} spacing={24}>
+          {options
+            .sort((a, b) => a.position - b.position)
+            .map((item, inx) => (
+              <DraggableCard
+                item={item}
+                key={item.id}
+                hidden={!!slots.find((slot) => slot?.id === item.id)}
+              />
+            ))}
         </SimpleGrid>
       </Stack>
     </>

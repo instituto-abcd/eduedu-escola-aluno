@@ -1,4 +1,4 @@
-import { Button, Group, Loader, Stack, Text } from "@mantine/core";
+import { Group, Loader, Stack } from "@mantine/core";
 import { exam as _exam } from "./mocks/exam";
 import { useState } from "react";
 import { produce } from "immer";
@@ -6,6 +6,7 @@ import { Question } from "~/api/exam";
 import { QuestionLoader } from "~/components/QuestionLoader/QuestionLoader";
 import { EduButton } from "~/components/EduButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { DebugHelper } from "./DebugHelper";
 
 type Answers = {
   [key: string]: {
@@ -18,6 +19,10 @@ export function ExamPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswer] = useState<Answers>({});
 
+  /* 👇🏻 DEBUG ONLY 👇🏻 */
+  const blacklistQuestions = [95, 96];
+  /* ☝🏻 DEBUG ONLY ☝🏻 */
+
   const { data: exam } = { data: _exam };
 
   const isLoading = false;
@@ -25,7 +30,10 @@ export function ExamPage() {
   const hasPrev = currentIndex > 0;
 
   function getQuestion(): Question {
-    return exam.questions[currentIndex] as Question;
+    const questions = exam.questions.filter(
+      (question) => !blacklistQuestions.includes(question.id)
+    );
+    return questions[currentIndex] as Question;
   }
 
   function nextQuestion() {
@@ -75,18 +83,14 @@ export function ExamPage() {
             Continuar
           </EduButton>
         </Group>
-        <Text
-          color="dimmed"
-          size="xs"
-          style={{
-            position: "absolute",
-            bottom: -10,
-            pointerEvents: "none",
-            userSelect: "none",
-          }}
-        >
-          {exam.questions[currentIndex].model}
-        </Text>
+
+        {/* 👇🏻 DEBUG ONLY ☝🏻 */}
+        <DebugHelper
+          exam={exam}
+          currentQuestionIndex={currentIndex}
+          changeIndex={setCurrentIndex}
+        />
+        {/* ☝🏻 DEBUG ONLY ☝🏻 */}
       </Stack>
     </Stack>
   );

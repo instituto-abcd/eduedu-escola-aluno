@@ -34,19 +34,19 @@ export function Model25({ question }: { question: Question }) {
 
             <Grid.Col span={1}>
               <DraggableCard
-                image=""
+                image="https://place-hold.it/110"
                 name="O alho"
               />
             </Grid.Col>
             <Grid.Col span={1}>
               <DraggableCard
-                image=""
+                image="https://place-hold.it/110"
                 name="A rua"
               />
             </Grid.Col>
             <Grid.Col span={1}>
               <DraggableCard
-                image=""
+                image="https://place-hold.it/110"
                 name="O relógio"
               />
             </Grid.Col>

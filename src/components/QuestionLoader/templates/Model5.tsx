@@ -1,12 +1,13 @@
 import { SimpleGrid, Title } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { IconButton } from "~/components/EduButton";
+import { TextOptionButton } from "~/components/OptionButton";
 
 export function Model5({ question }: { question: Question }) {
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      <IconButton icon={<OuvirIcon />} />
 
       <Title color="dark.3" size={30} align="center">
         {question.description}
@@ -14,9 +15,11 @@ export function Model5({ question }: { question: Question }) {
 
       <SimpleGrid cols={2} w="full">
         {question.options
-          .sort((a, b) => a.order - b.order)
-          .map((o) => (
-            <EduButton key={o.order}>{o.description}</EduButton>
+          .sort((a, b) => a.position - b.position)
+          .map((option) => (
+            <TextOptionButton key={option.position}>
+              {option.description}
+            </TextOptionButton>
           ))}
       </SimpleGrid>
     </>

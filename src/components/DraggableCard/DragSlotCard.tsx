@@ -1,4 +1,6 @@
 import { createStyles } from "@mantine/core";
+import { useDrop } from "react-dnd";
+import { CardItem, DraggableCard } from "./DraggableCard";
 
 const useStyles = createStyles({
   card: {
@@ -12,13 +14,36 @@ const useStyles = createStyles({
   },
 });
 
-type Props = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
->;
+type Props = Omit<
+  React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  "onDrop"
+> & {
+  onDrop: (item: CardItem) => void;
+  accept: string | string[];
+  item: CardItem | null;
+  onClear?: () => void;
+};
 
-export function DragSlotCard(props: Props) {
+export function DragSlotCard({
+  onDrop,
+  accept,
+  item,
+  onClear,
+  ...props
+}: Props) {
   const { classes } = useStyles();
 
-  return <div {...props} className={classes.card} />;
+  const [, drop] = useDrop(
+    () => ({
+      accept,
+      drop: onDrop,
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    []
+  );
+
+  if (item !== null) return <DraggableCard item={item} onClear={onClear} />;
+  return <div {...props} className={classes.card} style={{}} ref={drop} />;
 }

@@ -1,30 +1,39 @@
-import { Image, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Group, Image, Stack, Text, Title } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { Card } from "~/components/Card";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { IconButton } from "~/components/EduButton";
+import { OptionButton } from "~/components/OptionButton";
 
 export function Model4({ question }: { question: Question }) {
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      <IconButton icon={<OuvirIcon />} variant="gray" />
 
-      <Title align="center" color="dark.3">
+      {/* <Title align="center" color="dark.3">
         {question.description}
-      </Title>
+      </Title> */}
 
-      <Stack>
-        <SimpleGrid cols={2} spacing={24}>
-          {question.options.map((o) => (
-            <Card key={o.order}>
-              <Image
-                src="https://place-hold.it/125"
-                alt={o.description}
-                width={125}
-              />
-            </Card>
+      <Stack my="auto">
+        <Group spacing={24}>
+          {question.options.map((option) => (
+            <OptionButton key={option.position}>
+              {option.image_url && (
+                <>
+                  <Image
+                    src={option.image_url}
+                    alt={option.description}
+                    height={105}
+                    width="auto"
+                  />
+                  <Text size={20} color="gray.7" weight={600}>
+                    {option.image_name}
+                  </Text>
+                </>
+              )}
+              {!option.image_url && <Text>{option.description}</Text>}
+            </OptionButton>
           ))}
-        </SimpleGrid>
+        </Group>
       </Stack>
     </>
   );

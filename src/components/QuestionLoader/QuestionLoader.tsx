@@ -25,6 +25,13 @@ import { Model29 } from "./templates/Model29";
 import { Model30 } from "./templates/Model30";
 import { Model31 } from "./templates/Model31";
 import { Model33 } from "./templates/Model33";
+import { QME2x2Audio } from "./templates/QME2x2Audio";
+import { QME2x2Text } from "./templates/QME2x2Text";
+import { QME2x2Text2 } from "./templates/QME2x2Text2";
+import { QME2x2Video } from "./templates/QME2x2Video";
+import { QME2x3Video } from "./templates/QMES2x3Video";
+import { QMES5 } from "./templates/QMES5";
+import { QORD3x2 } from "./templates/QORD3x2";
 
 type QuestionLoaderProps = ModelProps;
 
@@ -34,7 +41,7 @@ export function QuestionLoader({ question, onAnswer }: QuestionLoaderProps) {
     onAnswer,
   };
 
-  switch (question.model) {
+  switch (question.model_id) {
     case "MODEL2":
       return <Model2 {...commonProps} />;
     case "MODEL4":
@@ -87,6 +94,22 @@ export function QuestionLoader({ question, onAnswer }: QuestionLoaderProps) {
       return <Model33 {...commonProps} />;
     case "MODEL32":
       return <Model32 {...commonProps} />;
+
+    // Orfãos
+    case "QME2x2Audio":
+      return <QME2x2Audio {...commonProps} />;
+    case "QME2x2Text":
+      return <QME2x2Text {...commonProps} />;
+    case "QME2x2Text2":
+      return <QME2x2Text2 {...commonProps} />;
+    case "QMES5":
+      return <QMES5 {...commonProps} />;
+    case "QME2x2Video":
+      return <QME2x2Video {...commonProps} />;
+    case "QMES2x3Video":
+      return <QME2x3Video {...commonProps} />;
+    case "QORD3x2":
+      return <QORD3x2 {...commonProps} />;
 
     default:
       return <h1>Question NULL</h1>;

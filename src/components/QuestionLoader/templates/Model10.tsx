@@ -1,43 +1,46 @@
-import { SimpleGrid, Title, createStyles } from "@mantine/core";
+import { Group, Image, SimpleGrid, Title } from "@mantine/core";
+import { IconBook } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { EduButton } from "~/components/EduButton/EduButton";
-
-const useStyles = createStyles({
-  button: {
-    width: 170,
-    height: 148,
-    borderRadius: 8,
-    border: "1px solid #228BE6",
-    backgroundColor: "#fff",
-    cursor: "pointer",
-    boxShadow: "0px 5px 0px 0px #228BE6",
-    display: "grid",
-    placeItems: "center",
-    fontSize: 30,
-    fontWeight: 600,
-    color: "#228BE6",
-  },
-});
+import { IconButton } from "~/components/EduButton";
+import { OptionButton } from "~/components/OptionButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 
 export function Model10({ question }: { question: Question }) {
-  const { classes } = useStyles();
+  const { imageTitles, textTitles } = useQuestionHelper(question);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
-      <Title color="dark.3" size={30} align="center">
-        {question.description}
-      </Title>
+      <Group>
+        <IconButton icon={<OuvirIcon />} variant="gray" />
+        <IconButton icon={<IconBook size={34} />} variant="black" />
+      </Group>
+      {textTitles.map((title) => (
+        <Title color="dark.3" size={30} align="center" key={title.description}>
+          {title.description}
+        </Title>
+      ))}
 
-      <SimpleGrid cols={2}>
-        {question.options
-          .sort((a, b) => a.order - b.order)
-          .map((o) => (
-            <button key={o.order} className={classes.button}>
-              {o.description}
-            </button>
-          ))}
-      </SimpleGrid>
+      <Group spacing={100} my="auto">
+        {imageTitles.map((title) => (
+          <Image
+            src={title.file_url}
+            alt={title.description}
+            width={270}
+            key={title.file_url}
+          />
+        ))}
+
+        <SimpleGrid cols={2}>
+          {question.options
+            .sort((a, b) => a.position - b.position)
+            .map((option) => (
+              <OptionButton key={option.description}>
+                {option.description}
+              </OptionButton>
+            ))}
+        </SimpleGrid>
+      </Group>
     </>
   );
 }

@@ -23,6 +23,7 @@ export type Question = {
     sound_url?: string;
   }[];
   order: number;
+  orderedAnswer: boolean;
   school_year: number;
   titles: {
     description: string;

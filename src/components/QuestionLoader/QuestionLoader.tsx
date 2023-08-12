@@ -16,10 +16,13 @@ import { QORD3x2 } from "./templates/QORD3x2";
 
 type QuestionLoaderProps = ModelProps;
 
-export function QuestionLoader({ question, onAnswer }: QuestionLoaderProps) {
-  const commonProps = {
+export function QuestionLoader({
+  question,
+  answerCallback,
+}: QuestionLoaderProps) {
+  const commonProps: ModelProps = {
     question,
-    onAnswer,
+    answerCallback,
   };
 
   switch (question.model_id) {

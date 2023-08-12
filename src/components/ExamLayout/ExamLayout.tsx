@@ -24,6 +24,7 @@ export function ExamLayout() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            userSelect: "none",
           }}
         >
           <Center h="80%" mt={55}>

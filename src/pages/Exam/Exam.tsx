@@ -1,58 +1,32 @@
-import { Group, Loader, Stack } from "@mantine/core";
-import { exam as _exam } from "./mocks/exam";
+import { Loader, Stack } from "@mantine/core";
+import { QuestionLoader } from "~/components/QuestionLoader";
+import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
-import { produce } from "immer";
 import { Question } from "~/api/exam";
-import { QuestionLoader } from "~/components/QuestionLoader/QuestionLoader";
-import { EduButton } from "~/components/EduButton";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { DebugHelper } from "./DebugHelper";
-
-type Answers = {
-  [key: string]: {
-    answer: string;
-    isCorrect: boolean;
-  };
-};
 
 export function ExamPage() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswer] = useState<Answers>({});
+  const [currentQuestion, setCurrentQuestion] = useState<Question>();
 
-  /* 👇🏻 DEBUG ONLY 👇🏻 */
-  const blacklistQuestions = [95, 96];
-  /* ☝🏻 DEBUG ONLY ☝🏻 */
+  const { isLoading } = useGetFirstExamQuestion({
+    onSuccess: (question) => {
+      if (!currentQuestion) {
+        setCurrentQuestion(question);
+      }
+    },
+  });
 
-  const { data: exam } = { data: _exam };
-
-  const isLoading = false;
-  const hasNext = currentIndex < exam.questions.length - 1;
-  const hasPrev = currentIndex > 0;
-
-  function getQuestion(): Question {
-    const questions = exam.questions.filter(
-      (question) => !blacklistQuestions.includes(question.id)
-    );
-    return questions[currentIndex] as Question;
-  }
-
-  function nextQuestion() {
-    setCurrentIndex((prev) => prev + 1);
-  }
-
-  function prevQuestion() {
-    setCurrentIndex((prev) => prev - 1);
-  }
-
-  function onAnswer(answer: string, isCorrect: boolean) {
-    setAnswer(
-      produce((draft) => {
-        draft[currentIndex] = {
-          answer,
-          isCorrect,
-        };
-      })
-    );
+  function handleAnswer(
+    answer:
+      | Question
+      | {
+          examCompleted: true;
+        }
+  ) {
+    if ("examCompleted" in answer) {
+      console.log("EXAM COMPLETED");
+    } else {
+      setCurrentQuestion(answer);
+    }
   }
 
   return (
@@ -64,33 +38,12 @@ export function ExamPage() {
     >
       {isLoading && <Loader />}
       <Stack spacing={65} align="center" h="100%" w="100%" px={54}>
-        <QuestionLoader question={getQuestion()} onAnswer={onAnswer} />
-      </Stack>
-      <Stack align="center" py="lg">
-        <Group align="center">
-          <EduButton
-            leftIcon={<IconChevronLeft size={18} />}
-            disabled={!hasPrev}
-            onClick={prevQuestion}
-          >
-            Anterior
-          </EduButton>
-          <EduButton
-            rightIcon={<IconChevronRight size={18} />}
-            disabled={!hasNext}
-            onClick={nextQuestion}
-          >
-            Continuar
-          </EduButton>
-        </Group>
-
-        {/* 👇🏻 DEBUG ONLY ☝🏻 */}
-        <DebugHelper
-          exam={exam}
-          currentQuestionIndex={currentIndex}
-          changeIndex={setCurrentIndex}
-        />
-        {/* ☝🏻 DEBUG ONLY ☝🏻 */}
+        {currentQuestion && (
+          <QuestionLoader
+            question={currentQuestion}
+            answerCallback={handleAnswer}
+          />
+        )}
       </Stack>
     </Stack>
   );

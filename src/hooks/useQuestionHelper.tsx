@@ -23,10 +23,19 @@ export function useQuestionHelper(question: Question) {
     [getTitlesOfType]
   );
 
+  const audioTitles = useMemo(
+    () => getTitlesOfType("AUDIO"),
+    [getTitlesOfType]
+  );
+
+  const videoTitles = getTitlesOfType("VIDEO");
+
   return {
     hasTitleOfType,
     getTitlesOfType,
     textTitles,
     imageTitles,
+    audioTitles,
+    videoTitles,
   };
 }

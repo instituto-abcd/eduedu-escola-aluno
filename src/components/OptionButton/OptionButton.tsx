@@ -12,7 +12,7 @@ const useStyles = createStyles((theme) => ({
     boxShadow: "0px 5px 0px 0px #228BE6",
     display: "grid",
     placeItems: "center",
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: 600,
     color: "#228BE6",
     userSelect: "none",

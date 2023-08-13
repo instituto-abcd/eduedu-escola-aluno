@@ -1,7 +1,8 @@
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { IconButton } from "../EduButton";
-import { AudioHTMLAttributes, useRef } from "react";
+import { AudioHTMLAttributes, useRef, useState } from "react";
 import { createStyles } from "@mantine/core";
+import { IconButtonProps } from "../EduButton/IconButton";
 
 const useStyles = createStyles({
   audio: {
@@ -9,22 +10,33 @@ const useStyles = createStyles({
   },
 });
 
-type Props = AudioHTMLAttributes<HTMLAudioElement>;
+type Props = AudioHTMLAttributes<HTMLAudioElement> & {
+  buttonProps?: IconButtonProps;
+};
 
-export function AudioButton(props: Props) {
+export function AudioButton({ buttonProps, ...props }: Props) {
   const { classes } = useStyles();
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  const isPlaying = !audioRef.current?.ended && !audioRef.current?.paused;
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <>
-      <audio {...props} className={classes.audio} ref={audioRef} />
+      <audio
+        {...props}
+        className={classes.audio}
+        ref={audioRef}
+        onLoadedData={() => setIsLoadingData(false)}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
       <IconButton
-        icon={<OuvirIcon />}
         variant="gray"
         onClick={() => void audioRef.current?.play()}
-        disabled={isPlaying}
+        disabled={isPlaying || isLoadingData}
+        {...buttonProps}
+        icon={buttonProps?.icon ?? <OuvirIcon />}
       />
     </>
   );

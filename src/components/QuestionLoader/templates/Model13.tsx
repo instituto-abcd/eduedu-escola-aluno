@@ -1,37 +1,76 @@
-import { Group, Stack } from "@mantine/core";
+import { Box, Group, SimpleGrid, Stack } from "@mantine/core";
+import { useCallback, useState } from "react";
 import { Question } from "~/api/exam";
+
 import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { DraggableCard } from "~/components/DraggableCard";
 import { EduButton } from "~/components/EduButton/EduButton";
-import { GrayCard } from "~/components/GrayCard/GrayCard";
+
+import type { CardItem } from "~/components/DraggableCard/DraggableCard";
+import { DragSlotGrayCard, DraggableGrayCard } from "~/components/DraggableGrayCard";
+import { produce } from "immer";
+
+type Slot = CardItem | null;
 
 export function Model13({ question }: { question: Question }) {
+  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
+
+  const [options] = useState<CardItem[]>(
+    question.options.map((option) => ({
+      id: option.position,
+      type: "ANSWER_CARD",
+      imageUrl: option.image_url ?? "",
+      description: option.description,
+      position: option.position,
+    }))
+  );
+
+  const handleDrop = useCallback(function (
+    item: CardItem | null,
+    index: number
+  ) {
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index] = item;
+      })
+    );
+  },
+    []);
 
   return (
     <>
+      {/* TODO: custom this as should be */}
+
       <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
 
       <Group position="apart" spacing={137}>
         <Stack align="center">
-          <Group>
-            <GrayCard
-              image="https://place-hold.it/110"
-              name="Pessoa"
-            />
-            <GrayCard
-              image="https://place-hold.it/110"
-              name="Lugar"
-            />
-            <GrayCard
-              image="https://place-hold.it/110"
-              name="Lugar"
-            />
-            <GrayCard
-              image="https://place-hold.it/110"
-              name="Coisa"
-            />
-          </Group>
-          <DraggableCard name="Violão" />
+          <SimpleGrid>
+            <Group>
+              {slots.map((slot, inx) => (
+                <DragSlotGrayCard
+                  key={inx}
+                  accept="ANSWER_CARD"
+                  onDrop={(item) => handleDrop(item, inx)}
+                  item={slot}
+                  onClear={() => handleDrop(null, inx)}
+                />
+              ))}
+            </Group>
+          </SimpleGrid>
+
+          <SimpleGrid>
+            <Box style={{ position: 'relative' }}>
+              {options
+                .sort((a, b) => a.position - b.position)
+                .map((item, inx) => (
+                  <DraggableGrayCard
+                    item={item}
+                    key={item.id}
+                    hidden={!!slots.find((slot) => slot?.id === item.id)}
+                  />
+                ))}
+            </Box>
+          </SimpleGrid>
         </Stack>
       </Group>
     </>

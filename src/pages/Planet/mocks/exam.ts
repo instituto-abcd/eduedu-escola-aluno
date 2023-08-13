@@ -38,25 +38,54 @@ export const exam = {
       order: 1,
     },
     {
+      level: 1,
       options: [
         {
-          imageUrl: "",
-          description: "",
-          soundUrl: "",
-          isCorrect: false,
-          order: 1,
+          description: "Maria",
+          position: 1,
         },
         {
-          imageUrl: "",
-          description: "",
-          soundUrl: "",
-          isCorrect: false,
-          order: 2,
+          description: "Violão",
+          position: 2,
+          isCorrect: true,
+        },
+        {
+          description: "Onça",
+          position: 3,
+        },
+        {
+          description: "Computador",
+          position: 4,
         },
       ],
       description: "",
-      fileUrl: "",
-      model: "MODEL13",
+      id: "",
+      axis_code: "",
+      model_id: "MODEL13",
+      titles: [
+        {
+          file_url: "https://place-hold.it/110",
+          description: "Pessoa",
+          position: 1,
+        },
+        {
+          file_url: "https://place-hold.it/110",
+          description: "Lugar",
+          position: 2,
+        },
+        {
+          file_url: "https://place-hold.it/110",
+          description: "Animal",
+          position: 3,
+        },
+        {
+          file_url: "https://place-hold.it/110",
+          description: "Coisa",
+          position: 4,
+        }
+      ],
+      category: "",
+      school_year: 1,
       order: 1,
     },
     {

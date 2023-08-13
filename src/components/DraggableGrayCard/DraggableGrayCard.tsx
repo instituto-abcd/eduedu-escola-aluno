@@ -14,7 +14,7 @@ const useStyles = createStyles((theme) => ({
     padding: 16,
     display: "grid",
     placeItems: "center",
-    position: "relative",
+    position: "relative"
   },
   close: {
     position: "absolute",
@@ -75,12 +75,7 @@ export function DraggableGrayCard({ item, hidden, onClear, ...props }: Props) {
   // TODO: sound????
 
   return (
-    <div className={classes.card} style={styles} {...props} ref={drag}
-    // style={{
-    //   width: customWidth ? customWidth : '170px',
-    //   height: customHeigth ? customHeigth : '200px'
-    // }}
-    >
+    <div className={classes.card} style={styles} {...props} ref={drag}>
       {item.imageUrl && (
         <Image
           src={item.imageUrl}

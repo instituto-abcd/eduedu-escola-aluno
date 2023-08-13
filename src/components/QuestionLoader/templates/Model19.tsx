@@ -3,7 +3,7 @@ import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { DraggableCard } from "~/components/DraggableCard";
 import { EduButton } from "~/components/EduButton/EduButton";
-import { GrayCard } from "~/components/GrayCard";
+// import { GrayCard } from "~/components/GrayCard";
 
 export function Model19({ question }: { question: Question }) {
   return (
@@ -20,11 +20,11 @@ export function Model19({ question }: { question: Question }) {
           />
 
           <Flex mt={40}>
-            <GrayCard
+            {/* <GrayCard
               name="1"
               customHeigth="70px"
               customWidth="70px"
-            />
+            /> */}
           </Flex>
         </SimpleGrid>
       </Group>

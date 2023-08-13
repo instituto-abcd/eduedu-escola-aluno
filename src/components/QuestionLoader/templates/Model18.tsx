@@ -3,7 +3,7 @@ import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { DraggableCard } from "~/components/DraggableCard";
 import { EduButton } from "~/components/EduButton/EduButton";
-import { GrayCard } from "~/components/GrayCard";
+// import { GrayCard } from "~/components/GrayCard";
 
 export function Model18({ question }: { question: Question }) {
   return (
@@ -20,18 +20,18 @@ export function Model18({ question }: { question: Question }) {
           </Grid.Col>
           <Grid.Col span="auto" my="auto" ml={20}>
             <Flex mb={50}>
-              <GrayCard
+              {/* <GrayCard
                 name="U"
                 customHeigth="70px"
                 customWidth="70px"
-              />
+              /> */}
             </Flex>
             <Flex>
-              <DraggableCard
+              {/* <DraggableCard
                 customHeigth="70px"
                 customWidth="70px"
                 name="R"
-              />
+              /> */}
             </Flex>
           </Grid.Col>
         </Grid>

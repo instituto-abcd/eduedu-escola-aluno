@@ -44,7 +44,15 @@ export function DragSlotGrayCard({
     []
   );
 
-  if (item !== null) return <DraggableGrayCard item={item} onClear={onClear} />;
+  if (item !== null) return (
+    <>
+      <div {...props} className={classes.card} style={{}} ref={drop}>
+        <Image my={10} src="https://place-hold.it/110" width={150} m="auto" />
+        <Text my={10} align="center">Teste</Text>
+        <DraggableGrayCard item={item} onClear={onClear} />
+      </div>
+    </>
+  );
   return (
     <div {...props} className={classes.card} style={{}} ref={drop}>
       <Image my={10} src="https://place-hold.it/110" width={150} m="auto" />

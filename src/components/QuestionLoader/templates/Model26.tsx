@@ -3,7 +3,7 @@ import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { DraggableCard } from "~/components/DraggableCard";
 import { EduButton } from "~/components/EduButton/EduButton";
-import { GrayCard } from "~/components/GrayCard";
+// import { GrayCard } from "~/components/GrayCard";
 
 export function Model26({ question }: { question: Question }) {
   return (
@@ -20,7 +20,7 @@ export function Model26({ question }: { question: Question }) {
           <Center>
             <Flex my="auto">
               <Text mr={10}>A</Text>
-              <GrayCard
+              {/* <GrayCard
                 customWidth="80px"
                 customHeigth="80px"
               />
@@ -31,7 +31,7 @@ export function Model26({ question }: { question: Question }) {
               <GrayCard
                 customWidth="80px"
                 customHeigth="80px"
-              />
+              /> */}
               <Text ml={10}>é o lugar onde eu aprendo.</Text>
             </Flex>
           </Center>

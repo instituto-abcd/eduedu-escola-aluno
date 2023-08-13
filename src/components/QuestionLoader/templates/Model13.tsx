@@ -44,7 +44,7 @@ export function Model13({ question }: { question: Question }) {
 
       <Group position="apart" spacing={137}>
         <Stack align="center">
-          <SimpleGrid>
+          <SimpleGrid mb={50}>
             <Group>
               {slots.map((slot, inx) => (
                 <DragSlotGrayCard
@@ -58,18 +58,16 @@ export function Model13({ question }: { question: Question }) {
             </Group>
           </SimpleGrid>
 
-          <SimpleGrid>
-            <Box style={{ position: 'relative' }}>
-              {options
-                .sort((a, b) => a.position - b.position)
-                .map((item, inx) => (
-                  <DraggableGrayCard
-                    item={item}
-                    key={item.id}
-                    hidden={!!slots.find((slot) => slot?.id === item.id)}
-                  />
-                ))}
-            </Box>
+          <SimpleGrid cols={slots.length}>
+            {options
+              .sort((a, b) => a.position - b.position)
+              .map((item, inx) => (
+                <DraggableGrayCard
+                  item={item}
+                  key={item.id}
+                  hidden={!!slots.find((slot) => slot?.id === item.id)}
+                />
+              ))}
           </SimpleGrid>
         </Stack>
       </Group>

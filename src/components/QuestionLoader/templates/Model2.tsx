@@ -1,4 +1,4 @@
-import { Group, Image, SimpleGrid, Stack } from "@mantine/core";
+import { Group, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { IconReload } from "@tabler/icons-react";
@@ -33,7 +33,7 @@ export function Model2({ question }: ModelProps) {
       })
     );
   },
-  []);
+    []);
 
   return (
     <>

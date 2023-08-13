@@ -1,35 +1,40 @@
 export const exam = {
-  _id: { $oid: "64c1abd50e696cd14e5fd0e3" },
-  id: "0QP0HqO6tc5gyaYOQU5s",
-  axis: {
-    code: "LC",
-    color: "#040404",
-    description: "Descrição de quem sabe interpretar.",
-    name: "Leitura e Compreensão de Texto",
-    order: 2,
+  _id: {
+    $oid: "64c990388db0badf2c25682b",
   },
-  level: 0,
+  id: "df84c3be-899d-4b76-bf3f-604b60a2ac75",
+  domain_code: "PORTUGUESE",
   questions: [
     {
+      level: 1,
       options: [
         {
-          imageUrl: "",
-          description: "",
-          soundUrl: "",
-          isCorrect: false,
-          order: 1,
+          image_url: "https://place-hold.it/200",
+          position: 1,
+          isCorrect: true,
         },
         {
-          imageUrl: "",
-          description: "",
-          soundUrl: "",
-          isCorrect: false,
-          order: 2,
+          image_url: "https://place-hold.it/200",
+          position: 2,
+          isCorrect: true,
+        },
+        {
+          image_url: "https://place-hold.it/200",
+          position: 3,
+          isCorrect: true,
         },
       ],
       description: "",
-      fileUrl: "",
-      model: "MODEL12",
+      id: "",
+      axis_code: "",
+      model_id: "MODEL12",
+      titles: [
+        {
+          file_url: "https://place-hold.it/270"
+        }
+      ],
+      category: "",
+      school_year: 1,
       order: 1,
     },
     {
@@ -429,6 +434,6 @@ export const exam = {
       order: 1,
     },
   ],
-  schoolYear: "1º Ano Fundamental",
-  version: 23,
+  status: "ACTIVE",
+  version: 1,
 };

@@ -4,8 +4,8 @@ import arrowRight from '~/assets/planets/arrow-right-green.png';
 
 const useStyles = createStyles({
     prev: {
-        width: 170,
-        height: 200,
+        width: 130,
+        height: 150,
         borderRadius: 16,
         backgroundColor: "#FFE3E3",
         padding: 16,
@@ -13,8 +13,8 @@ const useStyles = createStyles({
         placeItems: "center",
     },
     next: {
-        width: 170,
-        height: 200,
+        width: 130,
+        height: 150,
         borderRadius: 16,
         backgroundColor: "#D3F9D8",
         padding: 16,
@@ -37,7 +37,7 @@ export function ArrowPlanet({ direction }: componentProps, props: Props) {
         <Box className={direction == 'prev' ? classes.prev : classes.next}>
             <Image
                 src={direction == 'prev' ? arrowLeft : arrowRight}
-                width={80}
+                width={60}
                 m="auto"
             />
         </Box>

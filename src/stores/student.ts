@@ -1,21 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { SchoolGrade, SchoolPeriod } from "~/api/school-class";
+import { Student } from "~/api/student";
 
-
-export const useStudent = create()(
-    persist(
-        (set, get) => ({
-            id: "",
-            name: "",
-            registry: "",
-            schoolClassId: "",
-            schoolClassName: "",
-            schoolGrade: "",
-            schoolPeriod: "",
-            status: ""
-        }),
-        {
-            name: "user_state",
-        }
-    )
+export const useStudent = create<Student>()(
+  persist(
+    (_get, _set) => ({
+      id: "",
+      name: "",
+      registry: "",
+      schoolClassId: "",
+      schoolClassName: "",
+      status: "",
+      schoolGrade: "" as SchoolGrade,
+      schoolPeriod: "" as SchoolPeriod,
+    }),
+    {
+      name: "student_state",
+    }
+  )
 );

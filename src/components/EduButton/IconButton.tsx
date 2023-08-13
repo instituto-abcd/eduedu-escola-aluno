@@ -6,7 +6,7 @@ const useStyles = createStyles(
       all: "unset",
       cursor: "pointer",
       width: 50,
-      height: 44,
+      height: 50,
       backgroundColor: palette.bg,
       boxShadow: `0px 8px 0px 0px ${palette.accent}`,
       padding: 5,
@@ -19,7 +19,7 @@ const useStyles = createStyles(
         color: "#C4C4C4",
         boxShadow: "0px 8px 0px 0px #c4c4c4",
       },
-      ":active": {
+      ":not(:disabled):active": {
         boxShadow: `0px 4px 0px 0px ${palette.accent}`,
         transform: "translateY(4px)",
         transition: "all 0.1s ease",
@@ -28,7 +28,7 @@ const useStyles = createStyles(
   })
 );
 
-type IconButtonProps = {
+export type IconButtonProps = {
   icon: JSX.Element;
   variant?: "primary" | "gray" | "black" | "yellow";
 } & React.DetailedHTMLProps<

@@ -1,7 +1,7 @@
 import { createStyles } from "@mantine/core";
 import { OptionButton } from ".";
 
-const useStyles = createStyles({
+const useStyles = createStyles((theme) => ({
   button: {
     width: "auto",
     minWidth: "max-content",
@@ -11,8 +11,11 @@ const useStyles = createStyles({
     fontWeight: 400,
     fontSize: 20,
     color: "#228BE6",
+    "&[data-selected=true]": {
+      backgroundColor: theme.colors.gray[1],
+    },
   },
-});
+}));
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement>;
 

@@ -1,22 +1,46 @@
-import { Group, Image, Stack, Text, Title } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { IconButton } from "~/components/EduButton";
+import { Group, Image, LoadingOverlay, Stack, Text } from "@mantine/core";
+import { useState } from "react";
+import { Answer, useGetExamQuestion } from "~/api/student";
+import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { EduButton } from "~/components/EduButton";
 
-export function Model4({ question }: { question: Question }) {
+export function Model4({ question, answerCallback }: ModelProps) {
+  const [answer, setAnswer] = useState<Answer | null>(null);
+  const { audioTitles } = useQuestionHelper(question);
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (answer === null) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: [answer],
+    });
+  }
   return (
     <>
-      <IconButton icon={<OuvirIcon />} variant="gray" />
-
-      {/* <Title align="center" color="dark.3">
-        {question.description}
-      </Title> */}
-
+      {audioTitles.map((title) => (
+        <AudioButton key={title.position} src={title.file_url} autoPlay />
+      ))}
       <Stack my="auto">
         <Group spacing={24}>
           {question.options.map((option) => (
-            <OptionButton key={option.position}>
+            <OptionButton
+              key={option.position}
+              data-selected={answer?.position === option.position}
+              onClick={() =>
+                setAnswer({
+                  position: option.position,
+                  positionAnswer: option.position,
+                })
+              }
+            >
               {option.image_url && (
                 <>
                   <Image
@@ -35,6 +59,11 @@ export function Model4({ question }: { question: Question }) {
           ))}
         </Group>
       </Stack>
+
+      <EduButton disabled={!answer} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

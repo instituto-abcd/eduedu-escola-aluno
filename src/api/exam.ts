@@ -1,10 +1,20 @@
-type IAxis = {
-  name: string;
+export type QuestionOption = {
   description: string;
-  color: string;
-  order: number;
-  code: string;
-  domain: "PORTUGUESE" | "MATH";
+  image_name?: string;
+  image_url?: string;
+  isCorrect: boolean;
+  position: number;
+  sound_name?: string;
+  sound_url?: string;
+};
+
+export type QuestionTitle = {
+  description: string;
+  file_name: string;
+  file_url: string;
+  placeholder: string;
+  position: number;
+  type: string;
 };
 
 export type Question = {
@@ -13,25 +23,11 @@ export type Question = {
   description: string;
   id: number;
   level: number;
-  options: {
-    description: string;
-    image_name?: string;
-    image_url?: string;
-    isCorrect: boolean;
-    position: number;
-    sound_name?: string;
-    sound_url?: string;
-  }[];
+  options: QuestionOption[];
   order: number;
+  orderedAnswer: boolean;
   school_year: number;
-  titles: {
-    description: string;
-    file_name: string;
-    file_url: string;
-    placeholder: string;
-    position: number;
-    type: string;
-  }[];
+  titles: QuestionTitle[];
   model_id:
   | "MODEL1"
   | "MODEL10"

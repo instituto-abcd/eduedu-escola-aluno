@@ -1,19 +1,38 @@
-import { Group, Image, SimpleGrid, Title } from "@mantine/core";
-import { IconBook } from "@tabler/icons-react";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { IconButton } from "~/components/EduButton";
+import { Group, Image, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { AudioButton } from "~/components/AudioButton";
+import { useState } from "react";
+import { Answer, useGetExamQuestion } from "~/api/student";
+import { EduButton } from "~/components/EduButton";
 
-export function Model10({ question }: { question: Question }) {
-  const { imageTitles, textTitles } = useQuestionHelper(question);
+export function Model10({ question, answerCallback }: ModelProps) {
+  const [answer, setAnswer] = useState<Answer | null>(null);
+  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (answer === null) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: [answer],
+    });
+  }
 
   return (
     <>
       <Group>
-        <IconButton icon={<OuvirIcon />} variant="gray" />
-        <IconButton icon={<IconBook size={34} />} variant="black" />
+        {audioTitles.map((title) => (
+          <AudioButton src={title.file_url} key={title.file_url} autoPlay />
+        ))}
+
+        {/* TODO: botão livro? */}
+        {/* <IconButton icon={<IconBook size={34} />} variant="black" /> */}
       </Group>
       {textTitles.map((title) => (
         <Title color="dark.3" size={30} align="center" key={title.description}>
@@ -35,12 +54,26 @@ export function Model10({ question }: { question: Question }) {
           {question.options
             .sort((a, b) => a.position - b.position)
             .map((option) => (
-              <OptionButton key={option.description}>
+              <OptionButton
+                key={option.description}
+                onClick={() =>
+                  setAnswer({
+                    position: option.position,
+                    positionAnswer: option.position,
+                  })
+                }
+                data-selected={answer?.position === option.position}
+              >
                 {option.description}
               </OptionButton>
             ))}
         </SimpleGrid>
       </Group>
+
+      <EduButton disabled={!answer} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

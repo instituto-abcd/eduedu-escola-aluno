@@ -1,22 +1,51 @@
-import { Group, Image, Stack, Title } from "@mantine/core";
-import { MessageDots } from "tabler-icons-react";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
+import {
+  Group,
+  Image,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
-import { IconButton } from "~/components/EduButton";
+import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { AudioButton } from "~/components/AudioButton";
+import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
+import { QuestionOption } from "~/api/exam";
+import { Fragment, useState } from "react";
+import { useGetExamQuestion } from "~/api/student";
 
-export function Model11({ question }: { question: Question }) {
-  const { imageTitles } = useQuestionHelper(question);
+/*
+ *   TODO: implementar variação em que temos multiplos slots no texto (orderedAnswer)
+ *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
+ */
 
-  // TODO: implementar texto
+export function Model11({ question, answerCallback }: ModelProps) {
+  const { imageTitles, audioTitles, textTitles } = useQuestionHelper(question);
 
+  const [, word] = question.description.split("/");
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (!answer) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
+    });
+  }
   return (
     <>
       <Group>
-        <IconButton icon={<OuvirIcon />} />
-        <IconButton icon={<MessageDots size={34} />} variant="yellow" />
+        {audioTitles.map((title) => (
+          <AudioButton src={title.file_url} autoPlay key={title.file_url} />
+        ))}
       </Group>
 
       <Group position="apart" spacing={137} my="auto" noWrap>
@@ -31,9 +60,30 @@ export function Model11({ question }: { question: Question }) {
         ))}
 
         <Stack align="center" spacing={40}>
-          <Title color="dark.3" size={30}>
-            {question.description}
-          </Title>
+          {textTitles.map((title) => (
+            <Title color="dark.3" size={30} key={title.description}>
+              {title.description.split("/")[0]}
+            </Title>
+          ))}
+
+          <Group>
+            {word &&
+              word.split("_").map((w, inx, arr) => (
+                <Fragment key={w}>
+                  <Text color="dark.3" size={50} weight={700}>
+                    {w}
+                  </Text>
+                  {arr.length !== inx + 1 && (
+                    <DragLetterSlot
+                      onDrop={(item) => setAnswer(item)}
+                      option={answer}
+                      onClear={() => setAnswer(null)}
+                    />
+                  )}
+                </Fragment>
+              ))}
+          </Group>
+
           <Group>
             {question.options
               .sort((a, b) => a.position - b.position)
@@ -47,7 +97,7 @@ export function Model11({ question }: { question: Question }) {
                     {option.description}
                   </TextOptionButton>
                 ) : (
-                  <DraggableLetters key={option.position}>
+                  <DraggableLetters key={option.position} option={option}>
                     {option.description}
                   </DraggableLetters>
                 )
@@ -55,6 +105,15 @@ export function Model11({ question }: { question: Question }) {
           </Group>
         </Stack>
       </Group>
+
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{ marginTop: "auto" }}
+      >
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

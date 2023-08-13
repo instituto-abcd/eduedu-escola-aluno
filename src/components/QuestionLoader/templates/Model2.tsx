@@ -1,12 +1,11 @@
 import { Group, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { IconReload } from "@tabler/icons-react";
 import { DragSlotCard, DraggableCard } from "~/components/DraggableCard";
-import { IconButton } from "~/components/EduButton";
 import { useCallback, useState } from "react";
 import { produce } from "immer";
 import type { CardItem } from "~/components/DraggableCard/DraggableCard";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
 
 type Slot = CardItem | null;
 
@@ -35,11 +34,14 @@ export function Model2({ question }: ModelProps) {
   },
     []);
 
+  const { audioTitles } = useQuestionHelper(question);
+
   return (
     <>
       <Group>
-        <IconButton icon={<OuvirIcon />} variant="gray" />
-        <IconButton icon={<IconReload />} />
+        {audioTitles.map((title) => (
+          <AudioButton key={title.file_url} src={title.file_url} autoPlay />
+        ))}
       </Group>
 
       <Stack>
@@ -58,7 +60,7 @@ export function Model2({ question }: ModelProps) {
         <SimpleGrid cols={options.length} spacing={24}>
           {options
             .sort((a, b) => a.position - b.position)
-            .map((item, inx) => (
+            .map((item) => (
               <DraggableCard
                 item={item}
                 key={item.id}

@@ -6,6 +6,7 @@ import { AuthRoutes } from "./Auth";
 import { ExamRoutes } from "./ExamRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
+import { ExamEvaluationPage } from "~/pages/Exam/Exam-Evaluation";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -25,6 +26,7 @@ export function AppRoutes() {
         </Route>
         <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
         <Route path={nested(PATH.INTRO)} Component={IntroPage} />
+        <Route path={nested(PATH.EXAM_EVALUATION)} Component={ExamEvaluationPage} />
       </Routes>
     </BrowserRouter>
   );

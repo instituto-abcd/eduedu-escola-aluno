@@ -20,6 +20,9 @@ export function Step03({ schoolClassId, students, updateStudentsList }: componen
     const [modal, modalHandler] = useDisclosure(false);
 
     const [studentId, setStudentId] = useState('')
+    const [studentFirstAccess, setStudentFirstAccess] = useState(false)
+    const [studentExamPerformed, setStudentExamPerformed] = useState(false)
+
     function logout(studentId: string) {
         setStudentId(studentId)
         modalHandler.open()
@@ -33,7 +36,13 @@ export function Step03({ schoolClassId, students, updateStudentsList }: componen
             );
         },
         onSuccess: () => {
-            navigate(PATH.DASHBOARD)
+            if (studentFirstAccess == true) {
+                navigate(PATH.INTRO)
+            } else if (studentFirstAccess == false && studentExamPerformed == true) {
+                navigate(PATH.EXAM)
+            } else {
+                navigate(PATH.DASHBOARD)
+            }
         },
     })
     const { mutate: reserveStudent } = useReserveStudent({
@@ -54,7 +63,6 @@ export function Step03({ schoolClassId, students, updateStudentsList }: componen
                             key={student.id}
                             span={1}
                             style={{ height: '100%' }}
-
                         >
                             <Box style={{ position: 'relative' }}>
                                 {student.reserved && (
@@ -71,7 +79,14 @@ export function Step03({ schoolClassId, students, updateStudentsList }: componen
                                 )}
                                 <Button
                                     id={student.id}
-                                    onClick={() => student.reserved ? logout(student.id) : setStudentId(student.id)}
+                                    onClick={() => student.reserved ?
+                                        logout(student.id)
+                                        : (
+                                            setStudentId(student.id),
+                                            setStudentFirstAccess(student.firstAccess),
+                                            setStudentExamPerformed(student.examPerformed)
+                                        )
+                                    }
                                     style={{
                                         display: 'flex',
                                         height: '100%',
@@ -115,7 +130,7 @@ export function Step03({ schoolClassId, students, updateStudentsList }: componen
                 <Center mt="20px">
                     <Pagination total={students?.pagination?.totalPages} />
                 </Center>
-            </Card>
+            </Card >
             <Group position="right" mt="20px">
                 <Button
                     onClick={() => reserveStudent({ id: schoolClassId, studentId: studentId })}

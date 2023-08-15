@@ -5,18 +5,13 @@ import { useCallback, useState } from "react";
 import { produce } from "immer";
 import type { CardItem } from "~/components/DraggableCard/DraggableCard";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { useGetExamQuestion } from "~/api/student";
-
-/* 
-    TODO: (bug) -> se arrastar um card dentro do slot para um outro slot, 
-                   duplica o card
-*/
+import { VideoPlayer } from "~/components/VideoPlayer";
 
 type Slot = CardItem | null;
 
-export function Model2({ question, answerCallback }: ModelProps) {
+export function Model2Video({ question, answerCallback }: ModelProps) {
   const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
 
   const [options] = useState<CardItem[]>(
@@ -57,45 +52,45 @@ export function Model2({ question, answerCallback }: ModelProps) {
   },
   []);
 
-  const { audioTitles } = useQuestionHelper(question);
+  const { videoTitles } = useQuestionHelper(question);
 
   return (
     <>
-      <Group>
-        {audioTitles.map((title) => (
-          <AudioButton
-            key={title.file_url}
+      <Group my="auto">
+        {videoTitles.map((title) => (
+          <VideoPlayer
             src={title.file_url ?? ""}
+            key={title.description}
             autoPlay
           />
         ))}
-      </Group>
 
-      <Stack>
-        <SimpleGrid cols={options.length} spacing={24}>
-          {slots.map((slot, inx) => (
-            <DragSlotCard
-              key={inx}
-              accept="ANSWER_CARD"
-              onDrop={(item) => handleDrop(item, inx)}
-              item={slot}
-              onClear={() => handleDrop(null, inx)}
-            />
-          ))}
-        </SimpleGrid>
-
-        <SimpleGrid cols={options.length} spacing={24}>
-          {options
-            .sort((a, b) => a.position - b.position)
-            .map((item) => (
-              <DraggableCard
-                item={item}
-                key={item.id}
-                hidden={!!slots.find((slot) => slot?.id === item.id)}
+        <Stack>
+          <SimpleGrid cols={options.length} spacing={24}>
+            {slots.map((slot, inx) => (
+              <DragSlotCard
+                key={inx}
+                accept="ANSWER_CARD"
+                onDrop={(item) => handleDrop(item, inx)}
+                item={slot}
+                onClear={() => handleDrop(null, inx)}
               />
             ))}
-        </SimpleGrid>
-      </Stack>
+          </SimpleGrid>
+
+          <SimpleGrid cols={options.length} spacing={24}>
+            {options
+              .sort((a, b) => a.position - b.position)
+              .map((item) => (
+                <DraggableCard
+                  item={item}
+                  key={item.id}
+                  hidden={!!slots.find((slot) => slot?.id === item.id)}
+                />
+              ))}
+          </SimpleGrid>
+        </Stack>
+      </Group>
 
       <EduButton disabled={slots.includes(null)} onClick={submitAnswer}>
         Continuar

@@ -44,7 +44,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
     <>
       <Group>
         {audioTitles.map((title) => (
-          <AudioButton src={title.file_url} autoPlay key={title.file_url} />
+          <AudioButton
+            src={title.file_url ?? ""}
+            autoPlay
+            key={title.file_url}
+          />
         ))}
       </Group>
 

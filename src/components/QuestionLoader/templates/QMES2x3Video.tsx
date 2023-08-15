@@ -48,7 +48,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
       <Group noWrap grow spacing={75} py={40} my="auto">
         <div>
           {videoTitles.map((title) => (
-            <VideoPlayer key={title.file_url} src={title.file_url} />
+            <VideoPlayer key={title.file_url} src={title.file_url ?? ""} />
           ))}
         </div>
 

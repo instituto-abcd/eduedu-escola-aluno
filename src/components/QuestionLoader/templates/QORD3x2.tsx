@@ -79,7 +79,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton autoPlay src={title.file_url} key={title.file_url} />
+        <AudioButton autoPlay src={title.file_url ?? ""} key={title.file_url} />
       ))}
 
       <Group noWrap grow spacing={75} py={40}>

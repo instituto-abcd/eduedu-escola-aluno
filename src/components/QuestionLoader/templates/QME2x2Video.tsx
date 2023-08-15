@@ -30,7 +30,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
         <div>
           {question.titles?.map((title) => {
             if (title.type === "VIDEO") {
-              return <VideoPlayer src={title.file_url} key={title.file_url} />;
+              return (
+                <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
+              );
             }
           })}
         </div>
@@ -40,7 +42,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
             <OptionButton
               key={option.position}
               data-selected={answer?.position === option.position}
-              sound={option.sound_url}
+              sound={option.sound_url ?? ""}
               onClick={() =>
                 setAnswer({
                   position: option.position,

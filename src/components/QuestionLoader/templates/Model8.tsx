@@ -36,7 +36,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
       <Group my="auto">
         {videoTitles.map((title) => (
-          <VideoPlayer src={title.file_url} key={title.file_url} />
+          <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
         ))}
 
         {imageTitles.map((title) => (

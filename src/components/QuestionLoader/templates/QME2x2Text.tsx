@@ -2,7 +2,6 @@ import {
   Group,
   Image,
   ScrollArea,
-  SimpleGrid,
   Stack,
   Text,
   Title,

@@ -1,0 +1,160 @@
+import { Question } from "~/api/exam";
+
+export const testQuestions: { [key in Question["model_id"]]?: Question[] } = {
+  QORD3x2: [
+    {
+      orderedAnswer: true,
+      level: 3,
+      options: [
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "G",
+          position: 0,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "R",
+          position: 1,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "A",
+          position: 2,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "D",
+          position: 3,
+          isCorrect: false,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "E",
+          position: 4,
+          isCorrect: false,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "L",
+          position: 5,
+          isCorrect: false,
+        },
+      ],
+      description: "Audio: Complete a palavra MAGRA. Texto: MA _ _ _",
+      id: 20,
+      axis_code: "EA",
+      model_id: "QORD3x2",
+      titles: [
+        {
+          file_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Fea10b_enunciado.mp3?alt=media&token=b1316c35-0369-4387-8406-fbdd0e074e6e",
+          file_name: "EA10B_Enunciado.mp3",
+          description: "Audio: Complete a palavra MAGRA. Texto: MA _ _ _",
+          position: 1,
+          placeholder: "",
+          type: "AUDIO",
+        },
+        {
+          file_url: null,
+          file_name: "",
+          description: "MA___",
+          position: 3,
+          placeholder: "",
+          type: "TEXT",
+        },
+        {
+          file_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fmenina_magra.svg?alt=media&token=1aa72d84-cb97-498d-b774-9086cd37efea",
+          file_name: "menina_magra",
+          description: "imagem menina magra",
+          position: 4,
+          placeholder: "",
+          type: "IMAGE",
+        },
+      ],
+      category: "B",
+      school_year: 2,
+      multiplesAnswer: false,
+      order: 10,
+    },
+  ],
+  MODEL2: [
+    {
+      orderedAnswer: true,
+      level: 1,
+      options: [
+        {
+          image_name: "",
+          sound_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Falt_letra_f.mp3?alt=media&token=bff2b1be-cf4f-4514-b1a8-0722ac887b0a",
+          image_url: null,
+          sound_name: "Alt_Letra_F.mp3",
+          description: "F",
+          position: 1,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Falt_letra_g.mp3?alt=media&token=f22ae8bc-ea18-4908-9879-7a5bac370cc4",
+          image_url: null,
+          sound_name: "Alt_Letra_G.mp3",
+          description: "G",
+          position: 2,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Falt_letra_e.mp3?alt=media&token=dd35bdae-ff12-4019-8a49-c45fe73f9eb4",
+          image_url: null,
+          sound_name: "Alt_Letra_E.mp3",
+          description: "E",
+          position: 0,
+          isCorrect: true,
+        },
+      ],
+      description: "Organize as letras em ordem alfabética.",
+      id: 3,
+      axis_code: "EA",
+      model_id: "MODEL2",
+      titles: [
+        {
+          file_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fvideo%2Fea2ab_enunciado.mp4?alt=media&token=8cb1c41d-7638-434f-85d5-74aea5d637cc",
+          file_name: "EA2AB_Enunciado.mp4",
+          description: "Organize as letras em ordem alfabética.",
+          position: 2,
+          placeholder: "",
+          type: "VIDEO",
+        },
+      ],
+      category: "A",
+      school_year: 0,
+      multiplesAnswer: false,
+      order: 2,
+    },
+  ],
+  QME2x2Audio: [],
+};

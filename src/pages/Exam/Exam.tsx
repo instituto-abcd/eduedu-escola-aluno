@@ -3,6 +3,7 @@ import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
 import { Question } from "~/api/exam";
+import { testQuestions } from "./__test-questions";
 
 export function ExamPage() {
   const [currentQuestion, setCurrentQuestion] = useState<Question>();
@@ -30,6 +31,8 @@ export function ExamPage() {
   }
 
   // const _fakeQuestion = { } as unknown as Question;
+  const _fakeQuestion =
+    testQuestions.QME2x2Audio?.[0] ?? ({} as unknown as Question);
 
   return (
     <Stack

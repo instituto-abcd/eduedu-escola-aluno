@@ -8,6 +8,7 @@ import { AudioControls } from "~/components/AudioControls/AudioControls";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { useState } from "react";
 import { EduButton } from "~/components/EduButton";
+import { QuestionTitleClassification } from "~/api/exam";
 
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
@@ -33,29 +34,30 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       {audioTitles
         .filter(
           (title) =>
-            title.description === "text" &&
-            !title.file_name.split(".")[0].endsWith("intro")
+            title.classification === QuestionTitleClassification.HISTORIA
         )
         .map((title) => (
-          <AudioControls src={title.file_url} key={title.file_url} />
+          <AudioControls src={title.file_url ?? ""} key={title.file_url} />
         ))}
 
       <Group>
         {audioTitles
-          .filter((title) => title.description === "question")
+          .filter(
+            (title) =>
+              title.classification === QuestionTitleClassification.ENUNCIADO
+          )
           .map((title) => (
-            <AudioButton src={title.file_url} key={title.file_url} />
+            <AudioButton src={title.file_url ?? ""} key={title.file_url} />
           ))}
 
         {audioTitles
           .filter(
             (title) =>
-              title.description === "text" &&
-              title.file_name.split(".")[0].endsWith("intro")
+              title.classification === QuestionTitleClassification.INTRO
           )
           .map((title) => (
             <AudioButton
-              src={title.file_url}
+              src={title.file_url ?? ""}
               key={title.file_url}
               autoPlay
               buttonProps={{ variant: "yellow", icon: <IconBook /> }}
@@ -67,7 +69,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
         {question.options.map((option) => (
           <OptionButton
             key={option.position}
-            sound={option.sound_url}
+            sound={option.sound_url ?? ""}
             onClick={() =>
               setAnswer({
                 position: option.position,

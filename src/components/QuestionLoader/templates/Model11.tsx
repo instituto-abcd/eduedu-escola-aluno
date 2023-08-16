@@ -18,7 +18,6 @@ import { Fragment, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 
 /*
- *   TODO: implementar variação em que temos multiplos slots no texto (orderedAnswer)
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
  */
 

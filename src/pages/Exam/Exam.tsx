@@ -31,8 +31,8 @@ export function ExamPage() {
   }
 
   // const _fakeQuestion = { } as unknown as Question;
-  const _fakeQuestion =
-    testQuestions.QME2x2Audio?.[0] ?? ({} as unknown as Question);
+  // const _fakeQuestion =
+  //   testQuestions.MODEL18?.[0] ?? ({} as unknown as Question);
 
   return (
     <Stack

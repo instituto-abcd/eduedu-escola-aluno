@@ -4,7 +4,7 @@ import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
-import { Question, QuestionOption } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { EduButton } from "~/components/EduButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
@@ -18,7 +18,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
 
   const [slots, setSlots] = useState<Slot[]>([null, null]);
 
-  function selectItem(_answer: Question["options"][0]) {
+  function selectItem(_answer: QuestionOption) {
     const answer = {
       position: _answer.position,
       positionAnswer: _answer.position,

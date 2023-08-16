@@ -17,7 +17,7 @@ const useStyles = createStyles((theme) => ({
     cursor: "grab",
     fontSize: 40,
     fontWeight: 600,
-    lineHeight: 1,
+    lineHeight: 58,
     userSelect: "none",
     position: "relative",
   },

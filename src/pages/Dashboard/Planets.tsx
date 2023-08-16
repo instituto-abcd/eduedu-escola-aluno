@@ -12,7 +12,6 @@ type componentProps = {
 }
 export function Planets({ planets }: componentProps) {
     const [embla, setEmbla] = useState<Embla>();
-
     return (
         <Box mb={50}>
             <Title mb={40} c="white">Meus planetas</Title>
@@ -52,7 +51,7 @@ export function Planets({ planets }: componentProps) {
             >
                 {planets &&
                     planets.map((planet) => (
-                        <Carousel.Slide gap="sm" size="10%">
+                        <Carousel.Slide gap="sm" size="10%" key={planet.planetId}>
                             <Box style={{ position: 'relative', height: '270px', width: '200px' }}>
                                 <img
                                     src={planet.planetAvatar}

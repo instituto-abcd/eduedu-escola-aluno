@@ -1,6 +1,7 @@
 import { ModelProps } from "./templates";
 import { Model10 } from "./templates/Model10";
 import { Model11 } from "./templates/Model11";
+import { Model18 } from "./templates/Model18";
 import { Model2 } from "./templates/Model2";
 import { Model2Video } from "./templates/Model2Video";
 import { Model32 } from "./templates/Model32";
@@ -41,6 +42,8 @@ export function QuestionLoader({
       return <Model10 {...commonProps} />;
     case "MODEL11":
       return <Model11 {...commonProps} />;
+    case "MODEL18":
+      return <Model18 {...commonProps} />;
     case "MODEL32":
       return <Model32 {...commonProps} />;
 

@@ -21,7 +21,7 @@ export type QuestionTitle = {
   placeholder: string;
   position: number;
   type: string;
-  classification: QuestionTitleClassification;
+  classification: QuestionTitleClassification | null;
 };
 
 export type Question = {

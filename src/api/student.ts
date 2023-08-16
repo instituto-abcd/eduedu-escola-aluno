@@ -111,7 +111,7 @@ export function useGetStudentPlanetTrackMutation(options?: MutationOptions) {
 // TODO: tipar queryoptions
 export function useGetStudentPlanetTrackQuery(options?: QueryOptions) {
   const handler = useCallback(function () {
-    return StudentAPI.getStudentAwards(useStudent.getState().id);
+    return StudentAPI.getStudentPlanetTrack(useStudent.getState().id);
   }, []);
 
   return useQuery(

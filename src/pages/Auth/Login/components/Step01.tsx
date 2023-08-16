@@ -23,7 +23,7 @@ export function Step01({ sendToFather }: componentsProps) {
     })
     const form = useForm({
         initialValues: {
-            accessKey: 'EDUEDU029'
+            accessKey: 'EDUEDU002'
         },
         validate: zodResolver(formValidation)
     })

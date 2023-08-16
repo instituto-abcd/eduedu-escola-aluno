@@ -20,7 +20,7 @@ export function ExamEvaluationPage() {
                         <Flex direction="column" align="center" justify="center">
                         <span>Você acabou de concluir a prova.</span>
                         <span style={{paddingBottom: 15 }}>Aguarde enquanto o sistema calcula as suas tarefas.</span>
-                        {isLoading && <Loader />}
+                        {true && <Loader />}
                         </Flex>
                     </Container>
                 </Box>

@@ -3,4 +3,6 @@ export const PATH = {
   INTRO: "/introducao",
   DASHBOARD: "/dashboard",
   EXAM: "/prova",
+  EVALUATION: "/avaliacao",
+  EXAM_EVALUATION: "/prova/avaliacao",
 } as const;

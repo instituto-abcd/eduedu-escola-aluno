@@ -1,6 +1,6 @@
 import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
-import { Question } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
@@ -15,7 +15,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
     onSuccess: (q) => answerCallback(q),
   });
 
-  function selectItem(_answer: Question["options"][0]) {
+  function selectItem(_answer: QuestionOption) {
     const answer = {
       position: _answer.position,
       positionAnswer: _answer.position,
@@ -48,7 +48,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
       <Group noWrap grow spacing={75} py={40} my="auto">
         <div>
           {videoTitles.map((title) => (
-            <VideoPlayer key={title.file_url} src={title.file_url} />
+            <VideoPlayer key={title.file_url} src={title.file_url ?? ""} />
           ))}
         </div>
 

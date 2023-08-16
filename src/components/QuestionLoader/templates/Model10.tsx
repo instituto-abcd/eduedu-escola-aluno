@@ -28,7 +28,11 @@ export function Model10({ question, answerCallback }: ModelProps) {
     <>
       <Group>
         {audioTitles.map((title) => (
-          <AudioButton src={title.file_url} key={title.file_url} autoPlay />
+          <AudioButton
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            autoPlay
+          />
         ))}
 
         {/* TODO: botão livro? */}

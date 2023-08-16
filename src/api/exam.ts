@@ -1,20 +1,27 @@
 export type QuestionOption = {
   description: string;
-  image_name?: string;
-  image_url?: string;
+  image_name: string | null;
+  image_url: string | null;
   isCorrect: boolean;
   position: number;
-  sound_name?: string;
-  sound_url?: string;
+  sound_name: string | null;
+  sound_url: string | null;
 };
+
+export enum QuestionTitleClassification {
+  INTRO = "INTRO",
+  HISTORIA = "HISTORIA",
+  ENUNCIADO = "ENUNCIADO",
+}
 
 export type QuestionTitle = {
   description: string;
   file_name: string;
-  file_url: string;
+  file_url: string | null;
   placeholder: string;
   position: number;
   type: string;
+  classification: QuestionTitleClassification | null;
 };
 
 export type Question = {
@@ -26,6 +33,7 @@ export type Question = {
   options: QuestionOption[];
   order: number;
   orderedAnswer: boolean;
+  multiplesAnswer: boolean;
   school_year: number;
   titles: QuestionTitle[];
   model_id:
@@ -41,6 +49,7 @@ export type Question = {
     | "MODEL18"
     | "MODEL19"
     | "MODEL2"
+    | "MODEL2-VIDEO"
     | "MODEL20"
     | "MODEL21"
     | "MODEL22"

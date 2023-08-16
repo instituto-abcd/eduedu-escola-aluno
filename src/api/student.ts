@@ -33,6 +33,7 @@ const KEY = {
   GET_STUDENT_PLANET_TRACK: "GET_STUDENT_PLANET_TRACK",
   GET_STUDENT_AWARDS: "GET_STUDENT_AWARDS",
   FIRST_QUESTION: "FIRST_QUESTION",
+  EXAM_EVALUATION: "EXAM_EVALUATION"
 };
 
 const URL = {
@@ -43,6 +44,8 @@ const URL = {
     `student/${id}/exam-questions/first`,
   GET_STUDENT_EXAM_QUESTIONS: (studentId: string, examId: string) =>
     `student/${studentId}/exam-questions/${examId}/answer`,
+  EXAM_EVALUATION: (id: string) =>
+  `student/${id}/exam-evaluation`,
 };
 
 export class StudentAPI extends API {
@@ -80,6 +83,11 @@ export class StudentAPI extends API {
       input
     );
 
+    return data;
+  }
+
+  static async submitExamEvaluation(studentId: string) {
+    const { data } = await this.api.post(URL.EXAM_EVALUATION(studentId));
     return data;
   }
 }
@@ -151,4 +159,12 @@ export function useGetExamQuestion(
   }, []);
 
   return useMutation(handler, options);
+}
+
+export function useSubmitExamEvaluation(options?: QueryOptions<Question, typeof KEY.EXAM_EVALUATION>) {
+  const handler = useCallback(function () {
+    return StudentAPI.submitExamEvaluation(useStudent.getState().id);
+  }, []);
+
+  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
 }

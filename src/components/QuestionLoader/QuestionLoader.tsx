@@ -1,7 +1,9 @@
 import { ModelProps } from "./templates";
 import { Model10 } from "./templates/Model10";
 import { Model11 } from "./templates/Model11";
+import { Model18 } from "./templates/Model18";
 import { Model2 } from "./templates/Model2";
+import { Model2Video } from "./templates/Model2Video";
 import { Model32 } from "./templates/Model32";
 import { Model4 } from "./templates/Model4";
 import { Model5 } from "./templates/Model5";
@@ -28,6 +30,8 @@ export function QuestionLoader({
   switch (question.model_id) {
     case "MODEL2":
       return <Model2 {...commonProps} />;
+    case "MODEL2-VIDEO":
+      return <Model2Video {...commonProps} />;
     case "MODEL4":
       return <Model4 {...commonProps} />;
     case "MODEL5":
@@ -38,6 +42,8 @@ export function QuestionLoader({
       return <Model10 {...commonProps} />;
     case "MODEL11":
       return <Model11 {...commonProps} />;
+    case "MODEL18":
+      return <Model18 {...commonProps} />;
     case "MODEL32":
       return <Model32 {...commonProps} />;
 

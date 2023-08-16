@@ -26,7 +26,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton key={title.position} src={title.file_url} autoPlay />
+        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
       ))}
       <Stack my="auto">
         <Group spacing={24}>
@@ -40,6 +40,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                   positionAnswer: option.position,
                 })
               }
+              sound={option.sound_url ?? undefined}
             >
               {option.image_url && (
                 <>
@@ -49,9 +50,11 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     height={105}
                     width="auto"
                   />
-                  <Text size={20} color="gray.7" weight={600}>
-                    {option.image_name}
-                  </Text>
+                  {question.axis_code && question.axis_code !== null && (
+                    <Text size={14} color="gray.7" weight={600}>
+                      {option.description}
+                    </Text>
+                  )}
                 </>
               )}
               {!option.image_url && <Text>{option.description}</Text>}

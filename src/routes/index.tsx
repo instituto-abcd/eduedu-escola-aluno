@@ -6,6 +6,7 @@ import { AuthRoutes } from "./Auth";
 import { ExamRoutes } from "./ExamRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
+import { ExamEvaluationPage } from "~/pages/Exam/Exam-Evaluation";
 
 export function AppRoutes() {
   function nested(route: string) {

@@ -18,7 +18,6 @@ import { Fragment, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 
 /*
- *   TODO: implementar variação em que temos multiplos slots no texto (orderedAnswer)
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
  */
 
@@ -44,7 +43,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
     <>
       <Group>
         {audioTitles.map((title) => (
-          <AudioButton src={title.file_url} autoPlay key={title.file_url} />
+          <AudioButton
+            src={title.file_url ?? ""}
+            autoPlay
+            key={title.file_url}
+          />
         ))}
       </Group>
 

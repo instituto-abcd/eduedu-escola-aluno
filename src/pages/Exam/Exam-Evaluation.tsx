@@ -1,22 +1,19 @@
 import { BackgroundImage, Box, Center, Container, Flex, Loader } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { useSubmitExamEvaluation } from "~/api/student";
 import bg from '~/assets/bgs/bg-exam-evaluation.jpg'
+import { PATH } from "~/constants/path";
 
 export function ExamEvaluationPage() {
 
-    // TODO: Efetuar request POST /student/{id}/exam-evaluation
-    const isLoading  = true;
+    const navigate = useNavigate();
 
-    // TODO: Após efetuar request, redirecionar para a tela /dashboard
+    const { isLoading } = useSubmitExamEvaluation({
+        onSuccess: () => navigate(PATH.DASHBOARD),
+    });
 
     return (
-        <BackgroundImage
-            src={bg}
-            maw={1440}
-            mih="100vh"
-            mx="auto"
-            p={0}
-            styles={{ main: { padding: 0, position: "relative" } }}
-        >
+        <BackgroundImage src={bg} h="100vh">
             <Center h="100vh">
                 <Box style={{ color: '#fff', padding: '0px 0', fontSize: 20 }}>
                     <Container>

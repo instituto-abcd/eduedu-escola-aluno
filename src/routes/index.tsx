@@ -26,7 +26,6 @@ export function AppRoutes() {
         </Route>
         <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
         <Route path={nested(PATH.INTRO)} Component={IntroPage} />
-        <Route path={nested(PATH.EXAM_EVALUATION)} Component={ExamEvaluationPage} />
       </Routes>
     </BrowserRouter>
   );

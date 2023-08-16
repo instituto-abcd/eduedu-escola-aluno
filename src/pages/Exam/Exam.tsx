@@ -4,8 +4,12 @@ import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
 import { Question } from "~/api/exam";
 import { testQuestions } from "./__test-questions";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "~/constants/path";
 
 export function ExamPage() {
+  const navigate = useNavigate();
+  
   const [currentQuestion, setCurrentQuestion] = useState<Question>();
 
   const { isLoading } = useGetFirstExamQuestion({
@@ -24,7 +28,7 @@ export function ExamPage() {
         }
   ) {
     if ("examCompleted" in answer) {
-      alert("EXAM COMPLETED");
+      navigate(PATH.EXAM_EVALUATION)
     } else {
       setCurrentQuestion(answer);
     }

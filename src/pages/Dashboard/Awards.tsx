@@ -38,7 +38,7 @@ export function Awards({ awards }: componentProps) {
                         lg={1}
                     >
                         <Tooltip
-                            disabled={!!!(item.title || item.description)}
+                            disabled={!!!item.active}
                             label={item.title + "\n" + item.description}
                             transitionProps={{ transition: 'scale', duration: 300 }}
                             style={{ whiteSpace: 'pre-line', textAlign: 'center' }}
@@ -57,8 +57,10 @@ export function Awards({ awards }: componentProps) {
                                         filter: item.active ? '' : 'grayScale(100%)'
                                     }}
                                     onClick={() => {
-                                        setAwardImage(item.image)
-                                        modalHandler.open()
+                                        if (item.active) {
+                                            setAwardImage(item.image)
+                                            modalHandler.open()
+                                        }
                                     }}
                                 />
                             </Box>

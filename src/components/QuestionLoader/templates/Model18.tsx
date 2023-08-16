@@ -1,7 +1,7 @@
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
-import { Group, Image, LoadingOverlay, Stack, Title } from "@mantine/core";
+import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { useState } from "react";
@@ -69,8 +69,6 @@ export function Model18({ question, answerCallback }: ModelProps) {
           autoPlay
         />
       ))}
-
-      <Title color="dark.3">{question.description}</Title>
 
       <Group my="auto" spacing={80}>
         {imageTitles.map((title) => (

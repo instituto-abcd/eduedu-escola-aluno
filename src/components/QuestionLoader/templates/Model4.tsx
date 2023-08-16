@@ -50,7 +50,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     height={105}
                     width="auto"
                   />
-                  {question.axis_code && question.axis_code !== null && (
+                  {!question.axis_code && question.axis_code === null && (
                     <Text size={14} color="gray.7" weight={600}>
                       {option.description}
                     </Text>

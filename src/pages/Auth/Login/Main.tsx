@@ -45,6 +45,7 @@ export function LoginPage() {
 
   // Students:
   const [students, setStudents] = useState([]);
+  const [studentsFilter, setStudentsFilter] = useState([]);
   const { mutate: studentsList } = useStudentsBySchoolclass({
     onError: (error) => {
       errorNotification(
@@ -52,7 +53,10 @@ export function LoginPage() {
         `${error.message} (cod: ${error.code})`
       );
     },
-    onSuccess: (data) => { setStudents(data) },
+    onSuccess: (data) => {
+      setStudents(data)
+      setStudentsFilter(data)
+    },
   });
 
   // Managing data received from childs:
@@ -62,8 +66,13 @@ export function LoginPage() {
     step == 2 ? getSchoolClasses() : {};
     step == 3 ? studentsList({ id: schoolClassIdChild }) : {};
   }
-  function updateList() {
-    studentsList({ id: schoolClassId })
+  function updateList() { studentsList({ id: schoolClassId }) }
+  function filterStudents(inputValue) {
+    let filterBy = inputValue.replace(/\s/g, '').toLowerCase();
+    let result = students.items.filter((item) =>
+      (new RegExp(filterBy)).test(item['name'].replace(/\s/g, '').toLowerCase())
+    )
+    setStudentsFilter({ items: result })
   }
 
   return (
@@ -102,6 +111,7 @@ export function LoginPage() {
                 mb="50px"
                 label="Nome"
                 placeholder="Pesquisar"
+                onChange={(input) => filterStudents(input.target.value)}
                 styles={{
                   label: { color: "#fff", marginBottom: 6 },
                 }}
@@ -118,7 +128,7 @@ export function LoginPage() {
           {step == 3 && (
             <Step03
               schoolClassId={schoolClassId}
-              students={students}
+              students={studentsFilter}
               updateStudentsList={updateList}
             />
           )}

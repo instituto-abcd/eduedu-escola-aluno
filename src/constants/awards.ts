@@ -17,35 +17,88 @@ import sensacional from '~/assets/awards/sensacional.png'
 import sensivel from '~/assets/awards/sensivel.png'
 import superAward from '~/assets/awards/super.png'
 
-export const AWARDS = {
-    bombastico: bombastico,
-    brilhante: brilhante,
-    competente: competente,
-    confiante: confiante,
-    corajoso: corajoso,
-    escritor: escritor,
-    excelente: excelente,
-    fantastico: fantastico,
-    gigante: gigante,
-    incrivel: incrivel,
-    leitor: leitor,
-    lutador: lutador,
-    maestro: maestro,
-    motivado: motivador,
-    perfeito: perfeito,
-    sensacional: sensacional,
-    sensivel: sensivel,
-    super: superAward,
-
+export const AWARDS_IMAGES = [
+    {
+        name: 'bombastico',
+        image: bombastico,
+    },
+    {
+        name: 'brilhante',
+        image: brilhante,
+    },
+    {
+        name: 'competente',
+        image: competente,
+    },
+    {
+        name: 'confiante',
+        image: confiante,
+    },
+    {
+        name: 'corajoso',
+        image: corajoso,
+    },
+    {
+        name: 'escritor',
+        image: escritor,
+    },
+    {
+        name: 'excelente',
+        image: excelente,
+    },
+    {
+        name: 'fantastico',
+        image: fantastico,
+    },
+    {
+        name: 'gigante',
+        image: gigante,
+    },
+    {
+        name: 'incrivel',
+        image: incrivel,
+    },
+    {
+        name: 'leitor',
+        image: leitor,
+    },
+    {
+        name: 'lutador',
+        image: lutador,
+    },
+    {
+        name: 'maestro',
+        image: maestro,
+    },
+    {
+        name: 'motivador',
+        image: motivador,
+    },
+    {
+        name: 'perfeito',
+        image: perfeito,
+    },
+    {
+        name: 'sensacional',
+        image: sensacional,
+    },
+    {
+        name: 'sensivel',
+        image: sensivel,
+    },
+    {
+        name: 'super',
+        image: superAward,
+    },
     // Awards without images:
-    sabio: '',
-    aptitude: '',
-    first_quiz: '',
-    fifth_quiz: '',
-    easy_peasy: '',
-    fighter: '',
-    astro: '',
-    socioemotional: '',
-    happy: '',
-    trabalhador: '',
-}
+    //         sabio: '',
+    //         aptitude: '',
+    //         first_quiz: '',
+    //         fifth_quiz: '',
+    //         easy_peasy: '',
+    //         fighter: '',
+    //         astro: '',
+    //         socioemotional: '',
+    //         happy: '',
+    //         trabalhador: '',
+]

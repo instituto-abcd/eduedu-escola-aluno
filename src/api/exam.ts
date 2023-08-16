@@ -1,17 +1,42 @@
-type IAxis = {
-  name: string;
+export type QuestionOption = {
   description: string;
-  color: string;
-  order: number;
-  code: string;
-  domain: "PORTUGUESE" | "MATH";
+  image_name: string | null;
+  image_url: string | null;
+  isCorrect: boolean;
+  position: number;
+  sound_name: string | null;
+  sound_url: string | null;
+};
+
+export enum QuestionTitleClassification {
+  INTRO = "INTRO",
+  HISTORIA = "HISTORIA",
+  ENUNCIADO = "ENUNCIADO",
+}
+
+export type QuestionTitle = {
+  description: string;
+  file_name: string;
+  file_url: string | null;
+  placeholder: string;
+  position: number;
+  type: string;
+  classification: QuestionTitleClassification | null;
 };
 
 export type Question = {
-  order: number;
+  axis_code: string;
+  category: string;
   description: string;
-  fileUrl?: string;
-  model:
+  id: number;
+  level: number;
+  options: QuestionOption[];
+  order: number;
+  orderedAnswer: boolean;
+  multiplesAnswer: boolean;
+  school_year: number;
+  titles: QuestionTitle[];
+  model_id:
     | "MODEL1"
     | "MODEL10"
     | "MODEL11"
@@ -24,6 +49,7 @@ export type Question = {
     | "MODEL18"
     | "MODEL19"
     | "MODEL2"
+    | "MODEL2-VIDEO"
     | "MODEL20"
     | "MODEL21"
     | "MODEL22"
@@ -68,22 +94,20 @@ export type Question = {
     | "MODEL6"
     | "MODEL7"
     | "MODEL8"
-    | "MODEL9";
-  options: {
-    order: number;
-    description: string;
-    isCorrect: boolean;
-    imageUrl?: string;
-    soundUrl?: string;
-  }[];
+    | "MODEL9"
+    | "QME2x2Audio"
+    | "QME2x2Text"
+    | "QME2x2Text2"
+    | "QMES5"
+    | "QME2x2Video"
+    | "QMES2x3Video"
+    | "QORD3x2";
 };
 
 export type IExam = {
   id: string;
-  axis: IAxis;
-  level: number;
-  name: string;
-  schoolYear: string;
+  domain_code: string;
+  status: string;
   questions: Question[];
   version: number;
 };

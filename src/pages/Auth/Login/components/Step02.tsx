@@ -24,7 +24,7 @@ export function Step02({ schoolClasses, sendToFather }: componentsProps) {
                 <Select
                     {...form.getInputProps('id')}
                     label="Turma"
-                    placeholder="Selecione"
+                    placeholder={schoolClasses.length ? "Selecione" : "Sem turmas disponíveis"}
                     data={schoolClasses}
                     styles={{
                         label: { color: "#fff", marginBottom: 6 },

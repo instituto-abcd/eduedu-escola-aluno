@@ -1,44 +1,106 @@
-import { Group, Image, SimpleGrid, Stack, createStyles } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
-import { EduButton } from "~/components/EduButton/EduButton";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { IconReload } from "@tabler/icons-react";
 import { DragSlotCard, DraggableCard } from "~/components/DraggableCard";
+import { useCallback, useState } from "react";
+import { produce } from "immer";
+import type { CardItem } from "~/components/DraggableCard/DraggableCard";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { EduButton } from "~/components/EduButton";
+import { useGetExamQuestion } from "~/api/student";
 
-const useStyles = createStyles({
-  contentCardImage: {
-    width: "100%",
+/* 
+    TODO: (bug) -> se arrastar um card dentro do slot para um outro slot, 
+                   duplica o card
+*/
+
+type Slot = CardItem | null;
+
+export function Model2({ question, answerCallback }: ModelProps) {
+  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
+
+  const [options] = useState<CardItem[]>(
+    question.options.map((option) => ({
+      id: option.position,
+      type: "ANSWER_CARD",
+      imageUrl: option.image_url ?? "",
+      description: option.description,
+      position: option.position,
+    }))
+  );
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (slots.includes(null)) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: slots.map((slot, inx) => ({
+        position: slot?.position ?? 0,
+        positionAnswer: inx,
+      })),
+    });
+  }
+
+  const handleDrop = useCallback(function (
+    item: CardItem | null,
+    index: number
+  ) {
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index] = item;
+      })
+    );
   },
-});
+  []);
 
-export function Model2({ question }: ModelProps) {
-  const { classes } = useStyles();
+  const { audioTitles } = useQuestionHelper(question);
 
   return (
     <>
-      <Group position="apart">
-        <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
-        <EduButton rightIcon={<IconReload />}>Começar de novo</EduButton>
+      <Group>
+        {audioTitles.map((title) => (
+          <AudioButton
+            key={title.file_url}
+            src={title.file_url ?? ""}
+            autoPlay
+          />
+        ))}
       </Group>
 
       <Stack>
-        <SimpleGrid cols={3} spacing={24}>
-          {question.options.map((o) => (
-            <DragSlotCard key={o.order} />
+        <SimpleGrid cols={options.length} spacing={24}>
+          {slots.map((slot, inx) => (
+            <DragSlotCard
+              key={inx}
+              accept="ANSWER_CARD"
+              onDrop={(item) => handleDrop(item, inx)}
+              item={slot}
+              onClear={() => handleDrop(null, inx)}
+            />
           ))}
         </SimpleGrid>
-        <SimpleGrid cols={3} spacing={24}>
-          {question.options.map((o) => (
-            <DraggableCard key={o.order}>
-              <Image
-                src="https://place-hold.it/220"
-                alt={o.description}
-                className={classes.contentCardImage}
+
+        <SimpleGrid cols={options.length} spacing={24}>
+          {options
+            .sort((a, b) => a.position - b.position)
+            .map((item) => (
+              <DraggableCard
+                item={item}
+                key={item.id}
+                hidden={!!slots.find((slot) => slot?.id === item.id)}
               />
-            </DraggableCard>
-          ))}
+            ))}
         </SimpleGrid>
       </Stack>
+
+      <EduButton disabled={slots.includes(null)} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

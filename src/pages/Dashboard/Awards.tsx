@@ -1,5 +1,5 @@
 import { Title, BackgroundImage, Grid, Tooltip, Box } from "@mantine/core";
-import { AWARDS_IMAGES } from '../../constants/awards'
+import { AWARDS_IMAGES } from '~/constants/awards'
 import { ModalAwards } from "./Awards/Modal";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
@@ -10,7 +10,7 @@ type componentProps = {
 
 export function Awards({ awards }: componentProps) {
 
-    // Modal to show award image:
+    // Modal to show award image && its award image:
     const [modal, modalHandler] = useDisclosure(false);
     const [awardImage, setAwardImage] = useState('');
 
@@ -32,8 +32,13 @@ export function Awards({ awards }: componentProps) {
 
             <Grid columns={9}>
                 {AWARDS_IMAGES.map((item) => (
-                    <Grid.Col md={2} lg={1}>
+                    <Grid.Col
+                        key={item.name}
+                        md={2}
+                        lg={1}
+                    >
                         <Tooltip
+                            disabled={!!!(item.title || item.description)}
                             label={item.title + "\n" + item.description}
                             transitionProps={{ transition: 'scale', duration: 300 }}
                             style={{ whiteSpace: 'pre-line', textAlign: 'center' }}
@@ -42,7 +47,6 @@ export function Awards({ awards }: componentProps) {
                             withArrow
                             multiline
                             width={200}
-                            disabled={!!!(item.title || item.description)}
                         >
                             <Box>
                                 <BackgroundImage

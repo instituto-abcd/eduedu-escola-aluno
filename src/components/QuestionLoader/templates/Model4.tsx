@@ -16,7 +16,7 @@ import { EduButton } from "~/components/EduButton";
 
 export function Model4({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -41,9 +41,23 @@ export function Model4({ question, answerCallback }: ModelProps) {
         <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
       ))}
       {textTitles.map((title) => (
-        <Title color="dark.3" size={30} align="center" my="auto" maw={900}>
-          {title.description}
-        </Title>
+        <Title
+          color="dark.3"
+          size={30}
+          align="center"
+          my="auto"
+          maw={900}
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
+      ))}
+
+      {imageTitles.map((title) => (
+        <Image
+          src={title.file_url}
+          alt={title.description}
+          width={270}
+          key={title.file_url}
+        />
       ))}
       <Stack my="auto">
         <Group spacing={24}>

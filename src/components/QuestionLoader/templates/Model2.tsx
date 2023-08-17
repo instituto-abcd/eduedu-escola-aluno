@@ -19,13 +19,10 @@ type Slot = CardItem | null;
 export function Model2({ question, answerCallback }: ModelProps) {
   const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
 
-  const [options] = useState<CardItem[]>(
+  const [options, setOptions] = useState<CardItem[]>(
     question.options.map((option) => ({
-      id: option.position,
+      ...option,
       type: "ANSWER_CARD",
-      imageUrl: option.image_url ?? "",
-      description: option.description,
-      position: option.position,
     }))
   );
 
@@ -63,6 +60,15 @@ export function Model2({ question, answerCallback }: ModelProps) {
     setSlots(question.options.map(() => null));
   }, [question]);
 
+  useEffect(() => {
+    setOptions(
+      question.options.map((option) => ({
+        ...option,
+        type: "ANSWER_CARD",
+      }))
+    );
+  }, [question]);
+
   return (
     <>
       <Group>
@@ -94,8 +100,10 @@ export function Model2({ question, answerCallback }: ModelProps) {
             .map((item) => (
               <DraggableCard
                 item={item}
-                key={item.id}
-                hidden={!!slots.find((slot) => slot?.id === item.id)}
+                key={item.position}
+                hidden={
+                  !!slots.find((slot) => slot?.position === item.position)
+                }
               />
             ))}
         </SimpleGrid>

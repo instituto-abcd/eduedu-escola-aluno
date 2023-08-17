@@ -1,4 +1,6 @@
 import { createStyles } from "@mantine/core";
+import { useRef } from "react";
+import feedbackButtonNext from "~/assets/audio/feedback_button_next.mp3";
 
 const useStyles = createStyles(() => ({
   button: {
@@ -37,21 +39,37 @@ const useStyles = createStyles(() => ({
 type EduButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   rightIcon?: JSX.Element;
   leftIcon?: JSX.Element;
+  withFeedbackSound?: boolean;
 };
 
 export function EduButton({
   children,
   rightIcon,
   leftIcon,
+  withFeedbackSound = true,
   ...props
 }: EduButtonProps) {
   const { classes, cx } = useStyles();
 
+  const soundRef = useRef<HTMLAudioElement>(null);
+
+  function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    if (withFeedbackSound) {
+      void soundRef.current?.play();
+    }
+    props?.onClick?.(e);
+  }
+
   return (
-    <button {...props} className={cx(classes.button, props.className)}>
+    <button
+      {...props}
+      className={cx(classes.button, props.className)}
+      onClick={onClick}
+    >
       {leftIcon}
       {children}
       {rightIcon}
+      {withFeedbackSound && <audio src={feedbackButtonNext} ref={soundRef} />}
     </button>
   );
 }

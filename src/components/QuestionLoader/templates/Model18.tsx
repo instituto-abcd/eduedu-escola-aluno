@@ -42,7 +42,6 @@ export function Model18({ question, answerCallback }: ModelProps) {
 
     if (item) {
       const indexOffset = index - text.replace(/_/gi, "").length;
-      console.log(index, indexOffset);
 
       setSelected((state) =>
         produce(state, (draft) => {
@@ -63,6 +62,10 @@ export function Model18({ question, answerCallback }: ModelProps) {
   useEffect(() => {
     setSelected([]);
   }, [question]);
+
+  useEffect(() => {
+    setSlots(text.split("").map((char) => (char === "_" ? null : char)));
+  }, [text]);
 
   return (
     <>

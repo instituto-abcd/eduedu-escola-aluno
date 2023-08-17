@@ -1,7 +1,8 @@
 import { Image, Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CSSProperties } from "react";
+import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
+import { QuestionOption } from "~/api/exam";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -39,20 +40,19 @@ const useStyles = createStyles((theme) => ({
     userSelect: "none",
     pointerEvents: "none",
   },
+  audio: {
+    display: "none",
+  },
 }));
 
-export type CardItem = {
-  id: string | number;
-  type: string;
-  position: number;
-  imageUrl?: string;
-  description?: string;
-};
+export type CardItem = QuestionOption & { type: "ANSWER_CARD" };
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   item: CardItem;
   onClear?: () => void;
 };
+
+// TODO: item sound onclick
 
 export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
   const { classes } = useStyles();
@@ -74,24 +74,45 @@ export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
     pointerEvents: hidden ? "none" : "all",
   };
 
-  // TODO: sound????
+  const soundRef = useRef<HTMLAudioElement>(null);
+
+  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    if (item.sound_url) {
+      void soundRef.current?.play();
+    }
+    props?.onClick?.(e);
+  }
 
   return (
-    <div className={classes.card} style={styles} {...props} ref={drag}>
-      {item.imageUrl && (
+    <div
+      className={classes.card}
+      style={styles}
+      {...props}
+      ref={drag}
+      onDragStart={onClick}
+      onClickCapture={onClick}
+    >
+      {item.image_url && (
         <Image
-          src={item.imageUrl}
+          src={item.image_url}
           w="100%"
           style={{ pointerEvents: "none", userSelect: "none" }}
         />
       )}
-      {!item.imageUrl && item.description && (
+      {!item.image_url && item.description && (
         <Text className={classes.text}>{item.description}</Text>
       )}
       {onClear && (
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />
         </button>
+      )}
+      {item.sound_url && (
+        <audio
+          src={item.sound_url}
+          ref={soundRef}
+          className={classes.audio}
+        ></audio>
       )}
     </div>
   );

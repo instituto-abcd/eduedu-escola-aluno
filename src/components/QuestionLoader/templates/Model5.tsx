@@ -26,7 +26,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton src={title.file_url} key={title.file_url} autoPlay />
+        <AudioButton src={title.file_url ?? ""} key={title.file_url} autoPlay />
       ))}
 
       <Title color="dark.3" size={30} align="center" my="auto" maw={900}>

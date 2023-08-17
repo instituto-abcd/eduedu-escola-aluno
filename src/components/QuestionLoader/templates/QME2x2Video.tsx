@@ -1,6 +1,6 @@
 import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -22,7 +22,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
     });
   }
 
-  if (isLoading) return;
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   return (
     <>

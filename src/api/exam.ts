@@ -36,6 +36,7 @@ export type Question = {
   multiplesAnswer: boolean;
   school_year: number;
   titles: QuestionTitle[];
+  progress?: number;
   model_id:
     | "MODEL1"
     | "MODEL10"

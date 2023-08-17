@@ -1,7 +1,7 @@
 import { Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { DragSlotCard, DraggableCard } from "~/components/DraggableCard";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { produce } from "immer";
 import type { CardItem } from "~/components/DraggableCard/DraggableCard";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -53,6 +53,10 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
   []);
 
   const { videoTitles } = useQuestionHelper(question);
+
+  useEffect(() => {
+    setSlots(question.options.map(() => null));
+  }, [question]);
 
   return (
     <>

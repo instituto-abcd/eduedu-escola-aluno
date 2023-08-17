@@ -6,7 +6,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioControls } from "~/components/AudioControls/AudioControls";
 import { Answer, useGetExamQuestion } from "~/api/student";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { QuestionTitleClassification } from "~/api/exam";
 
@@ -28,7 +28,12 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
     });
   }
 
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
+
   return (
     <>
       {audioTitles

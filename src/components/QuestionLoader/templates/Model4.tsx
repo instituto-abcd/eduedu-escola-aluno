@@ -1,4 +1,11 @@
-import { Group, Image, LoadingOverlay, Stack, Text } from "@mantine/core";
+import {
+  Group,
+  Image,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
@@ -9,7 +16,7 @@ import { EduButton } from "~/components/EduButton";
 
 export function Model4({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles } = useQuestionHelper(question);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -32,6 +39,11 @@ export function Model4({ question, answerCallback }: ModelProps) {
     <>
       {audioTitles.map((title) => (
         <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
+      ))}
+      {textTitles.map((title) => (
+        <Title color="dark.3" size={30} align="center" my="auto" maw={900}>
+          {title.description}
+        </Title>
       ))}
       <Stack my="auto">
         <Group spacing={24}>

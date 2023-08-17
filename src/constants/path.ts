@@ -5,4 +5,5 @@ export const PATH = {
   EXAM: "/prova",
   EVALUATION: "/avaliacao",
   EXAM_EVALUATION: "/prova/avaliacao",
+  PLANET: "/planeta",
 } as const;

@@ -14,7 +14,6 @@ export const models = [
   "MODEL20",
   "MODEL21",
   "MODEL22",
-  "MODEL23",
   "MODEL24",
   "MODEL25",
   "MODEL26",

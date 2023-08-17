@@ -52,7 +52,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
       })
     );
   },
-  []);
+    []);
 
   const { audioTitles } = useQuestionHelper(question);
 

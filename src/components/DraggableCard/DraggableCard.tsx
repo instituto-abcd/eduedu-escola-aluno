@@ -6,6 +6,8 @@ import { QuestionOption } from "~/api/exam";
 
 const useStyles = createStyles((theme) => ({
   card: {
+    width: 170,
+    height: 200,
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: "0 4px 0 0 #228BE6",
@@ -50,8 +52,6 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   onClear?: () => void;
 };
 
-// TODO: item sound onclick
-
 export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
   const { classes } = useStyles();
 
@@ -85,10 +85,10 @@ export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
     <div
       className={classes.card}
       style={styles}
-      {...props}
       ref={drag}
       onDragStart={onClick}
       onClickCapture={onClick}
+      {...props}
     >
       {item.image_url && (
         <Image

@@ -1,6 +1,6 @@
 import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -22,7 +22,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
     });
   }
 
-  if (isLoading) return;
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   return (
     <>
@@ -30,7 +32,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
         <div>
           {question.titles?.map((title) => {
             if (title.type === "VIDEO") {
-              return <VideoPlayer src={title.file_url} key={title.file_url} />;
+              return (
+                <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
+              );
             }
           })}
         </div>
@@ -40,7 +44,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
             <OptionButton
               key={option.position}
               data-selected={answer?.position === option.position}
-              sound={option.sound_url}
+              sound={option.sound_url ?? ""}
               onClick={() =>
                 setAnswer({
                   position: option.position,

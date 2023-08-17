@@ -4,7 +4,7 @@ import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { VideoPlayer } from "~/components/VideoPlayer";
 
@@ -26,6 +26,10 @@ export function Model8({ question, answerCallback }: ModelProps) {
     });
   }
 
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       {textTitles.map((title) => (
@@ -36,7 +40,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
       <Group my="auto">
         {videoTitles.map((title) => (
-          <VideoPlayer src={title.file_url} key={title.file_url} />
+          <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
         ))}
 
         {imageTitles.map((title) => (

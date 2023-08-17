@@ -3,7 +3,7 @@ import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 
@@ -24,11 +24,19 @@ export function Model10({ question, answerCallback }: ModelProps) {
     });
   }
 
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       <Group>
         {audioTitles.map((title) => (
-          <AudioButton src={title.file_url} key={title.file_url} autoPlay />
+          <AudioButton
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            autoPlay
+          />
         ))}
 
         {/* TODO: botão livro? */}

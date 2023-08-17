@@ -1,10 +1,13 @@
-import { BackgroundImage, Center, Image } from "@mantine/core";
+import { BackgroundImage, Center, Image, Progress } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import bgProva from "~/assets/bgs/bg_prova2.png";
 import lousa from "~/assets/bgs/lousa.svg";
 import carteiras from "~/assets/bgs/carteiras.png";
+import { useExamProgress } from "~/stores/exam-progress";
 
 export function ExamLayout() {
+  const examProgress = useExamProgress((state) => state.value);
+
   return (
     <BackgroundImage
       src={bgProva}
@@ -14,7 +17,16 @@ export function ExamLayout() {
       p={0}
       styles={{ main: { padding: 0, position: "relative" } }}
     >
-      <Center>
+      <Center style={{ position: "relative" }}>
+        <Progress
+          value={examProgress}
+          w={750}
+          style={{ position: "absolute", top: 20 }}
+          size="lg"
+          striped
+          animate
+          radius="xl"
+        />
         <BackgroundImage
           src={lousa}
           w={1140}

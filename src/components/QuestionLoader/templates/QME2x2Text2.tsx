@@ -1,12 +1,4 @@
-import {
-  Group,
-  Image,
-  ScrollArea,
-  SimpleGrid,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Group, Image, ScrollArea, Stack, Text, Title } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
 

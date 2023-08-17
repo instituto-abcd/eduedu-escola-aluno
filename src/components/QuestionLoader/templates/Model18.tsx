@@ -1,41 +1,121 @@
-import { Flex, Grid, Group, Image, Text } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { DraggableCard } from "~/components/DraggableCard";
-import { EduButton } from "~/components/EduButton/EduButton";
-// import { GrayCard } from "~/components/GrayCard";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { AudioButton } from "~/components/AudioButton";
+import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
+import { DraggableLetters } from "~/components/DraggableLetters";
+import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
+import { useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { TextOptionButton } from "~/components/OptionButton";
+import { Answer, useGetExamQuestion } from "~/api/student";
+import { produce } from "immer";
+import { EduButton } from "~/components/EduButton";
 
-export function Model18({ question }: { question: Question }) {
+export function Model18({ question, answerCallback }: ModelProps) {
+  const [selected, setSelected] = useState<Answer[]>([]);
+  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+
+  const text = textTitles[0].description;
+  const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
+    () => text.split("").map((char) => (char === "_" ? null : char))
+  );
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (selected.length < 3) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: selected,
+    });
+  }
+
+  function handleDrop(item: QuestionOption | null, index: number) {
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index] = item;
+      })
+    );
+
+    if (item) {
+      const indexOffset = index - text.replace(/_/gi, "").length;
+      console.log(index, indexOffset);
+
+      setSelected((state) =>
+        produce(state, (draft) => {
+          draft[indexOffset] = {
+            position: item.position,
+            positionAnswer: indexOffset,
+          };
+        })
+      );
+    }
+  }
+
+  function handleClear(index: number) {
+    handleDrop(null, index);
+    setSelected(selected.filter((_, inx) => inx !== index));
+  }
+
+  useEffect(() => {
+    setSelected([]);
+  }, [question]);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles.map((title) => (
+        <AudioButton
+          src={title.file_url ?? ""}
+          key={title.file_name}
+          autoPlay
+        />
+      ))}
 
-      <Group position="apart" spacing={137}>
-        <Grid columns={12}>
-          <Grid.Col span={12}>
-            <Text align="center">Complete a palavra com RA, RE, RI, RO ou RU</Text>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Image src="https://place-hold.it/220" width={220} />
-          </Grid.Col>
-          <Grid.Col span="auto" my="auto" ml={20}>
-            <Flex mb={50}>
-              {/* <GrayCard
-                name="U"
-                customHeigth="70px"
-                customWidth="70px"
-              /> */}
-            </Flex>
-            <Flex>
-              {/* <DraggableCard
-                customHeigth="70px"
-                customWidth="70px"
-                name="R"
-              /> */}
-            </Flex>
-          </Grid.Col>
-        </Grid>
+      <Group my="auto" spacing={80}>
+        {imageTitles.map((title) => (
+          <Image src={title.file_url ?? ""} key={title.file_name} width={270} />
+        ))}
+
+        <Stack spacing={40}>
+          <Group>
+            {slots.map((slot, inx) => {
+              if (typeof slot === "string")
+                return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
+
+              return (
+                <DragLetterSlot
+                  onDrop={(item) => handleDrop(item, inx)}
+                  option={slot}
+                  onClear={() => handleClear(inx)}
+                  key={inx}
+                />
+              );
+            })}
+          </Group>
+
+          <Group>
+            {question.options
+              .sort((a, b) => a.position - b.position)
+              .map((option) => (
+                <DraggableLetters key={option.description} option={option}>
+                  {option.description}
+                </DraggableLetters>
+              ))}
+          </Group>
+        </Stack>
       </Group>
+
+      <EduButton
+        disabled={selected.length < 3}
+        onClick={submitAnswer}
+        style={{ marginTop: "auto" }}
+      >
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

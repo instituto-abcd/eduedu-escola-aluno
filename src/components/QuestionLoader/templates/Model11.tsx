@@ -14,11 +14,10 @@ import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { QuestionOption } from "~/api/exam";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 
 /*
- *   TODO: implementar variação em que temos multiplos slots no texto (orderedAnswer)
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
  */
 
@@ -40,11 +39,20 @@ export function Model11({ question, answerCallback }: ModelProps) {
       optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
     });
   }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       <Group>
         {audioTitles.map((title) => (
-          <AudioButton src={title.file_url} autoPlay key={title.file_url} />
+          <AudioButton
+            src={title.file_url ?? ""}
+            autoPlay
+            key={title.file_url}
+          />
         ))}
       </Group>
 

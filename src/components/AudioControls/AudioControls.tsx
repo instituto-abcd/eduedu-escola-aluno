@@ -93,7 +93,7 @@ export function AudioControls(props: Props) {
 
           const duration = intervalToDuration({
             start: 0,
-            end: seconds * 1000,
+            end: Number.isNaN(seconds) ? 0 : seconds * 1000,
           });
 
           const zeroPad = (num: number) => String(num).padStart(2, "0");

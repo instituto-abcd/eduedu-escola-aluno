@@ -1,5 +1,5 @@
 import { Group, Image, LoadingOverlay, Stack, Text } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -23,10 +23,15 @@ export function Model4({ question, answerCallback }: ModelProps) {
       optionsAnswered: [answer],
     });
   }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton key={title.position} src={title.file_url} autoPlay />
+        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
       ))}
       <Stack my="auto">
         <Group spacing={24}>
@@ -40,6 +45,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                   positionAnswer: option.position,
                 })
               }
+              sound={option.sound_url ?? undefined}
             >
               {option.image_url && (
                 <>
@@ -48,10 +54,13 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     alt={option.description}
                     height={105}
                     width="auto"
+                    maw="100%"
                   />
-                  <Text size={20} color="gray.7" weight={600}>
-                    {option.image_name}
-                  </Text>
+                  {!question.axis_code && question.axis_code === null && (
+                    <Text size={14} color="gray.7" weight={600}>
+                      {option.description}
+                    </Text>
+                  )}
                 </>
               )}
               {!option.image_url && <Text>{option.description}</Text>}

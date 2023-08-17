@@ -1,5 +1,5 @@
 import { Group, LoadingOverlay, SimpleGrid } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { OptionButton } from "~/components/OptionButton";
@@ -35,6 +35,10 @@ export function QMES5({ question, answerCallback }: ModelProps) {
       optionsAnswered: selected,
     });
   }
+
+  useEffect(() => {
+    setSelected([]);
+  }, [question]);
 
   return (
     <>

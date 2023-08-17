@@ -14,7 +14,7 @@ import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { QuestionOption } from "~/api/exam";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 
 /*
@@ -39,6 +39,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
       optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
     });
   }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       <Group>

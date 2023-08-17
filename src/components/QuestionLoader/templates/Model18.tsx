@@ -4,7 +4,7 @@ import { AudioButton } from "~/components/AudioButton";
 import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
 import { Answer, useGetExamQuestion } from "~/api/student";
@@ -59,6 +59,10 @@ export function Model18({ question, answerCallback }: ModelProps) {
     handleDrop(null, index);
     setSelected(selected.filter((_, inx) => inx !== index));
   }
+
+  useEffect(() => {
+    setSelected([]);
+  }, [question]);
 
   return (
     <>

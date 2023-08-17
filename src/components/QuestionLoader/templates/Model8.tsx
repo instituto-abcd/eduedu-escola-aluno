@@ -4,7 +4,7 @@ import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { VideoPlayer } from "~/components/VideoPlayer";
 
@@ -25,6 +25,10 @@ export function Model8({ question, answerCallback }: ModelProps) {
       optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
     });
   }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   return (
     <>

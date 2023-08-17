@@ -2,7 +2,7 @@ import { Group, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { EduButton } from "~/components/EduButton";
@@ -75,6 +75,10 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   }
 
   const { audioTitles } = useQuestionHelper(question);
+
+  useEffect(() => {
+    setSelected([]);
+  }, [question]);
 
   return (
     <>

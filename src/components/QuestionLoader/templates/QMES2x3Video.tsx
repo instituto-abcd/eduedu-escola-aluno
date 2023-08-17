@@ -1,5 +1,5 @@
 import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { OptionButton } from "~/components/OptionButton";
@@ -42,6 +42,10 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
       optionsAnswered: selected,
     });
   }
+
+  useEffect(() => {
+    setSelected([]);
+  }, [question]);
 
   return (
     <>

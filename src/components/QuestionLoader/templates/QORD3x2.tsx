@@ -78,6 +78,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
 
   useEffect(() => {
     setSelected([]);
+    setSlots([null, null]);
   }, [question]);
 
   return (

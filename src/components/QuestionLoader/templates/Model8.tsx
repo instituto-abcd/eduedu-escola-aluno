@@ -7,9 +7,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { VideoPlayer } from "~/components/VideoPlayer";
+import { AudioButton } from "~/components/AudioButton";
 
 export function Model8({ question, answerCallback }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles } = useQuestionHelper(question);
+  const { imageTitles, videoTitles, textTitles, audioTitles } =
+    useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Answer | null>(null);
 
@@ -32,6 +34,10 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {audioTitles.map((title) => (
+        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
+      ))}
+
       {textTitles.map((title) => (
         <Title color="dark.3" size={30} align="center">
           {title.description}
@@ -65,6 +71,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
                   })
                 }
                 data-selected={answer?.position === option.position}
+                sound={option.sound_url ?? undefined}
               >
                 {option.description}
               </TextOptionButton>

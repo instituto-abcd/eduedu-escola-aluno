@@ -1,5 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { OptionButton } from ".";
+import { OptionButtonProps } from "./OptionButton";
 
 const useStyles = createStyles((theme) => ({
   button: {
@@ -17,9 +18,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement>;
-
-export function TextOptionButton(props: Props) {
+export function TextOptionButton(props: OptionButtonProps) {
   const { classes, cx } = useStyles();
 
   return (

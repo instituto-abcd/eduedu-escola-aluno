@@ -1,4 +1,12 @@
-import { Group, Image, LoadingOverlay, Stack, Text } from "@mantine/core";
+import {
+  Group,
+  Image,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Title,
+  createStyles,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
@@ -7,9 +15,18 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 
+const useStyles = createStyles(() => ({
+  h1: {
+    h1: {
+      fontSize: 40,
+    },
+  },
+}));
+
 export function Model4({ question, answerCallback }: ModelProps) {
+  const { classes } = useStyles();
   const [answer, setAnswer] = useState<Answer | null>(null);
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -33,7 +50,28 @@ export function Model4({ question, answerCallback }: ModelProps) {
       {audioTitles.map((title) => (
         <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
       ))}
-      <Stack my="auto">
+
+      <Stack my="auto" align="center">
+        {textTitles.map((title) => (
+          <Title
+            color="dark.3"
+            size={20}
+            align="center"
+            my="auto"
+            maw={900}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            className={classes.h1}
+          />
+        ))}
+
+        {imageTitles.map((title) => (
+          <Image
+            src={title.file_url}
+            alt={title.description}
+            width={270}
+            key={title.file_url}
+          />
+        ))}
         <Group spacing={24}>
           {question.options.map((option) => (
             <OptionButton
@@ -54,7 +92,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     alt={option.description}
                     height={105}
                     width="auto"
-                    maw="100%"
+                    styles={{ image: { maxWidth: "100%" } }}
                   />
                   {!question.axis_code && question.axis_code === null && (
                     <Text size={14} color="gray.7" weight={600}>

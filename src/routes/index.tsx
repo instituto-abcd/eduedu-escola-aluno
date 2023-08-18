@@ -4,6 +4,7 @@ import { PATH } from "~/constants/path";
 import { DashboardRoutes } from "./Dashboard";
 import { AuthRoutes } from "./Auth";
 import { ExamRoutes } from "./ExamRoutes";
+import { PlanetRoutes } from "./PlanetRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
 import { ExamEvaluationPage } from "~/pages/Exam/Exam-Evaluation";
@@ -23,6 +24,9 @@ export function AppRoutes() {
         </Route>
         <Route path={nested(PATH.EXAM)} Component={ExamLayout}>
           <Route index Component={ExamRoutes} />
+        </Route>
+        <Route path={nested(PATH.PLANET)} Component={ExamLayout}>
+          <Route index Component={PlanetRoutes} />
         </Route>
         <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
         <Route path={nested(PATH.INTRO)} Component={IntroPage} />

@@ -2,7 +2,7 @@ import { useAuthLogin } from "~/api/auth";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
 import { errorNotification } from "~/utils/errorNotification";
-import { Stack, Button, TextInput } from "@mantine/core";
+import { Stack, Button, PasswordInput } from "@mantine/core";
 
 type Props = {
   sendToFather: (step: number, schoolClassIdChild?: string) => void;
@@ -37,7 +37,7 @@ export function Step01({ sendToFather }: Props) {
           login(values);
         })}
       >
-        <TextInput
+        <PasswordInput
           {...form.getInputProps("accessKey")}
           label="Código de acesso"
           placeholder="Digite o código de acesso"

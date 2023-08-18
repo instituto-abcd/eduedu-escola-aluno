@@ -61,6 +61,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
             maw={900}
             dangerouslySetInnerHTML={{ __html: title.description }}
             className={classes.h1}
+            key={title.description}
           />
         ))}
 

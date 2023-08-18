@@ -33,6 +33,7 @@ import { QME2x2Video } from "./templates/QME2x2Video";
 import { QME2x3Video } from "./templates/QMES2x3Video";
 import { QMES5 } from "./templates/QMES5";
 import { QORD3x2 } from "./templates/QORD3x2";
+import { Model8Prova } from "./templates/Model8Prova";
 
 type QuestionLoaderProps = ModelProps;
 
@@ -56,6 +57,8 @@ export function QuestionLoader({
       return <Model5 {...commonProps} />;
     case "MODEL8":
       return <Model8 {...commonProps} />;
+    case "MODEL8-PROVA":
+      return <Model8Prova {...commonProps} />;
     case "MODEL10":
       return <Model10 {...commonProps} />;
     case "MODEL11":

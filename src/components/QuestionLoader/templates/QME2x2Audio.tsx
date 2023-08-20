@@ -1,5 +1,5 @@
 import { Group, LoadingOverlay, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconBook, IconVolume } from "@tabler/icons-react";
+import { IconVolume } from "@tabler/icons-react";
 import { OptionButton } from "~/components/OptionButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -61,11 +61,11 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               title.classification === QuestionTitleClassification.INTRO
           )
           .map((title) => (
-            <AudioButton
+            <audio
               src={title.file_url ?? ""}
               key={title.file_url}
+              style={{ display: "none" }}
               autoPlay
-              buttonProps={{ variant: "yellow", icon: <IconBook /> }}
             />
           ))}
       </Group>

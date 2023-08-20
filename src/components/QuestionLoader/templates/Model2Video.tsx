@@ -89,17 +89,15 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
           </SimpleGrid>
 
           <SimpleGrid cols={options.length} spacing={24}>
-            {options
-              .sort((a, b) => a.position - b.position)
-              .map((item) => (
-                <DraggableCard
-                  item={item}
-                  key={item.position}
-                  hidden={
-                    !!slots.find((slot) => slot?.position === item.position)
-                  }
-                />
-              ))}
+            {options.map((item) => (
+              <DraggableCard
+                item={item}
+                key={item.position}
+                hidden={
+                  !!slots.find((slot) => slot?.position === item.position)
+                }
+              />
+            ))}
           </SimpleGrid>
         </Stack>
       </Group>

@@ -1,15 +1,20 @@
 import {
   Group,
   Image,
+  LoadingOverlay,
   ScrollArea,
   Stack,
   Text,
   Title,
   createStyles,
 } from "@mantine/core";
-import { Question } from "~/api/exam";
+import { useEffect, useState } from "react";
+import { QuestionTitleClassification } from "~/api/exam";
+import { Answer, useGetExamQuestion } from "~/api/student";
+import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -23,11 +28,29 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function QME2x2Text({ question }: { question: Question }) {
+export function QME2x2Text({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
-  const title = "Leia o texto e responda à pergunta.";
   const { textTitles, imageTitles } = useQuestionHelper(question);
+  const [answer, setAnswer] = useState<Answer | null>(null);
 
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (answer === null) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: [answer],
+    });
+  }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
+  const title = "Leia o texto e responda à pergunta.";
   return (
     <>
       <Title color="dark.3" size={30}>
@@ -39,7 +62,14 @@ export function QME2x2Text({ question }: { question: Question }) {
           <Stack align="center" p={20}>
             <Text
               className={classes.typography}
-              dangerouslySetInnerHTML={{ __html: textTitles[0].description }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  textTitles.find(
+                    (title) =>
+                      title.classification ===
+                      QuestionTitleClassification.HISTORIA
+                  )?.description ?? "",
+              }}
             />
             {imageTitles.map((title) => (
               <Image
@@ -54,19 +84,36 @@ export function QME2x2Text({ question }: { question: Question }) {
 
         <Stack align="center" p={20}>
           <Title align="center" color="dark.3" size={30} weight={500}>
-            {textTitles[1].description}
+            {
+              textTitles.find(
+                (title) =>
+                  title.classification === QuestionTitleClassification.ENUNCIADO
+              )?.description
+            }
           </Title>
           <Group align="center" position="center">
-            {question.options
-              .sort((a, b) => a.position - b.position)
-              .map((option) => (
-                <TextOptionButton key={option.description}>
-                  {option.description}
-                </TextOptionButton>
-              ))}
+            {question.options.map((option) => (
+              <TextOptionButton
+                key={option.description}
+                onClick={() =>
+                  setAnswer({
+                    position: option.position,
+                    positionAnswer: option.position,
+                  })
+                }
+                data-selected={answer?.position === option.position}
+              >
+                {option.description}
+              </TextOptionButton>
+            ))}
           </Group>
         </Stack>
       </Group>
+
+      <EduButton disabled={!answer} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

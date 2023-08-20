@@ -1,4 +1,4 @@
-import { Group, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid } from "@mantine/core";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
@@ -9,33 +9,25 @@ import { EduButton } from "~/components/EduButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { produce } from "immer";
+import { TextOptionButton } from "~/components/OptionButton";
 
-type Slot = null | QuestionOption;
+type Slot = string | null | QuestionOption;
 
 export function QORD3x2({ question, answerCallback }: ModelProps) {
+  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const startingSlots =
+    textTitles.length > 0
+      ? textTitles[0].description
+          .split("")
+          .map((char) => (char === "_" ? null : char))
+      : [null, null];
+
   const [selected, setSelected] = useState<Answer[]>([]);
-  const disabled = selected.length < 2;
 
-  const [slots, setSlots] = useState<Slot[]>([null, null]);
-
-  function selectItem(_answer: QuestionOption) {
-    const answer = {
-      position: _answer.position,
-      positionAnswer: _answer.position,
-    };
-
-    if (selected.find((item) => item.position === answer.position)) {
-      setSelected(selected.filter((item) => item.position !== answer.position));
-    } else {
-      setSelected([
-        ...selected,
-        {
-          position: _answer.position,
-          positionAnswer: _answer.position,
-        },
-      ]);
-    }
-  }
+  const [slots, setSlots] = useState<Slot[]>(startingSlots);
+  const disabled =
+    selected.filter(Boolean).length <
+    slots.filter((slot) => typeof slot !== "string").length;
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -74,11 +66,11 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
     setSelected(selected.filter((_, inx) => inx !== index));
   }
 
-  const { audioTitles } = useQuestionHelper(question);
-
   useEffect(() => {
     setSelected([]);
-    setSlots([null, null]);
+    setSlots(startingSlots);
+    // só pra essa linha, pois o comportamento é intencional
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question]);
 
   return (
@@ -87,44 +79,44 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
         <AudioButton autoPlay src={title.file_url ?? ""} key={title.file_url} />
       ))}
 
-      <Group noWrap grow spacing={75} py={40}>
-        {question.titles
-          .filter((title) => title.type === "TEXT")
-          .map((title) => (
-            <Text key={title.position} size="lg">
-              {title.description}
-            </Text>
-          ))}
+      <Group mt="auto">
+        {slots.map((slot, inx) => {
+          if (typeof slot === "string")
+            return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
+
+          return (
+            <DragLetterSlot
+              key={inx}
+              onDrop={(item) => handleDrop(item, inx)}
+              option={slot}
+              onClear={() => handleClear(inx)}
+            />
+          );
+        })}
       </Group>
 
-      <Group>
-        {slots.map((slot, inx) => (
-          <DragLetterSlot
-            key={inx}
-            onDrop={(item) => handleDrop(item, inx)}
-            option={slot}
-            onClear={() => handleClear(inx)}
+      <SimpleGrid
+        cols={3}
+        style={{ placeItems: "center" }}
+        spacing={24}
+        mb="auto"
+      >
+        {question.options.map((option) => (
+          <DraggableLetters
+            key={option.position}
+            option={option}
+            hidden={
+              !!slots.find(
+                (item) =>
+                  item &&
+                  typeof item !== "string" &&
+                  item.position === option.position
+              )
+            }
           />
         ))}
-      </Group>
-
-      <SimpleGrid cols={3} style={{ placeItems: "center" }} spacing={24}>
-        {question.options
-          .sort((a, b) => a.position - b.position)
-          .map((option) => (
-            <DraggableLetters
-              key={option.position}
-              onClick={() => selectItem(option)}
-              option={option}
-            />
-          ))}
       </SimpleGrid>
-
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{ marginTop: "auto" }}
-      >
+      <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
       <LoadingOverlay visible={isLoading} />

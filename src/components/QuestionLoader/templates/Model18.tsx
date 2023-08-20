@@ -100,13 +100,22 @@ export function Model18({ question, answerCallback }: ModelProps) {
           </Group>
 
           <Group>
-            {question.options
-              .sort((a, b) => a.position - b.position)
-              .map((option) => (
-                <DraggableLetters key={option.description} option={option}>
-                  {option.description}
-                </DraggableLetters>
-              ))}
+            {question.options.map((option) => (
+              <DraggableLetters
+                key={option.description}
+                option={option}
+                hidden={
+                  !!slots.find(
+                    (item) =>
+                      item &&
+                      typeof item !== "string" &&
+                      item.position === option.position
+                  )
+                }
+              >
+                {option.description}
+              </DraggableLetters>
+            ))}
           </Group>
         </Stack>
       </Group>

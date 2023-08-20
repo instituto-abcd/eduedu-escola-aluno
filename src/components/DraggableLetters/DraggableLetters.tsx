@@ -41,6 +41,7 @@ type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   onClear?: () => void;
   option: QuestionOption;
   type?: string;
+  disabled?: boolean;
 };
 
 export function DraggableLetters({
@@ -48,6 +49,7 @@ export function DraggableLetters({
   option,
   type = "ANSWER_LETTERS",
   hidden,
+  disabled,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
@@ -59,6 +61,7 @@ export function DraggableLetters({
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
+      canDrag: !hidden && !disabled,
     }),
     [option]
   );
@@ -77,7 +80,11 @@ export function DraggableLetters({
       ref={drag}
     >
       {option.image_url && (
-        <Image src={option.image_url} width={40} alt={option.image_name} />
+        <Image
+          src={option.image_url}
+          width={40}
+          alt={option.image_name ?? ""}
+        />
       )}
       {!option.image_url && option.description && (
         <Text>{option.description}</Text>

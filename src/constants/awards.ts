@@ -11,7 +11,7 @@ import incrivel from '~/assets/awards/incrivel.png'
 import leitor from '~/assets/awards/leitor.png'
 import lutador from '~/assets/awards/lutador.png'
 import maestro from '~/assets/awards/maestro.png'
-import motivador from '~/assets/awards/motivador.png'
+import motivado from '~/assets/awards/motivado.png'
 import perfeito from '~/assets/awards/perfeito.png'
 import sensacional from '~/assets/awards/sensacional.png'
 import sensivel from '~/assets/awards/sensivel.png'
@@ -71,8 +71,8 @@ export const AWARDS_IMAGES = [
         image: maestro,
     },
     {
-        name: 'motivador',
-        image: motivador,
+        name: 'motivado',
+        image: motivado,
     },
     {
         name: 'perfeito',

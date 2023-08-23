@@ -6,6 +6,8 @@ import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function QMES5({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -36,6 +38,9 @@ export function QMES5({ question, answerCallback }: ModelProps) {
     });
   }
 
+  const { videoTitles, optionArrKey } = useQuestionHelper(question);
+  const mediaTrack = useMediaTrackStore();
+
   useEffect(() => {
     setSelected([]);
   }, [question]);
@@ -43,18 +48,19 @@ export function QMES5({ question, answerCallback }: ModelProps) {
   return (
     <>
       <Group noWrap grow spacing={75} py={40}>
-        {question.titles?.map((title) => {
-          if (title.type === "VIDEO") {
-            return (
-              <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
-            );
-          }
-        })}
+        <div>
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            onPlayStatusChange={mediaTrack.setPlayStatus}
+            canPlay={mediaTrack.canPlay()}
+            autoPlay
+          />
+        </div>
 
         <SimpleGrid cols={2} style={{ placeItems: "center" }} spacing={24}>
-          {question.options.map((option) => (
+          {question.options.map((option, inx) => (
             <OptionButton
-              key={option.description}
+              key={optionArrKey(option, inx)}
               onClick={() =>
                 selectItem({
                   position: option.position,
@@ -64,6 +70,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
               data-selected={
                 !!selected.find((item) => item.position === option.position)
               }
+              isCorrect={option.isCorrect}
             >
               {option.description}
             </OptionButton>

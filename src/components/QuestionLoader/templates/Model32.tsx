@@ -1,16 +1,21 @@
 import {
   Group,
   Image,
+  LoadingOverlay,
   ScrollArea,
   Stack,
   Text,
   Title,
   createStyles,
 } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
+import { useEffect, useState } from "react";
+import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton/EduButton";
+import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { AudioButton } from "~/components/AudioButton";
+import { QuestionTitleClassification } from "~/api/exam";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -23,27 +28,62 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model32({ question }: { question: Question }) {
+export function Model32({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
 
-  const { textTitles, imageTitles } = useQuestionHelper(question);
-  const [questionText, questionTitle, questionHeader] = textTitles;
+  const { textTitles, imageTitles, audioTitles, optionArrKey } =
+    useQuestionHelper(question);
 
-  // TODO: !importante - sugerir identificação dos titulos, ou utilização dos POSITION para este propósito
-  // TODO: id 95 e 96 não tem 3 titulos de texto como os outros (faltando o header), description está vazio
+  const [answer, setAnswer] = useState<Answer | null>(null);
+
+  const { mutate, isLoading } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (!answer) return;
+
+    mutate({
+      questionId: question.id,
+      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
+    });
+  }
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles.map((title) => (
+        <AudioButton
+          key={title.position}
+          src={title.file_url ?? ""}
+          autoPlay={!!title.file_url}
+        />
+      ))}
+
       <Title color="dark.3" size={30} align="center">
-        {questionHeader.description}
+        {
+          textTitles.find(
+            (title) =>
+              title.classification === QuestionTitleClassification.INTRO
+          )?.description
+        }
       </Title>
 
       <Group noWrap grow spacing={50}>
         <ScrollArea h={290} px={30} type="always">
           <Stack align="stretch" spacing={20} py={10}>
             <Text
-              dangerouslySetInnerHTML={{ __html: questionText.description }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  textTitles.find(
+                    (title) =>
+                      title.classification ===
+                      QuestionTitleClassification.HISTORIA
+                  )?.description ?? "",
+              }}
               className={classes.typography}
             />
             {imageTitles.map((title) => (
@@ -58,13 +98,35 @@ export function Model32({ question }: { question: Question }) {
         </ScrollArea>
         <Stack>
           <Text size={20} weight={600} color="dark.3" align="center">
-            {questionTitle.description}
+            {
+              textTitles.find(
+                (title) =>
+                  title.classification === QuestionTitleClassification.ENUNCIADO
+              )?.description
+            }
           </Text>
-          {question.options.map((option) => (
-            <EduButton key={option.position}>{option.description}</EduButton>
+          {question.options.map((option, inx) => (
+            <TextOptionButton
+              key={optionArrKey(option, inx)}
+              onClick={() =>
+                setAnswer({
+                  position: option.position,
+                  positionAnswer: option.position,
+                })
+              }
+              data-selected={answer?.position === option.position}
+              sound={option.sound_url ?? undefined}
+              isCorrect={option.isCorrect}
+            >
+              {option.description}
+            </TextOptionButton>
           ))}
         </Stack>
       </Group>
+      <EduButton disabled={!answer} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

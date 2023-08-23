@@ -30,7 +30,7 @@ export const AudioButton = forwardRef<Ref, Props>(
       if (autoPlay) {
         play();
       }
-    }, []);
+    }, [src]);
 
     useImperativeHandle(ref, () => ({
       play,

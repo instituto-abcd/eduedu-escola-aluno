@@ -1,4 +1,10 @@
-import { BackgroundImage, Center, Image, Progress } from "@mantine/core";
+import {
+  BackgroundImage,
+  Button,
+  Center,
+  Image,
+  Progress,
+} from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import bgProva from "~/assets/bgs/bg_prova2.png";
 import lousa from "~/assets/bgs/lousa.svg";
@@ -88,6 +94,18 @@ export function ExamLayout() {
           mediaTrack.setPlayStatus(false);
         }}
       />
+      {import.meta.env.DEV && (
+        <Button
+          color="red.6"
+          onClick={() => {
+            audioRef.current?.pause();
+            mediaTrack.setPlayStatus(false);
+          }}
+          style={{ position: "fixed", bottom: 150, right: 150, zIndex: 999 }}
+        >
+          Stop All Audio
+        </Button>
+      )}
     </BackgroundImage>
   );
 }

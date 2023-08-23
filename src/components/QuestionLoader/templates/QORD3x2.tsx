@@ -104,9 +104,9 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
         spacing={24}
         mb="auto"
       >
-        {question.options.map((option) => (
+        {question.options.map((option, inx) => (
           <DraggableLetters
-            key={option.position}
+            key={`[${inx}]-[${option.position}]:${option.description}`}
             option={option}
             hidden={
               !!slots.find(

@@ -40,14 +40,24 @@ const useStyles = createStyles({
   audio: {
     display: "none",
   },
+  debugDiv: {
+    position: "relative",
+    p: {
+      position: "absolute",
+      top: 0,
+      marginInline: "auto",
+      zIndex: 999,
+    },
+  },
 });
 
 export type OptionButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     sound?: string;
+    isCorrect?: boolean;
   };
 
-export function OptionButton(props: OptionButtonProps) {
+export function OptionButton({ isCorrect, ...props }: OptionButtonProps) {
   const { classes, cx } = useStyles();
   const soundRef = useRef<HTMLAudioElement>(null);
   const mediaTrack = useMediaTrackStore();
@@ -64,13 +74,14 @@ export function OptionButton(props: OptionButtonProps) {
   }
 
   return (
-    <>
+    <div className={classes.debugDiv}>
       <button
         {...props}
         className={cx(classes.button, props.className)}
         onClick={onClick}
         disabled={props.disabled || mediaTrack.isPlaying}
       />
+      {import.meta.env.DEV && <p>{isCorrect ? "✅" : "❌"}</p>}
       {props.sound && (
         <audio
           src={props.sound}
@@ -81,6 +92,6 @@ export function OptionButton(props: OptionButtonProps) {
           onEnded={() => mediaTrack.setPlayStatus(false)}
         ></audio>
       )}
-    </>
+    </div>
   );
 }

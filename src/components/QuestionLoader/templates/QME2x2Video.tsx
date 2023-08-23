@@ -55,6 +55,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
                   positionAnswer: option.position,
                 })
               }
+              isCorrect={option.isCorrect}
             >
               {option.image_url && (
                 <Image

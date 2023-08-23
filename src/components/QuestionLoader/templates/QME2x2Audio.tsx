@@ -11,8 +11,10 @@ import { EduButton } from "~/components/EduButton";
 import { QuestionTitleClassification } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 
+// TODO: questão B (retry) perde o autoplay
+
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, optionArrKey } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Answer | null>(null);
 
@@ -28,10 +30,6 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
     });
   }
-
-  useEffect(() => {
-    setAnswer(null);
-  }, [question]);
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
@@ -59,6 +57,11 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
   }, [currentAudio]);
 
   const mediaTrack = useMediaTrackStore();
+
+  useEffect(() => {
+    setAnswer(null);
+    void introRef.current?.play();
+  }, [question]);
 
   return (
     <>
@@ -117,9 +120,9 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       </Group>
 
       <SimpleGrid cols={cols}>
-        {question.options.map((option) => (
+        {question.options.map((option, inx) => (
           <OptionButton
-            key={option.position}
+            key={optionArrKey(option, inx)}
             sound={option.sound_url ?? ""}
             onClick={() =>
               setAnswer({
@@ -128,11 +131,12 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               })
             }
             data-selected={answer?.position === option.position}
+            isCorrect={option.isCorrect}
           >
             <Stack justify="space-evenly">
               <IconVolume size={62} />
               <Text color="dark.6" size={30} weight={400}>
-                {option.position + 1}
+                {inx + 1}
               </Text>
             </Stack>
           </OptionButton>

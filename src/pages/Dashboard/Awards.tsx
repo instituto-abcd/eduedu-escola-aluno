@@ -58,7 +58,7 @@ export function Awards({ awards }: componentProps) {
                                     }}
                                     onClick={() => {
                                         if (item.active) {
-                                            setAwardImage(item.image)
+                                            setAwardImage(item.name)
                                             modalHandler.open()
                                         }
                                     }}

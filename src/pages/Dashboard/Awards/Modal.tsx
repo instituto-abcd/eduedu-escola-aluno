@@ -6,7 +6,6 @@ import { AWARDS_IMAGES } from '~/constants/awards'
 
 // Sounds:
 import { useRef } from "react";
-import feedbackButtonNext from "~/assets/audio/feedback_button_next.mp3";
 
 type Props = {
     opened: boolean;
@@ -25,8 +24,9 @@ export function ModalAwards({ opened, onClose, image }: Props) {
             preserveAspectRatio: "xMidYMid slice"
         }
     };
-    // const soundRef = useRef<HTMLAudioElement>(null);
-    // soundRef.current?.play();
+
+    const soundRef = useRef<HTMLAudioElement>(null);
+    soundRef.current?.play();
 
     return (
         <Modal
@@ -41,14 +41,18 @@ export function ModalAwards({ opened, onClose, image }: Props) {
                 }
             }}
         >
-            {/* <audio src={feedbackButtonNext} ref={soundRef} /> */}
-            {defaultOptions.animationData !== undefined &&
+            {awardLottie.length !== 0 &&
                 (
-                    <Lottie
-                        options={defaultOptions}
-                        height={400}
-                        width={400}
-                    />
+                    <>
+                        <audio autoPlay>
+                            <source src={awardLottie[0]['sound']} />
+                        </audio>
+                        <Lottie
+                            options={defaultOptions}
+                            height={400}
+                            width={400}
+                        />
+                    </>
                 )
             }
         </Modal>

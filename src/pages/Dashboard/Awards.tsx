@@ -30,7 +30,7 @@ export function Awards({ awards }: componentProps) {
         <>
             <Title mb={40} color="white">Minhas Conquistas</Title>
 
-            <Grid columns={9}>
+            <Grid columns={8}>
                 {AWARDS_IMAGES.map((item) => (
                     <Grid.Col
                         key={item.name}

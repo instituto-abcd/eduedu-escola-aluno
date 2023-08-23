@@ -42,7 +42,7 @@ import sensacionalLottie from '~/assets/lotties/lottie_badge_sensacional.json'
 import sensacionalSound from '~/assets/audio/badge_sensacional.mp3'
 import superAward from '~/assets/awards/super.png'
 import superAwardLottie from '~/assets/lotties/lottie_badge_super.json'
-import superAwardSound from '~/assets/audio/badge_superAward.mp3'
+import superAwardSound from '~/assets/audio/badge_super.mp3'
 
 export const AWARDS_IMAGES = [
     {

@@ -1,18 +1,23 @@
-import { Group, Image, LoadingOverlay, Stack, Title } from "@mantine/core";
-
-import { EduButton } from "~/components/EduButton";
-import { TextOptionButton } from "~/components/OptionButton";
-import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
-import { VideoPlayer } from "~/components/VideoPlayer";
+import { ModelProps } from ".";
+import {
+  Title,
+  Group,
+  LoadingOverlay,
+  Image,
+  Stack,
+  Text,
+  SimpleGrid,
+} from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
+import { EduButton } from "~/components/EduButton";
+import { OptionButton } from "~/components/OptionButton";
+import { IconVolume } from "@tabler/icons-react";
+import { Answer, useGetExamQuestion } from "~/api/student";
+import { useEffect, useState } from "react";
 
-export function Model8({ question, answerCallback }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles } =
-    useQuestionHelper(question);
-
+export function Model8Prova({ question, answerCallback }: ModelProps) {
+  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<Answer | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
@@ -44,11 +49,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
         </Title>
       ))}
 
-      <Group my="auto">
-        {videoTitles.map((title) => (
-          <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
-        ))}
-
+      <Group my="auto" position="apart" spacing={150}>
         {imageTitles.map((title) => (
           <Image
             src={title.file_url}
@@ -58,11 +59,11 @@ export function Model8({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-        <Stack align="stretch" spacing={40} w={555}>
+        <SimpleGrid cols={2}>
           {question.options
             .sort((a, b) => a.position - b.position)
             .map((option) => (
-              <TextOptionButton
+              <OptionButton
                 key={option.description}
                 onClick={() =>
                   setAnswer({
@@ -73,10 +74,15 @@ export function Model8({ question, answerCallback }: ModelProps) {
                 data-selected={answer?.position === option.position}
                 sound={option.sound_url ?? undefined}
               >
-                {option.description}
-              </TextOptionButton>
+                <Stack justify="space-evenly">
+                  <IconVolume size={62} />
+                  <Text color="dark.6" size={30} weight={400}>
+                    {option.position + 1}
+                  </Text>
+                </Stack>
+              </OptionButton>
             ))}
-        </Stack>
+        </SimpleGrid>
       </Group>
 
       <EduButton disabled={!answer} onClick={submitAnswer}>

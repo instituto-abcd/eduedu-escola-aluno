@@ -30,11 +30,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  sound?: string;
-};
+export type OptionButtonProps =
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    sound?: string;
+  };
 
-export function OptionButton(props: Props) {
+export function OptionButton(props: OptionButtonProps) {
   const { classes, cx } = useStyles();
   const soundRef = useRef<HTMLAudioElement>(null);
 

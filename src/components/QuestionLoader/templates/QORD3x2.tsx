@@ -70,8 +70,6 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   useEffect(() => {
     setSelected([]);
     setSlots(startingSlots);
-    // só pra essa linha, pois o comportamento é intencional
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question]);
 
   const mediaTrack = useMediaTrackStore();
@@ -106,7 +104,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
       >
         {question.options.map((option, inx) => (
           <DraggableLetters
-            key={`[${inx}]-[${option.position}]:${option.description}`}
+            key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
             option={option}
             hidden={
               !!slots.find(

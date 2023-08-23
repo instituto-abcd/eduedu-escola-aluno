@@ -2,7 +2,7 @@ import { createStyles } from "@mantine/core";
 import { useRef } from "react";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles({
   button: {
     width: 170,
     height: 148,
@@ -23,7 +23,9 @@ const useStyles = createStyles((theme) => ({
       transform: "translateY(3px)",
     },
     "&[data-selected=true]": {
-      backgroundColor: theme.colors.gray[1],
+      backgroundColor: "#DFFEC5",
+      border: "1px solid #ACE655",
+      boxShadow: "0px 5px 0px 0px #ACE655",
     },
     ":disabled": {
       backgroundColor: "#E9E9E9",
@@ -38,7 +40,7 @@ const useStyles = createStyles((theme) => ({
   audio: {
     display: "none",
   },
-}));
+});
 
 export type OptionButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {

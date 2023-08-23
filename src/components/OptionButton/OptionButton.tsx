@@ -1,5 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { useRef } from "react";
+import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 
 const useStyles = createStyles((theme) => ({
   button: {
@@ -17,12 +18,21 @@ const useStyles = createStyles((theme) => ({
     color: "#228BE6",
     userSelect: "none",
     wordBreak: "break-all",
-    ":active": {
+    ":not(:disabled):active": {
       boxShadow: "0px 2px 0px 0px #228BE6",
       transform: "translateY(3px)",
     },
     "&[data-selected=true]": {
       backgroundColor: theme.colors.gray[1],
+    },
+    ":disabled": {
+      backgroundColor: "#E9E9E9",
+      color: "#C4C4C4",
+      boxShadow: "0px 8px 0px 0px #c4c4c4",
+      borderColor: "#c4c4c4",
+      img: {
+        opacity: 0.5,
+      },
     },
   },
   audio: {
@@ -38,10 +48,15 @@ export type OptionButtonProps =
 export function OptionButton(props: OptionButtonProps) {
   const { classes, cx } = useStyles();
   const soundRef = useRef<HTMLAudioElement>(null);
+  const mediaTrack = useMediaTrackStore();
 
   function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    if (props.sound) {
-      void soundRef.current?.play();
+    if (props.sound && mediaTrack.canPlay()) {
+      mediaTrack.play({
+        trackId: `[SOUND]-${props.sound}`,
+        trackUrl: props.sound,
+        mediaType: MediaType.AUDIO,
+      });
     }
     props?.onClick?.(e);
   }
@@ -52,12 +67,16 @@ export function OptionButton(props: OptionButtonProps) {
         {...props}
         className={cx(classes.button, props.className)}
         onClick={onClick}
+        disabled={props.disabled || mediaTrack.isPlaying}
       />
       {props.sound && (
         <audio
           src={props.sound}
           ref={soundRef}
           className={classes.audio}
+          onPlay={() => mediaTrack.setPlayStatus(true)}
+          onPause={() => mediaTrack.setPlayStatus(false)}
+          onEnded={() => mediaTrack.setPlayStatus(false)}
         ></audio>
       )}
     </>

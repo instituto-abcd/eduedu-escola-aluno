@@ -48,9 +48,12 @@ export function Model4({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
+        <AudioButton
+          key={title.position}
+          src={title.file_url ?? ""}
+          autoPlay={!!title.file_url}
+        />
       ))}
-
       <Stack my="auto" align="center">
         {textTitles.map((title) => (
           <Title
@@ -107,7 +110,6 @@ export function Model4({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>

@@ -6,9 +6,10 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioControls } from "~/components/AudioControls/AudioControls";
 import { Answer, useGetExamQuestion } from "~/api/student";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { QuestionTitleClassification } from "~/api/exam";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
@@ -34,6 +35,31 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
+  const [currentAudio, setCurrentAudio] =
+    useState<QuestionTitleClassification | null>(
+      QuestionTitleClassification.INTRO
+    );
+
+  const introRef = useRef<HTMLAudioElement>(null);
+  const historyRef = useRef<HTMLDivElement & { play: () => void }>(null);
+  const questionRef = useRef<HTMLDivElement & { play: () => void }>(null);
+
+  useEffect(() => {
+    switch (currentAudio) {
+      case QuestionTitleClassification.INTRO:
+        void introRef.current?.play();
+        break;
+      case QuestionTitleClassification.HISTORIA:
+        historyRef.current?.play();
+        break;
+      case QuestionTitleClassification.ENUNCIADO:
+        questionRef.current?.play();
+        break;
+    }
+  }, [currentAudio]);
+
+  const mediaTrack = useMediaTrackStore();
+
   return (
     <>
       {audioTitles
@@ -42,7 +68,17 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
             title.classification === QuestionTitleClassification.HISTORIA
         )
         .map((title) => (
-          <AudioControls src={title.file_url ?? ""} key={title.file_url} />
+          <AudioControls
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            ref={historyRef}
+            onEnded={() => {
+              setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
+              mediaTrack.setPlayStatus(false);
+            }}
+            onPlay={() => mediaTrack.setPlayStatus(true)}
+            onPause={() => mediaTrack.setPlayStatus(false)}
+          />
         ))}
 
       <Group>
@@ -52,7 +88,11 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               title.classification === QuestionTitleClassification.ENUNCIADO
           )
           .map((title) => (
-            <AudioButton src={title.file_url ?? ""} key={title.file_url} />
+            <AudioButton
+              src={title.file_url ?? ""}
+              key={title.file_url}
+              ref={questionRef}
+            />
           ))}
 
         {audioTitles
@@ -65,7 +105,13 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               src={title.file_url ?? ""}
               key={title.file_url}
               style={{ display: "none" }}
-              autoPlay
+              ref={introRef}
+              onEnded={() => {
+                setCurrentAudio(QuestionTitleClassification.HISTORIA);
+                mediaTrack.setPlayStatus(false);
+              }}
+              onPlay={() => mediaTrack.setPlayStatus(true)}
+              onPause={() => mediaTrack.setPlayStatus(false)}
             />
           ))}
       </Group>

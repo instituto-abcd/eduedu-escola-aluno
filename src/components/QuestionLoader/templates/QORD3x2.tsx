@@ -10,6 +10,7 @@ import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type Slot = string | null | QuestionOption;
 
@@ -73,6 +74,8 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question]);
 
+  const mediaTrack = useMediaTrackStore();
+
   return (
     <>
       {audioTitles.map((title) => (
@@ -111,7 +114,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
                   item &&
                   typeof item !== "string" &&
                   item.position === option.position
-              )
+              ) || mediaTrack.isPlaying
             }
           />
         ))}

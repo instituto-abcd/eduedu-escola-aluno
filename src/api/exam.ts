@@ -37,9 +37,11 @@ export type Question = {
   school_year: number;
   titles: QuestionTitle[];
   progress?: number;
+  status?: string;
   model_id:
     | "MODEL1"
     | "MODEL10"
+    | "MODEL10-PROVA"
     | "MODEL11"
     | "MODEL12"
     | "MODEL13"

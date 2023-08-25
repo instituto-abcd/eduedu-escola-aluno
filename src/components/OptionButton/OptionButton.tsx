@@ -81,7 +81,9 @@ export function OptionButton({ isCorrect, ...props }: OptionButtonProps) {
         onClick={onClick}
         disabled={props.disabled || mediaTrack.isPlaying}
       />
-      {import.meta.env.DEV && <p>{isCorrect ? "✅" : "❌"}</p>}
+      {import.meta.env.DEV && typeof isCorrect === "boolean" && (
+        <p>{isCorrect ? "✅" : "❌"}</p>
+      )}
       {props.sound && (
         <audio
           src={props.sound}

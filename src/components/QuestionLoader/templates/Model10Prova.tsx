@@ -7,10 +7,7 @@ import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 
-// TODO: desvincular MODEL10 em prova e planeta
-// motivo: em prova se usa o POSITION pra marcar a resposta, em planeta está nulo (será usado "description" ❓)
-
-export function Model10({ question, answerCallback }: ModelProps) {
+export function Model10Prova({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
   const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
 

@@ -6,6 +6,7 @@ import { Question } from "~/api/exam";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
+import { testQuestions } from "./__test-questions";
 
 export function ExamPage() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export function ExamPage() {
     }
   }
 
-  // const fakeQuestion = testQuestions.QME2x2Text?.[0] ?? {};
+  const fakeQuestion = testQuestions.MODEL32?.[0] ?? {};
 
   return (
     <>

@@ -9,7 +9,6 @@ const useStyles = createStyles(
       height: 50,
       backgroundColor: palette.bg,
       boxShadow: `0px 8px 0px 0px ${palette.accent}`,
-      padding: 5,
       display: "grid",
       placeItems: "center",
       borderRadius: 6,

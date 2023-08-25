@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API } from "./base";
 import { useCallback } from "react";
-import { MutationOptions, PaginationParams, QueryOptions } from "./api-types";
+import { MutationOptions, Paginated, PaginationParams, QueryOptions } from "./api-types";
 import { Student } from "./student";
 
 const URL = {
@@ -28,7 +28,7 @@ export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
 export class SchoolClassAPI extends API {
   static async getStudentsById(id: string, params?: PaginationParams) {
-    const { data } = await this.api.get<Student[]>(URL.GET_STUDENTS_BY_ID(id), {
+    const { data } = await this.api.get<Paginated<Student[]>>(URL.GET_STUDENTS_BY_ID(id), {
       params,
     });
     return data;
@@ -51,7 +51,7 @@ export class SchoolClassAPI extends API {
 
 export function useStudentsBySchoolclass(
   schoolClassId: string,
-  options?: QueryOptions<Student[], [typeof KEY.GET_STUDENTS_BY_ID]>
+  options?: QueryOptions<Paginated<Student[]>, [typeof KEY.GET_STUDENTS_BY_ID]>
 ) {
   const handler = useCallback(
     function () {

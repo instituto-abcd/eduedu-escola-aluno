@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSchoolClassesAllMutation } from "~/api/user";
-import { useStudentsBySchoolclass } from "~/api/school-class";
+import { useReserveStudent, useStudentsBySchoolclass } from "~/api/school-class";
 import { errorNotification } from "~/utils/errorNotification";
 import {
   BackgroundImage,
@@ -10,12 +10,29 @@ import {
   TextInput,
   Select,
   Flex,
+  Card,
+  Grid,
+  Button,
+  Stack,
+  Text,
+  Group
 } from "@mantine/core";
 import logo from "~/assets/logos/eduedu-branca.svg";
 import bg from "~/assets/bgs/bg-aluno.svg";
 import { Step01 } from "./components/Step01";
 import { Step02 } from "./components/Step02";
 import { Step03 } from "./components/Step03";
+import { IconLockOpen } from "@tabler/icons-react";
+import { ModalDuplicidadeLogin } from "./components/ModalDuplicidadeLogin";
+import { useDisclosure } from "@mantine/hooks";
+import { Student, useGetStudent } from "~/api/student";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "~/constants/path";
+import { Pagination } from "~/components/Pagination";
+import { usePagination } from "~/hooks/usePagination";
+import { useForm, zodResolver } from "@mantine/form";
+import { z } from "zod";
+import { Paginated } from "~/api/api-types";
 
 export function LoginPage() {
   // Controlling steps:
@@ -43,10 +60,20 @@ export function LoginPage() {
     },
   });
 
+  const formValidation = z.object({
+    id: z.string().min(1, "Selecione uma turma")
+  })
+  const form = useForm({
+    initialValues: {
+      id: ''
+    },
+    validate: zodResolver(formValidation)
+  })
+
   // Students:
-  const [students, setStudents] = useState([]);
-  const [studentsFilter, setStudentsFilter] = useState([]);
-  const { mutate: studentsList } = useStudentsBySchoolclass({
+  // const [students, setStudents] = useState([]);
+  const [studentsFilter, setStudentsFilter] = useState<Paginated<Student[]>>();
+  const { data: studentsList } = useStudentsBySchoolclass(form.values.id, {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
@@ -54,7 +81,6 @@ export function LoginPage() {
       );
     },
     onSuccess: (data) => {
-      setStudents(data)
       setStudentsFilter(data)
     },
   });
@@ -67,13 +93,57 @@ export function LoginPage() {
     step == 3 ? studentsList({ id: schoolClassIdChild }) : {};
   }
   function updateList() { studentsList({ id: schoolClassId }) }
+  
   function filterStudents(inputValue) {
     let filterBy = inputValue.replace(/\s/g, '').toLowerCase();
-    let result = students.items.filter((item) =>
+    let result = studentsFilter.items.filter((item) =>
       (new RegExp(filterBy)).test(item['name'].replace(/\s/g, '').toLowerCase())
     )
     setStudentsFilter({ items: result })
   }
+
+  const [studentId, setStudentId] = useState("");
+  const [studentFirstAccess, setStudentFirstAccess] = useState(false);
+  const [studentExamPerformed, setStudentExamPerformed] = useState(false);
+
+  const navigate = useNavigate();
+  const { mutate: getStudentData } = useGetStudent({
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
+    },
+    onSuccess: () => {
+      if (studentFirstAccess == true) {
+        navigate(PATH.INTRO);
+      } else if (studentFirstAccess == false && studentExamPerformed == false) {
+        navigate(PATH.EXAM);
+      } else {
+        navigate(PATH.DASHBOARD);
+      }
+    },
+  });
+
+  const { mutate: reserveStudent } = useReserveStudent({
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
+    },
+    onSuccess: () => {
+      getStudentData(studentId);
+    },
+  });
+
+  const [modal, modalHandler] = useDisclosure(false);
+  function logout(studentId: string) {
+    setStudentId(studentId);
+    modalHandler.open();
+  }
+
+  const pagination = usePagination();
 
   return (
     <BackgroundImage src={bg} h="100vh" w="100vw">
@@ -120,20 +190,137 @@ export function LoginPage() {
           </Flex>
           {step == 1 && <Step01 sendToFather={getDataFromChild} />}
           {step == 2 && (
-            <Step02
-              schoolClasses={schoolClassesOptions}
-              sendToFather={getDataFromChild}
-            />
+            // <Step02
+            //   schoolClasses={schoolClassesOptions}
+            //   sendToFather={getDataFromChild}
+            // />
+            <Stack w={400} m="auto">
+              <form onSubmit={form.onSubmit((schoolClass) => { getDataFromChild(3, schoolClass.id) })}>
+                  <Select
+                      {...form.getInputProps('id')}
+                      label="Turma"
+                      placeholder={schoolClassesOptions.length ? "Selecione" : "Sem turmas disponíveis"}
+                      data={schoolClassesOptions}
+                      styles={{
+                          label: { color: "#fff", marginBottom: 6 },
+                      }}
+                  />
+                  <Button
+                      type="submit"
+                      disabled={!form.isValid()}
+                      fullWidth
+                      mt={20}
+                  >
+                      Entrar
+                  </Button>
+              </form>
+            </Stack>
           )}
           {step == 3 && (
-            <Step03
-              schoolClassId={schoolClassId}
-              students={studentsFilter}
-              updateStudentsList={updateList}
-            />
+            <>
+              <Card py={20} px={40}>
+                <Grid columns={4}>
+                  {studentsFilter?.items?.map((student) => (
+                    <Grid.Col key={student.id} span={1} style={{ height: "100%" }}>
+                      <Box style={{ position: "relative" }}>
+                        {student.reserved && (
+                          <IconLockOpen
+                            color="#228BE6"
+                            height={20}
+                            style={{
+                              position: "absolute",
+                              top: 10,
+                              right: 10,
+                              zIndex: 1,
+                            }}
+                          />
+                        )}
+                        <Button
+                          id={student.id}
+                          onClick={() =>
+                            student.reserved
+                              ? logout(student.id)
+                              : (setStudentId(student.id),
+                                setStudentFirstAccess(student.firstAccess),
+                                setStudentExamPerformed(student.examPerformed))
+                          }
+                          style={{
+                            display: "flex",
+                            height: "100%",
+                            width: "100%",
+                            padding: "10px 20px",
+                            borderRadius: "12px",
+                            border: student.reserved
+                              ? "1px solid #E9ECEF"
+                              : "1px solid #228BE6",
+                          }}
+                          styles={{
+                            root: {
+                              background: student.reserved
+                                ? "#E9ECEF"
+                                : student.id == studentId
+                                  ? "#E7F5FF"
+                                  : "#FFF",
+                              "&:hover": {
+                                background: student.reserved ? "#B8BCC1" : "#E7F5FF",
+                              },
+                            },
+                          }}
+                        >
+                          <Stack>
+                            <Text
+                              fz="lg"
+                              c={student.reserved ? "gray.5" : "blue.6"}
+                              style={{ lineHeight: 1 }}
+                            >
+                              {student.name}
+                            </Text>
+                            <Text fz="md" c={student.reserved ? "gray.5" : "gray.7"}>
+                              {student.registry}
+                            </Text>
+                          </Stack>
+                        </Button>
+                      </Box>
+                    </Grid.Col>
+                  ))}
+                </Grid>
+                <Center mt="20px">
+                  {/* <Pagination total={students?.pagination?.totalPages} /> */}
+                  {studentsFilter && (
+                    <Pagination
+                      paginationApi={studentsFilter?.pagination ?? {}}
+                      paginationHook={pagination}
+                    />
+                  )}
+                </Center>
+              </Card>
+              <Group position="right" mt="20px">
+                <Button
+                  onClick={() =>
+                    reserveStudent({ id: schoolClassId, studentId: studentId })
+                  }
+                  disabled={!studentId.length}
+                  style={{ width: "157px" }}
+                >
+                  Entrar
+                </Button>
+              </Group>
+
+              <ModalDuplicidadeLogin
+                opened={modal}
+                onClose={modalHandler.close}
+                studentId={studentId}
+                schoolClassId={schoolClassId}
+                updateStudents={updateList}
+              />
+            </>
           )}
         </Box>
       </Center>
     </BackgroundImage>
   );
 }
+function getStudentData(studentId: any) {
+  throw new Error("Function not implemented.");
+}
+

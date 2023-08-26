@@ -1,12 +1,34 @@
-import { BackgroundImage, Center, Image, Progress } from "@mantine/core";
+import {
+  BackgroundImage,
+  Button,
+  Center,
+  Image,
+  Progress,
+} from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import bgProva from "~/assets/bgs/bg_prova2.png";
 import lousa from "~/assets/bgs/lousa.svg";
 import carteiras from "~/assets/bgs/carteiras.png";
 import { useExamProgress } from "~/stores/exam-progress";
+import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { useEffect, useRef } from "react";
 
 export function ExamLayout() {
   const examProgress = useExamProgress((state) => state.value);
+
+  const mediaTrack = useMediaTrackStore();
+  const currentAudio =
+    mediaTrack.currentTrack?.mediaType === MediaType.AUDIO
+      ? mediaTrack.currentTrack
+      : null;
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (currentAudio) {
+      void audioRef.current?.play();
+    }
+  }, [currentAudio]);
 
   return (
     <BackgroundImage
@@ -59,6 +81,31 @@ export function ExamLayout() {
           pointerEvents: "none",
         }}
       />
+      <audio
+        style={{ display: "none" }}
+        src={currentAudio?.trackUrl ?? ""}
+        ref={audioRef}
+        onPlay={() => mediaTrack.setPlayStatus(true)}
+        onPause={() => mediaTrack.setPlayStatus(false)}
+        onEnded={() => {
+          if (mediaTrack.hasQueue()) {
+            mediaTrack.playNext();
+          }
+          mediaTrack.setPlayStatus(false);
+        }}
+      />
+      {import.meta.env.DEV && (
+        <Button
+          color="red.6"
+          onClick={() => {
+            audioRef.current?.pause();
+            mediaTrack.setPlayStatus(false);
+          }}
+          style={{ position: "fixed", bottom: 150, right: 150, zIndex: 999 }}
+        >
+          Stop All Audio
+        </Button>
+      )}
     </BackgroundImage>
   );
 }

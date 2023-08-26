@@ -63,7 +63,7 @@ export function DraggableLetters({
       }),
       canDrag: !hidden && !disabled,
     }),
-    [option]
+    [option, hidden, disabled]
   );
 
   const styles: CSSProperties = {

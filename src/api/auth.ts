@@ -22,6 +22,7 @@ export type LoginResponse = {
   document: string;
   accessToken: string;
 };
+
 class AuthAPI extends API {
   static async loginAccessKey(input?: UserLogin) {
     const { data } = await this.api.post(URL.AUTH_ACCESS_KEY, input);
@@ -45,7 +46,9 @@ export function useAuthLogin(
         iat: z.number(),
       });
 
-      const token = decodeJwt(data.accessToken) as z.infer<typeof tokenValidation>;
+      const token = decodeJwt(data.accessToken) as z.infer<
+        typeof tokenValidation
+      >;
 
       tokenValidation.parse(token);
 

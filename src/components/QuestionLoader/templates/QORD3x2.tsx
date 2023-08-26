@@ -10,6 +10,7 @@ import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type Slot = string | null | QuestionOption;
 
@@ -69,9 +70,9 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   useEffect(() => {
     setSelected([]);
     setSlots(startingSlots);
-    // só pra essa linha, pois o comportamento é intencional
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question]);
+
+  const mediaTrack = useMediaTrackStore();
 
   return (
     <>
@@ -101,9 +102,9 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
         spacing={24}
         mb="auto"
       >
-        {question.options.map((option) => (
+        {question.options.map((option, inx) => (
           <DraggableLetters
-            key={option.position}
+            key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
             option={option}
             hidden={
               !!slots.find(
@@ -111,7 +112,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
                   item &&
                   typeof item !== "string" &&
                   item.position === option.position
-              )
+              ) || mediaTrack.isPlaying
             }
           />
         ))}

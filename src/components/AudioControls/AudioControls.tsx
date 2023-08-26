@@ -6,7 +6,7 @@ import {
   IconPlayerPauseFilled,
 } from "@tabler/icons-react";
 import { IconButton } from "../EduButton";
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { intervalToDuration, formatDuration } from "date-fns";
 
 const useStyles = createStyles({
@@ -16,8 +16,9 @@ const useStyles = createStyles({
 });
 
 type Props = React.AudioHTMLAttributes<HTMLAudioElement>;
+type Ref = HTMLDivElement & { play: () => void };
 
-export function AudioControls(props: Props) {
+export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -60,8 +61,11 @@ export function AudioControls(props: Props) {
 
   const { classes } = useStyles();
 
+  const play = () => void audioRef.current?.play();
+  useImperativeHandle(ref, () => ({ play, ...ref } as Ref), [ref]);
+
   return (
-    <Stack align="center" spacing="xl">
+    <Stack align="center" spacing="xl" ref={ref}>
       <Group>
         <IconButton
           icon={
@@ -116,10 +120,19 @@ export function AudioControls(props: Props) {
         ref={audioRef}
         onTimeUpdate={onTimeUpdate}
         style={{ display: "none" }}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        onPlay={(e) => {
+          props.onPlay?.(e);
+          setIsPlaying(true);
+        }}
+        onPause={(e) => {
+          props.onPause?.(e);
+          setIsPlaying(false);
+        }}
+        onEnded={(e) => {
+          props.onEnded?.(e);
+          setIsPlaying(false);
+        }}
       />
     </Stack>
   );
-}
+});

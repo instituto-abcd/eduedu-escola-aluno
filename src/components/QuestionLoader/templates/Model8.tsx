@@ -10,7 +10,7 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
 
 export function Model8({ question, answerCallback }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles } =
+  const { imageTitles, videoTitles, textTitles, audioTitles, optionArrKey } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -44,7 +44,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
         </Title>
       ))}
 
-      <Group my="auto">
+      <Group my="auto" position="apart">
         {videoTitles.map((title) => (
           <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
         ))}
@@ -59,23 +59,22 @@ export function Model8({ question, answerCallback }: ModelProps) {
         ))}
 
         <Stack align="stretch" spacing={40} w={555}>
-          {question.options
-            .sort((a, b) => a.position - b.position)
-            .map((option) => (
-              <TextOptionButton
-                key={option.description}
-                onClick={() =>
-                  setAnswer({
-                    position: option.position,
-                    positionAnswer: option.position,
-                  })
-                }
-                data-selected={answer?.position === option.position}
-                sound={option.sound_url ?? undefined}
-              >
-                {option.description}
-              </TextOptionButton>
-            ))}
+          {question.options.map((option, inx) => (
+            <TextOptionButton
+              key={optionArrKey(option, inx)}
+              onClick={() =>
+                setAnswer({
+                  position: option.position,
+                  positionAnswer: option.position,
+                })
+              }
+              data-selected={answer?.position === option.position}
+              sound={option.sound_url ?? undefined}
+              isCorrect={option.isCorrect}
+            >
+              {option.description}
+            </TextOptionButton>
+          ))}
         </Stack>
       </Group>
 

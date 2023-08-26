@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { Question } from "~/api/exam";
+import { Question, QuestionOption } from "~/api/exam";
 
 export function useQuestionHelper(question: Question) {
   const hasTitleOfType = useCallback(
@@ -30,6 +30,12 @@ export function useQuestionHelper(question: Question) {
 
   const videoTitles = getTitlesOfType("VIDEO");
 
+  function optionArrKey(option: QuestionOption, inx?: number) {
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
+      option.image_url ?? option.sound_url ?? "_"
+    })`;
+  }
+
   return {
     hasTitleOfType,
     getTitlesOfType,
@@ -37,5 +43,6 @@ export function useQuestionHelper(question: Question) {
     imageTitles,
     audioTitles,
     videoTitles,
+    optionArrKey,
   };
 }

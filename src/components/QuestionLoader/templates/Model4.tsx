@@ -26,7 +26,8 @@ const useStyles = createStyles(() => ({
 export function Model4({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<Answer | null>(null);
-  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles, optionArrKey } =
+    useQuestionHelper(question);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -48,9 +49,12 @@ export function Model4({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.map((title) => (
-        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
+        <AudioButton
+          key={title.position}
+          src={title.file_url ?? ""}
+          autoPlay={!!title.file_url}
+        />
       ))}
-
       <Stack my="auto" align="center">
         {textTitles.map((title) => (
           <Title
@@ -74,9 +78,9 @@ export function Model4({ question, answerCallback }: ModelProps) {
           />
         ))}
         <Group spacing={24}>
-          {question.options.map((option) => (
+          {question.options.map((option, inx) => (
             <OptionButton
-              key={option.position}
+              key={optionArrKey(option, inx)}
               data-selected={answer?.position === option.position}
               onClick={() =>
                 setAnswer({
@@ -85,6 +89,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                 })
               }
               sound={option.sound_url ?? undefined}
+              isCorrect={option.isCorrect}
             >
               {option.image_url && (
                 <>
@@ -107,7 +112,6 @@ export function Model4({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>

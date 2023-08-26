@@ -17,7 +17,8 @@ import { Answer, useGetExamQuestion } from "~/api/student";
 import { useEffect, useState } from "react";
 
 export function Model8Prova({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles, optionArrKey } =
+    useQuestionHelper(question);
   const [answer, setAnswer] = useState<Answer | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
@@ -60,28 +61,27 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         ))}
 
         <SimpleGrid cols={2}>
-          {question.options
-            .sort((a, b) => a.position - b.position)
-            .map((option) => (
-              <OptionButton
-                key={option.description}
-                onClick={() =>
-                  setAnswer({
-                    position: option.position,
-                    positionAnswer: option.position,
-                  })
-                }
-                data-selected={answer?.position === option.position}
-                sound={option.sound_url ?? undefined}
-              >
-                <Stack justify="space-evenly">
-                  <IconVolume size={62} />
-                  <Text color="dark.6" size={30} weight={400}>
-                    {option.position + 1}
-                  </Text>
-                </Stack>
-              </OptionButton>
-            ))}
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={optionArrKey(option, inx)}
+              onClick={() =>
+                setAnswer({
+                  position: option.position,
+                  positionAnswer: option.position,
+                })
+              }
+              data-selected={answer?.position === option.position}
+              sound={option.sound_url ?? undefined}
+              isCorrect={option.isCorrect}
+            >
+              <Stack justify="space-evenly">
+                <IconVolume size={62} />
+                <Text color="dark.6" size={30} weight={400}>
+                  {inx + 1}
+                </Text>
+              </Stack>
+            </OptionButton>
+          ))}
         </SimpleGrid>
       </Group>
 

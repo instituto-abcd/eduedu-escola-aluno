@@ -8,11 +8,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { useGetExamQuestion } from "~/api/student";
-
-/* 
-    TODO: (bug) -> se arrastar um card dentro do slot para um outro slot, 
-                   duplica o card
-*/
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type Slot = CardItem | null;
 
@@ -55,6 +51,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
   []);
 
   const { audioTitles } = useQuestionHelper(question);
+  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setSlots(question.options.map(() => null));
@@ -99,7 +96,10 @@ export function Model2({ question, answerCallback }: ModelProps) {
             <DraggableCard
               item={item}
               key={item.position}
-              hidden={!!slots.find((slot) => slot?.position === item.position)}
+              hidden={
+                !!slots.find((slot) => slot?.position === item.position) ||
+                mediaTrack.isPlaying
+              }
             />
           ))}
         </SimpleGrid>

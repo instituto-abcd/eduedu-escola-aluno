@@ -8,6 +8,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { EduButton } from "~/components/EduButton";
 import { useGetExamQuestion } from "~/api/student";
 import { VideoPlayer } from "~/components/VideoPlayer";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type Slot = CardItem | null;
 
@@ -64,16 +65,17 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
     );
   }, [question]);
 
+  const mediaTrack = useMediaTrackStore();
+
   return (
     <>
       <Group my="auto">
-        {videoTitles.map((title) => (
-          <VideoPlayer
-            src={title.file_url ?? ""}
-            key={title.description}
-            autoPlay
-          />
-        ))}
+        <VideoPlayer
+          src={videoTitles[0]?.file_url ?? ""}
+          onPlayStatusChange={mediaTrack.setPlayStatus}
+          canPlay={mediaTrack.canPlay()}
+          autoPlay
+        />
 
         <Stack>
           <SimpleGrid cols={options.length} spacing={24}>
@@ -94,7 +96,8 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
                 item={item}
                 key={item.position}
                 hidden={
-                  !!slots.find((slot) => slot?.position === item.position)
+                  !!slots.find((slot) => slot?.position === item.position) ||
+                  mediaTrack.isPlaying
                 }
               />
             ))}

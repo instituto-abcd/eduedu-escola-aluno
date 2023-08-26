@@ -7,9 +7,9 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function QME2x3Video({ question, answerCallback }: ModelProps) {
-  const { videoTitles } = useQuestionHelper(question);
   const [selected, setSelected] = useState<Answer[]>([]);
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -47,23 +47,30 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
     setSelected([]);
   }, [question]);
 
+  const { videoTitles, optionArrKey } = useQuestionHelper(question);
+  const mediaTrack = useMediaTrackStore();
+
   return (
     <>
       <Group noWrap grow spacing={75} py={40} my="auto">
         <div>
-          {videoTitles.map((title) => (
-            <VideoPlayer key={title.file_url} src={title.file_url ?? ""} />
-          ))}
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            onPlayStatusChange={mediaTrack.setPlayStatus}
+            canPlay={mediaTrack.canPlay()}
+            autoPlay
+          />
         </div>
 
         <SimpleGrid cols={2} style={{ placeItems: "center" }} spacing={24}>
-          {question.options.map((option) => (
+          {question.options.map((option, inx) => (
             <OptionButton
-              key={option.position}
+              key={optionArrKey(option, inx)}
               data-selected={
                 !!selected.find((item) => item.position === option.position)
               }
               onClick={() => selectItem(option)}
+              isCorrect={option.isCorrect}
             >
               {option.image_url && (
                 <Image

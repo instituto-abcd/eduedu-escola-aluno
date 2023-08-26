@@ -6,6 +6,8 @@ import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function QME2x2Video({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -22,6 +24,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
     });
   }
 
+  const { videoTitles } = useQuestionHelper(question);
+  const mediaTrack = useMediaTrackStore();
+
   useEffect(() => {
     setAnswer(null);
   }, [question]);
@@ -30,13 +35,12 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
     <>
       <Group noWrap grow spacing={75} py={40} my="auto">
         <div>
-          {question.titles?.map((title) => {
-            if (title.type === "VIDEO") {
-              return (
-                <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
-              );
-            }
-          })}
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            onPlayStatusChange={mediaTrack.setPlayStatus}
+            canPlay={mediaTrack.canPlay()}
+            autoPlay
+          />
         </div>
 
         <SimpleGrid cols={2} style={{ placeItems: "center" }} spacing={24}>
@@ -51,6 +55,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
                   positionAnswer: option.position,
                 })
               }
+              isCorrect={option.isCorrect}
             >
               {option.image_url && (
                 <Image

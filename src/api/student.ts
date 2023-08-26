@@ -17,6 +17,7 @@ export type Student = {
   cfo?: string;
   sea?: string;
   lct?: string;
+  reserved: boolean;
 };
 
 export type Answer = {
@@ -33,7 +34,7 @@ const KEY = {
   GET_STUDENT_PLANET_TRACK: "GET_STUDENT_PLANET_TRACK",
   GET_STUDENT_AWARDS: "GET_STUDENT_AWARDS",
   FIRST_QUESTION: "FIRST_QUESTION",
-  EXAM_EVALUATION: "EXAM_EVALUATION"
+  EXAM_EVALUATION: "EXAM_EVALUATION",
 };
 
 const URL = {
@@ -44,8 +45,7 @@ const URL = {
     `student/${id}/exam-questions/first`,
   GET_STUDENT_EXAM_QUESTIONS: (studentId: string, examId: string) =>
     `student/${studentId}/exam-questions/${examId}/answer`,
-  EXAM_EVALUATION: (id: string) =>
-  `student/${id}/exam-evaluation`,
+  EXAM_EVALUATION: (id: string) => `student/${id}/exam-evaluation`,
 };
 
 export class StudentAPI extends API {
@@ -161,7 +161,9 @@ export function useGetExamQuestion(
   return useMutation(handler, options);
 }
 
-export function useSubmitExamEvaluation(options?: QueryOptions<Question, typeof KEY.EXAM_EVALUATION>) {
+export function useSubmitExamEvaluation(
+  options?: QueryOptions<Question, typeof KEY.EXAM_EVALUATION>
+) {
   const handler = useCallback(function () {
     return StudentAPI.submitExamEvaluation(useStudent.getState().id);
   }, []);

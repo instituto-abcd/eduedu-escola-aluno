@@ -1,8 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API } from "./base";
 import { useCallback } from "react";
-import { MutationOptions, Paginated, PaginationParams, QueryOptions } from "./api-types";
-import { Student } from "./student";
+import {
+  MutationOptions,
+  Paginated,
+  PaginationParams,
+  QueryOptions,
+} from "./api-types";
 
 const URL = {
   GET_STUDENTS_BY_ID: (id: string) => `schoolClass/${id}/students`,
@@ -19,6 +23,16 @@ type ReserveStudent = {
   studentId: string;
 };
 
+export type SimplifiedStudent = {
+  id: string;
+  name: string;
+  registry: string;
+  status: string;
+  reserved: boolean;
+  examPerformed: boolean;
+  firstAccess: boolean;
+};
+
 export type SchoolGrade =
   | "CHILDREN"
   | "FIRST_GRADE"
@@ -27,10 +41,16 @@ export type SchoolGrade =
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
 export class SchoolClassAPI extends API {
-  static async getStudentsById(id: string, params?: PaginationParams) {
-    const { data } = await this.api.get<Paginated<Student[]>>(URL.GET_STUDENTS_BY_ID(id), {
-      params,
-    });
+  static async getStudentsById(
+    id: string,
+    params?: PaginationParams & { name?: string }
+  ) {
+    const { data } = await this.api.get<Paginated<SimplifiedStudent>>(
+      URL.GET_STUDENTS_BY_ID(id),
+      {
+        params,
+      }
+    );
     return data;
   }
 
@@ -51,19 +71,33 @@ export class SchoolClassAPI extends API {
 
 export function useStudentsBySchoolclass(
   schoolClassId: string,
-  options?: QueryOptions<Paginated<Student[]>, [typeof KEY.GET_STUDENTS_BY_ID]>
+  options?: QueryOptions<
+    Paginated<SimplifiedStudent>,
+    Array<string | number | undefined>
+  > & { search?: { name?: string } }
 ) {
   const handler = useCallback(
     function () {
       return SchoolClassAPI.getStudentsById(schoolClassId, {
         "page-number": options?.page,
         "page-size": options?.pageSize,
+        name: options?.search?.name,
       });
     },
-    [options?.page, options?.pageSize]
+    [options?.page, options?.pageSize, options?.search?.name, schoolClassId]
   );
 
-  return useQuery([KEY.GET_STUDENTS_BY_ID], handler, options);
+  return useQuery(
+    [
+      KEY.GET_STUDENTS_BY_ID,
+      schoolClassId,
+      options?.search?.name ?? "",
+      options?.page,
+      options?.pageSize,
+    ],
+    handler,
+    options
+  );
 }
 
 export function useReserveStudent(

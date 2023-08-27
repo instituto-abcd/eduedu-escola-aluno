@@ -35,6 +35,7 @@ import { useAuthLogin } from "~/api/auth";
 import { StudentGridCard } from "~/components/StudentGridCard/StudentGridCard";
 import { successNotification } from "~/utils/successNotification";
 import { PATH } from "~/constants/path";
+import { useStudent } from "~/stores/student";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -99,6 +100,8 @@ export function LoginPage() {
           (student) => student.id === vars.studentId
         );
         if (!student) return;
+
+        useStudent.setState({ ...student });
 
         if (student.firstAccess == true) {
           navigate(PATH.INTRO);

@@ -40,7 +40,6 @@ export function Planets({ planets }: componentProps) {
             </Box>
 
             <Carousel
-                loop
                 align="start"
                 breakpoints={[
                     { maxWidth: 'md', slideSize: '50%' },

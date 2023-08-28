@@ -28,7 +28,9 @@ export function IntroPage() {
               setCanGoToExam(true);
             }}
           ></video>
-          <Button disabled={!canGoToExam} onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button>
+          {/* TODO: Retornar disable do botão abaixo */}
+          {/* <Button disabled={!canGoToExam} onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button> */}
+          <Button onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button>
         </Stack>
       </Center>
     </BackgroundImage>

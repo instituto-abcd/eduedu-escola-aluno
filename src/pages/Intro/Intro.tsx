@@ -1,4 +1,5 @@
 import { BackgroundImage, Button, Center, Stack } from "@mantine/core";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bgIntro from "~/assets/bgs/bg-intro-video.png";
 import { PATH } from "~/constants/path";
@@ -6,26 +7,28 @@ import { PATH } from "~/constants/path";
 export function IntroPage() {
   const navigate = useNavigate();
 
+  const [canGoToExam, setCanGoToExam] = useState(false);
+
   return (
-    <BackgroundImage
-      src={bgIntro}
-      maw={1440}
-      mih="100vh"
-      mx="auto"
-      p={0}
-      styles={{ main: { padding: 0, position: "relative" } }}
-    >
+    <BackgroundImage src={bgIntro} h="100vh">
       <Center h="100vh">
         <Stack>
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/TA-NanjtvGI"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          ></iframe>
-          <Button onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button>
+          <video
+            autoPlay
+            src="https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/student%2FABERTURA.mp4?alt=media&token=5776a00f-1b23-4953-beab-550d71f891e9"
+            width={720}
+            height={540}
+            onLoad={() => {
+              setCanGoToExam(false);
+            }}
+            onPlay={() => {
+              setCanGoToExam(false);
+            }}
+            onPause={() => {
+              setCanGoToExam(true);
+            }}
+          ></video>
+          <Button disabled={!canGoToExam} onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button>
         </Stack>
       </Center>
     </BackgroundImage>

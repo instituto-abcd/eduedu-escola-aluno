@@ -17,7 +17,7 @@ export function ModalAwards({ opened, onClose, image }: Props) {
 
     const awardLottie = AWARDS_IMAGES.filter((item) => item.name == image);
     const defaultOptions = {
-        loop: true,
+        loop: false,
         autoplay: true,
         animationData: awardLottie.length ? awardLottie[0]['lottie'] : {},
         rendererSettings: {

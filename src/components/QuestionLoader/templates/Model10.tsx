@@ -10,7 +10,8 @@ import { usePlanetAnswer } from "~/api/planet";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, optionArrKey } =
+    useQuestionHelper(question);
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -63,27 +64,40 @@ export function Model10({ question, answerCallback }: ModelProps) {
         ))}
 
         <SimpleGrid cols={2}>
-          {question.options.map((option) => (
+          {question.options.map((option, inx) => (
             <OptionButton
-              key={option.description}
+              key={optionArrKey(option, inx)}
               onClick={() =>
                 setAnswer({
                   ...option,
                   positionAnswer: question.orderedAnswer
-                    ? answer?.position
+                    ? option.position
                     : undefined,
                 })
               }
-              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
+              data-selected={
+                JSON.stringify(answer) ===
+                JSON.stringify({
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? option.position
+                    : undefined,
+                })
+              }
               isCorrect={option.isCorrect}
+              sound={option.sound_url ?? undefined}
             >
               {option.description}
               {option.image_url && (
-                <Image
+                <img
                   src={option.image_url}
                   alt={option.description}
                   width={100}
-                  mx="auto"
+                  style={{
+                    maxHeight: 140,
+                    objectFit: "contain",
+                    marginInline: "auto",
+                  }}
                 />
               )}
             </OptionButton>

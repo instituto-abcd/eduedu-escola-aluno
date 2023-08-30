@@ -74,7 +74,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
                     : undefined,
                 })
               }
-              data-selected={answer?.position === option.position}
+              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               isCorrect={option.isCorrect}
             >
               {option.description}

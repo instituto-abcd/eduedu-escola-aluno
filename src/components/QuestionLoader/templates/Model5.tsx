@@ -4,12 +4,13 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { useState } from "react";
+import { QuestionOption } from "~/api/exam";
 
 export function Model5({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -34,22 +35,15 @@ export function Model5({ question, answerCallback }: ModelProps) {
       </Title>
 
       <SimpleGrid cols={2} w="full" my="auto">
-        {question.options
-          .sort((a, b) => a.position - b.position)
-          .map((option) => (
-            <TextOptionButton
-              key={option.position}
-              onClick={() =>
-                setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
-                })
-              }
-              data-selected={answer?.position === option.position}
-            >
-              {option.description}
-            </TextOptionButton>
-          ))}
+        {question.options.map((option) => (
+          <TextOptionButton
+            key={option.position}
+            onClick={() => setAnswer(option)}
+            data-selected={JSON.stringify(answer) === JSON.stringify(option)}
+          >
+            {option.description}
+          </TextOptionButton>
+        ))}
       </SimpleGrid>
 
       <EduButton

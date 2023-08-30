@@ -8,15 +8,26 @@ import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { IconMessageCircle2 } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model33({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
   const mediaTrack = useMediaTrackStore();
 
-  // TODO - integrar com o backend
-  const isLoading = false;
-  const submitAnswer = () => answerCallback(question);
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (mediaTrack.isPlaying) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
 
   useEffect(() => {
     if (audioTitles[0].file_url && !mediaTrack.isPlaying) {

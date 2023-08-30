@@ -25,7 +25,11 @@ type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   canPlay?: boolean;
 };
 
-export function VideoPlayer({ onPlayStatusChange, canPlay, ...props }: Props) {
+export function VideoPlayer({
+  onPlayStatusChange,
+  canPlay = true,
+  ...props
+}: Props) {
   const { classes } = useStyles();
   const ref = useRef<HTMLVideoElement>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);

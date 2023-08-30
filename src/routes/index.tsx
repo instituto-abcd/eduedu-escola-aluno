@@ -26,7 +26,7 @@ export function AppRoutes() {
           <Route index Component={ExamRoutes} />
         </Route>
         <Route path={nested(PATH.PLANET)} Component={ExamLayout}>
-          <Route index Component={PlanetRoutes} />
+          <Route path="*" Component={PlanetRoutes} />
         </Route>
         <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
         <Route path={nested(PATH.INTRO)} Component={IntroPage} />

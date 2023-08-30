@@ -1,1 +1,1 @@
-export { PlanetPage } from "./Exam";
+export { PlanetPage } from "./Planet";

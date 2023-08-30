@@ -4,7 +4,7 @@ import { API } from "./base";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { SchoolGrade, SchoolPeriod } from "./school-class";
 import { useStudent } from "~/stores/student";
-import { Question } from "./exam";
+import { Question, QuestionOption } from "./exam";
 
 export type Student = {
   id: string;
@@ -20,18 +20,46 @@ export type Student = {
   reserved: boolean;
 };
 
-export type Answer = {
+export type Planet = {
+  avatar_url: string;
+  axis_code: string;
+  domain_code: string;
+  enable: boolean;
+  id: string;
+  level: string;
+  next_planet_id: string | null;
   position: number;
-  positionAnswer: number;
+  status: string;
+  title: string;
+  questions: Question[];
+};
+
+export type SimplifiedPlanet = {
+  planetId: string;
+  planetName: string;
+  planetAvatar: string;
+  score: number;
+  stars: number;
+  canExecutePlanet: boolean;
+};
+
+export type PlanetTrack = {
+  studentId: string;
+  examId: string;
+  examDate: Date;
+  current: boolean;
+  planetTrack: SimplifiedPlanet[];
+  examPerformed: boolean;
 };
 
 type GetQuestionInput = {
   questionId: string | number;
-  optionsAnswered: Answer[];
+  optionsAnswered: QuestionOption[];
 };
 
 const KEY = {
-  GET_STUDENT_PLANET_TRACK: "GET_STUDENT_PLANET_TRACK",
+  STUDENT: "STUDENT",
+  PLANET_TRACK: "PLANET_TRACK",
   GET_STUDENT_AWARDS: "GET_STUDENT_AWARDS",
   FIRST_QUESTION: "FIRST_QUESTION",
   EXAM_EVALUATION: "EXAM_EVALUATION",
@@ -49,21 +77,26 @@ const URL = {
 };
 
 export class StudentAPI extends API {
-  // TODO: tipar retorno
-  static async getStudent(id: string) {
-    const { data } = await this.api.get(URL.GET_STUDENT(id));
+  static studentId = useStudent.getState().id;
+
+  static async getStudent() {
+    const { data } = await this.api.get<Student>(
+      URL.GET_STUDENT(this.studentId)
+    );
+    return data;
+  }
+
+  static async getPlanetTrack() {
+    const { data } = await this.api.get<PlanetTrack>(
+      URL.GET_STUDENT_PLANET_TRACK(this.studentId)
+    );
+
     return data;
   }
 
   // TODO: tipar retorno
-  static async getStudentPlanetTrack(id: string) {
-    const { data } = await this.api.get(URL.GET_STUDENT_PLANET_TRACK(id));
-    return data;
-  }
-
-  // TODO: tipar retorno
-  static async getStudentAwards(id: string) {
-    const { data } = await this.api.get(URL.GET_STUDENT_AWARDS(id));
+  static async getStudentAwards() {
+    const { data } = await this.api.get(URL.GET_STUDENT_AWARDS(this.studentId));
     return data;
   }
 
@@ -74,10 +107,10 @@ export class StudentAPI extends API {
     return data;
   }
 
-  static async getExamQuestion(studentId: string, input: GetQuestionInput) {
+  static async getExamQuestion(input: GetQuestionInput) {
     const { data } = await this.api.post<Question | { examCompleted: true }>(
       URL.GET_STUDENT_EXAM_QUESTIONS(
-        studentId,
+        this.studentId,
         "fa387b6c-7ecf-4752-aeb3-c810a912c421" // TODO: pegar id do exam
       ),
       input
@@ -86,53 +119,26 @@ export class StudentAPI extends API {
     return data;
   }
 
-  static async submitExamEvaluation(studentId: string) {
-    const { data } = await this.api.post(URL.EXAM_EVALUATION(studentId));
+  static async submitExamEvaluation() {
+    const { data } = await this.api.post(URL.EXAM_EVALUATION(this.studentId));
     return data;
   }
 }
 
-export function useGetStudent(options?: MutationOptions) {
-  const handler = useCallback(function (id: string) {
-    return StudentAPI.getStudent(id);
-  }, []);
-
-  return useMutation(handler, {
-    ...options,
-
-    onSuccess: (data, vars, ctx) => {
-      useStudent.setState({ ...data });
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
-}
-
-// TODO: tipar mutationoptions
-export function useGetStudentPlanetTrackMutation(options?: MutationOptions) {
-  const handler = useCallback(function (id: string) {
-    return StudentAPI.getStudentPlanetTrack(id);
-  }, []);
-
-  return useMutation(handler, options);
-}
-
-// TODO: tipar queryoptions
-export function useGetStudentPlanetTrackQuery(options?: QueryOptions) {
+export function useGetPlanetTrack(
+  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
+) {
   const handler = useCallback(function () {
-    return StudentAPI.getStudentPlanetTrack(useStudent.getState().id);
+    return StudentAPI.getPlanetTrack();
   }, []);
 
-  return useQuery(
-    [KEY.GET_STUDENT_PLANET_TRACK, options?.search],
-    handler,
-    options
-  );
+  return useQuery([KEY.PLANET_TRACK], handler, options);
 }
 
 // TODO: tipar queryoptions
 export function useGetStudentAwardsQuery(options?: QueryOptions) {
   const handler = useCallback(function () {
-    return StudentAPI.getStudentAwards(useStudent.getState().id);
+    return StudentAPI.getStudentAwards();
   }, []);
 
   return useQuery([KEY.GET_STUDENT_AWARDS, options?.search], handler, options);

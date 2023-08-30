@@ -14,10 +14,11 @@ import { useEffect, useState } from "react";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { usePlanetAnswer } from "~/api/planet";
 
 // TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
 
-export function Model27({ question }: ModelProps) {
+export function Model27({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
@@ -35,9 +36,25 @@ export function Model27({ question }: ModelProps) {
     setSlideIndex(slideIndex - 1);
   }
 
-  // TODO: implementar
-  const submitAnswer = () => alert("TODO - implementar");
-  const isLoading = false;
+  const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (disabled) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
+
+  useEffect(() => {
+    setSlideIndex(0);
+  }, [question]);
 
   useEffect(() => {
     if (mediaTrack.isPlaying) return;
@@ -50,17 +67,33 @@ export function Model27({ question }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title) => (
-        <AudioButton src={title.file_url ?? ""} key={title.file_url} autoPlay />
-      ))}
+      {audioTitles
+        .filter((title) => !!title.file_url)
+        .map((title) => (
+          <AudioButton
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            autoPlay
+          />
+        ))}
 
       <Stack spacing={24} align="center" my="auto">
-        <Image
-          src={currentSlide.image_url}
-          alt={currentSlide.description}
-          width={280}
-          height={280}
-        />
+        {currentSlide.image_url && (
+          <Image
+            src={currentSlide.image_url}
+            alt={currentSlide.description}
+            width="auto"
+            height={currentSlide.description ? 140 : 280}
+          />
+        )}
+        {currentSlide.description && (
+          <Text
+            color="dark.3"
+            align="center"
+            dangerouslySetInnerHTML={{ __html: currentSlide.description }}
+            maw={800}
+          />
+        )}
         <Text color="dark.3" size={20} align="center">
           {question.description}
         </Text>
@@ -74,10 +107,7 @@ export function Model27({ question }: ModelProps) {
           </TextOptionButton>
         </Group>
       </Stack>
-      <EduButton
-        disabled={slideIndex + 1 < totalSlides || mediaTrack.isPlaying}
-        onClick={submitAnswer}
-      >
+      <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
       <LoadingOverlay visible={isLoading} />

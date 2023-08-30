@@ -4,17 +4,15 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
-
-// TODO: desvincular MODEL10 em prova e planeta
-// motivo: em prova se usa o POSITION pra marcar a resposta, em planeta está nulo (será usado "description" ❓)
+import { QuestionOption } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model10({ question, answerCallback }: ModelProps) {
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
   });
 
@@ -22,6 +20,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
     if (answer === null) return;
 
     mutate({
+      planetId: question.planet_id,
       questionId: question.id,
       optionsAnswered: [answer],
     });
@@ -41,14 +40,16 @@ export function Model10({ question, answerCallback }: ModelProps) {
             autoPlay
           />
         ))}
-
-        {/* TODO: botão livro? */}
-        {/* <IconButton icon={<IconBook size={34} />} variant="black" /> */}
       </Group>
+
       {textTitles.map((title) => (
-        <Title color="dark.3" size={30} align="center" key={title.description}>
-          {title.description}
-        </Title>
+        <Title
+          color="dark.3"
+          size={30}
+          align="center"
+          key={title.description}
+          dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+        />
       ))}
 
       <Group spacing={100} my="auto">
@@ -67,14 +68,24 @@ export function Model10({ question, answerCallback }: ModelProps) {
               key={option.description}
               onClick={() =>
                 setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? answer?.position
+                    : undefined,
                 })
               }
               data-selected={answer?.position === option.position}
               isCorrect={option.isCorrect}
             >
               {option.description}
+              {option.image_url && (
+                <Image
+                  src={option.image_url}
+                  alt={option.description}
+                  width={100}
+                  mx="auto"
+                />
+              )}
             </OptionButton>
           ))}
         </SimpleGrid>

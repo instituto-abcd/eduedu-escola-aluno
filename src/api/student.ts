@@ -161,7 +161,7 @@ export function useGetExamQuestion(
   >
 ) {
   const handler = useCallback(function (input: GetQuestionInput) {
-    return StudentAPI.getExamQuestion(useStudent.getState().id, input);
+    return StudentAPI.getExamQuestion(input);
   }, []);
 
   return useMutation(handler, options);

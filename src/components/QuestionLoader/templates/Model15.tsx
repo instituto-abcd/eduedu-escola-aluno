@@ -1,18 +1,38 @@
-import { Group } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { Group, LoadingOverlay } from "@mantine/core";
+import { ModelProps } from ".";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import { EduButton } from "~/components/EduButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { usePlanetAnswer } from "~/api/planet";
 
-export function Model15({ question }: { question: Question }) {
+export function Model15({ question, answerCallback }: ModelProps) {
+  const { videoTitles } = useQuestionHelper(question);
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
-
-      <Group position="apart" spacing={137}>
-        <video width="320" height="240" controls>
-          <source src="" type="video/mp4" />
-        </video>
+      <Group my="auto">
+        {videoTitles.map((title) => (
+          <VideoPlayer
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            autoPlay
+          />
+        ))}
       </Group>
+      <EduButton onClick={submitAnswer}>Continuar</EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

@@ -1,79 +1,111 @@
-import { Box, Grid, Group, Image, Stack } from "@mantine/core";
-import { useCallback, useState } from "react";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { ArrowPlanet } from "~/components/ArrowPlanet/ArrowPlanet";
-import { EduButton } from "~/components/EduButton/EduButton";
-import { produce } from "immer";
-import type { CardItem } from "~/components/DraggableCard/DraggableCard";
-import { DragSlotPileCard, DraggablePileCard } from "~/components/DraggablePileCard";
+import { Group, Image, LoadingOverlay } from "@mantine/core";
+import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import arrowLeft from "~/assets/planets/arrow-left-red.png";
+import arrowRight from "~/assets/planets/arrow-right-green.png";
+import { useDrop } from "react-dnd";
+import { forwardRef, useEffect, useState } from "react";
+import { CardStack } from "~/components/CardStack";
+import { QuestionOption } from "~/api/exam";
+import { EduButton } from "~/components/EduButton";
+import { usePlanetAnswer } from "~/api/planet";
 
-type Slot = CardItem | null;
+export function Model12({ question, answerCallback }: ModelProps) {
+  const { audioTitles, imageTitles } = useQuestionHelper(question);
+  const [answers, setAnswers] = useState<QuestionOption[]>([]);
+  const [stack, setStack] = useState<QuestionOption[]>(question.options);
 
-export function Model12({ question }: { question: Question }) {
-  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
+  const [, dropLeft] = useDrop({
+    accept: "ANSWER_CARD",
+    drop: (option: QuestionOption) => {
+      setAnswers((state) => [...state, { ...option, positionAnswer: 1 }]);
+      setStack(
+        stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
+      );
+    },
+  });
 
-  const [options] = useState<CardItem[]>(
-    question.options.map((option) => ({
-      id: option.position,
-      type: "ANSWER_CARD",
-      imageUrl: option.image_url ?? "",
-      description: option.description,
-      position: option.position,
-    }))
-  );
+  const [, dropRight] = useDrop({
+    accept: "ANSWER_CARD",
+    drop: (option: QuestionOption) => {
+      setAnswers((state) => [...state, { ...option, positionAnswer: 2 }]);
+      setStack(
+        stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
+      );
+    },
+  });
 
-  const handleDrop = useCallback(function (
-    item: CardItem | null,
-    index: number
-  ) {
-    setSlots((state) =>
-      produce(state, (draft) => {
-        draft[index] = item;
-      })
-    );
-  },
-    []);
+  const disabled = answers.length < question.options.length;
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (disabled) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: answers,
+    });
+  }
+
+  useEffect(() => {
+    setAnswers([]);
+  }, [question]);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
-      <Group position="apart">
-        <Stack align="center">
-          <Image src={question.titles[0].file_url} width={269} height={175} mb={20} />
-          {/* TODO: understand what should be the behavior here */}
-          {/* {slots.map((slot, inx) => (
-            <DragSlotPileCard
-              key={inx}
-              accept="ANSWER_CARD"
-              onDrop={(item) => handleDrop(item, inx)}
-              item={slot}
-              onClear={() => handleDrop(null, inx)}
-            />
-          ))} */}
+      {audioTitles.length > 0 &&
+        audioTitles
+          .filter((title) => title.file_url)
+          .map((title) => (
+            <AudioButton src={title.file_url!} key={title.file_url} />
+          ))}
 
-          <Grid columns={6}>
-            <Grid.Col span={1}>
-              <ArrowPlanet direction="prev" />
-            </Grid.Col>
-            <Grid.Col span={3}>
-              <Box style={{ position: 'relative' }}>
-                {options
-                  .sort((a, b) => a.position - b.position)
-                  .map((item, inx) => (
-                    <DraggablePileCard
-                      item={item}
-                      key={item.id}
-                      hidden={!!slots.find((slot) => slot?.id === item.id)}
-                    />
-                  ))}
-              </Box>
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <ArrowPlanet direction="next" />
-            </Grid.Col>
-          </Grid>
-        </Stack>
+      {imageTitles[0] && (
+        <Image src={imageTitles[0].file_url} width={200} height="auto" />
+      )}
+
+      <Group position="apart" spacing={52} align="center">
+        <DropYesOrNo direction="left" ref={dropLeft} />
+        <CardStack
+          options={stack}
+          cardProps={{ variant: "wide", imageOnly: true }}
+        />
+        <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
+
+      <EduButton disabled={disabled} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }
+
+const DropYesOrNo = forwardRef<HTMLDivElement, { direction: "left" | "right" }>(
+  (props, ref) => {
+    return (
+      <div
+        style={{
+          width: 170,
+          height: 198,
+          backgroundColor: props.direction === "left" ? "#FFE3E3" : "#D3F9D8",
+          display: "grid",
+          placeItems: "center",
+          borderRadius: 16,
+        }}
+        ref={ref}
+      >
+        <Image
+          src={props.direction === "left" ? arrowLeft : arrowRight}
+          width={50}
+          height="auto"
+        />
+      </div>
+    );
+  }
+);

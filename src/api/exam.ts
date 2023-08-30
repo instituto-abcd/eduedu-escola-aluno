@@ -6,6 +6,7 @@ export type QuestionOption = {
   position: number;
   sound_name: string | null;
   sound_url: string | null;
+  positionAnswer?: number;
 };
 
 export enum QuestionTitleClassification {
@@ -37,9 +38,12 @@ export type Question = {
   school_year: number;
   titles: QuestionTitle[];
   progress?: number;
+  status?: string;
+  planet_id: string;
   model_id:
     | "MODEL1"
     | "MODEL10"
+    | "MODEL10-PROVA"
     | "MODEL11"
     | "MODEL12"
     | "MODEL13"

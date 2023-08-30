@@ -11,8 +11,6 @@ import { EduButton } from "~/components/EduButton";
 import { QuestionTitleClassification } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 
-// TODO: questão B (retry) perde o autoplay
-
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
   const { audioTitles, optionArrKey } = useQuestionHelper(question);
 

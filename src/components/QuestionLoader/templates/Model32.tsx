@@ -9,13 +9,13 @@ import {
   createStyles,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
-import { QuestionTitleClassification } from "~/api/exam";
+import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -34,7 +34,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
   const { textTitles, imageTitles, audioTitles, optionArrKey } =
     useQuestionHelper(question);
 
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -45,7 +45,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
 
     mutate({
       questionId: question.id,
-      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
+      optionsAnswered: [answer],
     });
   }
 
@@ -55,13 +55,15 @@ export function Model32({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title) => (
-        <AudioButton
-          key={title.position}
-          src={title.file_url ?? ""}
-          autoPlay={!!title.file_url}
-        />
-      ))}
+      {audioTitles
+        .filter((title) => !!title.file_url)
+        .map((title) => (
+          <AudioButton
+            key={title.position}
+            src={title.file_url ?? ""}
+            autoPlay={!!title.file_url}
+          />
+        ))}
 
       <Title color="dark.3" size={30} align="center">
         {
@@ -72,7 +74,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
         }
       </Title>
 
-      <Group noWrap grow spacing={50}>
+      <Group noWrap grow spacing={50} my="auto">
         <ScrollArea h={290} px={30} type="always">
           <Stack align="stretch" spacing={20} py={10}>
             <Text
@@ -86,14 +88,16 @@ export function Model32({ question, answerCallback }: ModelProps) {
               }}
               className={classes.typography}
             />
-            {imageTitles.map((title) => (
-              <Image
-                src={title.file_url}
-                key={title.file_url}
-                width={204}
-                mx="auto"
-              />
-            ))}
+            {imageTitles
+              .filter((title) => !!title.file_url)
+              .map((title) => (
+                <Image
+                  src={title.file_url}
+                  key={title.file_url}
+                  width={204}
+                  mx="auto"
+                />
+              ))}
           </Stack>
         </ScrollArea>
         <Stack>
@@ -110,13 +114,23 @@ export function Model32({ question, answerCallback }: ModelProps) {
               key={optionArrKey(option, inx)}
               onClick={() =>
                 setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
-                })
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? option.position
+                    : undefined,
+                } as QuestionOption)
               }
-              data-selected={answer?.position === option.position}
+              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               sound={option.sound_url ?? undefined}
               isCorrect={option.isCorrect}
+              style={{
+                maxWidth: 440,
+                width: 440,
+                minWidth: "auto",
+                wordWrap: "break-word",
+                wordBreak: "break-word",
+                textAlign: "center",
+              }}
             >
               {option.description}
             </TextOptionButton>

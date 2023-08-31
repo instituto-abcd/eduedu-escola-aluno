@@ -1,20 +1,116 @@
-import { Center, Group, SimpleGrid, Image, Text } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
+import {
+  Group,
+  Image,
+  Text,
+  Space,
+  Stack,
+  LoadingOverlay,
+} from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
+import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { useEffect, useState } from "react";
+import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { TextOptionButton } from "~/components/OptionButton";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { usePlanetAnswer } from "~/api/planet";
 
-export function Model27({ question }: { question: Question }) {
+// TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
+
+export function Model27({ question, answerCallback }: ModelProps) {
+  const { audioTitles } = useQuestionHelper(question);
+  const mediaTrack = useMediaTrackStore();
+
+  const totalSlides = question.options.length;
+  const [slideIndex, setSlideIndex] = useState(0);
+  const currentSlide = question.options[slideIndex];
+
+  function nextSlide() {
+    if (slideIndex + 1 >= totalSlides) return;
+    setSlideIndex(slideIndex + 1);
+  }
+
+  function previousSlide() {
+    if (slideIndex - 1 < 0) return;
+    setSlideIndex(slideIndex - 1);
+  }
+
+  const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (disabled) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
+
+  useEffect(() => {
+    setSlideIndex(0);
+  }, [question]);
+
+  useEffect(() => {
+    if (mediaTrack.isPlaying) return;
+    mediaTrack.play({
+      mediaType: MediaType.AUDIO,
+      trackId: currentSlide.sound_url ?? "",
+      trackUrl: currentSlide.sound_url ?? "",
+    });
+  }, [slideIndex]);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles
+        .filter((title) => !!title.file_url)
+        .map((title) => (
+          <AudioButton
+            src={title.file_url ?? ""}
+            key={title.file_url}
+            autoPlay
+          />
+        ))}
 
-      <Group position="apart" spacing={137}>
-
-        <SimpleGrid>
-          <Image src="https://place-hold.it/362" width={269} height={175} mb={20} />
-          <Text style={{ textAlign: 'center' }}>Este é o meu bairro</Text>
-        </SimpleGrid>
-      </Group>
+      <Stack spacing={24} align="center" my="auto">
+        {currentSlide.image_url && (
+          <Image
+            src={currentSlide.image_url}
+            alt={currentSlide.description}
+            width="auto"
+            height={currentSlide.description ? 140 : 280}
+          />
+        )}
+        {currentSlide.description && (
+          <Text
+            color="dark.3"
+            align="center"
+            dangerouslySetInnerHTML={{ __html: currentSlide.description }}
+            maw={800}
+          />
+        )}
+        <Text color="dark.3" size={20} align="center">
+          {question.description}
+        </Text>
+        <Space h={28} />
+        <Group position="center">
+          <TextOptionButton onClick={previousSlide}>
+            <IconChevronLeft size={40} />
+          </TextOptionButton>
+          <TextOptionButton onClick={nextSlide}>
+            <IconChevronRight size={40} />
+          </TextOptionButton>
+        </Group>
+      </Stack>
+      <EduButton disabled={disabled} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

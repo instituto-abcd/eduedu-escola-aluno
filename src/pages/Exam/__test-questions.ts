@@ -1,4 +1,4 @@
-import { Question } from "~/api/exam";
+import { Question, QuestionTitleClassification } from "~/api/exam";
 
 export const testQuestions: { [key in Question["model_id"]]?: Question[] } = {
   QORD3x2: [
@@ -185,6 +185,95 @@ export const testQuestions: { [key in Question["model_id"]]?: Question[] } = {
       school_year: 1,
       multiplesAnswer: false,
       order: 7,
+    },
+    {
+      orderedAnswer: true,
+      level: 2,
+      options: [
+        {
+          image_name: "escrita_sa",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_sa.svg?alt=media&token=53461055-dd74-47b5-8765-af3388129c02",
+          sound_name: "",
+          description: "",
+          position: 0,
+          isCorrect: true,
+        },
+        {
+          image_name: "escrita_no",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_no.svg?alt=media&token=93181618-c457-4a54-9da2-2ba6be5cd1a1",
+          sound_name: "",
+          description: "",
+          position: 5,
+          isCorrect: false,
+        },
+        {
+          image_name: "escrita_to",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_to.svg?alt=media&token=c7596280-62f3-4129-ab3b-54e1a4eaab5a",
+          sound_name: "",
+          description: "",
+          position: 3,
+          isCorrect: false,
+        },
+        {
+          image_name: "escrita_ra",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_ra.svg?alt=media&token=fdf7c728-37c3-4659-945a-c392d38495db",
+          sound_name: "",
+          description: "",
+          position: 2,
+          isCorrect: false,
+        },
+        {
+          image_name: "escrita_po",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_po.svg?alt=media&token=ece23949-979c-4cf6-95f8-41a0f44d5445",
+          sound_name: "",
+          description: "",
+          position: 1,
+          isCorrect: true,
+        },
+        {
+          image_name: "escrita_so",
+          sound_url: null,
+          image_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Fimage%2Fescrita_so.svg?alt=media&token=dca0d18b-2c82-41e1-acd5-d938cc211195",
+          sound_name: "",
+          description: "",
+          position: 4,
+          isCorrect: false,
+        },
+      ],
+      description:
+        "A palavra MATO é formada por dois pedaços MA - TO. Quais dois pedaços formam a palavra SAPO?",
+      id: 18,
+      axis_code: "EA",
+      model_id: "QORD3x2",
+      titles: [
+        {
+          file_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Fea9b_enunciado.mp3?alt=media&token=08182567-98b2-4084-8de4-924d76478fd2",
+          file_name: "EA9B_Enunciado.mp3",
+          description:
+            "A palavra MATO é formada por dois pedaços MA - TO. Quais dois pedaços formam a palavra SAPO?",
+          position: 1,
+          placeholder: "",
+          type: "AUDIO",
+          classification: null,
+        },
+      ],
+      category: "B",
+      school_year: 1,
+      multiplesAnswer: false,
+      order: 7,
+      progress: 26.32,
     },
   ],
   MODEL2: [
@@ -680,6 +769,99 @@ export const testQuestions: { [key in Question["model_id"]]?: Question[] } = {
       school_year: 2,
       multiplesAnswer: false,
       order: 13,
+    },
+  ],
+  MODEL32: [
+    {
+      orderedAnswer: false,
+      level: 4,
+      options: [
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "Porque ela não conseguiu pegar as uvas.",
+          position: 0,
+          isCorrect: true,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "Porque ela não gostava de uvas.",
+          position: 1,
+          isCorrect: false,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "Porque ela estava com fome.",
+          position: 2,
+          isCorrect: false,
+        },
+        {
+          image_name: "",
+          sound_url: null,
+          image_url: null,
+          sound_name: "",
+          description: "Porque as uvas ainda não estavam maduras.",
+          position: 3,
+          isCorrect: false,
+        },
+      ],
+      description:
+        "<h1>A RAPOSA E A UVA</h1><br/>Era uma vez uma raposa que estava sem comer havia muitos dias. Ela foi passear no pomar e encontrou um lindo cacho de uvas.<br/><br/>O cacho estava no alto de uma parreira, e a raposa decidiu se esforçar para apanhá-lo. Ela deu muitos pulos para tentar alcançar, mas, depois de muitas tentativas, ficou exausta e continuava faminta. Então, a raposa deu de ombros e resolveu ir embora.<br/><br/>Desapontada, a raposa disse:<br/><br/>— Estas uvas estão verdes mesmo... Nem quero mais comê-las.",
+      id: 90,
+      axis_code: "LC",
+      model_id: "MODEL32",
+      titles: [
+        {
+          file_url: null,
+          file_name: "",
+          description:
+            "<h1>A RAPOSA E A UVA</h1><br/>Era uma vez uma raposa que estava sem comer havia muitos dias. Ela foi passear no pomar e encontrou um lindo cacho de uvas.<br/><br/>O cacho estava no alto de uma parreira, e a raposa decidiu se esforçar para apanhá-lo. Ela deu muitos pulos para tentar alcançar, mas, depois de muitas tentativas, ficou exausta e continuava faminta. Então, a raposa deu de ombros e resolveu ir embora.<br/><br/>Desapontada, a raposa disse:<br/><br/>— Estas uvas estão verdes mesmo... Nem quero mais comê-las.",
+          position: 3,
+          placeholder: "",
+          type: "TEXT",
+          classification: QuestionTitleClassification.HISTORIA,
+        },
+        {
+          file_url: null,
+          file_name: "",
+          description: "Por que a raposa disse que as uvas estavam verdes?",
+          position: 3,
+          placeholder: "",
+          type: "TEXT",
+          classification: QuestionTitleClassification.ENUNCIADO,
+        },
+        {
+          file_url:
+            "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/exam%2Faudio%2Flct14b_enunciado.mp3?alt=media&token=bdbcbc7a-ffc1-4a52-9a46-fb45522cbfa2",
+          file_name: "lct14b_enunciado.mp3",
+          description: "intro",
+          position: 1,
+          placeholder: "",
+          type: "AUDIO",
+          classification: null,
+        },
+        {
+          file_url: null,
+          file_name: "",
+          description: "Leia a fábula e responda à pergunta.",
+          position: 3,
+          placeholder: "",
+          type: "TEXT",
+          classification: QuestionTitleClassification.INTRO,
+        },
+      ],
+      category: "B",
+      school_year: 3,
+      multiplesAnswer: false,
+      order: 14,
     },
   ],
 };

@@ -1,20 +1,25 @@
-import { Loader, Progress, Stack } from "@mantine/core";
-import { QuestionLoader } from "~/components/QuestionLoader";
-import { useGetFirstExamQuestion } from "~/api/student";
+import { Loader, Stack } from "@mantine/core";
 import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Question } from "~/api/exam";
-import { useNavigate } from "react-router-dom";
+import { usePlanetGetFirstQuestion } from "~/api/planet";
+import { Planet } from "~/api/student";
+import { QuestionLoader } from "~/components/QuestionLoader";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
-import { testQuestions } from "./__test-questions";
 
-export function ExamPage() {
+export function PlanetPage() {
+  const location = useLocation();
+  const params = useParams();
+  const planet: Planet = location.state?.planet;
+  const planetId = planet?.id ?? params.planetId ?? "--ID_MISSING--";
+
   const navigate = useNavigate();
 
   const [currentQuestion, setCurrentQuestion] = useState<Question>();
   const updateProgress = useExamProgress((state) => state.setValue);
 
-  const { isLoading } = useGetFirstExamQuestion({
+  const { isLoading } = usePlanetGetFirstQuestion(planetId, {
     onSuccess: (question) => {
       if (!currentQuestion) {
         setCurrentQuestion(question);
@@ -26,25 +31,19 @@ export function ExamPage() {
     answer:
       | Question
       | {
-          examCompleted: true;
+          planetCompleted: true;
         }
   ) {
-    if ("examCompleted" in answer) {
-      navigate(PATH.EXAM_EVALUATION);
+    if ("planetCompleted" in answer) {
+      navigate(PATH.DASHBOARD);
     } else {
       setCurrentQuestion(answer);
       answer.progress && updateProgress(answer.progress);
     }
   }
 
-  const fakeQuestion = testQuestions.MODEL32?.[0] ?? {};
-
   return (
     <>
-      <Progress
-        value={currentQuestion?.progress ?? 0}
-        style={{ position: "fixed", top: 100, zIndex: 999 }}
-      />
       <Stack
         align="center"
         justify="space-between"

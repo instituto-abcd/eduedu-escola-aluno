@@ -4,16 +4,14 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { useEffect, useState } from "react";
+import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
-import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
 
-export function Model10({ question, answerCallback }: ModelProps) {
-  const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, optionArrKey } =
-    useQuestionHelper(question);
+export function Model10Prova({ question, answerCallback }: ModelProps) {
+  const [answer, setAnswer] = useState<Answer | null>(null);
+  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
 
-  const { mutate, isLoading } = usePlanetAnswer({
+  const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
 
@@ -21,7 +19,6 @@ export function Model10({ question, answerCallback }: ModelProps) {
     if (answer === null) return;
 
     mutate({
-      planetId: question.planet_id,
       questionId: question.id,
       optionsAnswered: [answer],
     });
@@ -41,16 +38,14 @@ export function Model10({ question, answerCallback }: ModelProps) {
             autoPlay
           />
         ))}
-      </Group>
 
+        {/* TODO: botão livro? */}
+        {/* <IconButton icon={<IconBook size={34} />} variant="black" /> */}
+      </Group>
       {textTitles.map((title) => (
-        <Title
-          color="dark.3"
-          size={30}
-          align="center"
-          key={title.description}
-          dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-        />
+        <Title color="dark.3" size={30} align="center" key={title.description}>
+          {title.description}
+        </Title>
       ))}
 
       <Group spacing={100} my="auto">
@@ -64,42 +59,19 @@ export function Model10({ question, answerCallback }: ModelProps) {
         ))}
 
         <SimpleGrid cols={2}>
-          {question.options.map((option, inx) => (
+          {question.options.map((option) => (
             <OptionButton
-              key={optionArrKey(option, inx)}
+              key={option.description}
               onClick={() =>
                 setAnswer({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? option.position
-                    : undefined,
+                  position: option.position,
+                  positionAnswer: option.position,
                 })
               }
-              data-selected={
-                JSON.stringify(answer) ===
-                JSON.stringify({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? option.position
-                    : undefined,
-                })
-              }
+              data-selected={answer?.position === option.position}
               isCorrect={option.isCorrect}
-              sound={option.sound_url ?? undefined}
             >
               {option.description}
-              {option.image_url && (
-                <img
-                  src={option.image_url}
-                  alt={option.description}
-                  width={100}
-                  style={{
-                    maxHeight: 140,
-                    objectFit: "contain",
-                    marginInline: "auto",
-                  }}
-                />
-              )}
             </OptionButton>
           ))}
         </SimpleGrid>

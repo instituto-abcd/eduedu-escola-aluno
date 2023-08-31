@@ -7,6 +7,7 @@ import { ExamRoutes } from "./ExamRoutes";
 import { PlanetRoutes } from "./PlanetRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
+import { DebugRoutes } from "./DebugRoutes";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -25,10 +26,11 @@ export function AppRoutes() {
           <Route index Component={ExamRoutes} />
         </Route>
         <Route path={nested(PATH.PLANET)} Component={ExamLayout}>
-          <Route index Component={PlanetRoutes} />
+          <Route path="*" Component={PlanetRoutes} />
         </Route>
         <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
         <Route path={nested(PATH.INTRO)} Component={IntroPage} />
+        <Route path={nested(PATH.DEBUG)} Component={DebugRoutes} />
       </Routes>
     </BrowserRouter>
   );

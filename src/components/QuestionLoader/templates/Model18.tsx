@@ -7,12 +7,12 @@ import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { produce } from "immer";
 import { EduButton } from "~/components/EduButton";
 
 export function Model18({ question, answerCallback }: ModelProps) {
-  const [selected, setSelected] = useState<Answer[]>([]);
+  const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
   const text = textTitles[0].description;
@@ -46,7 +46,7 @@ export function Model18({ question, answerCallback }: ModelProps) {
       setSelected((state) =>
         produce(state, (draft) => {
           draft[indexOffset] = {
-            position: item.position,
+            ...item,
             positionAnswer: indexOffset,
           };
         })

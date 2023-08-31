@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import { PlanetPage } from "~/pages/Planet/Exam";
+import { PlanetPage } from "~/pages/Planet";
 
 export function PlanetRoutes() {
   return (
     <Routes>
-      <Route index Component={PlanetPage} />
+      <Route path=":planetId" Component={PlanetPage} />
     </Routes>
   );
 }

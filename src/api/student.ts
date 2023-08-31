@@ -77,26 +77,22 @@ const URL = {
 };
 
 export class StudentAPI extends API {
-  static studentId = useStudent.getState().id;
-
-  static async getStudent() {
-    const { data } = await this.api.get<Student>(
-      URL.GET_STUDENT(this.studentId)
-    );
+  static async getStudent(studentId: string) {
+    const { data } = await this.api.get<Student>(URL.GET_STUDENT(studentId));
     return data;
   }
 
-  static async getPlanetTrack() {
+  static async getPlanetTrack(studentId: string) {
     const { data } = await this.api.get<PlanetTrack>(
-      URL.GET_STUDENT_PLANET_TRACK(this.studentId)
+      URL.GET_STUDENT_PLANET_TRACK(studentId)
     );
 
     return data;
   }
 
   // TODO: tipar retorno
-  static async getStudentAwards() {
-    const { data } = await this.api.get(URL.GET_STUDENT_AWARDS(this.studentId));
+  static async getStudentAwards(studentId: string) {
+    const { data } = await this.api.get(URL.GET_STUDENT_AWARDS(studentId));
     return data;
   }
 
@@ -107,10 +103,10 @@ export class StudentAPI extends API {
     return data;
   }
 
-  static async getExamQuestion(input: GetQuestionInput) {
+  static async getExamQuestion(studentId: string, input: GetQuestionInput) {
     const { data } = await this.api.post<Question | { examCompleted: true }>(
       URL.GET_STUDENT_EXAM_QUESTIONS(
-        this.studentId,
+        studentId,
         "fa387b6c-7ecf-4752-aeb3-c810a912c421" // TODO: pegar id do exam
       ),
       input
@@ -119,8 +115,8 @@ export class StudentAPI extends API {
     return data;
   }
 
-  static async submitExamEvaluation() {
-    const { data } = await this.api.post(URL.EXAM_EVALUATION(this.studentId));
+  static async submitExamEvaluation(studentId: string) {
+    const { data } = await this.api.post(URL.EXAM_EVALUATION(studentId));
     return data;
   }
 }
@@ -128,8 +124,10 @@ export class StudentAPI extends API {
 export function useGetPlanetTrack(
   options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
 ) {
+  const studentId = useStudent((state) => state.id);
+
   const handler = useCallback(function () {
-    return StudentAPI.getPlanetTrack();
+    return StudentAPI.getPlanetTrack(studentId);
   }, []);
 
   return useQuery([KEY.PLANET_TRACK], handler, options);
@@ -137,8 +135,10 @@ export function useGetPlanetTrack(
 
 // TODO: tipar queryoptions
 export function useGetStudentAwardsQuery(options?: QueryOptions) {
+  const studentId = useStudent((state) => state.id);
+
   const handler = useCallback(function () {
-    return StudentAPI.getStudentAwards();
+    return StudentAPI.getStudentAwards(studentId);
   }, []);
 
   return useQuery([KEY.GET_STUDENT_AWARDS, options?.search], handler, options);
@@ -147,8 +147,10 @@ export function useGetStudentAwardsQuery(options?: QueryOptions) {
 export function useGetFirstExamQuestion(
   options?: QueryOptions<Question, typeof KEY.FIRST_QUESTION>
 ) {
+  const studentId = useStudent((state) => state.id);
+
   const handler = useCallback(function () {
-    return StudentAPI.getFirstExamQuestion(useStudent.getState().id);
+    return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
   return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
@@ -160,8 +162,9 @@ export function useGetExamQuestion(
     Question | { examCompleted: true }
   >
 ) {
+  const studentId = useStudent((state) => state.id);
   const handler = useCallback(function (input: GetQuestionInput) {
-    return StudentAPI.getExamQuestion(input);
+    return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
   return useMutation(handler, options);
@@ -170,8 +173,9 @@ export function useGetExamQuestion(
 export function useSubmitExamEvaluation(
   options?: QueryOptions<Question, typeof KEY.EXAM_EVALUATION>
 ) {
+  const studentId = useStudent((state) => state.id);
   const handler = useCallback(function () {
-    return StudentAPI.submitExamEvaluation(useStudent.getState().id);
+    return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
   return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);

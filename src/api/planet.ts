@@ -17,17 +17,15 @@ const URL = {
     `/student/${studentId}/planets/${planetId}/answer`,
 };
 
-const studentId = useStudent.getState().id;
-
 class PlanetAPI extends API {
-  static async getFirstQuestion(planetId: string) {
+  static async getFirstQuestion(studentId: string, planetId: string) {
     const { data } = await this.api.get<Question>(
       URL.FIRST_QUESTION(studentId, planetId)
     );
     return data;
   }
 
-  static async answerQuestion(planetId: string, answer: AnswerInput) {
+  static async answerQuestion(studentId: string, planetId: string, answer: AnswerInput) {
     const { data } = await this.api.post<Question | { planetCompleted: true }>(
       URL.ANSWER_QUESTION(studentId, planetId),
       answer
@@ -41,9 +39,11 @@ export function usePlanetGetFirstQuestion(
   planetId: string,
   options?: QueryOptions<Question, ["PLANET_FIRST_QUESTION"]>
 ) {
+  const studentId = useStudent((state) => state.id);
+
   const handler = useCallback(
     function () {
-      return PlanetAPI.getFirstQuestion(planetId);
+      return PlanetAPI.getFirstQuestion(studentId, planetId);
     },
     [planetId]
   );
@@ -54,11 +54,13 @@ export function usePlanetGetFirstQuestion(
 export function usePlanetAnswer(
   options?: MutationOptions<AnswerInput, Question | { planetCompleted: true }>
 ) {
+  const studentId = useStudent((state) => state.id);
+
   const handler = useCallback(function ({
     planetId,
     ...answer
   }: AnswerInput & { planetId: string }) {
-    return PlanetAPI.answerQuestion(planetId, answer);
+    return PlanetAPI.answerQuestion(studentId, planetId, answer);
   },
   []);
 

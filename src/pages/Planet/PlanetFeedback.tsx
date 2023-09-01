@@ -6,48 +6,35 @@ import {
   Flex,
   Loader,
 } from "@mantine/core";
+import { useTimeout } from "@mantine/hooks";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSubmitExamEvaluation } from "~/api/student";
 import bg from "~/assets/bgs/bg-exam-evaluation.jpg";
 import { PATH } from "~/constants/path";
-import Lottie from "react-lottie";
-import loadingLottie from "~/assets/lotties/lottie_loading_anim.json";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { useEffect } from "react";
 
-export function ExamEvaluationPage() {
+export function PlanetFeedbackPage() {
   const navigate = useNavigate();
 
-  useSubmitExamEvaluation({
-    onSuccess: () => navigate(PATH.DASHBOARD),
-  });
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: loadingLottie,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
+  const { start } = useTimeout(() => navigate(PATH.DASHBOARD), 3000);
   const mediaTrack = useMediaTrackStore();
+
   useEffect(() => {
+    start();
     mediaTrack.clearQueue();
   }, []);
 
   return (
     <BackgroundImage src={bg} h="100vh">
-      <Center>
+      <Center h="100vh">
         <Box style={{ color: "#fff", padding: "0px 0", fontSize: 20 }}>
           <Container>
-            <Lottie options={defaultOptions} height={400} width={400} />
             <Flex direction="column" align="center" justify="center">
               <span>Você acabou de concluir a prova.</span>
               <span style={{ paddingBottom: 15 }}>
                 Aguarde enquanto o sistema calcula as suas tarefas.
               </span>
-              {true && <Loader />}
+              <Loader />
             </Flex>
           </Container>
         </Box>

@@ -4,7 +4,7 @@ WORKDIR /app
 ARG ARG_VITE_API_URL
 
 ENV VITE_API_URL=${ARG_VITE_API_URL}
-ENV NODE_OPTIONS="--max_old_space_size=4096"
+ENV NODE_OPTIONS=--max_old_space_size=4096
 
 COPY . .
 

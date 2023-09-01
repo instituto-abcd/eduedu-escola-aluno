@@ -31,9 +31,9 @@ import lutadorSound from '~/assets/audio/badge_lutador.mp3'
 import maestro from '~/assets/awards/maestro.png'
 import maestroLottie from '~/assets/lotties/lottie_badge_maestro.json'
 import maestroSound from '~/assets/audio/badge_maestro.mp3'
-import motivador from '~/assets/awards/motivado.png'
-import motivadorLottie from '~/assets/lotties/lottie_badge_motivador.json'
-import motivadorSound from '~/assets/audio/badge_motivador.mp3'
+import motivado from '~/assets/awards/motivado.png'
+import motivadoLottie from '~/assets/lotties/lottie_badge_motivado.json'
+import motivadoSound from '~/assets/audio/badge_motivado.mp3'
 import perfeito from '~/assets/awards/perfeito.png'
 import perfeitoLottie from '~/assets/lotties/lottie_badge_perfeito.json'
 import perfeitoSound from '~/assets/audio/badge_perfeito.mp3'
@@ -112,10 +112,10 @@ export const AWARDS_IMAGES = [
         sound: maestroSound
     },
     {
-        name: 'motivador',
-        image: motivador,
-        lottie: motivadorLottie,
-        sound: motivadorSound
+        name: 'motivado',
+        image: motivado,
+        lottie: motivadoLottie,
+        sound: motivadoSound
     },
     {
         name: 'perfeito',

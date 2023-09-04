@@ -33,9 +33,9 @@ export function ExamEvaluationPage() {
                             height={400}
                             width={400}
                         />
-                        <Flex direction="column" align="center" justify="center">  
+                        <Flex direction="column" align="center" justify="center">
                             <span>Você acabou de concluir a prova.</span>
-                            <span style={{paddingBottom: 15 }}>Aguarde enquanto o sistema calcula as suas tarefas.</span>
+                            <span style={{ paddingBottom: 15 }}>Aguarde enquanto o sistema calcula as suas tarefas.</span>
                             {true && <Loader />}
                         </Flex>
                     </Container>

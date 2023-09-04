@@ -84,7 +84,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
                     (title) =>
                       title.classification ===
                       QuestionTitleClassification.HISTORIA
-                  )?.description ?? "",
+                  )?.description ?? textTitles[0].description,
               }}
               className={classes.typography}
             />

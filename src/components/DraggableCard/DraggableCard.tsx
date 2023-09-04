@@ -1,8 +1,7 @@
-import { Image, Text, createStyles } from "@mantine/core";
+import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { QuestionOption } from "~/api/exam";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -45,19 +44,34 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export type CardItem = QuestionOption & { type: "ANSWER_CARD" };
-
-type Props = React.HTMLAttributes<HTMLDivElement> & {
-  item: CardItem;
+type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
+  item: T;
+  itemType?: string;
+  text?: string | null;
+  textClasses?: string;
+  sound?: string | null;
+  image?: string | null;
+  disabled?: boolean;
   onClear?: () => void;
 };
 
-export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
-  const { classes } = useStyles();
+export function DraggableCard<T>({
+  item,
+  text,
+  sound,
+  image,
+  hidden,
+  onClear,
+  disabled,
+  textClasses,
+  itemType = "ANSWER_CARD",
+  ...props
+}: Props<T>) {
+  const { classes, cx } = useStyles();
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
-      type: item.type,
+      type: itemType,
       item: () => item,
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
@@ -75,7 +89,7 @@ export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
   const soundRef = useRef<HTMLAudioElement>(null);
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (item.sound_url) {
+    if (sound) {
       void soundRef.current?.play();
     }
     props?.onClick?.(e);
@@ -83,34 +97,35 @@ export function DraggableCard({ item, hidden, onClear, ...props }: Props) {
 
   return (
     <div
-      className={classes.card}
+      {...props}
+      className={cx(classes.card, props.className)}
       style={styles}
-      ref={drag}
+      ref={disabled ? null : drag}
       onDragStart={onClick}
       onClickCapture={onClick}
-      {...props}
     >
-      {item.image_url && (
-        <Image
-          src={item.image_url}
-          w="100%"
-          style={{ pointerEvents: "none", userSelect: "none" }}
+      {image && (
+        <img
+          src={image}
+          style={{
+            maxHeight: 130,
+            objectFit: "contain",
+            marginInline: "auto",
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
         />
       )}
-      {!item.image_url && item.description && (
-        <Text className={classes.text}>{item.description}</Text>
+      {!image && text && (
+        <Text className={cx(classes.text, textClasses)}>{text}</Text>
       )}
       {onClear && (
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />
         </button>
       )}
-      {item.sound_url && (
-        <audio
-          src={item.sound_url}
-          ref={soundRef}
-          className={classes.audio}
-        ></audio>
+      {sound && (
+        <audio src={sound} ref={soundRef} className={classes.audio}></audio>
       )}
     </div>
   );

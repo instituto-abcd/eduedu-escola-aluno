@@ -1,5 +1,5 @@
 import { createStyles } from "@mantine/core";
-import { useRef } from "react";
+import { forwardRef, useRef } from "react";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 
 const useStyles = createStyles({
@@ -57,43 +57,46 @@ export type OptionButtonProps =
     isCorrect?: boolean;
   };
 
-export function OptionButton({ isCorrect, ...props }: OptionButtonProps) {
-  const { classes, cx } = useStyles();
-  const soundRef = useRef<HTMLAudioElement>(null);
-  const mediaTrack = useMediaTrackStore();
+export const OptionButton = forwardRef<HTMLButtonElement, OptionButtonProps>(
+  ({ isCorrect, ...props }, ref) => {
+    const { classes, cx } = useStyles();
+    const soundRef = useRef<HTMLAudioElement>(null);
+    const mediaTrack = useMediaTrackStore();
 
-  function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    if (props.sound && mediaTrack.canPlay()) {
-      mediaTrack.play({
-        trackId: `[SOUND]-${props.sound}`,
-        trackUrl: props.sound,
-        mediaType: MediaType.AUDIO,
-      });
+    function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+      if (props.sound && mediaTrack.canPlay()) {
+        mediaTrack.play({
+          trackId: `[SOUND]-${props.sound}`,
+          trackUrl: props.sound,
+          mediaType: MediaType.AUDIO,
+        });
+      }
+      props?.onClick?.(e);
     }
-    props?.onClick?.(e);
-  }
 
-  return (
-    <div className={classes.debugDiv}>
-      <button
-        {...props}
-        className={cx(classes.button, props.className)}
-        onClick={onClick}
-        disabled={props.disabled || mediaTrack.isPlaying}
-      />
-      {import.meta.env.DEV && typeof isCorrect === "boolean" && (
-        <p>{isCorrect ? "✅" : "❌"}</p>
-      )}
-      {props.sound && (
-        <audio
-          src={props.sound}
-          ref={soundRef}
-          className={classes.audio}
-          onPlay={() => mediaTrack.setPlayStatus(true)}
-          onPause={() => mediaTrack.setPlayStatus(false)}
-          onEnded={() => mediaTrack.setPlayStatus(false)}
-        ></audio>
-      )}
-    </div>
-  );
-}
+    return (
+      <div className={classes.debugDiv}>
+        <button
+          {...props}
+          className={cx(classes.button, props.className)}
+          onClick={onClick}
+          disabled={props.disabled || mediaTrack.isPlaying}
+          ref={ref}
+        />
+        {import.meta.env.DEV && typeof isCorrect === "boolean" && (
+          <p>{isCorrect ? "✅" : "❌"}</p>
+        )}
+        {props.sound && (
+          <audio
+            src={props.sound}
+            ref={soundRef}
+            className={classes.audio}
+            onPlay={() => mediaTrack.setPlayStatus(true)}
+            onPause={() => mediaTrack.setPlayStatus(false)}
+            onEnded={() => mediaTrack.setPlayStatus(false)}
+          ></audio>
+        )}
+      </div>
+    );
+  }
+);

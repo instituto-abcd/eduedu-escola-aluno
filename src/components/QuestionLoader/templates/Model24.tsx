@@ -6,7 +6,7 @@ import { AudioButton } from "~/components/AudioButton";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { OptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
 
@@ -33,6 +33,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
 
   const disabled = isTypeSelect ? !singleAnswer : answer === -1;
+  const hasImages = imageTitles.filter((title) => title.file_url).length > 0;
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -49,9 +50,14 @@ export function Model24({ question, answerCallback }: ModelProps) {
     });
   }
 
-  useEffect(() => {
-    setAnswer(-1);
-  }, [question]);
+  // const audioButton = useRef<HTMLAudioElement>(null);
+  // const mediaTrack = useMediaTrackStore();
+  // useEffect(() => {
+  //   setAnswer(-1);
+  //   if (!mediaTrack.isPlaying) {
+  //     void audioButton.current?.play();
+  //   }
+  // }, [question]);
 
   return (
     <>
@@ -64,6 +70,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 key={title.position}
                 src={title.file_url ?? ""}
                 autoPlay
+                // ref={audioButton}
               />
             ) : (
               <AudioButton
@@ -88,7 +95,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
             <Image
               src={title.file_url}
               width="auto"
-              height={230}
+              height={190}
               alt={title.placeholder}
               key={title.file_url}
             />
@@ -129,7 +136,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
       )}
 
       {isTypeSelect && (
-        <Stack my="auto" align="center" spacing={100}>
+        <Stack my="auto" align="center" spacing={hasImages ? 40 : 100}>
           {textTitles
             .filter(
               (title) => title.description && title.description.length > 5
@@ -139,6 +146,8 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 dangerouslySetInnerHTML={{ __html: title.description }}
                 color="dark.3"
                 weight={500}
+                size={24}
+                key={title.description}
               ></Title>
             ))}
           <Group>

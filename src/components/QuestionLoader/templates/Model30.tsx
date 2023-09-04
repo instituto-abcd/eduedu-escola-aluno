@@ -1,4 +1,4 @@
-import { Group, Image, LoadingOverlay } from "@mantine/core";
+import { Group, LoadingOverlay } from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -41,7 +41,12 @@ export function Model30({ question, answerCallback }: ModelProps) {
       )}
 
       {imageTitles.length > 0 && (
-        <Image src={imageTitles[0].file_url ?? ""} width={424} height="auto" />
+        <img
+          src={imageTitles[0].file_url ?? ""}
+          width={424}
+          style={{ maxHeight: 430, height: "auto" }}
+          height="auto"
+        />
       )}
 
       <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>

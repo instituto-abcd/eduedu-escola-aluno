@@ -2,21 +2,23 @@ import { CardStack } from "~/components/CardStack";
 import { ModelProps } from ".";
 import {
   Group,
-  Image,
   LoadingOverlay,
   Stack,
   Text,
   createStyles,
 } from "@mantine/core";
-import slot_pessoa from "~/assets/slot_pessoa.png";
-import slot_lugar from "~/assets/slot_lugar.png";
-import slot_animal from "~/assets/slot_animal.png";
-import slot_coisa from "~/assets/slot_coisa.png";
+// import slot_pessoa from "~/assets/slot_pessoa.png";
+// import slot_lugar from "~/assets/slot_lugar.png";
+// import slot_animal from "~/assets/slot_animal.png";
+// import slot_coisa from "~/assets/slot_coisa.png";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { produce } from "immer";
 import { EduButton } from "~/components/EduButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { usePlanetAnswer } from "~/api/planet";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -29,61 +31,86 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-end",
-    gap: "1rem",
+    justifyContent: "center",
     paddingBlock: "1rem",
     borderRadius: 16,
   },
 }));
 
-export function Model13({ question }: ModelProps) {
+export function Model13({ question, answerCallback }: ModelProps) {
+  const { imageTitles, audioTitles } = useQuestionHelper(question);
+
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
+  const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
   function onDrop(item: QuestionOption | null, index: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[index] = item;
+        draft.push({ ...item, positionAnswer: index } as QuestionOption);
       })
     );
 
-    setOptions(
-      options.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
+    setOptions((state) =>
+      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
     );
   }
 
-  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
 
-  const slots = [
-    { description: "Pessoa", image: slot_pessoa },
-    { description: "Lugar", image: slot_lugar },
-    { description: "Animal", image: slot_animal },
-    { description: "Coisa", image: slot_coisa },
-  ];
+  function submitAnswer() {
+    if (options.length > 0) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: answers,
+    });
+  }
+
+  useEffect(() => {
+    setAnswers([]);
+    setOptions(question.options);
+  }, []);
 
   return (
     <>
-      <Stack spacing={100} my="auto" align="center">
-        <Group my="auto">
-          {slots.map((slot, inx) => (
-            <SlotCard
-              {...slot}
-              onClear={() => {}}
-              onDrop={(option) => onDrop(option, inx)}
-            />
-          ))}
+      {audioTitles.filter((title) => title.file_url).length > 0 && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <AudioButton
+                key={title.file_url}
+                src={title.file_url!}
+                autoPlay={inx === 0}
+              />
+            ))}
         </Group>
+      )}
+
+      <Stack spacing={60} my="auto" align="center">
+        <Group my="auto">
+          {imageTitles
+            .filter((title) => title.file_url)
+            .map((slot, inx) => (
+              <SlotCard
+                image={slot.file_url!}
+                description={slot.description}
+                onDrop={(option) => onDrop(option, inx)}
+                key={inx}
+              />
+            ))}
+        </Group>
+
         <CardStack options={options} />
       </Stack>
 
-      <EduButton disabled={answers.includes(null)} onClick={() => {}}>
+      <EduButton disabled={options.length > 0} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={false} />
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }
@@ -92,12 +119,10 @@ function SlotCard({
   description,
   image,
   onDrop,
-  onClear,
 }: {
-  description: string;
+  description?: string;
   image: string;
   onDrop: (item: QuestionOption | null) => void;
-  onClear: () => void;
 }) {
   const { classes } = useStyles();
   const [, drop] = useDrop(
@@ -113,14 +138,7 @@ function SlotCard({
 
   return (
     <div className={classes.slot} ref={drop}>
-      <Image
-        src={image}
-        height={96}
-        width="80%"
-        maw="80%"
-        mx="auto"
-        fit="contain"
-      />
+      <img src={image} height={96} />
       <Text size={20} weight={600} color="gray.7">
         {description}
       </Text>

@@ -1,6 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
-import { CardItem, DraggableCard } from "./DraggableCard";
+import { QuestionOption } from "~/api/exam";
 
 const useStyles = createStyles({
   card: {
@@ -14,24 +14,25 @@ const useStyles = createStyles({
   },
 });
 
-type Props = Omit<
+type Props<T> = {
+  onDrop: (item: T | null) => void;
+  accept?: string | string[];
+  item: T | null;
+  replaceWith?: React.ReactNode;
+} & Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
   "onDrop"
-> & {
-  onDrop: (item: CardItem) => void;
-  accept: string | string[];
-  item: CardItem | null;
-  onClear?: () => void;
-};
+>;
 
-export function DragSlotCard({
-  onDrop,
-  accept,
+export function DraggableCardSlot<T = QuestionOption>({
   item,
-  onClear,
+  onDrop,
+  className,
+  replaceWith,
+  accept = "ANSWER_CARD",
   ...props
-}: Props) {
-  const { classes } = useStyles();
+}: Props<T>) {
+  const { classes, cx } = useStyles();
 
   const [, drop] = useDrop(
     () => ({
@@ -44,6 +45,13 @@ export function DragSlotCard({
     []
   );
 
-  if (item !== null) return <DraggableCard item={item} onClear={onClear} />;
-  return <div {...props} className={classes.card} style={{}} ref={drop} />;
+  if (item !== null && replaceWith) return replaceWith;
+  return (
+    <div
+      {...props}
+      className={cx(classes.card, className)}
+      style={{}}
+      ref={drop}
+    />
+  );
 }

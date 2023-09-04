@@ -1,4 +1,4 @@
-import { Group, Image, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
+import { IconVolume } from "@tabler/icons-react";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -43,25 +44,32 @@ export function Model10({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      {textTitles.map((title) => (
-        <Title
-          color="dark.3"
-          size={30}
-          align="center"
-          key={title.description}
-          dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-        />
-      ))}
-
-      <Group spacing={100} my="auto">
-        {imageTitles.map((title) => (
-          <Image
-            src={title.file_url}
-            alt={title.description}
-            width={270}
-            key={title.file_url}
+      {textTitles
+        .filter(
+          (title) => title.description && !title.placeholder.includes("ID")
+        )
+        .map((title) => (
+          <Title
+            color="dark.3"
+            size={20}
+            align="center"
+            key={title.description}
+            dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
           />
         ))}
+
+      <Group spacing={100} my="auto">
+        {imageTitles
+          .filter((title) => title.file_url)
+          .map((title) => (
+            <img
+              src={title.file_url!}
+              alt={title.description}
+              width={270}
+              style={{ maxHeight: 400, objectFit: "contain" }}
+              key={title.file_url}
+            />
+          ))}
 
         <SimpleGrid cols={2}>
           {question.options.map((option, inx) => (
@@ -99,6 +107,9 @@ export function Model10({ question, answerCallback }: ModelProps) {
                     marginInline: "auto",
                   }}
                 />
+              )}
+              {!option.image_url && option.sound_url && (
+                <IconVolume size={80} />
               )}
             </OptionButton>
           ))}

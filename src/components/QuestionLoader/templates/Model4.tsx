@@ -8,12 +8,13 @@ import {
   createStyles,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
+import { QuestionOption } from "~/api/exam";
 
 const useStyles = createStyles(() => ({
   h1: {
@@ -25,7 +26,7 @@ const useStyles = createStyles(() => ({
 
 export function Model4({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { audioTitles, textTitles, imageTitles, optionArrKey } =
     useQuestionHelper(question);
 
@@ -81,13 +82,8 @@ export function Model4({ question, answerCallback }: ModelProps) {
           {question.options.map((option, inx) => (
             <OptionButton
               key={optionArrKey(option, inx)}
-              data-selected={answer?.position === option.position}
-              onClick={() =>
-                setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
-                })
-              }
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              onClick={() => setAnswer(option)}
               sound={option.sound_url ?? undefined}
               isCorrect={option.isCorrect}
             >

@@ -1,58 +1,205 @@
-import { Card, Center, Grid, Group, SimpleGrid, Text, Title } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
+import { Group, LoadingOverlay, Stack, createStyles } from "@mantine/core";
+import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { useDrop } from "react-dnd";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { DraggableCard } from "~/components/DraggableCard";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { useEffect, useState } from "react";
+import { produce } from "immer";
+import { usePlanetAnswer } from "~/api/planet";
+import { EduButton } from "~/components/EduButton";
 
-export function Model25({ question }: { question: Question }) {
+const useStyles = createStyles((theme) => ({
+  slot: {
+    width: 240,
+    height: 148,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: theme.colors.gray[6],
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  wideButton: {
+    width: 240,
+    height: 148,
+    // TODO: mergear com estilo do componente raíz (não funcional)
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    boxShadow: "0 4px 0 0 #228BE6",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#228BE6",
+    padding: 16,
+    display: "grid",
+    placeItems: "center",
+    position: "relative",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: theme.colors.gray[7],
+    textAlign: "center",
+  },
+}));
+
+export function Model25({ question }: ModelProps) {
+  const { audioTitles, imageTitles } = useQuestionHelper(question);
+  const { classes } = useStyles();
+
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
+    null,
+    null,
+    null,
+  ]);
+
+  function onDrop(option: QuestionOption | null, inx: number) {
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft[inx] = option;
+      })
+    );
+  }
+
+  function hideTitle(position: number) {
+    return answers.some((answer) => answer?.positionAnswer === position);
+  }
+
+  const { mutate, isLoading } = usePlanetAnswer();
+
+  function submitAnswer() {
+    if (answers.includes(null)) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: answers as QuestionOption[],
+    });
+  }
+
+  useEffect(() => {
+    setAnswers([null, null, null]);
+  }, [question]);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles.filter((title) => title.file_url) && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url!}
+              key={title.file_url}
+              autoPlay={inx === 0}
+            />
+          ))}
+        </Group>
+      )}
 
-      <Group position="apart" spacing={137}>
-        <Center style={{ width: '100%' }}>
-          <Grid columns={3} maw={600}>
-            <Grid.Col span={3}>
-              <Title mb={5} style={{ textAlign: 'center' }}>O que é o que é</Title>
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <Card style={{ border: '1px solid #868E96', height: '100%' }}>
-                É feito para andar e não anda
-              </Card>
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <Card style={{ border: '1px solid #868E96', height: '100%' }}>
-                Dá muitas voltas e não sai do lugar.
-              </Card>
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <Card style={{ border: '1px solid #868E96', height: '100%' }}>
-                Tem cabeça e tem dente, não é bicho e nem é gente.
-              </Card>
-            </Grid.Col>
+      <Stack my="auto" spacing={50}>
+        <Group>
+          {question.options.map((option, inx) => (
+            <SlotCard
+              key={inx}
+              option={option}
+              onDrop={(title) =>
+                title
+                  ? onDrop({ ...option, positionAnswer: title.position }, inx)
+                  : onDrop(null, inx)
+              }
+            />
+          ))}
+        </Group>
+        <Group>
+          {imageTitles.map((title, inx) =>
+            !title.file_url && title.description ? (
+              <DraggableCard<QuestionTitle>
+                key={inx}
+                className={classes.wideButton}
+                item={title}
+                hidden={hideTitle(title.position)}
+                text={title.description}
+                textClasses={classes.text}
+              />
+            ) : (
+              <DraggableCard<QuestionTitle>
+                key={inx}
+                className={classes.wideButton}
+                item={title}
+                image={title.file_url}
+                hidden={hideTitle(title.position)}
+              />
+            )
+          )}
+        </Group>
+      </Stack>
 
-
-            <Grid.Col span={1}>
-              <DraggableCard
-                image="https://place-hold.it/362"
-                name="O alho"
-              />
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <DraggableCard
-                image="https://place-hold.it/362"
-                name="A rua"
-              />
-            </Grid.Col>
-            <Grid.Col span={1}>
-              <DraggableCard
-                image="https://place-hold.it/362"
-                name="O relógio"
-              />
-            </Grid.Col>
-          </Grid>
-        </Center>
-      </Group>
+      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
+  );
+}
+
+function SlotCard({
+  option,
+  onDrop,
+}: {
+  option: QuestionOption;
+  onDrop: (item: QuestionTitle | null) => void;
+}) {
+  const [droppedTitle, setDropppedTitle] = useState<QuestionTitle | null>(null);
+  const [, drop] = useDrop(
+    () => ({
+      accept: "ANSWER_CARD",
+      drop: (item: QuestionTitle | null) => {
+        onDrop(item);
+        setDropppedTitle(item);
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    []
+  );
+
+  useEffect(() => {
+    setDropppedTitle(null);
+  }, [option]);
+
+  const { classes } = useStyles();
+
+  if (droppedTitle) {
+    return (
+      <DraggableCard
+        disabled
+        className={classes.wideButton}
+        textClasses={classes.text}
+        item={droppedTitle}
+        image={droppedTitle.file_url}
+        text={droppedTitle.description}
+        onClear={() => {
+          setDropppedTitle(null), onDrop(null);
+        }}
+      />
+    );
+  }
+
+  return (
+    <div className={classes.slot} ref={drop}>
+      <img
+        src={option.image_url ?? ""}
+        alt={option.description}
+        width={100}
+        style={{
+          maxHeight: 130,
+          objectFit: "contain",
+          marginInline: "auto",
+        }}
+      />
+    </div>
   );
 }

@@ -1,33 +1,101 @@
-import { Flex, Group, SimpleGrid } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { DraggableCard } from "~/components/DraggableCard";
-import { EduButton } from "~/components/EduButton/EduButton";
-// import { GrayCard } from "~/components/GrayCard";
+import { Group, LoadingOverlay, Stack, createStyles } from "@mantine/core";
+import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { CardStack } from "~/components/CardStack";
+import { DraggableCardSlot } from "~/components/DraggableCard";
+import { QuestionOption } from "~/api/exam";
+import { useEffect, useState } from "react";
+import { produce } from "immer";
+import { usePlanetAnswer } from "~/api/planet";
+import { EduButton } from "~/components/EduButton";
 
-export function Model19({ question }: { question: Question }) {
+const useStyles = createStyles({
+  slot: {
+    width: 95,
+    height: 95,
+    color: "#495057",
+    fontSize: 50,
+    fontWeight: 600,
+    display: "grid",
+    placeItems: "center",
+  },
+});
+
+export function Model19({ question, answerCallback }: ModelProps) {
+  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const { classes } = useStyles();
+
+  const [options, setOptions] = useState<QuestionOption[]>(question.options);
+  const [answers, setAnswers] = useState<QuestionOption[]>([]);
+  const slots = textTitles[0] ? textTitles[0].description.split(" ") : [];
+  const disabled = options.length > 0;
+
+  function handleDrop(item: QuestionOption, index: number) {
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft.push({ ...item, positionAnswer: index } as QuestionOption);
+      })
+    );
+
+    setOptions((state) =>
+      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
+    );
+  }
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    if (disabled) return;
+
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: answers,
+    });
+  }
+
+  useEffect(() => {
+    setAnswers([]);
+    setOptions(question.options);
+  }, []);
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
-
-      <Group position="apart" spacing={137}>
-        <SimpleGrid>
-          <DraggableCard
-            customHeigth="200px"
-            customWidth="300px"
-            image="https://place-hold.it/150"
-            imageWidth="150"
-          />
-
-          <Flex mt={40}>
-            {/* <GrayCard
-              name="1"
-              customHeigth="70px"
-              customWidth="70px"
-            /> */}
-          </Flex>
-        </SimpleGrid>
+      <Group>
+        {audioTitles
+          .filter((title) => title.file_url)
+          .map((title, inx) => (
+            <AudioButton
+              src={title.file_url!}
+              key={title.file_url}
+              autoPlay={inx === 0}
+            />
+          ))}
       </Group>
+
+      <Stack align="center" spacing={60} my="auto">
+        <CardStack options={options} />
+
+        <Group>
+          {slots.map((slot, inx) => (
+            <DraggableCardSlot<QuestionOption>
+              onDrop={(item) => item && handleDrop(item, inx)}
+              item={null}
+              key={inx}
+              className={classes.slot}
+            >
+              {slot}
+            </DraggableCardSlot>
+          ))}
+        </Group>
+      </Stack>
+      <EduButton disabled={disabled} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

@@ -1,17 +1,31 @@
 import {
   BackgroundImage,
+  Image,
   Button,
   Center,
-  Image,
   Progress,
 } from "@mantine/core";
 import { Outlet } from "react-router-dom";
-import bgProva from "~/assets/bgs/bg_prova2.png";
 import lousa from "~/assets/bgs/lousa.svg";
-import carteiras from "~/assets/bgs/carteiras.png";
 import { useExamProgress } from "~/stores/exam-progress";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Navbar } from "../Navbar/Navbar";
+
+// Images:
+import sala_1680 from "~/assets/bgs/sala_1680x1050.png";
+import sala_1920 from "~/assets/bgs/sala_1920x1080.png";
+import sala_1440 from "~/assets/bgs/sala_1440x1080.png";
+
+// Lotties:
+import Lottie from 'react-lottie';
+import hologramaEduEdu from "~/assets/lotties/exam/holograma_eduedu.json"
+import livroAberto from "~/assets/lotties/exam/livro_aberto.json"
+import livros from "~/assets/lotties/exam/livros.json"
+import luzRodape from "~/assets/lotties/exam/luz_rodape.json"
+import luzMesa from "~/assets/lotties/exam/luz_mesa.json"
+import vaso1 from "~/assets/lotties/exam/vaso_1.json"
+import vaso2 from "~/assets/lotties/exam/vaso_2.json"
 
 export function ExamLayout() {
   const examProgress = useExamProgress((state) => state.value);
@@ -30,15 +44,23 @@ export function ExamLayout() {
     }
   }, [currentAudio]);
 
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [bgProva, setBgProva] = useState('');
+  useEffect(() => {
+    if (screenWidth > 1920) { setBgProva(sala_1920); }
+    else if (screenWidth < 1920 && screenWidth >= 1680) { setBgProva(sala_1680); }
+    else { setBgProva(sala_1440) }
+  }, []);
+
   return (
     <BackgroundImage
       src={bgProva}
-      maw={1440}
       mih="100vh"
       mx="auto"
       p={0}
       styles={{ main: { padding: 0, position: "relative" } }}
     >
+      <Navbar />
       <Center style={{ position: "relative" }}>
         <Progress
           value={examProgress}
@@ -66,21 +88,150 @@ export function ExamLayout() {
           </Center>
         </BackgroundImage>
       </Center>
-      <Image
-        src={carteiras}
-        w="100%"
-        maw={1440}
-        mah={1080}
-        h="auto"
-        style={{
-          position: "absolute",
-          insetInline: 0,
-          bottom: 0,
-          zIndex: 555,
-          marginInline: "auto",
-          pointerEvents: "none",
-        }}
-      />
+
+      <>
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: livros,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 555,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: livroAberto,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 555,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: hologramaEduEdu,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 555,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: vaso1,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 555,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: vaso2,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 555,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: luzRodape,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 500,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+        <Lottie
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: luzMesa,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          style={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: 500,
+            marginInline: "auto",
+            pointerEvents: "none",
+          }}
+          height="auto"
+          width={screenWidth}
+        />
+      </>
+
       <audio
         style={{ display: "none" }}
         src={currentAudio?.trackUrl ?? ""}

@@ -16,6 +16,7 @@ import { Navbar } from "../Navbar/Navbar";
 import sala_1680 from "~/assets/bgs/sala_1680x1050.png";
 import sala_1920 from "~/assets/bgs/sala_1920x1080.png";
 import sala_1440 from "~/assets/bgs/sala_1440x1080.png";
+import sala_3000 from "~/assets/bgs/sala_3000x900.png";
 
 // Lotties:
 import Lottie from 'react-lottie';
@@ -47,9 +48,10 @@ export function ExamLayout() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [bgProva, setBgProva] = useState('');
   useEffect(() => {
-    if (screenWidth > 1920) { setBgProva(sala_1920); }
-    else if (screenWidth < 1920 && screenWidth >= 1680) { setBgProva(sala_1680); }
-    else { setBgProva(sala_1440) }
+    setBgProva(sala_3000)
+    // if (screenWidth > 1920) { setBgProva(sala_1920); }
+    // else if (screenWidth < 1920 && screenWidth >= 1680) { setBgProva(sala_1680); }
+    // else { setBgProva(sala_1440) }
   }, []);
 
   return (
@@ -89,7 +91,7 @@ export function ExamLayout() {
         </BackgroundImage>
       </Center>
 
-      <>
+      {/* <>
         <Lottie
           options={{
             loop: true,
@@ -230,7 +232,7 @@ export function ExamLayout() {
           height="auto"
           width={screenWidth}
         />
-      </>
+      </> */}
 
       <audio
         style={{ display: "none" }}

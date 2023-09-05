@@ -30,6 +30,12 @@ export function Model19({ question, answerCallback }: ModelProps) {
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const slots = textTitles[0] ? textTitles[0].description.split(" ") : [];
   const disabled = options.length > 0;
+  const descRule = question.rules.find(
+    (rule) => rule.name === "show_option_desc"
+  );
+  const showOptionsDesc = Boolean(
+    descRule === undefined ? true : descRule.value === "false" ? false : true
+  );
 
   function handleDrop(item: QuestionOption, index: number) {
     setAnswers((state) =>
@@ -77,7 +83,10 @@ export function Model19({ question, answerCallback }: ModelProps) {
       </Group>
 
       <Stack align="center" spacing={60} my="auto">
-        <CardStack options={options} />
+        <CardStack
+          options={options}
+          cardProps={{ imageOnly: !showOptionsDesc }}
+        />
 
         <Group>
           {slots.map((slot, inx) => (

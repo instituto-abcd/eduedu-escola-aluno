@@ -1,19 +1,58 @@
-import { Group, SimpleGrid, Text, Title } from "@mantine/core";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
+import { Group, LoadingOverlay, ScrollArea, Text, Title } from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
+import { ModelProps } from ".";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { AudioButton } from "~/components/AudioButton";
+import { usePlanetAnswer } from "~/api/planet";
 
-export function Model21({ question }: { question: Question }) {
+export function Model21({ question, answerCallback }: ModelProps) {
+  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const autoPlay =
+    question.rules.find((rule) => rule.name === "autoplay")?.value === "true" ??
+    false;
+
+  const title =
+    textTitles.find((title) => title.position === 1)?.description ?? "";
+
+  const statement =
+    textTitles.find((title) => title.position === 2)?.description ?? "";
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
+
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles.filter((title) => title.file_url).length > 0 && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <AudioButton
+                key={inx}
+                src={title.file_url!}
+                autoPlay={autoPlay}
+              />
+            ))}
+        </Group>
+      )}
 
-      <Group position="apart" spacing={137}>
-        <SimpleGrid>
-          <Title mb={40}>Leia o poema</Title>
-          <Text>Lorem ipsum</Text>
-        </SimpleGrid>
-      </Group>
+      <Title color="dark.3">{title}</Title>
+
+      <ScrollArea maw={800} my="auto">
+        <Text dangerouslySetInnerHTML={{ __html: statement }} color="dark.3" />
+      </ScrollArea>
+
+      <EduButton onClick={submitAnswer}>Continuar</EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

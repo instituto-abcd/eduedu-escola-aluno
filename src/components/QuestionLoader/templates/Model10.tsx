@@ -11,8 +11,7 @@ import { IconVolume } from "@tabler/icons-react";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, optionArrKey } =
-    useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -35,11 +34,11 @@ export function Model10({ question, answerCallback }: ModelProps) {
   return (
     <>
       <Group>
-        {audioTitles.map((title) => (
+        {audioTitles.map((title, inx) => (
           <AudioButton
             src={title.file_url ?? ""}
-            key={title.file_url}
-            autoPlay
+            key={inx}
+            autoPlay={inx === 0}
           />
         ))}
       </Group>
@@ -48,12 +47,12 @@ export function Model10({ question, answerCallback }: ModelProps) {
         .filter(
           (title) => title.description && !title.placeholder.includes("ID")
         )
-        .map((title) => (
+        .map((title, inx) => (
           <Title
             color="dark.3"
             size={20}
             align="center"
-            key={title.description}
+            key={inx}
             dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
           />
         ))}
@@ -74,7 +73,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
         <SimpleGrid cols={2}>
           {question.options.map((option, inx) => (
             <OptionButton
-              key={optionArrKey(option, inx)}
+              key={inx}
               onClick={() =>
                 setAnswer({
                   ...option,

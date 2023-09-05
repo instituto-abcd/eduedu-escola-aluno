@@ -40,6 +40,7 @@ export type Question = {
   progress?: number;
   status?: string;
   planet_id: string;
+  title: string;
   rules: {
     name: string;
     type: string;

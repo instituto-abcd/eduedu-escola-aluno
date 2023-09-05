@@ -16,28 +16,43 @@ import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { QuestionOption } from "~/api/exam";
 import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
+import { usePlanetAnswer } from "~/api/planet";
 
 /*
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
  */
 
 export function Model11({ question, answerCallback }: ModelProps) {
-  const { imageTitles, audioTitles, textTitles } = useQuestionHelper(question);
+  const { imageTitles, audioTitles, textTitles, isExam } = useQuestionHelper(question);
 
   const [, word] = question.description.split("/");
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function submitAnswer() {
     if (!answer) return;
 
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
-    });
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: [{ position: answer.position, positionAnswer: 0 } as QuestionOption],
+      });
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: [{ position: answer.position, positionAnswer: 0 } as QuestionOption],
+      });
+    }
   }
 
   useEffect(() => {

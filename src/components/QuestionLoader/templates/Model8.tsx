@@ -5,9 +5,11 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { Answer } from "~/api/student";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
+import { usePlanetAnswer } from "~/api/planet";
+import { QuestionOption } from "~/api/exam";
 
 export function Model8({ question, answerCallback }: ModelProps) {
   const { imageTitles, videoTitles, textTitles, audioTitles, optionArrKey } =
@@ -15,7 +17,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   const [answer, setAnswer] = useState<Answer | null>(null);
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
   });
 
@@ -24,7 +26,8 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
     mutate({
       questionId: question.id,
-      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
+      planetId: question.planet_id,
+      optionsAnswered: [{ position: answer.position, positionAnswer: 0 } as QuestionOption ],
     });
   }
 

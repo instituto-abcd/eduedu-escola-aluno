@@ -9,23 +9,38 @@ import { EduButton } from "~/components/EduButton";
 import { useGetExamQuestion } from "~/api/student";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model2({ question, answerCallback }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function submitAnswer() {
     if (answers.includes(null)) return;
 
-    mutate({
-      questionId: question.id,
-      optionsAnswered: answers as QuestionOption[],
-    });
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: answers as QuestionOption[],
+      })
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: answers as QuestionOption[],
+      });
+    }
   }
 
   const handleDrop = useCallback(function (
@@ -40,7 +55,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
   },
   []);
 
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, isExam } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {

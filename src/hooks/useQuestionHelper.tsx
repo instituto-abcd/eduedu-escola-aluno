@@ -1,7 +1,14 @@
 import { useCallback, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { Question, QuestionOption } from "~/api/exam";
+import { PATH } from "~/constants/path";
 
 export function useQuestionHelper(question: Question) {
+  const location = useLocation();
+  const isExam = location.pathname.startsWith(PATH.EXAM) && !question.planet_id;
+  const isPlanet =
+    location.pathname.startsWith(PATH.PLANET) || !!question.planet_id;
+
   const hasTitleOfType = useCallback(
     function (type: string) {
       return question.titles.filter((title) => title.type === type).length > 0;
@@ -52,5 +59,7 @@ export function useQuestionHelper(question: Question) {
     lottieTitles,
     getLottieJson,
     optionArrKey,
+    isExam,
+    isPlanet,
   };
 }

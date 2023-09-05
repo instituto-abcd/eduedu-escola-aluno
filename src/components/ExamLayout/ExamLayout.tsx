@@ -19,14 +19,14 @@ import sala_1440 from "~/assets/bgs/sala_1440x1080.png";
 import sala_3000 from "~/assets/bgs/sala_3000x900.png";
 
 // Lotties:
-import Lottie from 'react-lottie';
-import hologramaEduEdu from "~/assets/lotties/exam/holograma_eduedu.json"
-import livroAberto from "~/assets/lotties/exam/livro_aberto.json"
-import livros from "~/assets/lotties/exam/livros.json"
-import luzRodape from "~/assets/lotties/exam/luz_rodape.json"
-import luzMesa from "~/assets/lotties/exam/luz_mesa.json"
-import vaso1 from "~/assets/lotties/exam/vaso_1.json"
-import vaso2 from "~/assets/lotties/exam/vaso_2.json"
+import Lottie from "react-lottie";
+import hologramaEduEdu from "~/assets/lotties/exam/holograma_eduedu.json";
+import livroAberto from "~/assets/lotties/exam/livro_aberto.json";
+import livros from "~/assets/lotties/exam/livros.json";
+import luzRodape from "~/assets/lotties/exam/luz_rodape.json";
+import luzMesa from "~/assets/lotties/exam/luz_mesa.json";
+import vaso1 from "~/assets/lotties/exam/vaso_1.json";
+import vaso2 from "~/assets/lotties/exam/vaso_2.json";
 
 export function ExamLayout() {
   const examProgress = useExamProgress((state) => state.value);
@@ -46,12 +46,15 @@ export function ExamLayout() {
   }, [currentAudio]);
 
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [bgProva, setBgProva] = useState('');
+  const [bgProva, setBgProva] = useState("");
+
   useEffect(() => {
-    setBgProva(sala_3000)
+    setBgProva(sala_3000);
     // if (screenWidth > 1920) { setBgProva(sala_1920); }
     // else if (screenWidth < 1920 && screenWidth >= 1680) { setBgProva(sala_1680); }
     // else { setBgProva(sala_1440) }
+
+    audioRef.current && audioRef.current.setAttribute("src", "");
   }, []);
 
   return (

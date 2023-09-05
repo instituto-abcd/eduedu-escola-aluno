@@ -9,25 +9,40 @@ import { useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model5({ question, answerCallback }: ModelProps) {
-  const { audioTitles, videoTitles, textTitles, imageTitles } =
+  const { audioTitles, videoTitles, textTitles, imageTitles, isExam } =
     useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const [multipleAnswer, setMultipleAnswer] = useState<QuestionOption[]>([]);
   const mediaTrack = useMediaTrackStore();
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function submitAnswer() {
     if (!answer) return;
 
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: [answer],
+      });
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: [answer],
+      });
+    }
   }
 
   function handleOptionClick(option: QuestionOption) {

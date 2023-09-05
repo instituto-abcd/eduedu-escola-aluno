@@ -16,6 +16,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -31,22 +32,36 @@ const useStyles = createStyles((theme) => ({
 export function Model32({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
 
-  const { textTitles, imageTitles, audioTitles, optionArrKey } =
+  const { textTitles, imageTitles, audioTitles, optionArrKey, isExam } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function submitAnswer() {
     if (!answer) return;
 
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: [answer],
+      });
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: [answer],
+      });
+    }
   }
 
   useEffect(() => {

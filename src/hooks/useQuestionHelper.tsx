@@ -2,6 +2,9 @@ import { useCallback, useMemo } from "react";
 import { Question, QuestionOption } from "~/api/exam";
 
 export function useQuestionHelper(question: Question) {
+  const isExam = !question.planet_id;
+  const isPlanet = !!question.planet_id;
+
   const hasTitleOfType = useCallback(
     function (type: string) {
       return question.titles.filter((title) => title.type === type).length > 0;
@@ -52,5 +55,7 @@ export function useQuestionHelper(question: Question) {
     lottieTitles,
     getLottieJson,
     optionArrKey,
+    isExam,
+    isPlanet,
   };
 }

@@ -15,6 +15,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { QuestionOption } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
 
 const useStyles = createStyles(() => ({
   h1: {
@@ -27,20 +28,34 @@ const useStyles = createStyles(() => ({
 export function Model4({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { audioTitles, textTitles, imageTitles, optionArrKey } =
+  const { audioTitles, textTitles, imageTitles, optionArrKey, isExam } =
     useQuestionHelper(question);
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function submitAnswer() {
     if (answer === null) return;
 
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: [answer],
+      });
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: [answer],
+      });
+    }
   }
 
   useEffect(() => {
@@ -89,12 +104,19 @@ export function Model4({ question, answerCallback }: ModelProps) {
             >
               {option.image_url && (
                 <>
-                  <Image
+                  <img
                     src={option.image_url}
                     alt={option.description}
                     height={105}
                     width="auto"
-                    styles={{ image: { maxWidth: "100%" } }}
+                    style={{
+                      maxHeight: 120,
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      marginInline: "auto",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
                   />
                   {!question.axis_code && question.axis_code === null && (
                     <Text size={14} color="gray.7" weight={600}>

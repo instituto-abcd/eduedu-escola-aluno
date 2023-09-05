@@ -1,25 +1,18 @@
 import { Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
-import { DragSlotCard, DraggableCard } from "~/components/DraggableCard";
+import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
 import { useCallback, useEffect, useState } from "react";
 import { produce } from "immer";
-import type { CardItem } from "~/components/DraggableCard/DraggableCard";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { useGetExamQuestion } from "~/api/student";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-
-type Slot = CardItem | null;
+import { QuestionOption } from "~/api/exam";
 
 export function Model2({ question, answerCallback }: ModelProps) {
-  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
-
-  const [options, setOptions] = useState<CardItem[]>(
-    question.options.map((option) => ({
-      ...option,
-      type: "ANSWER_CARD",
-    }))
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
+    question.options.map(() => null)
   );
 
   const { mutate, isLoading } = useGetExamQuestion({
@@ -27,24 +20,21 @@ export function Model2({ question, answerCallback }: ModelProps) {
   });
 
   function submitAnswer() {
-    if (slots.includes(null)) return;
+    if (answers.includes(null)) return;
 
     mutate({
       questionId: question.id,
-      optionsAnswered: slots.map((slot, inx) => ({
-        position: slot?.position ?? 0,
-        positionAnswer: inx,
-      })),
+      optionsAnswered: answers as QuestionOption[],
     });
   }
 
   const handleDrop = useCallback(function (
-    item: CardItem | null,
+    item: QuestionOption | null,
     index: number
   ) {
-    setSlots((state) =>
+    setAnswers((state) =>
       produce(state, (draft) => {
-        draft[index] = item;
+        draft[index] = item ? { ...item, positionAnswer: index } : item;
       })
     );
   },
@@ -54,16 +44,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
-    setSlots(question.options.map(() => null));
-  }, [question]);
-
-  useEffect(() => {
-    setOptions(
-      question.options.map((option) => ({
-        ...option,
-        type: "ANSWER_CARD",
-      }))
-    );
+    setAnswers(question.options.map(() => null));
   }, [question]);
 
   return (
@@ -78,26 +59,37 @@ export function Model2({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      <Stack>
-        <SimpleGrid cols={options.length} spacing={24}>
-          {slots.map((slot, inx) => (
-            <DragSlotCard
+      <Stack my="auto">
+        <SimpleGrid cols={question.options.length} spacing={24}>
+          {answers.map((slot, inx) => (
+            <DraggableCardSlot
               key={inx}
-              accept="ANSWER_CARD"
               onDrop={(item) => handleDrop(item, inx)}
               item={slot}
-              onClear={() => handleDrop(null, inx)}
+              replaceWith={
+                <DraggableCard
+                  item={slot}
+                  image={slot?.image_url}
+                  text={slot?.description}
+                  sound={slot?.sound_url}
+                  disabled
+                  onClear={() => handleDrop(null, inx)}
+                />
+              }
             />
           ))}
         </SimpleGrid>
 
-        <SimpleGrid cols={options.length} spacing={24}>
-          {options.map((item) => (
+        <SimpleGrid cols={question.options.length} spacing={24}>
+          {question.options.map((item) => (
             <DraggableCard
               item={item}
               key={item.position}
+              image={item.image_url}
+              text={item.description}
+              sound={item.sound_url}
               hidden={
-                !!slots.find((slot) => slot?.position === item.position) ||
+                !!answers.find((slot) => slot?.position === item.position) ||
                 mediaTrack.isPlaying
               }
             />
@@ -105,7 +97,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Stack>
 
-      <EduButton disabled={slots.includes(null)} onClick={submitAnswer}>
+      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
         Continuar
       </EduButton>
       <LoadingOverlay visible={isLoading} />

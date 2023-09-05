@@ -35,6 +35,8 @@ import { QMES5 } from "./templates/QMES5";
 import { QORD3x2 } from "./templates/QORD3x2";
 import { Model8Prova } from "./templates/Model8Prova";
 import { Model10Prova } from "./templates/Model10Prova";
+import { Model35 } from "./templates/Model35";
+import { Model34 } from "./templates/Model34";
 
 type QuestionLoaderProps = ModelProps;
 
@@ -102,10 +104,14 @@ export function QuestionLoader({
       return <Model30 {...commonProps} />;
     case "MODEL31":
       return <Model31 {...commonProps} />;
-    case "MODEL33":
-      return <Model33 {...commonProps} />;
     case "MODEL32":
       return <Model32 {...commonProps} />;
+    case "MODEL33":
+      return <Model33 {...commonProps} />;
+    case "MODEL34":
+      return <Model34 {...commonProps} />;
+    case "MODEL35":
+      return <Model35 {...commonProps} />;
 
     // Orfãos
     case "QME2x2Audio":

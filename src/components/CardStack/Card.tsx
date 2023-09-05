@@ -1,4 +1,11 @@
-import { ActionIcon, Paper, Text, createStyles, Image } from "@mantine/core";
+import {
+  ActionIcon,
+  Paper,
+  Text,
+  createStyles,
+  PaperProps,
+  TextProps,
+} from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { useRef } from "react";
 import { useDrag } from "react-dnd";
@@ -59,7 +66,8 @@ export type StackCardProps = {
   onDragStart?: (option: QuestionOption) => void;
   variant?: "wide" | "square";
   imageOnly?: boolean;
-};
+  textProps?: Partial<TextProps>;
+} & Partial<PaperProps>;
 
 export function Card({
   option,
@@ -67,9 +75,11 @@ export function Card({
   onClear,
   onDragStart,
   imageOnly,
+  textProps,
   stacked = false,
   draggable = true,
   variant = "square",
+  ...props
 }: StackCardProps) {
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -83,7 +93,7 @@ export function Card({
     [option]
   );
 
-  const { classes } = useStyles({
+  const { classes, cx } = useStyles({
     stacked,
     isDragging,
     order,
@@ -96,7 +106,7 @@ export function Card({
 
   return (
     <Paper
-      className={classes.card}
+      className={cx(classes.card, props.className)}
       ref={draggable ? drag : null}
       onDragStart={() => {
         if (option.sound_url) {
@@ -106,13 +116,24 @@ export function Card({
       }}
     >
       {!imageOnly && (
-        <Text size={30} weight={600} color="blue.6" align="center">
+        <Text
+          size={30}
+          weight={600}
+          color="blue.6"
+          align="center"
+          {...textProps}
+        >
           {option.description}
         </Text>
       )}
 
       {option.image_url && (
-        <Image src={option.image_url} width={130} height="auto" />
+        <img
+          src={option.image_url}
+          width={130}
+          height="auto"
+          style={{ maxHeight: 140 }}
+        />
       )}
 
       {onClear && (

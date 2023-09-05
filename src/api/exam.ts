@@ -40,6 +40,11 @@ export type Question = {
   progress?: number;
   status?: string;
   planet_id: string;
+  rules: {
+    name: string;
+    type: string;
+    value: string;
+  }[];
   model_id:
     | "MODEL1"
     | "MODEL10"

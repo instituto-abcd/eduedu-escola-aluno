@@ -59,14 +59,21 @@ export function Model33({ question, answerCallback }: ModelProps) {
       </Group>
 
       <Group position="apart" spacing={137} w="100%" noWrap my="auto">
-        <Stack align="center" spacing={0}>
-          <Image src={illustration} width={346} height="auto" />
-          {textTitles.map((title) => (
-            <Text size={50} color="dark.3" weight={500} key={title.description}>
-              {title.description}
-            </Text>
-          ))}
-        </Stack>
+        {textTitles.some((title) => title.file_url) && (
+          <Stack align="center" spacing={0}>
+            <Image src={illustration} width={346} height="auto" />
+            {textTitles.map((title) => (
+              <Text
+                size={50}
+                color="dark.3"
+                weight={500}
+                key={title.description}
+              >
+                {title.description}
+              </Text>
+            ))}
+          </Stack>
+        )}
         <Lottie
           options={{
             loop: true,

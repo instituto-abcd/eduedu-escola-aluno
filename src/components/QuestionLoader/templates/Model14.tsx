@@ -1,59 +1,73 @@
-import { Grid, Group, Image } from "@mantine/core";
-import { produce } from "immer";
-import { useCallback, useState } from "react";
-import { Question } from "~/api/exam";
-import { OuvirIcon } from "~/assets/icons/Ouvir";
-import { DraggableCard } from "~/components/DraggableCard";
-import { CardItem } from "~/components/DraggableCard/DraggableCard";
+import { Group, Image, LoadingOverlay } from "@mantine/core";
+import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton/EduButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { TextOptionButton } from "~/components/OptionButton";
+import { useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
 
-export function Model14({ question }: { question: Question }) {
-  const [slots, setSlots] = useState<Slot[]>(question.options.map(() => null));
+export function Model14({ question, answerCallback }: ModelProps) {
+  const { audioTitles } = useQuestionHelper(question);
+  const circleRule = question.rules.find((rule) => rule.name === "circle_size");
+  const circleSize = circleRule ? +circleRule.value : 4;
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const [options] = useState<CardItem[]>(
-    question.options.map((option) => ({
-      id: option.position,
-      type: "ANSWER_CARD",
-      imageUrl: option.image_url ?? "",
-      description: option.description,
-      position: option.position,
-    }))
-  );
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
 
-  const handleDrop = useCallback(function (
-    item: CardItem | null,
-    index: number
-  ) {
-    setSlots((state) =>
-      produce(state, (draft) => {
-        draft[index] = item;
-      })
-    );
-  },
-    []);
+  function submitAnswer() {
+    if (answer === null) return;
+
+    mutate({
+      optionsAnswered: [answer],
+      planetId: question.planet_id,
+      questionId: question.id,
+    });
+  }
 
   return (
     <>
-      <EduButton rightIcon={<OuvirIcon />}>Ouvir novamente</EduButton>
+      {audioTitles
+        .filter((title) => title.file_url)
+        .map((title) => (
+          <AudioButton src={title.file_url!} key={title.file_url} autoPlay />
+        ))}
 
-      <Group position="apart" spacing={137}>
-        <Grid>
-          <Grid.Col span={4}>
-            <Image src="https://place-hold.it/110" height={256} />
-          </Grid.Col>
-          {options
-            .sort((a, b) => a.position - b.position)
-            .map((item, inx) => (
-              <Grid.Col span={2} m="auto" key={item.id}>
-                <DraggableCard
-                  item={item}
-                  key={item.id}
-                  hidden={!!slots.find((slot) => slot?.id === item.id)}
-                />
-              </Grid.Col>
+      <Group my="auto" position="apart" noWrap>
+        {question.options.map(
+          (option) =>
+            option.image_url && (
+              <Image src={option.image_url} key={option.image_url} />
+            )
+        )}
+
+        <Group noWrap>
+          {Array(circleSize)
+            .fill(null)
+            .map((_, inx) => (
+              <TextOptionButton
+                onClick={() =>
+                  setAnswer({
+                    position: inx,
+                    positionAnswer: inx,
+                  } as QuestionOption)
+                }
+                key={inx}
+                data-selected={answer?.position === inx}
+              >
+                {inx + 1}
+              </TextOptionButton>
             ))}
-        </Grid>
+        </Group>
       </Group>
+
+      <EduButton disabled={answer === null} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay visible={isLoading} />
     </>
   );
 }

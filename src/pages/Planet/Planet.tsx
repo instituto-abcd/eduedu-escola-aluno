@@ -31,14 +31,15 @@ export function PlanetPage() {
     answer:
       | Question
       | {
-          planetCompleted: true;
+          planetCompleted?: true;
         }
   ) {
     if ("planetCompleted" in answer) {
       navigate(PATH.DASHBOARD);
     } else {
-      setCurrentQuestion(answer);
-      answer.progress && updateProgress(answer.progress);
+      setCurrentQuestion(answer as Question);
+      (answer as Question).progress &&
+        updateProgress((answer as Question).progress as number);
     }
   }
 

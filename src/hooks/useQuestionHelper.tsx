@@ -23,12 +23,18 @@ export function useQuestionHelper(question: Question) {
     [getTitlesOfType]
   );
 
-  const audioTitles = useMemo(
-    () => getTitlesOfType("AUDIO"),
-    [getTitlesOfType]
-  );
-
+  const audioTitles = getTitlesOfType("AUDIO");
   const videoTitles = getTitlesOfType("VIDEO");
+  const lottieTitles = getTitlesOfType("LOTTIE");
+
+  function getLottieJson(url: string) {
+    return fetch(url)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error(err);
+        return null;
+      });
+  }
 
   function optionArrKey(option: QuestionOption, inx?: number) {
     return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
@@ -43,6 +49,8 @@ export function useQuestionHelper(question: Question) {
     imageTitles,
     audioTitles,
     videoTitles,
+    lottieTitles,
+    getLottieJson,
     optionArrKey,
   };
 }

@@ -1,7 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { QuestionOption } from "~/api/exam";
 import { Card, StackCardProps } from "./Card";
-import { useEffect, useState } from "react";
 
 type StyleProps = {
   width?: number;
@@ -19,33 +18,21 @@ const useStyles = createStyles((_, props: StyleProps) => ({
 type Props = {
   options: QuestionOption[];
   cardProps?: Partial<StackCardProps>;
+  className?: string;
 };
 
-export function CardStack({ options, cardProps }: Props) {
-  const { classes } = useStyles({
+export function CardStack({ options, className, cardProps }: Props) {
+  const { classes, cx } = useStyles({
     width: cardProps?.variant === "square" ? 170 : 308,
     height: cardProps?.variant === "square" ? 153 : 210,
   });
 
-  // Slice nas options de 1 a 3.
-  // Quando o card estiver dragging, remover do array <--- IN PROGRESS
-  // Quando for solto fora de um slot, devolver ao array
-  // Quando ouver onClear, devolver ao array
-
-  const [workingOptions, setWorkingOptions] = useState<QuestionOption[]>(
-    options.slice(0, 3)
-  );
-
-  useEffect(() => {
-    setWorkingOptions(options.slice(0, 3));
-  }, [options]);
-
   return (
-    <div className={classes.wrapper}>
-      {workingOptions.map((option, inx) => (
+    <div className={cx(classes.wrapper, className)}>
+      {options.map((option, inx) => (
         <Card
           option={option}
-          key={JSON.stringify(option)}
+          key={inx}
           order={inx + 1}
           stacked
           {...cardProps}

@@ -1,16 +1,17 @@
 import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { QuestionOption } from "~/api/exam";
 
 export function QME2x2Video({ question, answerCallback }: ModelProps) {
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
   });
@@ -47,14 +48,9 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
           {question.options.map((option) => (
             <OptionButton
               key={option.position}
-              data-selected={answer?.position === option.position}
+              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               sound={option.sound_url ?? ""}
-              onClick={() =>
-                setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
-                })
-              }
+              onClick={() => setAnswer(option)}
               isCorrect={option.isCorrect}
             >
               {option.image_url && (

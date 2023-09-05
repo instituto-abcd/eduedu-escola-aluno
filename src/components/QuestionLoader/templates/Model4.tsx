@@ -104,12 +104,19 @@ export function Model4({ question, answerCallback }: ModelProps) {
             >
               {option.image_url && (
                 <>
-                  <Image
+                  <img
                     src={option.image_url}
                     alt={option.description}
                     height={105}
                     width="auto"
-                    styles={{ image: { maxWidth: "100%" } }}
+                    style={{
+                      maxHeight: 120,
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      marginInline: "auto",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
                   />
                   {!question.axis_code && question.axis_code === null && (
                     <Text size={14} color="gray.7" weight={600}>

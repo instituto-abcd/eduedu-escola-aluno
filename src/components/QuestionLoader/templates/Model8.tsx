@@ -55,20 +55,28 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title) => (
-        <AudioButton key={title.position} src={title.file_url ?? ""} autoPlay />
+      {audioTitles.map((title, inx) => (
+        <AudioButton
+          key={inx}
+          src={title.file_url ?? ""}
+          autoPlay={inx === 0}
+        />
       ))}
 
-      {textTitles.map((title) => (
-        <Title color="dark.3" size={30} align="center">
+      {textTitles.map((title, inx) => (
+        <Title color="dark.3" size={30} align="center" key={inx}>
           {title.description}
         </Title>
       ))}
 
       <Group my="auto" noWrap w={BOARD_WIDTH}>
-        {videoTitles.map((title) => (
-          <Center w="100%">
-            <VideoPlayer src={title.file_url ?? ""} key={title.file_url} />
+        {videoTitles.map((title, inx) => (
+          <Center w="100%" key={inx}>
+            <VideoPlayer
+              src={title.file_url ?? ""}
+              key={title.file_url}
+              autoPlay
+            />
           </Center>
         ))}
 

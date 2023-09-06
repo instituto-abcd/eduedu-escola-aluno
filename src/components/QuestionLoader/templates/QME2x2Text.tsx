@@ -93,18 +93,20 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
           </Title>
           <Group align="center" position="center">
             {question.options.map((option) => (
-              <TextOptionButton
-                key={option.description}
-                onClick={() =>
-                  setAnswer({
-                    position: option.position,
-                    positionAnswer: option.position,
-                  })
-                }
-                data-selected={answer?.position === option.position}
-              >
-                {option.description}
-              </TextOptionButton>
+              <Stack>
+                <TextOptionButton
+                  key={option.description}
+                  onClick={() =>
+                    setAnswer({
+                      position: option.position,
+                      positionAnswer: option.position,
+                    })
+                  }
+                  data-selected={answer?.position === option.position}
+                >
+                  {option.description}
+                </TextOptionButton>
+              </Stack>
             ))}
           </Group>
         </Stack>

@@ -2,6 +2,7 @@ import { Button, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { Question } from "~/api/exam";
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { QuestionInfo } from "../Planet/components/QuestionInfo";
 
 export function QuestionView() {
   const location = useLocation();
@@ -31,6 +32,9 @@ export function QuestionView() {
       >
         Voltar
       </Button>
+      <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+        <QuestionInfo question={question} next={() => {}} previous={() => {}} />
+      </Stack>
     </>
   );
 }

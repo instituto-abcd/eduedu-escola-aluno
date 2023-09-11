@@ -19,6 +19,6 @@ export function TextOptionButton(props: OptionButtonProps) {
   const { classes, cx } = useStyles();
 
   return (
-    <OptionButton {...props} className={cx(classes.button, props.className)} />
+    <OptionButton {...props} className={cx(classes.button, props.className)} style={{ ...props.style }} />
   );
 }

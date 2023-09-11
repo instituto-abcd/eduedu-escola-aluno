@@ -86,7 +86,12 @@ export function Model18({ question, answerCallback }: ModelProps) {
           <Group>
             {slots.map((slot, inx) => {
               if (typeof slot === "string")
-                return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
+                return <TextOptionButton
+                  key={slot}
+                  style={{ width: '87px', height: '78px', fontSize: '40px', fontWeight: 600 }}
+                >
+                  {slot}
+                </TextOptionButton>;
 
               return (
                 <DragLetterSlot
@@ -94,6 +99,11 @@ export function Model18({ question, answerCallback }: ModelProps) {
                   option={slot}
                   onClear={() => handleClear(inx)}
                   key={inx}
+                  style={{
+                    width: '87px',
+                    height: '78px',
+                    textAlign: 'center'
+                  }}
                 />
               );
             })}
@@ -112,13 +122,18 @@ export function Model18({ question, answerCallback }: ModelProps) {
                       item.position === option.position
                   )
                 }
+                style={{
+                  width: '87px',
+                  height: '78px',
+                  textAlign: 'center'
+                }}
               >
                 {option.description}
               </DraggableLetters>
             ))}
           </Group>
-        </Stack>
-      </Group>
+        </Stack >
+      </Group >
 
       <EduButton
         disabled={selected.length < 3}

@@ -19,8 +19,8 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   const startingSlots =
     textTitles.length > 0
       ? textTitles[0].description
-          .split("")
-          .map((char) => (char === "_" ? null : char))
+        .split("")
+        .map((char) => (char === "_" ? null : char))
       : [null, null];
 
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -91,6 +91,14 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
               onDrop={(item) => handleDrop(item, inx)}
               option={slot}
               onClear={() => handleClear(inx)}
+              style={{
+                width: '87px',
+                height: '78px',
+                textAlign: 'center',
+                display: 'flex',
+                margin: 'auto',
+                alignItems: 'center',
+              }}
             />
           );
         })}
@@ -114,6 +122,14 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
                   item.position === option.position
               ) || mediaTrack.isPlaying
             }
+            style={{
+              width: '87px',
+              height: '78px',
+              textAlign: 'center',
+              display: 'flex',
+              margin: 'auto',
+              alignItems: 'center',
+            }}
           />
         ))}
       </SimpleGrid>

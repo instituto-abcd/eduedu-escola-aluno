@@ -23,9 +23,10 @@ import { usePlanetAnswer } from "~/api/planet";
  */
 
 export function Model11({ question, answerCallback }: ModelProps) {
-  const { imageTitles, audioTitles, textTitles, isExam } = useQuestionHelper(question);
+  const { imageTitles, audioTitles, textTitles, isExam } =
+    useQuestionHelper(question);
 
-  const [, word] = question.description.split("/");
+  const [, word] = textTitles[0].description.split("/") ?? ["", ""];
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
@@ -44,13 +45,17 @@ export function Model11({ question, answerCallback }: ModelProps) {
     if (isExam) {
       mutateExam({
         questionId: question.id,
-        optionsAnswered: [{ position: answer.position, positionAnswer: 0 } as QuestionOption],
+        optionsAnswered: [
+          { position: answer.position, positionAnswer: 0 } as QuestionOption,
+        ],
       });
     } else {
       mutatePlanet({
         questionId: question.id,
         planetId: question.planet_id,
-        optionsAnswered: [{ position: answer.position, positionAnswer: 0 } as QuestionOption],
+        optionsAnswered: [
+          { position: answer.position, positionAnswer: 0 } as QuestionOption,
+        ],
       });
     }
   }

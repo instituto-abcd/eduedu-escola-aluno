@@ -18,11 +18,14 @@ import { useGetExamQuestion } from "~/api/student";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { BOARD_WIDTH } from "~/constants/dimensions";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
-const showTextOptionExceptions = [79, 80, 87, 88];
+const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
 
 export function Model8Prova({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles, videoTitles } =
+    useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
@@ -37,6 +40,8 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
       optionsAnswered: [answer] as QuestionOption[],
     });
   }
+
+  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setAnswer(null);
@@ -65,6 +70,19 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
             />
           </Center>
         ))}
+
+        {videoTitles
+          .filter((title) => title.file_url)
+          .map((title, inx) => (
+            <Center w="100%" key={inx}>
+              <VideoPlayer
+                src={title.file_url ?? ""}
+                onPlayStatusChange={mediaTrack.setPlayStatus}
+                canPlay={mediaTrack.canPlay()}
+                autoPlay
+              />
+            </Center>
+          ))}
 
         <Center w="100%">
           <SimpleGrid cols={2}>

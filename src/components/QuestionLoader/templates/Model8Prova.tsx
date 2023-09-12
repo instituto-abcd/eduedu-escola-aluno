@@ -59,7 +59,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         </Title>
       ))}
 
-      <Group my="auto" w={BOARD_WIDTH} noWrap spacing={60}>
+      <Group my="auto" w={BOARD_WIDTH} noWrap spacing={20}>
         {imageTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <Image
@@ -84,9 +84,9 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
             </Center>
           ))}
 
-        <Center w="100%" maw="50%" mx="auto">
+        <Center w="100%" maw="60%" mx="auto">
           {showTextOptionExceptions.includes(question.id) && (
-            <Stack w="100%">
+            <Stack w="100%" spacing={30}>
               {question.options.map((option, inx) =>
                 showTextOptionExceptions.includes(question.id) ? (
                   <TextOptionButton
@@ -99,9 +99,9 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
-                        size={14}
+                        size={24}
                         color="blue.6"
-                        weight={600}
+                        weight={400}
                         style={{
                           wordWrap: "break-word",
                           wordBreak: "break-word",

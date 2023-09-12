@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { BOARD_WIDTH } from "~/constants/dimensions";
 
-const showTextOptionExceptions = [79, 80];
+const showTextOptionExceptions = [79, 80, 87, 88];
 
 export function Model8Prova({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);

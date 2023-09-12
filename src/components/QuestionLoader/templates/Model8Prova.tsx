@@ -165,7 +165,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                   >
                     <Stack justify="space-evenly">
                       <IconVolume size={62} />
-                      <Text color="dark.6" size={30} weight={400}>
+                      <Text color="blue.6" size={30} weight={600}>
                         {inx + 1}
                       </Text>
                     </Stack>

@@ -19,6 +19,8 @@ import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { BOARD_WIDTH } from "~/constants/dimensions";
 
+const showTextOptionExceptions = [79, 80, 87, 88];
+
 export function Model8Prova({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -74,12 +76,24 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                 sound={option.sound_url ?? undefined}
                 isCorrect={option.isCorrect}
               >
-                <Stack justify="space-evenly">
-                  <IconVolume size={62} />
-                  <Text color="dark.6" size={30} weight={400}>
-                    {inx + 1}
+                {!showTextOptionExceptions.includes(question.id) && (
+                  <Stack justify="space-evenly">
+                    <IconVolume size={62} />
+                    <Text color="dark.6" size={30} weight={400}>
+                      {inx + 1}
+                    </Text>
+                  </Stack>
+                )}
+                {showTextOptionExceptions.includes(question.id) && (
+                  <Text
+                    size={14}
+                    color="gray.7"
+                    weight={600}
+                    style={{ wordWrap: "break-word", wordBreak: "break-word" }}
+                  >
+                    {option.description}
                   </Text>
-                </Stack>
+                )}
               </OptionButton>
             ))}
           </SimpleGrid>

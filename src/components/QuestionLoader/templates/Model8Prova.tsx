@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
-import { OptionButton } from "~/components/OptionButton";
+import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
 import { useGetExamQuestion } from "~/api/student";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         </Title>
       ))}
 
-      <Group my="auto" w={BOARD_WIDTH} noWrap>
+      <Group my="auto" w={BOARD_WIDTH} noWrap spacing={60}>
         {imageTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <Image
@@ -84,37 +84,96 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
             </Center>
           ))}
 
-        <Center w="100%">
-          <SimpleGrid cols={2}>
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={inx}
-                onClick={() => setAnswer(option)}
-                data-selected={answer?.position === option.position}
-                sound={option.sound_url ?? undefined}
-                isCorrect={option.isCorrect}
-              >
-                {!showTextOptionExceptions.includes(question.id) && (
-                  <Stack justify="space-evenly">
-                    <IconVolume size={62} />
-                    <Text color="dark.6" size={30} weight={400}>
-                      {inx + 1}
-                    </Text>
-                  </Stack>
-                )}
-                {showTextOptionExceptions.includes(question.id) && (
-                  <Text
-                    size={14}
-                    color="gray.7"
-                    weight={600}
-                    style={{ wordWrap: "break-word", wordBreak: "break-word" }}
+        <Center w="100%" maw="50%" mx="auto">
+          {showTextOptionExceptions.includes(question.id) && (
+            <Stack w="100%">
+              {question.options.map((option, inx) =>
+                showTextOptionExceptions.includes(question.id) ? (
+                  <TextOptionButton
+                    key={inx}
+                    onClick={() => setAnswer(option)}
+                    data-selected={answer?.position === option.position}
+                    sound={option.sound_url ?? undefined}
+                    isCorrect={option.isCorrect}
+                    style={{ width: "100%" }}
                   >
-                    {option.description}
-                  </Text>
-                )}
-              </OptionButton>
-            ))}
-          </SimpleGrid>
+                    {showTextOptionExceptions.includes(question.id) && (
+                      <Text
+                        size={14}
+                        color="blue.6"
+                        weight={600}
+                        style={{
+                          wordWrap: "break-word",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {option.description}
+                      </Text>
+                    )}
+                  </TextOptionButton>
+                ) : (
+                  <OptionButton
+                    key={inx}
+                    onClick={() => setAnswer(option)}
+                    data-selected={answer?.position === option.position}
+                    sound={option.sound_url ?? undefined}
+                    isCorrect={option.isCorrect}
+                  >
+                    <Stack justify="space-evenly">
+                      <IconVolume size={62} />
+                      <Text color="dark.6" size={30} weight={400}>
+                        {inx + 1}
+                      </Text>
+                    </Stack>
+                  </OptionButton>
+                )
+              )}
+            </Stack>
+          )}
+          {!showTextOptionExceptions.includes(question.id) && (
+            <SimpleGrid cols={2}>
+              {question.options.map((option, inx) =>
+                showTextOptionExceptions.includes(question.id) ? (
+                  <TextOptionButton
+                    key={inx}
+                    onClick={() => setAnswer(option)}
+                    data-selected={answer?.position === option.position}
+                    sound={option.sound_url ?? undefined}
+                    isCorrect={option.isCorrect}
+                  >
+                    {showTextOptionExceptions.includes(question.id) && (
+                      <Text
+                        size={14}
+                        color="blue.6"
+                        weight={600}
+                        style={{
+                          wordWrap: "break-word",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {option.description}
+                      </Text>
+                    )}
+                  </TextOptionButton>
+                ) : (
+                  <OptionButton
+                    key={inx}
+                    onClick={() => setAnswer(option)}
+                    data-selected={answer?.position === option.position}
+                    sound={option.sound_url ?? undefined}
+                    isCorrect={option.isCorrect}
+                  >
+                    <Stack justify="space-evenly">
+                      <IconVolume size={62} />
+                      <Text color="dark.6" size={30} weight={400}>
+                        {inx + 1}
+                      </Text>
+                    </Stack>
+                  </OptionButton>
+                )
+              )}
+            </SimpleGrid>
+          )}
         </Center>
       </Group>
 

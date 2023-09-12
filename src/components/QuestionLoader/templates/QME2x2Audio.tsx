@@ -5,16 +5,16 @@ import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioControls } from "~/components/AudioControls/AudioControls";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { useEffect, useRef, useState } from "react";
 import { EduButton } from "~/components/EduButton";
-import { QuestionTitleClassification } from "~/api/exam";
+import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
-  const { audioTitles, optionArrKey } = useQuestionHelper(question);
+  const { audioTitles } = useQuestionHelper(question);
 
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -25,7 +25,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
 
     mutate({
       questionId: question.id,
-      optionsAnswered: [{ position: answer.position, positionAnswer: 0 }],
+      optionsAnswered: [answer],
     });
   }
 
@@ -58,7 +58,13 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
 
   useEffect(() => {
     setAnswer(null);
-    void introRef.current?.play();
+    const introTitle = audioTitles.find(
+      (title) => title.classification === QuestionTitleClassification.INTRO
+    );
+
+    if (introTitle && introTitle.autoplay) {
+      void introRef.current?.play();
+    }
   }, [question]);
 
   return (
@@ -74,7 +80,9 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
             key={title.file_url}
             ref={historyRef}
             onEnded={() => {
-              setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
+              if (title.autoplay) {
+                setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
+              }
               mediaTrack.setPlayStatus(false);
             }}
             onPlay={() => mediaTrack.setPlayStatus(true)}
@@ -108,7 +116,15 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               style={{ display: "none" }}
               ref={introRef}
               onEnded={() => {
-                setCurrentAudio(QuestionTitleClassification.HISTORIA);
+                const nextTitle = audioTitles.find(
+                  (t) =>
+                    t.classification === QuestionTitleClassification.HISTORIA
+                );
+
+                if (nextTitle && nextTitle.autoplay) {
+                  setCurrentAudio(QuestionTitleClassification.HISTORIA);
+                }
+
                 mediaTrack.setPlayStatus(false);
               }}
               onPlay={() => mediaTrack.setPlayStatus(true)}
@@ -118,27 +134,31 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       </Group>
 
       <SimpleGrid cols={cols}>
-        {question.options.map((option, inx) => (
-          <OptionButton
-            key={optionArrKey(option, inx)}
-            sound={option.sound_url ?? ""}
-            onClick={() =>
-              setAnswer({
-                position: option.position,
-                positionAnswer: option.position,
-              })
-            }
-            data-selected={answer?.position === option.position}
-            isCorrect={option.isCorrect}
-          >
-            <Stack justify="space-evenly">
-              <IconVolume size={62} />
-              <Text color="dark.6" size={30} weight={400}>
-                {inx + 1}
-              </Text>
-            </Stack>
-          </OptionButton>
-        ))}
+        {question.options.map((option, inx) => {
+          const hasLabel =
+            option.description !== null && option.description.length > 2;
+          return (
+            <OptionButton
+              key={inx}
+              sound={option.sound_url ?? ""}
+              onClick={() => setAnswer(option)}
+              data-selected={answer?.position === option.position}
+              isCorrect={option.isCorrect}
+            >
+              <Stack justify="space-evenly">
+                {!hasLabel && <IconVolume size={62} />}
+                <Text
+                  color="dark.6"
+                  size={hasLabel ? 17 : 30}
+                  weight={hasLabel ? 600 : 400}
+                  style={{ wordBreak: "break-word" }}
+                >
+                  {hasLabel ? option.description : inx + 1}
+                </Text>
+              </Stack>
+            </OptionButton>
+          );
+        })}
       </SimpleGrid>
       <EduButton
         disabled={!answer}

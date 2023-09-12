@@ -23,6 +23,7 @@ export type QuestionTitle = {
   position: number;
   type: string;
   classification: QuestionTitleClassification | null;
+  autoplay: boolean;
 };
 
 export type Question = {
@@ -40,6 +41,7 @@ export type Question = {
   progress?: number;
   status?: string;
   planet_id: string;
+  title: string;
   rules: {
     name: string;
     type: string;

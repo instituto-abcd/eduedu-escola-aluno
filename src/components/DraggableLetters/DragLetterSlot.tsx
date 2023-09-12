@@ -46,6 +46,6 @@ export function DragLetterSlot({
   );
 
   if (option !== null)
-    return <DraggableLetters onClear={onClear} option={option} disabled />;
-  return <div {...props} className={classes.card} style={{}} ref={drop} />;
+    return <DraggableLetters onClear={onClear} option={option} disabled style={{ ...props.style }} />;
+  return <div {...props} className={classes.card} style={{ ...props.style }} ref={drop} />;
 }

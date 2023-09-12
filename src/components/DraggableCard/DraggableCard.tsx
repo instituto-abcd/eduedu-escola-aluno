@@ -108,7 +108,8 @@ export function DraggableCard<T>({
         <img
           src={image}
           style={{
-            maxHeight: 130,
+            maxHeight: "95%",
+            maxWidth: "95%",
             objectFit: "contain",
             marginInline: "auto",
             pointerEvents: "none",
@@ -116,9 +117,7 @@ export function DraggableCard<T>({
           }}
         />
       )}
-      {!image && text && (
-        <Text className={cx(classes.text, textClasses)}>{text}</Text>
-      )}
+      {text && <Text className={cx(classes.text, textClasses)}>{text}</Text>}
       {onClear && (
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />

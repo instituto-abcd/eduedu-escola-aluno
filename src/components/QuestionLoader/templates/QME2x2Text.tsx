@@ -9,8 +9,8 @@ import {
   createStyles,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { QuestionTitleClassification } from "~/api/exam";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
+import { useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -26,12 +26,15 @@ const useStyles = createStyles((theme) => ({
       fontSize: 30,
     },
   },
+  button: {
+    width: "100%",
+  },
 }));
 
 export function QME2x2Text({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
   const { textTitles, imageTitles } = useQuestionHelper(question);
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   const { mutate, isLoading } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -42,7 +45,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
 
     mutate({
       questionId: question.id,
-      optionsAnswered: [answer],
+      optionsAnswered: [answer] as QuestionOption[],
     });
   }
 
@@ -92,20 +95,18 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
             }
           </Title>
           <Group align="center" position="center">
-            {question.options.map((option) => (
-              <TextOptionButton
-                key={option.description}
-                onClick={() =>
-                  setAnswer({
-                    position: option.position,
-                    positionAnswer: option.position,
-                  })
-                }
-                data-selected={answer?.position === option.position}
-              >
-                {option.description}
-              </TextOptionButton>
-            ))}
+            <Stack align="strech">
+              {question.options.map((option) => (
+                <TextOptionButton
+                  key={option.description}
+                  onClick={() => setAnswer(option)}
+                  data-selected={answer?.position === option.position}
+                  className={classes.button}
+                >
+                  {option.description}
+                </TextOptionButton>
+              ))}
+            </Stack>
           </Group>
         </Stack>
       </Group>

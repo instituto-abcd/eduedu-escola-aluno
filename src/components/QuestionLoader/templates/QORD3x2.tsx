@@ -1,9 +1,9 @@
-import { Group, LoadingOverlay, SimpleGrid } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid, createStyles } from "@mantine/core";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { useEffect, useState } from "react";
-import { Answer, useGetExamQuestion } from "~/api/student";
+import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { EduButton } from "~/components/EduButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
@@ -12,18 +12,26 @@ import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 
+const useStyles = createStyles({
+  letters: {
+    width: 87,
+    maxHeight: 78,
+  },
+});
+
 type Slot = string | null | QuestionOption;
 
 export function QORD3x2({ question, answerCallback }: ModelProps) {
+  const { classes } = useStyles();
   const { audioTitles, textTitles } = useQuestionHelper(question);
   const startingSlots =
     textTitles.length > 0
       ? textTitles[0].description
-        .split("")
-        .map((char) => (char === "_" ? null : char))
+          .split("")
+          .map((char) => (char === "_" ? null : char))
       : [null, null];
 
-  const [selected, setSelected] = useState<Answer[]>([]);
+  const [selected, setSelected] = useState<QuestionOption[]>([]);
 
   const [slots, setSlots] = useState<Slot[]>(startingSlots);
   const disabled =
@@ -54,7 +62,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
       setSelected((state) =>
         produce(state, (draft) => {
           draft[index] = {
-            position: item.position,
+            ...item,
             positionAnswer: index,
           };
         })
@@ -91,14 +99,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
               onDrop={(item) => handleDrop(item, inx)}
               option={slot}
               onClear={() => handleClear(inx)}
-              style={{
-                width: '87px',
-                height: '78px',
-                textAlign: 'center',
-                display: 'flex',
-                margin: 'auto',
-                alignItems: 'center',
-              }}
+              className={classes.letters}
             />
           );
         })}
@@ -122,14 +123,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
                   item.position === option.position
               ) || mediaTrack.isPlaying
             }
-            style={{
-              width: '87px',
-              height: '78px',
-              textAlign: 'center',
-              display: 'flex',
-              margin: 'auto',
-              alignItems: 'center',
-            }}
+            className={classes.letters}
           />
         ))}
       </SimpleGrid>

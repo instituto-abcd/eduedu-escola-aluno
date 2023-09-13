@@ -6,7 +6,7 @@ import {
   Progress,
 } from "@mantine/core";
 import { Outlet } from "react-router-dom";
-import lousa from "~/assets/bgs/lousa.svg";
+import lousa from "~/assets/bgs/lousa-sala1.svg";
 import { useExamProgress } from "~/stores/exam-progress";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { useEffect, useRef, useState } from "react";

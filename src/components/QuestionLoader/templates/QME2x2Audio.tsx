@@ -58,7 +58,13 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
 
   useEffect(() => {
     setAnswer(null);
-    void introRef.current?.play();
+    const introTitle = audioTitles.find(
+      (title) => title.classification === QuestionTitleClassification.INTRO
+    );
+
+    if (introTitle && introTitle.autoplay) {
+      void introRef.current?.play();
+    }
   }, [question]);
 
   return (
@@ -74,7 +80,9 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
             key={title.file_url}
             ref={historyRef}
             onEnded={() => {
-              setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
+              if (title.autoplay) {
+                setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
+              }
               mediaTrack.setPlayStatus(false);
             }}
             onPlay={() => mediaTrack.setPlayStatus(true)}
@@ -108,7 +116,15 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               style={{ display: "none" }}
               ref={introRef}
               onEnded={() => {
-                setCurrentAudio(QuestionTitleClassification.HISTORIA);
+                const nextTitle = audioTitles.find(
+                  (t) =>
+                    t.classification === QuestionTitleClassification.HISTORIA
+                );
+
+                if (nextTitle && nextTitle.autoplay) {
+                  setCurrentAudio(QuestionTitleClassification.HISTORIA);
+                }
+
                 mediaTrack.setPlayStatus(false);
               }}
               onPlay={() => mediaTrack.setPlayStatus(true)}
@@ -132,9 +148,9 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               <Stack justify="space-evenly">
                 {!hasLabel && <IconVolume size={62} />}
                 <Text
-                  color="dark.6"
-                  size={hasLabel ? 17 : 30}
-                  weight={hasLabel ? 600 : 400}
+                  color="blue.6"
+                  size={hasLabel ? 20 : 30}
+                  weight={hasLabel ? 400 : 600}
                   style={{ wordBreak: "break-word" }}
                 >
                   {hasLabel ? option.description : inx + 1}

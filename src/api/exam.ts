@@ -23,6 +23,7 @@ export type QuestionTitle = {
   position: number;
   type: string;
   classification: QuestionTitleClassification | null;
+  autoplay: boolean;
 };
 
 export type Question = {

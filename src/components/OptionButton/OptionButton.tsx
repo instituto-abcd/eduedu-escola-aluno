@@ -1,6 +1,6 @@
 import { createStyles } from "@mantine/core";
 import { forwardRef, useRef } from "react";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 const useStyles = createStyles({
   button: {
@@ -65,11 +65,7 @@ export const OptionButton = forwardRef<HTMLButtonElement, OptionButtonProps>(
 
     function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       if (props.sound && mediaTrack.canPlay()) {
-        mediaTrack.play({
-          trackId: `[SOUND]-${props.sound}`,
-          trackUrl: props.sound,
-          mediaType: MediaType.AUDIO,
-        });
+        void soundRef.current?.play();
       }
       props?.onClick?.(e);
     }
@@ -91,9 +87,6 @@ export const OptionButton = forwardRef<HTMLButtonElement, OptionButtonProps>(
             src={props.sound}
             ref={soundRef}
             className={classes.audio}
-            onPlay={() => mediaTrack.setPlayStatus(true)}
-            onPause={() => mediaTrack.setPlayStatus(false)}
-            onEnded={() => mediaTrack.setPlayStatus(false)}
           ></audio>
         )}
       </div>

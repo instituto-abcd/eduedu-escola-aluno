@@ -1,4 +1,4 @@
-import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
+import { Box, Center, Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
@@ -57,7 +57,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Group spacing={100} my="auto">
+      <Group spacing={20} my="auto">
         {imageTitles
           .filter((title) => title.file_url)
           .map((title) => (
@@ -115,7 +115,15 @@ export function Model10({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "20px",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
       <LoadingOverlay visible={isLoading} />

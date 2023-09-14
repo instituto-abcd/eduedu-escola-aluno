@@ -1,25 +1,29 @@
+// Utils & Aux:
+import { useEffect, useRef, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { lousaHeight, lousaWidth } from "~/utils/userScreen";
+import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { useExamProgress } from "~/stores/exam-progress";
+
+// Components:
 import {
   BackgroundImage,
-  Image,
   Button,
   Center,
   Progress,
 } from "@mantine/core";
-import { Outlet } from "react-router-dom";
-import lousa from "~/assets/bgs/lousa-sala1.svg";
-import { useExamProgress } from "~/stores/exam-progress";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
-import { useEffect, useRef, useState } from "react";
-import { Navbar } from "../Navbar/Navbar";
+import { Navbar } from "~/components/Navbar/Navbar";
 
 // Images:
-import sala_1680 from "~/assets/bgs/sala_1680x1050.png";
-import sala_1920 from "~/assets/bgs/sala_1920x1080.png";
-import sala_1440 from "~/assets/bgs/sala_1440x1080.png";
 import sala_3000 from "~/assets/bgs/sala_3000x900.png";
+import lousa from "~/assets/bgs/lousa-sala1.svg";
 import { LottiesExam } from "./LottiesExam";
 
 export function ExamLayout() {
+
+  // Getting progressbar position based on blackboard position which is based on user screen width:
+  const progressBarHeight = lousaHeight * 3 / 100
+
   const examProgress = useExamProgress((state) => state.value);
 
   const mediaTrack = useMediaTrackStore();
@@ -36,15 +40,10 @@ export function ExamLayout() {
     }
   }, [currentAudio]);
 
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [bgProva, setBgProva] = useState("");
 
   useEffect(() => {
     setBgProva(sala_3000);
-    // if (screenWidth > 1920) { setBgProva(sala_1920); }
-    // else if (screenWidth < 1920 && screenWidth >= 1680) { setBgProva(sala_1680); }
-    // else { setBgProva(sala_1440) }
-
     audioRef.current && audioRef.current.setAttribute("src", "");
   }, []);
 
@@ -52,7 +51,6 @@ export function ExamLayout() {
     <BackgroundImage
       src={bgProva}
       mih="100vh"
-      mx="auto"
       p={0}
       styles={{ main: { padding: 0, position: "relative" } }}
     >
@@ -60,8 +58,8 @@ export function ExamLayout() {
       <Center style={{ position: "relative" }}>
         <Progress
           value={examProgress}
-          w={750}
-          style={{ position: "absolute", top: 30 }}
+          w="50%"
+          style={{ position: "absolute", top: progressBarHeight }}
           size="lg"
           striped
           animate
@@ -69,9 +67,9 @@ export function ExamLayout() {
         />
         <BackgroundImage
           src={lousa}
-          w={1140}
-          h={846}
-          mt={10}
+          h={lousaHeight}
+          w={lousaWidth}
+          mt={progressBarHeight * 30 / 100}
           style={{
             display: "flex",
             alignItems: "center",
@@ -79,7 +77,11 @@ export function ExamLayout() {
             userSelect: "none",
           }}
         >
-          <Center h="80%" mt={55}>
+          <Center
+            w={lousaWidth * 90 / 100}
+            h={lousaHeight * 88 / 100}
+            mt={progressBarHeight * 350 / 100}
+          >
             <Outlet />
           </Center>
         </BackgroundImage>

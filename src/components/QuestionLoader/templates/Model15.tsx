@@ -27,8 +27,6 @@ export function Model15({ question, answerCallback }: ModelProps) {
           <VideoPlayer
             src={title.file_url ?? ""}
             key={title.file_url}
-            customWidth="800"
-            customHeight="auto"
             autoPlay
           />
         ))}

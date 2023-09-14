@@ -16,7 +16,7 @@ export function LottiesExam() {
   return (
     <Box mx="auto" h={290} style={{ position: 'relative' }}>
 
-      <Box mx="auto" h={290} maw={1200} style={{ position: 'relative', background: '#00ffff70' }}>
+      <Box mx="auto" h={290} maw={1200} style={{ position: 'relative' }}>
         <Lottie
           options={{
             loop: true,

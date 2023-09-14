@@ -61,7 +61,7 @@ export function ExamLayout() {
         <Progress
           value={examProgress}
           w={750}
-          style={{ position: "absolute", top: 20 }}
+          style={{ position: "absolute", top: 30 }}
           size="lg"
           striped
           animate

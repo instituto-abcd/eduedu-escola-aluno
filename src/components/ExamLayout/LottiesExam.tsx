@@ -68,6 +68,7 @@ export function LottiesExam() {
             height: 'auto'
           }}
         />
+        {/* TODO: reimplement when lottie is remade */}
         {/* <Lottie
           options={{
             loop: true,
@@ -78,17 +79,16 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
+            // background: 'red',
+            position: 'absolute',
+            left: '2%',
+            bottom: '-15%',
+            width: '200px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
         /> */}
-        <Lottie
+        {/* TODO: reimplement when lottie is remade */}
+        {/* <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -98,13 +98,14 @@ export function LottiesExam() {
             },
           }}
           style={{
+            // background: 'red',
             position: 'absolute',
             right: '2%',
             bottom: '-15%',
             width: '200px',
             height: 'auto'
           }}
-        />
+        /> */}
         <Lottie
           options={{
             loop: true,
@@ -124,7 +125,7 @@ export function LottiesExam() {
         />
       </Box>
 
-      TODO: reimplement when lottie is remade
+      {/* TODO: reimplement when lottie is remade */}
       {/* <Lottie
         options={{
           loop: true,

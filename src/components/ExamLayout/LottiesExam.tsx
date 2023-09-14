@@ -120,26 +120,23 @@ export function LottiesExam() {
           height="auto"
           width={screenWidth}
         /> */}
-      {/* <Lottie
-          options={{
-            loop: true,
-            autoplay: true,
-            animationData: luzMesa,
-            rendererSettings: {
-              preserveAspectRatio: "xMidYMid slice",
-            },
-          }}
-          style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 500,
-            marginInline: "auto",
-            pointerEvents: "none",
-          }}
-          height="auto"
-          width={screenWidth}
-        /> */}
+      <Lottie
+        options={{
+          loop: true,
+          autoplay: true,
+          animationData: luzMesa,
+          rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice",
+          },
+        }}
+        style={{
+          position: 'absolute',
+          left: '10%',
+          bottom: '0',
+          width: '200px',
+          height: 'auto'
+        }}
+      />
     </Box>
   )
 }

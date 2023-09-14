@@ -14,9 +14,9 @@ export function LottiesExam() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   return (
-    <Box mx="auto" h={290} style={{ position: 'relative' }}>
+    <Box mx="auto" maw={screenWidth} h={250} style={{ position: 'relative' }}>
 
-      <Box mx="auto" h={290} maw={1200} style={{ position: 'relative' }}>
+      <Box my={0} p={0} mx="auto" h={250} maw={1200} style={{ position: 'relative' }}>
         <Lottie
           options={{
             loop: true,
@@ -28,10 +28,11 @@ export function LottiesExam() {
           }}
           style={{
             position: 'absolute',
-            left: '35%',
-            bottom: '0%',
-            width: '400px',
-            height: 'auto'
+            right: '31.8%',
+            bottom: '6%',
+            width: '110px',
+            height: 'auto',
+            zIndex: 3
           }}
         />
         <Lottie
@@ -45,10 +46,11 @@ export function LottiesExam() {
           }}
           style={{
             position: 'absolute',
-            left: '33%',
-            bottom: '0%',
-            width: '400px',
-            height: 'auto'
+            left: '32%',
+            bottom: '2%',
+            width: '180px',
+            height: 'auto',
+            zIndex: 3
           }}
         />
         <Lottie
@@ -62,14 +64,14 @@ export function LottiesExam() {
           }}
           style={{
             position: 'absolute',
-            right: '0%',
-            bottom: '-10%',
-            width: '400px',
-            height: 'auto'
+            right: '24.5%',
+            bottom: '12%',
+            width: '90px',
+            height: 'auto',
+            zIndex: 3
           }}
         />
-        {/* TODO: reimplement when lottie is remade */}
-        {/* <Lottie
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -79,16 +81,15 @@ export function LottiesExam() {
             },
           }}
           style={{
-            // background: 'red',
             position: 'absolute',
             left: '2%',
-            bottom: '-15%',
+            bottom: '10%',
             width: '200px',
-            height: 'auto'
+            height: 'auto',
+            zIndex: 3
           }}
-        /> */}
-        {/* TODO: reimplement when lottie is remade */}
-        {/* <Lottie
+        />
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -98,14 +99,14 @@ export function LottiesExam() {
             },
           }}
           style={{
-            // background: 'red',
             position: 'absolute',
             right: '2%',
-            bottom: '-15%',
+            bottom: '5%',
             width: '200px',
-            height: 'auto'
+            height: 'auto',
+            zIndex: 3
           }}
-        /> */}
+        />
         <Lottie
           options={{
             loop: true,
@@ -117,16 +118,15 @@ export function LottiesExam() {
           }}
           style={{
             position: 'absolute',
-            left: '10%',
-            bottom: '0',
-            width: '200px',
-            height: 'auto'
+            left: '20%',
+            bottom: '-1%',
+            width: '100px',
+            height: 'auto',
+            zIndex: 3
           }}
         />
       </Box>
-
-      {/* TODO: reimplement when lottie is remade */}
-      {/* <Lottie
+      <Lottie
         options={{
           loop: true,
           autoplay: true,
@@ -136,13 +136,13 @@ export function LottiesExam() {
           },
         }}
         style={{
-          background: 'red',
           position: "absolute",
-          bottom: 0,
+          bottom: '18%',
+          zIndex: 2,
+          width: '100%',
+          height: 'auto'
         }}
-        height="auto"
-        width={screenWidth}
-      /> */}
+      />
     </Box>
   )
 }

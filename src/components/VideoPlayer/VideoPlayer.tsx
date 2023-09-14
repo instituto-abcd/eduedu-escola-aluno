@@ -1,6 +1,7 @@
 import { Loader, createStyles } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useRef, useState } from "react";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles({
   wrapper: {
@@ -23,15 +24,11 @@ const useStyles = createStyles({
 type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   onPlayStatusChange?: (isPlaying: boolean) => void;
   canPlay?: boolean;
-  customWidth?: string;
-  customHeight?: string;
 };
 
 export function VideoPlayer({
   onPlayStatusChange,
   canPlay = true,
-  customWidth,
-  customHeight,
   ...props
 }: Props) {
   const { classes } = useStyles();
@@ -45,14 +42,17 @@ export function VideoPlayer({
     }
   }
 
+  // Defining video height based on blackboard which is based on user screen width:
+  const defaultHeight = lousaWidth * 50 / 100;
+
   return (
     <div className={classes.wrapper}>
       <video
         {...props}
         ref={ref}
         style={{ maxHeight: 500 }}
-        width={customWidth ?? 320}
-        height={customHeight ?? 340}
+        width="auto"
+        height={defaultHeight}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

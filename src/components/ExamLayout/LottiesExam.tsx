@@ -8,11 +8,16 @@ import luzMesa from "~/assets/lotties/exam/luz_mesa.json";
 import vaso1 from "~/assets/lotties/exam/vaso_1.json";
 import vaso2 from "~/assets/lotties/exam/vaso_2.json";
 import { Box } from "@mantine/core";
+import { useState } from "react";
 
 export function LottiesExam() {
-    return (
-        <Box h={290} style={{ position: 'relative' }}>
-            {/* <Lottie
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  return (
+    <Box mx="auto" h={290} style={{ position: 'relative' }}>
+
+      <Box mx="auto" h={290} maw={1200} style={{ position: 'relative', background: '#00ffff70' }}>
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -22,17 +27,14 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
+            position: 'absolute',
+            left: '35%',
+            bottom: '0%',
+            width: '400px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
-        /> */}
-            {/* <Lottie
+        />
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -42,17 +44,14 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
+            position: 'absolute',
+            left: '33%',
+            bottom: '0%',
+            width: '400px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
-        /> */}
-            {/* <Lottie
+        />
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -62,17 +61,15 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
+            position: 'absolute',
+            right: '0%',
+            bottom: '-10%',
+            width: '400px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
-        /> */}
-            {/* <Lottie
+        />
+        {/* TODO: reimplement when lottie is remade */}
+        {/* <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -82,53 +79,34 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
+            // background: 'red',
+            position: 'absolute',
+            left: '2%',
+            bottom: '-15%',
+            width: '200px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
         /> */}
-            <Lottie
-                options={{
-                    loop: true,
-                    autoplay: true,
-                    animationData: vaso2,
-                    rendererSettings: {
-                        preserveAspectRatio: "xMidYMid slice",
-                    },
-                }}
-                style={{
-                    position: 'absolute',
-                    right: '10%',
-                    width: '200px',
-                    height: 'auto'
-                }}
-            />
-            {/* <Lottie
+        {/* TODO: reimplement when lottie is remade */}
+        {/* <Lottie
           options={{
             loop: true,
             autoplay: true,
-            animationData: luzRodape,
+            animationData: vaso2,
             rendererSettings: {
               preserveAspectRatio: "xMidYMid slice",
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 500,
-            marginInline: "auto",
-            pointerEvents: "none",
+            // background: 'red',
+            position: 'absolute',
+            right: '2%',
+            bottom: '-15%',
+            width: '200px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
         /> */}
-            {/* <Lottie
+        <Lottie
           options={{
             loop: true,
             autoplay: true,
@@ -138,16 +116,33 @@ export function LottiesExam() {
             },
           }}
           style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 500,
-            marginInline: "auto",
-            pointerEvents: "none",
+            position: 'absolute',
+            left: '10%',
+            bottom: '0',
+            width: '200px',
+            height: 'auto'
           }}
-          height="auto"
-          width={screenWidth}
-        /> */}
-        </Box>
-    )
+        />
+      </Box>
+
+      {/* TODO: reimplement when lottie is remade */}
+      {/* <Lottie
+        options={{
+          loop: true,
+          autoplay: true,
+          animationData: luzRodape,
+          rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice",
+          },
+        }}
+        style={{
+          background: 'red',
+          position: "absolute",
+          bottom: 0,
+        }}
+        height="auto"
+        width={screenWidth}
+      /> */}
+    </Box>
+  )
 }

@@ -32,26 +32,23 @@ export function LottiesExam() {
           height="auto"
           width={screenWidth}
         /> */}
-      {/* <Lottie
-          options={{
-            loop: true,
-            autoplay: true,
-            animationData: livroAberto,
-            rendererSettings: {
-              preserveAspectRatio: "xMidYMid slice",
-            },
-          }}
-          style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
-          }}
-          height="auto"
-          width={screenWidth}
-        /> */}
+      <Lottie
+        options={{
+          loop: true,
+          autoplay: true,
+          animationData: livroAberto,
+          rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice",
+          },
+        }}
+        style={{
+          position: 'absolute',
+          left: '35%',
+          bottom: '0%',
+          width: '400px',
+          height: 'auto'
+        }}
+      />
       <Lottie
         options={{
           loop: true,

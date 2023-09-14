@@ -11,32 +11,12 @@ import { Box } from "@mantine/core";
 
 export function LottiesExam() {
   return (
-    <Box h={290} style={{ position: 'relative' }}>
-      {/* <Lottie
-          options={{
-            loop: true,
-            autoplay: true,
-            animationData: livros,
-            rendererSettings: {
-              preserveAspectRatio: "xMidYMid slice",
-            },
-          }}
-          style={{
-            position: "absolute",
-            insetInline: 0,
-            bottom: 0,
-            zIndex: 555,
-            marginInline: "auto",
-            pointerEvents: "none",
-          }}
-          height="auto"
-          width={screenWidth}
-        /> */}
+    <Box mx="auto" h={290} maw={1200} style={{ position: 'relative', background: '#00ffff70' }}>
       <Lottie
         options={{
           loop: true,
           autoplay: true,
-          animationData: livroAberto,
+          animationData: livros,
           rendererSettings: {
             preserveAspectRatio: "xMidYMid slice",
           },
@@ -53,6 +33,23 @@ export function LottiesExam() {
         options={{
           loop: true,
           autoplay: true,
+          animationData: livroAberto,
+          rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice",
+          },
+        }}
+        style={{
+          position: 'absolute',
+          left: '33%',
+          bottom: '0%',
+          width: '400px',
+          height: 'auto'
+        }}
+      />
+      <Lottie
+        options={{
+          loop: true,
+          autoplay: true,
           animationData: hologramaEduEdu,
           rendererSettings: {
             preserveAspectRatio: "xMidYMid slice",
@@ -60,7 +57,7 @@ export function LottiesExam() {
         }}
         style={{
           position: 'absolute',
-          right: '10%',
+          right: '0%',
           bottom: '-10%',
           width: '400px',
           height: 'auto'
@@ -97,7 +94,8 @@ export function LottiesExam() {
         }}
         style={{
           position: 'absolute',
-          right: '10%',
+          right: '2%',
+          bottom: '-15%',
           width: '200px',
           height: 'auto'
         }}

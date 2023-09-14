@@ -50,6 +50,7 @@ export function VideoPlayer({
       <video
         {...props}
         ref={ref}
+        style={{ maxHeight: 500 }}
         width={customWidth ?? 320}
         height={customHeight ?? 340}
         onLoadedData={() => setIsLoadingData(false)}

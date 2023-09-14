@@ -1,10 +1,12 @@
 import {
   Group,
+  Box,
   Image,
   Text,
   Space,
   Stack,
   LoadingOverlay,
+  ScrollArea,
 } from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
 import { ModelProps } from ".";
@@ -25,7 +27,6 @@ export function Model27({ question, answerCallback }: ModelProps) {
   const totalSlides = question.options.length;
   const [slideIndex, setSlideIndex] = useState(0);
   const currentSlide = question.options[slideIndex];
-
   function nextSlide() {
     if (slideIndex + 1 >= totalSlides) return;
     setSlideIndex(slideIndex + 1);
@@ -86,17 +87,25 @@ export function Model27({ question, answerCallback }: ModelProps) {
             height={currentSlide.description ? 140 : 280}
           />
         )}
-        {currentSlide.description && (
-          <Text
-            color="dark.3"
-            align="center"
-            dangerouslySetInnerHTML={{ __html: currentSlide.description }}
-            maw={800}
-          />
-        )}
-        <Text color="dark.3" size={20} align="center">
+
+        {/* TODO: validate behavior with Eder & Will */}
+        <Text color="dark.3" fz="xl" align="center">
           {question.description}
         </Text>
+
+        {currentSlide.description && (
+          <ScrollArea w={800} mah={400}>
+            <Box>
+              <Text
+                fz="lg"
+                color="dark.3"
+                align="center"
+                dangerouslySetInnerHTML={{ __html: currentSlide.description }}
+                maw={800}
+              />
+            </Box>
+          </ScrollArea>
+        )}
         <Space h={28} />
         <Group position="center">
           <TextOptionButton onClick={previousSlide}>

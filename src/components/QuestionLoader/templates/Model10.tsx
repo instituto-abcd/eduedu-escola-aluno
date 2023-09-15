@@ -52,7 +52,10 @@ export function Model10({ question, answerCallback }: ModelProps) {
         ))}
 
         {/* TODO: como que faz isso meu pai? x.x */}
-        <IconButton icon={<IconBook size={34} />} variant="yellow" />
+        <IconButton
+          icon={<IconBook size={34} />}
+          variant="yellow"
+        />
       </Group>
 
       {textTitles

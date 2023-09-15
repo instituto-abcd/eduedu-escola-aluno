@@ -9,6 +9,7 @@ import { EduButton } from "~/components/EduButton";
 import { useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/utils/userScreen";
 
 // Determinar a variação de modelo
 // Variação de completar a frase: filtrar titles do tipo TEXT que incluam "completar"
@@ -64,7 +65,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
       <Box>
         <ScrollArea
           w={850}
-          h={540}
+          h={lousaHeight * 80 / 100}
         >
           <Center pb={20}>
             <Stack>

@@ -78,7 +78,7 @@ export function Model27({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Stack spacing={24} align="center" my="auto">
+      <Stack spacing={20} align="center" my="auto">
         {currentSlide.image_url && (
           <Image
             src={currentSlide.image_url}
@@ -106,12 +106,11 @@ export function Model27({ question, answerCallback }: ModelProps) {
             </Box>
           </ScrollArea>
         )}
-        <Space h={28} />
         <Group position="center">
           <TextOptionButton onClick={previousSlide}>
             <IconChevronLeft size={40} />
           </TextOptionButton>
-          <TextOptionButton onClick={nextSlide}>
+          <TextOptionButton onClick={nextSlide} disabled={(slideIndex + 1) == totalSlides ? true : false}>
             <IconChevronRight size={40} />
           </TextOptionButton>
         </Group>

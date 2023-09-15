@@ -1,13 +1,18 @@
-import { Box, Center, Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
-import { OptionButton } from "~/components/OptionButton";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
+// Utils & Aux:
 import { useEffect, useState } from "react";
-import { EduButton } from "~/components/EduButton";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { IconVolume } from "@tabler/icons-react";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+
+// Components:
+import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
+import { OptionButton } from "~/components/OptionButton";
+import { EduButton, IconButton } from "~/components/EduButton";
+import { AudioButton } from "~/components/AudioButton";
+
+// Icons:
+import { IconBook, IconVolume } from "@tabler/icons-react";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -34,13 +39,20 @@ export function Model10({ question, answerCallback }: ModelProps) {
   return (
     <>
       <Group>
-        {audioTitles.map((title, inx) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            key={inx}
-            autoPlay={inx === 0}
-          />
+        {audioTitles.map((item, inx) => (
+          <>
+            {item.file_url && item.file_url.length &&
+              <AudioButton
+                src={item.file_url ?? ""}
+                key={inx}
+                autoPlay={inx === 0}
+              />
+            }
+          </>
         ))}
+
+        {/* TODO: como que faz isso meu pai? x.x */}
+        <IconButton icon={<IconBook size={34} />} variant="yellow" />
       </Group>
 
       {textTitles
@@ -119,7 +131,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
         disabled={!answer}
         onClick={submitAnswer}
         style={{
-          marginTop: "20px",
+          marginTop: "10px",
           marginRight: "auto",
           marginLeft: "auto",
         }}

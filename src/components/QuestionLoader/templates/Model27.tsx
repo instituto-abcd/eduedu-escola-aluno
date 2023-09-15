@@ -88,11 +88,6 @@ export function Model27({ question, answerCallback }: ModelProps) {
           />
         )}
 
-        {/* TODO: validate behavior with Eder & Will */}
-        <Text color="dark.3" fz="xl" align="center">
-          {question.description}
-        </Text>
-
         {currentSlide.description && (
           <ScrollArea w={800} mah={400}>
             <Box>

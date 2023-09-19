@@ -15,6 +15,9 @@ export function Model33({ question, answerCallback }: ModelProps) {
   const illustration = imageTitles[0]?.file_url ?? "";
   const mediaTrack = useMediaTrackStore();
 
+  const hasTextOrImage =
+    !!illustration || textTitles.some((title) => title.file_url);
+
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
   });
@@ -59,9 +62,12 @@ export function Model33({ question, answerCallback }: ModelProps) {
       </Group>
 
       <Group position="apart" spacing={137} w="100%" noWrap my="auto">
-        {textTitles.some((title) => title.file_url) && (
+        {hasTextOrImage && (
           <Stack align="center" spacing={0}>
-            <Image src={illustration} width={346} height="auto" />
+            {illustration && (
+              <Image src={illustration} width={346} height="auto" />
+            )}
+
             {textTitles.map((title) => (
               <Text
                 size={50}
@@ -74,6 +80,7 @@ export function Model33({ question, answerCallback }: ModelProps) {
             ))}
           </Stack>
         )}
+
         <Lottie
           options={{
             loop: true,

@@ -148,7 +148,6 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               <Stack justify="space-evenly">
                 {!hasLabel && <IconVolume size={62} />}
                 <Text
-                  color="blue.6"
                   size={hasLabel ? 20 : 30}
                   weight={hasLabel ? 400 : 600}
                   style={{ wordBreak: "break-word" }}

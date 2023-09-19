@@ -1,4 +1,13 @@
-import { Box, Center, Group, Image, LoadingOverlay, ScrollArea, Stack, Title } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Group,
+  Image,
+  LoadingOverlay,
+  ScrollArea,
+  Stack,
+  Title,
+} from "@mantine/core";
 
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -63,10 +72,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
   return (
     <>
       <Box>
-        <ScrollArea
-          w={850}
-          h={lousaHeight * 80 / 100}
-        >
+        <ScrollArea w={850} h={(lousaHeight * 80) / 100}>
           <Center pb={20}>
             <Stack>
               <Group mx="auto">
@@ -78,7 +84,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                         key={title.position}
                         src={title.file_url ?? ""}
                         autoPlay
-                      // ref={audioButton}
+                        // ref={audioButton}
                       />
                     ) : (
                       <AudioButton
@@ -113,19 +119,20 @@ export function Model24({ question, answerCallback }: ModelProps) {
 
               {isTypeComplete && (
                 <Stack my="auto" align="center" spacing={100}>
-                  {textTitles.find((title) => title.placeholder.includes("completar"))
-                    ?.description && (
-                      <Title
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            textTitles.find((title) =>
-                              title.placeholder.includes("completar")
-                            )?.description ?? "",
-                        }}
-                        color="dark.3"
-                        weight={500}
-                      />
-                    )}
+                  {textTitles.find((title) =>
+                    title.placeholder.includes("completar")
+                  )?.description && (
+                    <Title
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find((title) =>
+                            title.placeholder.includes("completar")
+                          )?.description ?? "",
+                      }}
+                      color="dark.3"
+                      weight={500}
+                    />
+                  )}
                   <Group>
                     {question.options.map((option, inx) => (
                       <OptionButton
@@ -148,7 +155,8 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 <Stack my="auto" align="center" spacing={hasImages ? 40 : 100}>
                   {textTitles
                     .filter(
-                      (title) => title.description && title.description.length > 5
+                      (title) =>
+                        title.description && title.description.length > 5
                     )
                     .map((title) => (
                       <Title
@@ -166,7 +174,8 @@ export function Model24({ question, answerCallback }: ModelProps) {
                         isCorrect={option.isCorrect}
                         onClick={() => setSingleAnswer(option)}
                         data-selected={
-                          JSON.stringify(singleAnswer) === JSON.stringify(option)
+                          JSON.stringify(singleAnswer) ===
+                          JSON.stringify(option)
                         }
                       >
                         {option.description}

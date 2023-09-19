@@ -18,6 +18,9 @@ const useStyles = createStyles({
     color: "#228BE6",
     userSelect: "none",
     wordBreak: "break-all",
+    "*": {
+      color: "#228BE6",
+    },
     ":not(:disabled):active": {
       boxShadow: "0px 2px 0px 0px #228BE6",
       transform: "translateY(3px)",
@@ -34,6 +37,9 @@ const useStyles = createStyles({
       borderColor: "#c4c4c4",
       img: {
         opacity: 0.5,
+      },
+      "*": {
+        color: "#C4C4C4",
       },
     },
   },

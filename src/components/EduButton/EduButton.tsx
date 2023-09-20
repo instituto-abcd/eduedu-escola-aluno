@@ -40,6 +40,7 @@ type EduButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   rightIcon?: JSX.Element;
   leftIcon?: JSX.Element;
   withFeedbackSound?: boolean;
+  isDisabled?: boolean;
 };
 
 export function EduButton({
@@ -47,6 +48,7 @@ export function EduButton({
   rightIcon,
   leftIcon,
   withFeedbackSound = true,
+  isDisabled = false,
   ...props
 }: EduButtonProps) {
   const { classes, cx } = useStyles();
@@ -65,6 +67,7 @@ export function EduButton({
       {...props}
       className={cx(classes.button, props.className)}
       onClick={onClick}
+      disabled={isDisabled}
     >
       {leftIcon}
       {children}

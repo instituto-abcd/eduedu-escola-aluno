@@ -15,7 +15,7 @@ export function IntroPage() {
         <Stack>
           <video
             autoPlay
-            src="https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/student%2FABERTURA.mp4?alt=media&token=5776a00f-1b23-4953-beab-550d71f891e9"
+            src="http://localhost:8989/ABERTURA.mp4"
             width={720}
             height={540}
             onLoad={() => {

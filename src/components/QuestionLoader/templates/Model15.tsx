@@ -1,13 +1,9 @@
-// Utils & Aux:
-import { useState } from "react";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { usePlanetAnswer } from "~/api/planet";
-import { ModelProps } from ".";
-
-// Components:
 import { Group, LoadingOverlay } from "@mantine/core";
+import { ModelProps } from ".";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { EduButton } from "~/components/EduButton";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model15({ question, answerCallback }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
@@ -24,7 +20,6 @@ export function Model15({ question, answerCallback }: ModelProps) {
     });
   }
 
-  const [isPlaying, setIsPlaying] = useState(false)
   return (
     <>
       <Group my="auto">
@@ -33,11 +28,10 @@ export function Model15({ question, answerCallback }: ModelProps) {
             src={title.file_url ?? ""}
             key={title.file_url}
             autoPlay
-            onPlayStatusChange={(value) => setIsPlaying(value)}
           />
         ))}
       </Group>
-      <EduButton onClick={submitAnswer} isDisabled={isPlaying}>Continuar</EduButton>
+      <EduButton onClick={submitAnswer}>Continuar</EduButton>
       <LoadingOverlay visible={isLoading} />
     </>
   );

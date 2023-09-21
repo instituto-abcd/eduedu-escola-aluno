@@ -35,7 +35,11 @@ export function Model15({ question, answerCallback }: ModelProps) {
           />
         ))}
       </Group>
-      <EduButton onClick={submitAnswer} disabled={mediaTrack.isPlaying}>
+      <EduButton
+        onClick={submitAnswer}
+        disabled={mediaTrack.isPlaying}
+        withFeedbackSound={false}
+      >
         Continuar
       </EduButton>
       <LoadingOverlay visible={isLoading} />

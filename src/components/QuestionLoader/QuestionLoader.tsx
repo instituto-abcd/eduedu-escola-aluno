@@ -37,6 +37,8 @@ import { Model8Prova } from "./templates/Model8Prova";
 import { Model10Prova } from "./templates/Model10Prova";
 import { Model35 } from "./templates/Model35";
 import { Model34 } from "./templates/Model34";
+import { useEffect } from "react";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type QuestionLoaderProps = ModelProps;
 
@@ -48,6 +50,11 @@ export function QuestionLoader({
     question,
     answerCallback,
   };
+  const mediaTrack = useMediaTrackStore();
+
+  useEffect(() => {
+    mediaTrack.clearQueue();
+  }, [question]);
 
   switch (question.model_id) {
     case "MODEL2":

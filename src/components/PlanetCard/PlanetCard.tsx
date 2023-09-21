@@ -31,7 +31,6 @@ const useStyles = createStyles({
 export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
   const { classes } = useStyles();
 
-  console.log(planet)
   return (
     <Box py={40}>
       <Stack className={classes.wrapper} align="center" justify="end">
@@ -50,18 +49,17 @@ export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
           fractions={2}
           size="md"
         />
-        {planet.stars == 0 &&
+        {planet.stars == 0 && (
           <Button
             component={Link}
             to={`/planeta/${planet.planetId}`}
             state={{ planet }}
-          // disabled={!planet.canExecutePlanet}
+            // disabled={!planet.canExecutePlanet}
           >
-            {/* TODO: uncomment line 58 when allowed */}
             Fazer planeta
           </Button>
-        }
-        {planet.stars > 0 &&
+        )}
+        {planet.stars > 0 && (
           <Button
             component={Link}
             to={`/planeta/${planet.planetId}`}
@@ -70,7 +68,7 @@ export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
           >
             Tentar de novo
           </Button>
-        }
+        )}
       </Stack>
     </Box>
   );

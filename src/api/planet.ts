@@ -25,7 +25,11 @@ class PlanetAPI extends API {
     return data;
   }
 
-  static async answerQuestion(studentId: string, planetId: string, answer: AnswerInput) {
+  static async answerQuestion(
+    studentId: string,
+    planetId: string,
+    answer: AnswerInput
+  ) {
     const { data } = await this.api.post<Question | { planetCompleted: true }>(
       URL.ANSWER_QUESTION(studentId, planetId),
       answer

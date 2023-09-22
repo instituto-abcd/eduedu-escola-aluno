@@ -38,7 +38,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
       })
     );
   },
-  []);
+    []);
 
   const { videoTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
@@ -55,6 +55,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
           onPlayStatusChange={mediaTrack.setPlayStatus}
           canPlay={mediaTrack.canPlay()}
           autoPlay
+          customHeight="250"
         />
 
         <Stack>

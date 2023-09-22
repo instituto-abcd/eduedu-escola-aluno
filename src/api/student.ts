@@ -57,12 +57,15 @@ type GetQuestionInput = {
   optionsAnswered: QuestionOption[];
 };
 
+type PlanetFeedback = { planetName: string; stars: number };
+
 const KEY = {
   STUDENT: "STUDENT",
   PLANET_TRACK: "PLANET_TRACK",
   GET_STUDENT_AWARDS: "GET_STUDENT_AWARDS",
   FIRST_QUESTION: "FIRST_QUESTION",
   EXAM_EVALUATION: "EXAM_EVALUATION",
+  PLANET_FEEDBACK: "PLANET_FEEDBACK",
 };
 
 const URL = {
@@ -74,6 +77,8 @@ const URL = {
   GET_STUDENT_EXAM_QUESTIONS: (studentId: string, examId: string) =>
     `student/${studentId}/exam-questions/${examId}/answer`,
   EXAM_EVALUATION: (id: string) => `student/${id}/exam-evaluation`,
+  PLANET_FEEDBACK: (studentId: string, planetId: string) =>
+    `student/${studentId}/planets/${planetId}`,
 };
 
 export class StudentAPI extends API {
@@ -117,6 +122,14 @@ export class StudentAPI extends API {
 
   static async submitExamEvaluation(studentId: string) {
     const { data } = await this.api.post(URL.EXAM_EVALUATION(studentId));
+    return data;
+  }
+
+  static async planetFeedback(studentId: string, planetId: string) {
+    const { data } = await this.api.get<PlanetFeedback>(
+      URL.PLANET_FEEDBACK(studentId, planetId)
+    );
+
     return data;
   }
 }
@@ -176,6 +189,19 @@ export function useSubmitExamEvaluation(
   const studentId = useStudent((state) => state.id);
   const handler = useCallback(function () {
     return StudentAPI.submitExamEvaluation(studentId);
+  }, []);
+
+  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
+}
+
+export function usePlanetFeedback(
+  planetId: string,
+  options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>
+) {
+  const studentId = useStudent((state) => state.id);
+
+  const handler = useCallback(function () {
+    return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
   return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);

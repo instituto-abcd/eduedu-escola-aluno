@@ -5,10 +5,12 @@ import { errorNotification } from "~/utils/errorNotification";
 import { useState } from "react";
 import { useGetStudentAwardsQuery } from "~/api/student";
 import { PlanetTrack } from "./PlanetTrack";
+import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 
 export function DashboardPage() {
   const [awards, setAwards] = useState([]);
 
+  /* TODO: Refactor */
   const { data: getAwards } = useGetStudentAwardsQuery({
     onError: (error) => {
       errorNotification(
@@ -20,12 +22,14 @@ export function DashboardPage() {
       setAwards(data.awards);
     },
   });
+
   return (
     <BackgroundImage src={bg} h="100vh">
       <Container size="xl" mt={50}>
         <PlanetTrack />
         <Awards awards={awards} />
       </Container>
+      <PlanetCompletedFeedback />
     </BackgroundImage>
   );
 }

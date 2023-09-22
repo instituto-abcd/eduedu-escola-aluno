@@ -24,11 +24,13 @@ const useStyles = createStyles({
 type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   onPlayStatusChange?: (isPlaying: boolean) => void;
   canPlay?: boolean;
+  customHeight?: string;
 };
 
 export function VideoPlayer({
   onPlayStatusChange,
   canPlay = true,
+  customHeight,
   ...props
 }: Props) {
   const { classes } = useStyles();
@@ -42,8 +44,7 @@ export function VideoPlayer({
     }
   }
 
-  // Defining video height based on blackboard which is based on user screen width:
-  const defaultHeight = lousaWidth * 50 / 100;
+  const defaultHeight = (lousaWidth * 50) / 100;
 
   return (
     <div className={classes.wrapper}>
@@ -52,7 +53,7 @@ export function VideoPlayer({
         ref={ref}
         style={{ maxHeight: 500 }}
         width="auto"
-        height={defaultHeight}
+        height={customHeight ?? defaultHeight}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

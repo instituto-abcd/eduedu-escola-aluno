@@ -69,7 +69,6 @@ export function Model24({ question, answerCallback }: ModelProps) {
   //   }
   // }, [question]);
 
-  console.log(question)
   return (
     <>
       <Box>

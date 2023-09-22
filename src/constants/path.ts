@@ -6,5 +6,6 @@ export const PATH = {
   EVALUATION: "/avaliacao",
   EXAM_EVALUATION: "/prova/avaliacao",
   PLANET: "/planeta",
+  PLANET_FEEDBACK: "/planeta/feedback",
   DEBUG: "/debug",
 } as const;

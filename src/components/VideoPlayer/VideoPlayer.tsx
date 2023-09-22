@@ -42,8 +42,7 @@ export function VideoPlayer({
     }
   }
 
-  // Defining video height based on blackboard which is based on user screen width:
-  const defaultHeight = lousaWidth * 50 / 100;
+  const defaultHeight = (lousaWidth * 50) / 100;
 
   return (
     <div className={classes.wrapper}>

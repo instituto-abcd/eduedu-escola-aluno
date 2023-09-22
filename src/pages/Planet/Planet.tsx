@@ -35,7 +35,7 @@ export function PlanetPage() {
         }
   ) {
     if ("planetCompleted" in answer) {
-      navigate(PATH.DASHBOARD);
+      navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
     } else {
       setCurrentQuestion(answer as Question);
       (answer as Question).progress &&

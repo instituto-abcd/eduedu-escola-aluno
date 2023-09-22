@@ -1,6 +1,7 @@
 import { Loader, createStyles } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useRef, useState } from "react";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles({
   wrapper: {
@@ -23,11 +24,13 @@ const useStyles = createStyles({
 type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   onPlayStatusChange?: (isPlaying: boolean) => void;
   canPlay?: boolean;
+  customHeight?: string;
 };
 
 export function VideoPlayer({
   onPlayStatusChange,
   canPlay = true,
+  customHeight,
   ...props
 }: Props) {
   const { classes } = useStyles();
@@ -41,13 +44,16 @@ export function VideoPlayer({
     }
   }
 
+  const defaultHeight = (lousaWidth * 50) / 100;
+
   return (
     <div className={classes.wrapper}>
       <video
         {...props}
         ref={ref}
-        width={320}
-        height={340}
+        style={{ maxHeight: 500 }}
+        width="auto"
+        height={customHeight ?? defaultHeight}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

@@ -82,8 +82,8 @@ export function DraggableLetters({
       {option.image_url && (
         <Image
           src={option.image_url}
-          width={40}
           alt={option.image_name ?? ""}
+          style={{ maxWidth: 65 }}
         />
       )}
       {!option.image_url && option.description && (

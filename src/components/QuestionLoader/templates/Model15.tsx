@@ -4,6 +4,7 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { usePlanetAnswer } from "~/api/planet";
+import { useMediaTrackStore } from "~/stores/media-track.store";
 
 export function Model15({ question, answerCallback }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
@@ -11,6 +12,8 @@ export function Model15({ question, answerCallback }: ModelProps) {
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
   });
+
+  const mediaTrack = useMediaTrackStore();
 
   function submitAnswer() {
     mutate({
@@ -28,10 +31,17 @@ export function Model15({ question, answerCallback }: ModelProps) {
             src={title.file_url ?? ""}
             key={title.file_url}
             autoPlay
+            onPlayStatusChange={mediaTrack.setPlayStatus}
           />
         ))}
       </Group>
-      <EduButton onClick={submitAnswer}>Continuar</EduButton>
+      <EduButton
+        onClick={submitAnswer}
+        disabled={mediaTrack.isPlaying}
+        withFeedbackSound={false}
+      >
+        Continuar
+      </EduButton>
       <LoadingOverlay visible={isLoading} />
     </>
   );

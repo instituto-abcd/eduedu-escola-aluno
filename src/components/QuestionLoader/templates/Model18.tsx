@@ -77,63 +77,65 @@ export function Model18({ question, answerCallback }: ModelProps) {
         />
       ))}
 
-      <Group my="auto" spacing={80}>
-        {imageTitles.map((title) => (
-          <Image src={title.file_url ?? ""} key={title.file_name} width={270} />
-        ))}
+      <Group justify="center">
+        <Stack>
+          {imageTitles.map((title) => (
+            <Image src={title.file_url ?? ""} key={title.file_name} width={270} m="auto" />
+          ))}
 
-        <Stack spacing={40}>
-          <Group>
-            {slots.map((slot, inx) => {
-              if (typeof slot === "string")
-                return <TextOptionButton
-                  key={slot}
-                  style={{ width: '87px', height: '78px', fontSize: '40px', fontWeight: 600 }}
-                >
-                  {slot}
-                </TextOptionButton>;
+          <Stack spacing={40}>
+            <Group mx="auto">
+              {slots.map((slot, inx) => {
+                if (typeof slot === "string")
+                  return <TextOptionButton
+                    key={slot}
+                    style={{ width: '87px', height: '78px', fontSize: '40px', fontWeight: 600 }}
+                  >
+                    {slot}
+                  </TextOptionButton>;
 
-              return (
-                <DragLetterSlot
-                  onDrop={(item) => handleDrop(item, inx)}
-                  option={slot}
-                  onClear={() => handleClear(inx)}
-                  key={inx}
+                return (
+                  <DragLetterSlot
+                    onDrop={(item) => handleDrop(item, inx)}
+                    option={slot}
+                    onClear={() => handleClear(inx)}
+                    key={inx}
+                    style={{
+                      width: '87px',
+                      height: '78px',
+                      textAlign: 'center'
+                    }}
+                  />
+                );
+              })}
+            </Group>
+
+            <Group>
+              {question.options.map((option) => (
+                <DraggableLetters
+                  key={option.description}
+                  option={option}
+                  hidden={
+                    !!slots.find(
+                      (item) =>
+                        item &&
+                        typeof item !== "string" &&
+                        item.position === option.position
+                    )
+                  }
                   style={{
                     width: '87px',
                     height: '78px',
                     textAlign: 'center'
                   }}
-                />
-              );
-            })}
-          </Group>
-
-          <Group>
-            {question.options.map((option) => (
-              <DraggableLetters
-                key={option.description}
-                option={option}
-                hidden={
-                  !!slots.find(
-                    (item) =>
-                      item &&
-                      typeof item !== "string" &&
-                      item.position === option.position
-                  )
-                }
-                style={{
-                  width: '87px',
-                  height: '78px',
-                  textAlign: 'center'
-                }}
-              >
-                {option.description}
-              </DraggableLetters>
-            ))}
-          </Group>
-        </Stack >
-      </Group >
+                >
+                  {option.description}
+                </DraggableLetters>
+              ))}
+            </Group>
+          </Stack>
+        </Stack>
+      </Group>
 
       <EduButton
         disabled={selected.length < 3}

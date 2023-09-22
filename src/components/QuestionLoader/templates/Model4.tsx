@@ -20,7 +20,7 @@ import { usePlanetAnswer } from "~/api/planet";
 const useStyles = createStyles(() => ({
   h1: {
     h1: {
-      fontSize: 40,
+      fontSize: '2.3rem',
     },
   },
 }));

@@ -8,6 +8,7 @@ import { PlanetRoutes } from "./PlanetRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
 import { DebugRoutes } from "./DebugRoutes";
+import { DashboardAlt } from "~/pages/Dashboard/DashboardAlt";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -21,6 +22,8 @@ export function AppRoutes() {
           <Route index element={<Navigate to={PATH.DASHBOARD} />} />
           <Route path={nested(PATH.DASHBOARD)} Component={DashboardRoutes} />
           <Route path={nested(PATH.EXAM)} Component={ExamRoutes} />
+          {/* MVP Only */}
+          <Route path={PATH.DASH_ALT} element={<DashboardAlt />} />
         </Route>
         <Route path={nested(PATH.EXAM)} Component={ExamLayout}>
           <Route index Component={ExamRoutes} />

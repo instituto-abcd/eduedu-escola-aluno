@@ -6,6 +6,7 @@ import { PATH } from "~/constants/path";
 
 export function IntroPage() {
   const navigate = useNavigate();
+  const url = import.meta.env.VITE_API_URL;
 
   const [canGoToExam, setCanGoToExam] = useState(false);
 
@@ -15,7 +16,7 @@ export function IntroPage() {
         <Stack>
           <video
             autoPlay
-            src="http://localhost:8989/ABERTURA.mp4"
+            src={url + "assets-data/ABERTURA.mp4"}
             width={720}
             height={540}
             onLoad={() => {

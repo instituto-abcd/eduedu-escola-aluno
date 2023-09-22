@@ -69,6 +69,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
   //   }
   // }, [question]);
 
+  console.log(question)
   return (
     <>
       <Box>
@@ -84,7 +85,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                         key={title.position}
                         src={title.file_url ?? ""}
                         autoPlay
-                        // ref={audioButton}
+                      // ref={audioButton}
                       />
                     ) : (
                       <AudioButton
@@ -103,36 +104,37 @@ export function Model24({ question, answerCallback }: ModelProps) {
                   )}
               </Group>
 
-              {imageTitles.map(
-                (title) =>
-                  title.file_url && (
-                    <Image
-                      mx="auto"
-                      src={title.file_url}
-                      width="auto"
-                      height={190}
-                      alt={title.placeholder}
-                      key={title.file_url}
-                    />
-                  )
-              )}
-
               {isTypeComplete && (
                 <Stack my="auto" align="center" spacing={100}>
                   {textTitles.find((title) =>
                     title.placeholder.includes("completar")
                   )?.description && (
-                    <Title
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          textTitles.find((title) =>
-                            title.placeholder.includes("completar")
-                          )?.description ?? "",
-                      }}
-                      color="dark.3"
-                      weight={500}
-                    />
+                      <Title
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            textTitles.find((title) =>
+                              title.placeholder.includes("completar")
+                            )?.description ?? "",
+                        }}
+                        color="dark.3"
+                        weight={500}
+                      />
+                    )}
+
+                  {imageTitles.map(
+                    (title) =>
+                      title.file_url && (
+                        <Image
+                          mx="auto"
+                          src={title.file_url}
+                          width="auto"
+                          height={190}
+                          alt={title.placeholder}
+                          key={title.file_url}
+                        />
+                      )
                   )}
+
                   <Group>
                     {question.options.map((option, inx) => (
                       <OptionButton
@@ -167,6 +169,21 @@ export function Model24({ question, answerCallback }: ModelProps) {
                         key={title.description}
                       />
                     ))}
+
+                  {imageTitles.map(
+                    (title) =>
+                      title.file_url && (
+                        <Image
+                          mx="auto"
+                          src={title.file_url}
+                          width="auto"
+                          height={190}
+                          alt={title.placeholder}
+                          key={title.file_url}
+                        />
+                      )
+                  )}
+
                   <Group>
                     {question.options.map((option, inx) => (
                       <OptionButton
@@ -187,6 +204,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                   </Group>
                 </Stack>
               )}
+
             </Stack>
           </Center>
         </ScrollArea>

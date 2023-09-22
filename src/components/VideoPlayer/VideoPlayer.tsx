@@ -24,11 +24,13 @@ const useStyles = createStyles({
 type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   onPlayStatusChange?: (isPlaying: boolean) => void;
   canPlay?: boolean;
+  customHeight?: string;
 };
 
 export function VideoPlayer({
   onPlayStatusChange,
   canPlay = true,
+  customHeight,
   ...props
 }: Props) {
   const { classes } = useStyles();
@@ -51,7 +53,7 @@ export function VideoPlayer({
         ref={ref}
         style={{ maxHeight: 500 }}
         width="auto"
-        height={defaultHeight}
+        height={customHeight ?? defaultHeight}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

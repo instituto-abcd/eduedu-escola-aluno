@@ -53,7 +53,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
       })
     );
   },
-  []);
+    []);
 
   const { audioTitles, isExam } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();

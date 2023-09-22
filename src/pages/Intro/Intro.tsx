@@ -6,7 +6,9 @@ import { PATH } from "~/constants/path";
 
 export function IntroPage() {
   const navigate = useNavigate();
-  const url = import.meta.env.VITE_API_URL;
+  const url = import.meta.env.VITE_ASSETS === "LOCAL" ?
+    import.meta.env.VITE_API_URL + "assets-data/ABERTURA.mp4" :
+    "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/student%2FABERTURA.mp4?alt=media&token=5776a00f-1b23-4953-beab-550d71f891e9";
 
   const [canGoToExam, setCanGoToExam] = useState(false);
 
@@ -16,7 +18,7 @@ export function IntroPage() {
         <Stack>
           <video
             autoPlay
-            src={url + "assets-data/ABERTURA.mp4"}
+            src={url}
             width={720}
             height={540}
             onLoad={() => {

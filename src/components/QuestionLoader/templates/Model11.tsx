@@ -106,6 +106,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
                       onDrop={(item) => setAnswer(item)}
                       option={answer}
                       onClear={() => setAnswer(null)}
+                      style={{
+                        width: '87px',
+                        height: '78px',
+                        textAlign: 'center'
+                      }}
                     />
                   )}
                 </Fragment>
@@ -125,7 +130,15 @@ export function Model11({ question, answerCallback }: ModelProps) {
                     {option.description}
                   </TextOptionButton>
                 ) : (
-                  <DraggableLetters key={option.position} option={option}>
+                  <DraggableLetters
+                    key={option.position}
+                    option={option}
+                    style={{
+                      width: '87px',
+                      height: '78px',
+                      textAlign: 'center'
+                    }}
+                  >
                     {option.description}
                   </DraggableLetters>
                 )

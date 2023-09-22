@@ -9,6 +9,7 @@ import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
+import { lousaWidth } from "~/utils/userScreen";
 
 export function QME2x2Video({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -41,6 +42,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
             autoPlay
+            customHeight={(lousaWidth * 30 / 100).toString()}
           />
         </div>
 

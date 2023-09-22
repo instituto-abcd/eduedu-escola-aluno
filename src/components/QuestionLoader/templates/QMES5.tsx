@@ -8,6 +8,7 @@ import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaWidth } from "~/utils/userScreen";
 
 export function QMES5({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -54,6 +55,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
             autoPlay
+            customHeight={(lousaWidth * 30 / 100).toString()}
           />
         </div>
 

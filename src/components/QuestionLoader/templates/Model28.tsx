@@ -1,4 +1,4 @@
-import { Flex, Grid, Group, SimpleGrid } from "@mantine/core";
+import { Grid, Group } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { EduButton } from "~/components/EduButton/EduButton";

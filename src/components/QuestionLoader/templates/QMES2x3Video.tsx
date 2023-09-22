@@ -8,6 +8,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaWidth } from "~/utils/userScreen";
 
 export function QME2x3Video({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -58,6 +59,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
+            customHeight={(lousaWidth * 30 / 100).toString()}
             autoPlay
           />
         </div>

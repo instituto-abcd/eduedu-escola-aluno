@@ -85,7 +85,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
 
       <Group spacing={80} align="center" my="auto">
         {!hasVideo && hasText && (
-          <Title color="dark.3" size={30} align="center" my="auto" maw={400}>
+          <Title color="dark.3" size="2.5vh" align="center" my="auto" maw={400}>
             {textTitles[0].description}
           </Title>
         )}

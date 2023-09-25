@@ -16,14 +16,14 @@ export function QME2x2Text2({ question }: { question: Question }) {
 
   return (
     <>
-      <Title color="dark.3" size={30} weight={500}>
+      <Title color="dark.3" size="2.5vh" weight={500}>
         {title}
       </Title>
 
       <Group noWrap grow spacing={75}>
         <ScrollArea h={380}>
           <Stack align="center" p={20}>
-            <Title align="center" color="dark.3" size={30} weight={500}>
+            <Title align="center" color="dark.3" size="2.5vh" weight={500}>
               {subtitle}
             </Title>
             <Text align="center" color="dark.3" size={20} weight={400}>
@@ -33,7 +33,7 @@ export function QME2x2Text2({ question }: { question: Question }) {
           </Stack>
         </ScrollArea>
         <Stack align="center" p={20}>
-          <Title align="center" color="dark.3" size={30} weight={500}>
+          <Title align="center" color="dark.3" size="2.5vh" weight={500}>
             {qtitle}
           </Title>
           {question.options.map((option) => (

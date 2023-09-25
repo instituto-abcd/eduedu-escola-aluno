@@ -8,7 +8,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaHeight, lousaWidth } from "~/utils/userScreen";
 
 export function QME2x3Video({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -53,7 +53,13 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group noWrap grow spacing={75} py={40} my="auto">
+      <Group
+        noWrap
+        grow
+        spacing={(lousaHeight * 0.5 / 100).toString() + 'vh'}
+        my="auto"
+        pt={(lousaHeight * 0.5 / 100).toString() + 'vh'}
+      >
         <div>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
@@ -64,7 +70,11 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
           />
         </div>
 
-        <SimpleGrid cols={2} style={{ placeItems: "center" }} spacing={24}>
+        <SimpleGrid
+          cols={2}
+          style={{ placeItems: "center" }}
+          spacing={20}
+        >
           {question.options.map((option, inx) => (
             <OptionButton
               key={optionArrKey(option, inx)}
@@ -78,7 +88,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
                 <Image
                   src={option.image_url}
                   alt={option.description}
-                  width={132}
+                  width="100%"
                 />
               )}
               {!option.image_url && option.description && (

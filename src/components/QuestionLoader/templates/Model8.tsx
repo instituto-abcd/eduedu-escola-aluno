@@ -64,7 +64,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
       ))}
 
       {textTitles.map((title, inx) => (
-        <Title color="dark.3" size={30} align="center" key={inx}>
+        <Title color="dark.3" size="2.5vh" align="center" key={inx}>
           {title.description}
         </Title>
       ))}

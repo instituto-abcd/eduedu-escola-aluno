@@ -89,7 +89,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
 
         <Stack align="center" spacing={40}>
           {textTitles.map((title) => (
-            <Title color="dark.3" size={30} key={title.description}>
+            <Title color="dark.3" size="2.5vh" key={title.description}>
               {title.description.split("/")[0]}
             </Title>
           ))}

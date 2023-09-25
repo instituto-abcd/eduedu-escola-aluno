@@ -1,11 +1,12 @@
 import { createStyles } from "@mantine/core";
 import { forwardRef, useRef } from "react";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles({
   button: {
-    width: 170,
-    height: 148,
+    width: lousaWidth * 15 / 100,
+    height: lousaWidth * 15 / 100,
     borderRadius: 8,
     border: "1px solid #228BE6",
     backgroundColor: "#fff",

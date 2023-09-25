@@ -59,7 +59,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
                 <Image
                   src={option.image_url}
                   alt={option.description}
-                  width={132}
+                  width="100%"
                 />
               )}
               {!option.image_url && option.sound_url && (

@@ -6,6 +6,7 @@ import { AudioButton } from "~/components/AudioButton";
 import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { EduButton } from "~/components/EduButton";
+import { lousaWidth } from "~/utils/userScreen";
 
 export function Model10Prova({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -43,17 +44,17 @@ export function Model10Prova({ question, answerCallback }: ModelProps) {
         {/* <IconButton icon={<IconBook size={34} />} variant="black" /> */}
       </Group>
       {textTitles.map((title) => (
-        <Title color="dark.3" size={30} align="center" key={title.description}>
+        <Title color="dark.3" size="2.5vh" align="center" key={title.description}>
           {title.description}
         </Title>
       ))}
 
-      <Group spacing={100} my="auto">
+      <Group spacing={(lousaWidth * 5 / 100)} my="auto">
         {imageTitles.map((title) => (
           <Image
             src={title.file_url}
             alt={title.description}
-            width={270}
+            width={(lousaWidth * 30 / 100).toString()}
             key={title.file_url}
           />
         ))}

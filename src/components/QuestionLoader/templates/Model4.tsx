@@ -16,11 +16,12 @@ import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles(() => ({
   h1: {
     h1: {
-      fontSize: '2.3rem',
+      fontSize: '2.3vw',
     },
   },
 }));
@@ -89,11 +90,11 @@ export function Model4({ question, answerCallback }: ModelProps) {
           <Image
             src={title.file_url}
             alt={title.description}
-            width={270}
+            width={lousaWidth * 25 / 100}
             key={title.file_url}
           />
         ))}
-        <Group spacing={24}>
+        <Group>
           {question.options.map((option, inx) => (
             <OptionButton
               key={optionArrKey(option, inx)}

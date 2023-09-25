@@ -80,7 +80,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Title color="dark.3" size={30} align="center">
+      <Title color="dark.3" size="2.5vh" align="center">
         {
           textTitles.find(
             (title) =>

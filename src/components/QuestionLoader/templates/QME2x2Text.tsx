@@ -56,9 +56,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
   const title = "Leia o texto e responda à pergunta.";
   return (
     <>
-      <Title color="dark.3" size={30}>
-        {title}
-      </Title>
+      <Title color="dark.3" size="2.5vh">{title}</Title>
 
       <Group noWrap grow spacing={75}>
         <ScrollArea h={380}>

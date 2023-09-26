@@ -1,4 +1,4 @@
-import { Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
+import { Box, Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { Answer, useGetExamQuestion } from "~/api/student";
@@ -8,7 +8,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { EduButton } from "~/components/EduButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaHeight, lousaWidth } from "~/utils/userScreen";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 export function QME2x3Video({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<Answer[]>([]);
@@ -53,6 +53,7 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Board content */}
       <Group
         noWrap
         grow
@@ -60,48 +61,57 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
         my="auto"
         pt={(lousaHeight * 0.5 / 100).toString() + 'vh'}
       >
-        <div>
+        <Box maw={lousaWidth * 50 / 100}>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
-            customHeight={(lousaWidth * 30 / 100).toString()}
+            customHeight={(lousaWidth * 35 / 100).toString()}
             autoPlay
           />
-        </div>
+        </Box>
 
-        <SimpleGrid
-          cols={2}
-          style={{ placeItems: "center" }}
-          spacing={20}
-        >
-          {question.options.map((option, inx) => (
-            <OptionButton
-              key={optionArrKey(option, inx)}
-              data-selected={
-                !!selected.find((item) => item.position === option.position)
-              }
-              onClick={() => selectItem(option)}
-              isCorrect={option.isCorrect}
-            >
-              {option.image_url && (
-                <Image
-                  src={option.image_url}
-                  alt={option.description}
-                  width="100%"
-                />
-              )}
-              {!option.image_url && option.description && (
-                <Text>{option.description}</Text>
-              )}
-            </OptionButton>
-          ))}
-        </SimpleGrid>
+        <Box maw={lousaWidth * 50 / 100}>
+          <SimpleGrid cols={2} spacing={20}>
+            {question.options.map((option, inx) => (
+              <OptionButton
+                key={optionArrKey(option, inx)}
+                data-selected={
+                  !!selected.find((item) => item.position === option.position)
+                }
+                onClick={() => selectItem(option)}
+                isCorrect={option.isCorrect}
+              >
+                {option.image_url && (
+                  <Image
+                    src={option.image_url}
+                    alt={option.description}
+                    width="100%"
+                  />
+                )}
+                {!option.image_url && option.description && (
+                  <Text>{option.description}</Text>
+                )}
+              </OptionButton>
+            ))}
+          </SimpleGrid>
+        </Box>
       </Group>
 
-      <EduButton disabled={selected.length === 0} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={selected.length === 0}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
-import { lousaHeight, lousaWidth } from "~/utils/userScreen";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { useExamProgress } from "~/stores/exam-progress";
-import { BackgroundImage, Button, Center, Progress } from "@mantine/core";
+import { BackgroundImage, Box, Button, Center, Progress } from "@mantine/core";
 import { Navbar } from "~/components/Navbar/Navbar";
 import sala_3000 from "~/assets/bgs/sala_3000x900.png";
 import lousa from "~/assets/bgs/lousa-sala1.svg";
@@ -53,7 +53,7 @@ export function ExamLayout() {
           src={lousa}
           h={lousaHeight}
           w={lousaWidth}
-          mt={(progressBarHeight * 30) / 100}
+          mt={progressBarHeight * 22 / 100}
           style={{
             display: "flex",
             alignItems: "center",
@@ -61,13 +61,13 @@ export function ExamLayout() {
             userSelect: "none",
           }}
         >
-          <Center
-            w={(lousaWidth * 90) / 100}
-            h={(lousaHeight * 88) / 100}
-            mt={(progressBarHeight * 350) / 100}
+          <Box
+            w={lousaWidth * 90 / 100}
+            h={lousaHeight * 86 / 100}
+            mt={progressBarHeight * 350 / 100}
           >
             <Outlet />
-          </Center>
+          </Box>
         </BackgroundImage>
       </Center>
 

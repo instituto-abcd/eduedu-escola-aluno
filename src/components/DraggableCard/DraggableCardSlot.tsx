@@ -1,7 +1,7 @@
 import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   card: {

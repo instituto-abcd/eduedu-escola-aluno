@@ -1,7 +1,7 @@
 import { createStyles } from "@mantine/core";
 import { forwardRef, useRef } from "react";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {

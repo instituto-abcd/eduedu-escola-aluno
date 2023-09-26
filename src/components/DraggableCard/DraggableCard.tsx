@@ -2,7 +2,7 @@ import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   card: {

@@ -1,4 +1,4 @@
-import { screenWidth } from "~/utils/userScreen";
+import { screenWidth } from "~/constants/dimensions";
 import Lottie from "react-lottie";
 import hologramaEduEdu from "~/assets/lotties/exam/holograma_eduedu.json";
 import livroAberto from "~/assets/lotties/exam/livro_aberto.json";

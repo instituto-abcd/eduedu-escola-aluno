@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
-import { lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
+import { lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -41,7 +41,11 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
   return (
     <>
       {/* Board content */}
-      <Group noWrap grow spacing={75} py={40} my="auto">
+      <Group
+        my="auto"
+        pt={lousaPaddingTop}
+        spacing={(lousaWidth * 5 / 100)}
+      >
         <div>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}

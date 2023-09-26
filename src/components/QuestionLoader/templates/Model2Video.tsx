@@ -1,14 +1,18 @@
-import { Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
+// Aux & Utils:
 import { ModelProps } from ".";
-import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { useCallback, useEffect, useState } from "react";
 import { produce } from "immer";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { EduButton } from "~/components/EduButton";
-import { useGetExamQuestion } from "~/api/student";
-import { VideoPlayer } from "~/components/VideoPlayer";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
+import { lousaHeight, lousaWidth, lousaPaddingTop } from "~/constants/dimensions";
+
+// Components:
+import { Box, Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
+import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
+import { EduButton } from "~/components/EduButton";
+import { VideoPlayer } from "~/components/VideoPlayer";
 
 export function Model2Video({ question, answerCallback }: ModelProps) {
   const [slots, setSlots] = useState<Array<QuestionOption | null>>(
@@ -49,17 +53,25 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group my="auto">
-        <VideoPlayer
-          src={videoTitles[0]?.file_url ?? ""}
-          onPlayStatusChange={mediaTrack.setPlayStatus}
-          canPlay={mediaTrack.canPlay()}
-          autoPlay
-          customHeight="200"
-        />
+      {/* Board content */}
+      <Group
+        noWrap
+        grow
+        my="auto"
+        pt={lousaPaddingTop}
+      >
+        <Box maw={lousaWidth * 50 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            onPlayStatusChange={mediaTrack.setPlayStatus}
+            canPlay={mediaTrack.canPlay()}
+            autoPlay
+            customHeight={(lousaWidth * 30 / 100).toString()}
+          />
+        </Box>
 
-        <Stack>
-          <SimpleGrid cols={question.options.length} spacing={20}>
+        <Stack maw={lousaWidth * 50 / 100}>
+          <SimpleGrid cols={question.options.length} style={{ placeItems: "center" }} spacing={20}>
             {slots.map((slot, inx) => (
               <DraggableCardSlot
                 key={inx}
@@ -80,7 +92,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
             ))}
           </SimpleGrid>
 
-          <SimpleGrid cols={question.options.length} spacing={24}>
+          <SimpleGrid cols={question.options.length} style={{ placeItems: "center" }} spacing={20}>
             {question.options.map((item, inx) => (
               <DraggableCard
                 item={item}
@@ -98,9 +110,19 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
         </Stack>
       </Group>
 
-      <EduButton disabled={slots.includes(null)} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={slots.includes(null)}
+        onClick={submitAnswer}
+        style={{
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

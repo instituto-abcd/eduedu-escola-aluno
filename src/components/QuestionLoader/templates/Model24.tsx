@@ -17,7 +17,7 @@ import { EduButton } from "~/components/EduButton";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/utils/userScreen";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model24({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles, imageTitles, optionArrKey } =

@@ -1,27 +1,31 @@
-import {
-  Group,
-  Image,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
+// Utils & Aux:
 import { useEffect, useState } from "react";
-import { useGetExamQuestion } from "~/api/student";
-import { AudioButton } from "~/components/AudioButton";
-import { OptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { EduButton } from "~/components/EduButton";
+import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaWidth, lousaPaddingTop } from "~/constants/dimensions";
+import { ModelProps } from ".";
+
+// Components:
+import {
+  Image,
+  LoadingOverlay,
+  Group,
+  Text,
+  Title,
+  Stack,
+  Center,
+  createStyles,
+} from "@mantine/core";
+import { AudioButton } from "~/components/AudioButton";
+import { OptionButton } from "~/components/OptionButton";
+import { EduButton } from "~/components/EduButton";
 
 const useStyles = createStyles(() => ({
   h1: {
     h1: {
-      fontSize: '2.3vw',
+      fontSize: '2.2vw',
     },
   },
 }));
@@ -65,24 +69,30 @@ export function Model4({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title) => (
-        <AudioButton
-          key={title.position}
-          src={title.file_url ?? ""}
-          autoPlay={!!title.file_url}
-        />
-      ))}
-      <Stack my="auto" align="center">
+      {/* Action buttons */}
+      <Group mx="auto">
+        {audioTitles.map((title) => (
+          <AudioButton
+            key={title.position}
+            src={title.file_url ?? ""}
+            autoPlay={!!title.file_url}
+          />
+        ))}
+      </Group>
+
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+        spacing={(lousaWidth * 5 / 100)}
+      >
         {textTitles.map((title) => (
           <Title
-            color="dark.3"
-            size="2.5vh"
-            align="center"
-            my="auto"
-            maw={900}
-            dangerouslySetInnerHTML={{ __html: title.description }}
-            className={classes.h1}
             key={title.description}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            align="center"
+            color="dark.3"
+            className={classes.h1}
           />
         ))}
 
@@ -94,46 +104,61 @@ export function Model4({ question, answerCallback }: ModelProps) {
             key={title.file_url}
           />
         ))}
-        <Group justify="center">
-          {question.options.map((option, inx) => (
-            <OptionButton
-              key={optionArrKey(option, inx)}
-              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-              onClick={() => setAnswer(option)}
-              sound={option.sound_url ?? undefined}
-              isCorrect={option.isCorrect}
-            >
-              {option.image_url && (
-                <>
-                  <img
-                    src={option.image_url}
-                    alt={option.description}
-                    height={105}
-                    width="auto"
-                    style={{
-                      maxHeight: 120,
-                      maxWidth: "100%",
-                      objectFit: "contain",
-                      marginInline: "auto",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    }}
-                  />
-                  {!question.axis_code && question.axis_code === null && (
-                    <Text size={14} color="gray.7" weight={600}>
-                      {option.description}
-                    </Text>
-                  )}
-                </>
-              )}
-              {!option.image_url && <Text>{option.description}</Text>}
-            </OptionButton>
-          ))}
-        </Group>
+
+        <Center>
+          <Group>
+            {question.options.map((option, inx) => (
+              <OptionButton
+                key={optionArrKey(option, inx)}
+                data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+                onClick={() => setAnswer(option)}
+                sound={option.sound_url ?? undefined}
+                isCorrect={option.isCorrect}
+              >
+                {option.image_url && (
+                  <>
+                    <img
+                      src={option.image_url}
+                      alt={option.description}
+                      height={105}
+                      width="auto"
+                      style={{
+                        maxHeight: 120,
+                        maxWidth: "100%",
+                        objectFit: "contain",
+                        marginInline: "auto",
+                        pointerEvents: "none",
+                        userSelect: "none",
+                      }}
+                    />
+                    {!question.axis_code && question.axis_code === null && (
+                      <Text size={14} color="gray.7" weight={600}>
+                        {option.description}
+                      </Text>
+                    )}
+                  </>
+                )}
+                {!option.image_url && <Text>{option.description}</Text>}
+              </OptionButton>
+            ))}
+          </Group>
+        </Center>
       </Stack>
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

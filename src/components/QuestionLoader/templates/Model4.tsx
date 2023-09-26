@@ -98,6 +98,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
 
         {imageTitles.map((title) => (
           <Image
+            mx="auto"
             src={title.file_url}
             alt={title.description}
             width={lousaWidth * 25 / 100}

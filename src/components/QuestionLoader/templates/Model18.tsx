@@ -10,6 +10,7 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { useGetExamQuestion } from "~/api/student";
 import { produce } from "immer";
 import { EduButton } from "~/components/EduButton";
+import { lousaWidth } from "~/utils/userScreen";
 
 export function Model18({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
@@ -80,16 +81,16 @@ export function Model18({ question, answerCallback }: ModelProps) {
       <Group justify="center">
         <Stack>
           {imageTitles.map((title) => (
-            <Image src={title.file_url ?? ""} key={title.file_name} width={270} m="auto" />
+            <Image src={title.file_url ?? ""} key={title.file_name} width={lousaWidth * 25 / 100} m="auto" />
           ))}
 
-          <Stack spacing={40}>
+          <Stack spacing={20}>
             <Group mx="auto">
               {slots.map((slot, inx) => {
                 if (typeof slot === "string")
                   return <TextOptionButton
                     key={slot}
-                    style={{ width: '87px', height: '78px', fontSize: '40px', fontWeight: 600 }}
+                    style={{ width: lousaWidth * 8 / 100, height: lousaWidth * 8 / 100, fontSize: '2.5vw', fontWeight: 600 }}
                   >
                     {slot}
                   </TextOptionButton>;
@@ -101,8 +102,8 @@ export function Model18({ question, answerCallback }: ModelProps) {
                     onClear={() => handleClear(inx)}
                     key={inx}
                     style={{
-                      width: '87px',
-                      height: '78px',
+                      width: lousaWidth * 8 / 100,
+                      height: lousaWidth * 8 / 100,
                       textAlign: 'center'
                     }}
                   />
@@ -124,8 +125,8 @@ export function Model18({ question, answerCallback }: ModelProps) {
                     )
                   }
                   style={{
-                    width: '87px',
-                    height: '78px',
+                    width: lousaWidth * 8 / 100,
+                    height: lousaWidth * 8 / 100,
                     textAlign: 'center'
                   }}
                 >

@@ -76,7 +76,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
         {textTitles.map((title) => (
           <Title
             color="dark.3"
-            size={20}
+            size="2.5vh"
             align="center"
             my="auto"
             maw={900}
@@ -94,7 +94,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
             key={title.file_url}
           />
         ))}
-        <Group>
+        <Group justify="center">
           {question.options.map((option, inx) => (
             <OptionButton
               key={optionArrKey(option, inx)}

@@ -52,7 +52,7 @@ export function ExamPage() {
         style={{ position: "relative" }}
       >
         {isLoading && <Loader />}
-        <Stack spacing={55} align="center" h="100%" w="100%" px={54}>
+        <Stack spacing={20} align="center" h="100%" w="100%">
           {currentQuestion && (
             <QuestionLoader
               question={currentQuestion}

@@ -109,17 +109,17 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 {textTitles.find((title) =>
                   title.placeholder.includes("completar")
                 )?.description && (
-                  <Title
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find((title) =>
-                          title.placeholder.includes("completar")
-                        )?.description ?? "",
-                    }}
-                    color="dark.3"
-                    weight={500}
-                  />
-                )}
+                    <Title
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find((title) =>
+                            title.placeholder.includes("completar")
+                          )?.description ?? "",
+                      }}
+                      color="dark.3"
+                      weight={500}
+                    />
+                  )}
                 <Group>
                   {question.options.map((option, inx) => (
                     <OptionButton

@@ -55,11 +55,11 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
           onPlayStatusChange={mediaTrack.setPlayStatus}
           canPlay={mediaTrack.canPlay()}
           autoPlay
-          customHeight="250"
+          customHeight="200"
         />
 
         <Stack>
-          <SimpleGrid cols={question.options.length} spacing={24}>
+          <SimpleGrid cols={question.options.length} spacing={20}>
             {slots.map((slot, inx) => (
               <DraggableCardSlot
                 key={inx}

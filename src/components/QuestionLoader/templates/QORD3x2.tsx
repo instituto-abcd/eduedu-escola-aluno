@@ -27,8 +27,8 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   const startingSlots =
     textTitles.length > 0
       ? textTitles[0].description
-          .split("")
-          .map((char) => (char === "_" ? null : char))
+        .split("")
+        .map((char) => (char === "_" ? null : char))
       : [null, null];
 
   const [selected, setSelected] = useState<QuestionOption[]>([]);

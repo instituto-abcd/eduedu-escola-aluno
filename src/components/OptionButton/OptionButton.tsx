@@ -5,8 +5,8 @@ import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles({
   button: {
-    width: lousaWidth * 15 / 100,
-    height: lousaWidth * 15 / 100,
+    width: lousaWidth * 16 / 100,
+    height: lousaWidth * 16 / 100,
     borderRadius: 8,
     border: "1px solid #228BE6",
     backgroundColor: "#fff",

@@ -1,11 +1,12 @@
 import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles({
   card: {
-    width: 170,
-    height: 200,
+    width: lousaWidth * 14 / 100,
+    height: lousaWidth * 16 / 100,
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "solid",

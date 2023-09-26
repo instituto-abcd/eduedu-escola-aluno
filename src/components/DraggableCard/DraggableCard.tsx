@@ -2,11 +2,12 @@ import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
+import { lousaWidth } from "~/utils/userScreen";
 
 const useStyles = createStyles((theme) => ({
   card: {
-    width: 170,
-    height: 200,
+    width: lousaWidth * 14 / 100,
+    height: lousaWidth * 16 / 100,
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: "0 4px 0 0 #228BE6",

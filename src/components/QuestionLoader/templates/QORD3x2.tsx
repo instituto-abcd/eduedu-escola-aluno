@@ -1,4 +1,4 @@
-import { Group, LoadingOverlay, SimpleGrid, createStyles } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid, Stack, createStyles } from "@mantine/core";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
@@ -11,6 +11,7 @@ import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaPaddingTop } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   letters: {
@@ -84,52 +85,72 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title) => (
-        <AudioButton autoPlay src={title.file_url ?? ""} key={title.file_url} />
-      ))}
-
-      <Group mt="auto">
-        {slots.map((slot, inx) => {
-          if (typeof slot === "string")
-            return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
-
-          return (
-            <DragLetterSlot
-              key={inx}
-              onDrop={(item) => handleDrop(item, inx)}
-              option={slot}
-              onClear={() => handleClear(inx)}
-              className={classes.letters}
-            />
-          );
-        })}
+      <Group mx="auto">
+        {audioTitles.map((title) => (
+          <AudioButton autoPlay src={title.file_url ?? ""} key={title.file_url} />
+        ))}
       </Group>
 
-      <SimpleGrid
-        cols={3}
-        style={{ placeItems: "center" }}
-        spacing={24}
-        mb="auto"
+      {/* Board content */}
+      <Stack pt={lousaPaddingTop} m="auto">
+
+        {/* Slots */}
+        <Group mx="auto" mb={20}>
+          {slots.map((slot, inx) => {
+            if (typeof slot === "string")
+              return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
+
+            return (
+              <DragLetterSlot
+                key={inx}
+                onDrop={(item) => handleDrop(item, inx)}
+                option={slot}
+                onClear={() => handleClear(inx)}
+                className={classes.letters}
+              />
+            );
+          })}
+        </Group>
+
+        {/* Anwsers options  */}
+        <SimpleGrid
+          mx="auto"
+          cols={3}
+          style={{ placeItems: "center" }}
+          spacing={20}
+        >
+          {question.options.map((option, inx) => (
+            <DraggableLetters
+              key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
+              option={option}
+              hidden={
+                !!slots.find(
+                  (item) =>
+                    item &&
+                    typeof item !== "string" &&
+                    item.position === option.position
+                ) || mediaTrack.isPlaying
+              }
+              className={classes.letters}
+            />
+          ))}
+        </SimpleGrid>
+      </Stack>
+
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={disabled}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
       >
-        {question.options.map((option, inx) => (
-          <DraggableLetters
-            key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
-            option={option}
-            hidden={
-              !!slots.find(
-                (item) =>
-                  item &&
-                  typeof item !== "string" &&
-                  item.position === option.position
-              ) || mediaTrack.isPlaying
-            }
-            className={classes.letters}
-          />
-        ))}
-      </SimpleGrid>
-      <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

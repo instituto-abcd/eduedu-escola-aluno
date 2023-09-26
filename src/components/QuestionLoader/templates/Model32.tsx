@@ -17,7 +17,7 @@ import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight, lousaWidth } from "~/utils/userScreen";
+import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -71,96 +71,116 @@ export function Model32({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles
-        .filter((title) => !!title.file_url)
-        .map((title) => (
-          <AudioButton
-            key={title.position}
-            src={title.file_url ?? ""}
-            autoPlay={!!title.file_url}
-          />
-        ))}
+      <Group mx="auto">
+        {audioTitles
+          .filter((title) => !!title.file_url)
+          .map((title) => (
+            <AudioButton
+              key={title.position}
+              src={title.file_url ?? ""}
+              autoPlay={!!title.file_url}
+            />
+          ))}
+      </Group>
 
-      <Title color="dark.3" size="2.5vh" align="center">
-        {
-          textTitles.find(
-            (title) =>
-              title.classification === QuestionTitleClassification.INTRO
-          )?.description
-        }
-      </Title>
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+      >
+        <Title color="dark.3" size="2.5vh" align="center">
+          {
+            textTitles.find(
+              (title) =>
+                title.classification === QuestionTitleClassification.INTRO
+            )?.description
+          }
+        </Title>
 
-      <Group noWrap grow spacing={50} my="auto">
-        <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
-          <Stack align="stretch" spacing={20} py={10}>
-            <Text
-              dangerouslySetInnerHTML={{
-                __html:
+        <Group noWrap grow spacing={0} my="auto">
+          <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
+            <Stack align="stretch" spacing={20} py={10}>
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find(
+                      (title) =>
+                        title.classification ===
+                        QuestionTitleClassification.HISTORIA
+                    )?.description ??
+                    textTitles[0]?.description ??
+                    "",
+                }}
+                className={classes.typography}
+              />
+              {imageTitles
+                .filter((title) => !!title.file_url)
+                .map((title) => (
+                  <Image
+                    src={title.file_url}
+                    key={title.file_url}
+                    width={204}
+                    mx="auto"
+                  />
+                ))}
+            </Stack>
+          </ScrollArea>
+
+          <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
+            <Stack>
+              <Text size={20} weight={600} color="dark.3" align="center">
+                {
                   textTitles.find(
                     (title) =>
-                      title.classification ===
-                      QuestionTitleClassification.HISTORIA
-                  )?.description ??
-                  textTitles[0]?.description ??
-                  "",
-              }}
-              className={classes.typography}
-            />
-            {imageTitles
-              .filter((title) => !!title.file_url)
-              .map((title) => (
-                <Image
-                  src={title.file_url}
-                  key={title.file_url}
-                  width={204}
-                  mx="auto"
-                />
-              ))}
-          </Stack>
-        </ScrollArea>
-
-        <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
-          <Stack>
-            <Text size={20} weight={600} color="dark.3" align="center">
-              {
-                textTitles.find(
-                  (title) =>
-                    title.classification === QuestionTitleClassification.ENUNCIADO
-                )?.description
-              }
-            </Text>
-            {question.options.map((option, inx) => (
-              <TextOptionButton
-                key={optionArrKey(option, inx)}
-                onClick={() =>
-                  setAnswer({
-                    ...option,
-                    positionAnswer: question.orderedAnswer
-                      ? option.position
-                      : undefined,
-                  } as QuestionOption)
+                      title.classification === QuestionTitleClassification.ENUNCIADO
+                  )?.description
                 }
-                data-selected={JSON.stringify(answer) === JSON.stringify(option)}
-                sound={option.sound_url ?? undefined}
-                isCorrect={option.isCorrect}
-                style={{
-                  maxWidth: lousaWidth * 40 / 100,
-                  width: '100%',
-                  minWidth: "auto",
-                  wordWrap: "break-word",
-                  wordBreak: "break-word",
-                  textAlign: "center",
-                }}
-              >
-                {option.description}
-              </TextOptionButton>
-            ))}
-          </Stack>
-        </ScrollArea>
-      </Group>
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+              </Text>
+              {question.options.map((option, inx) => (
+                <TextOptionButton
+                  key={optionArrKey(option, inx)}
+                  onClick={() =>
+                    setAnswer({
+                      ...option,
+                      positionAnswer: question.orderedAnswer
+                        ? option.position
+                        : undefined,
+                    } as QuestionOption)
+                  }
+                  data-selected={JSON.stringify(answer) === JSON.stringify(option)}
+                  sound={option.sound_url ?? undefined}
+                  isCorrect={option.isCorrect}
+                  style={{
+                    maxWidth: lousaWidth * 40 / 100,
+                    width: '100%',
+                    minWidth: "auto",
+                    wordWrap: "break-word",
+                    wordBreak: "break-word",
+                    textAlign: "center",
+                  }}
+                >
+                  {option.description}
+                </TextOptionButton>
+              ))}
+            </Stack>
+          </ScrollArea>
+        </Group>
+      </Stack>
+
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

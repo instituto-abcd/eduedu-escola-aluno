@@ -17,6 +17,7 @@ import { QuestionOption } from "~/api/exam";
 import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 import { usePlanetAnswer } from "~/api/planet";
+import { textoMedium, textoExtraBig, lousaWidth } from "~/constants/dimensions";
 
 /*
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
@@ -66,7 +67,8 @@ export function Model11({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group>
+      {/* Action buttons */}
+      <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
             src={title.file_url ?? ""}
@@ -76,7 +78,8 @@ export function Model11({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      <Group position="apart" spacing={137} my="auto" noWrap>
+      {/* Board content */}
+      <Group m="auto" spacing={(lousaWidth * 5 / 100)}>
         {imageTitles.map((title) => (
           <Image
             src={title.file_url}
@@ -89,7 +92,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
 
         <Stack align="center" spacing={40}>
           {textTitles.map((title) => (
-            <Title color="dark.3" size="2.5vh" key={title.description}>
+            <Title color="dark.3" size={textoMedium} key={title.description}>
               {title.description.split("/")[0]}
             </Title>
           ))}
@@ -98,7 +101,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
             {word &&
               word.split("_").map((w, inx, arr) => (
                 <Fragment key={w}>
-                  <Text color="dark.3" size={50} weight={700}>
+                  <Text
+                    color="dark.3"
+                    size="3rem"
+                    weight={700}
+                  >
                     {w}
                   </Text>
                   {arr.length !== inx + 1 && (
@@ -147,13 +154,20 @@ export function Model11({ question, answerCallback }: ModelProps) {
         </Stack>
       </Group>
 
+      {/* Continue to the next screen button */}
       <EduButton
         disabled={!answer}
         onClick={submitAnswer}
-        style={{ marginTop: "auto" }}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
       >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

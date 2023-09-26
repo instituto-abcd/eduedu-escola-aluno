@@ -90,7 +90,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Group>
+      <Group mx="auto">
         {audioTitles
           .filter(
             (title) =>
@@ -133,7 +133,8 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           ))}
       </Group>
 
-      <SimpleGrid cols={cols}>
+      {/* Board content */}
+      <SimpleGrid cols={cols} mt={20} w="fit-content" mx="auto">
         {question.options.map((option, inx) => {
           const hasLabel =
             option.description !== null && option.description.length > 2;
@@ -159,13 +160,21 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           );
         })}
       </SimpleGrid>
+
+      {/* Continue to the next screen button */}
       <EduButton
         disabled={!answer}
         onClick={submitAnswer}
-        style={{ minHeight: "max-content" }}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
       >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

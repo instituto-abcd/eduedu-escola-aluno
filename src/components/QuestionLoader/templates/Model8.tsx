@@ -55,13 +55,16 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title, inx) => (
-        <AudioButton
-          key={inx}
-          src={title.file_url ?? ""}
-          autoPlay={inx === 0}
-        />
-      ))}
+      {/* Action buttons */}
+      <Group mx="auto">
+        {audioTitles.map((title, inx) => (
+          <AudioButton
+            key={inx}
+            src={title.file_url ?? ""}
+            autoPlay={inx === 0}
+          />
+        ))}
+      </Group>
 
       {textTitles.map((title, inx) => (
         <Title color="dark.3" size="2.5vh" align="center" key={inx}>

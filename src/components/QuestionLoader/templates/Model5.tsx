@@ -75,14 +75,18 @@ export function Model5({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title, inx) => (
-        <AudioButton
-          src={title.file_url ?? ""}
-          key={inx}
-          autoPlay={inx === 0}
-        />
-      ))}
+      {/* Action buttons */}
+      <Group>
+        {audioTitles.map((title, inx) => (
+          <AudioButton
+            src={title.file_url ?? ""}
+            key={inx}
+            autoPlay={inx === 0}
+          />
+        ))}
+      </Group>
 
+      {/* Board content */}
       <Group spacing={80} align="center" my="auto">
         {!hasVideo && hasText && (
           <Title color="dark.3" size="2.5vh" align="center" my="auto" maw={400}>
@@ -144,9 +148,20 @@ export function Model5({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

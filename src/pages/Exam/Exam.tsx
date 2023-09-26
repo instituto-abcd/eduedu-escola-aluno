@@ -1,4 +1,4 @@
-import { Loader, Progress } from "@mantine/core";
+import { Loader, Progress, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
@@ -45,13 +45,18 @@ export function ExamPage() {
         value={currentQuestion?.progress ?? 0}
         style={{ position: "fixed", top: 100, zIndex: 999 }}
       />
-      {isLoading && <Loader />}
-      {currentQuestion && (
-        <QuestionLoader
-          question={currentQuestion}
-          answerCallback={handleAnswer}
-        />
-      )}
+      <Stack
+        h="100%"
+        w="100%"
+        style={{ position: "relative" }}>
+        {isLoading && <Loader />}
+        {currentQuestion && (
+          <QuestionLoader
+            question={currentQuestion}
+            answerCallback={handleAnswer}
+          />
+        )}
+      </Stack>
     </>
   );
 }

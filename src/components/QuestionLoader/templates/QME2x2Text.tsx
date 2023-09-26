@@ -5,6 +5,7 @@ import {
   ScrollArea,
   Stack,
   Text,
+  Box,
   Title,
   createStyles,
 } from "@mantine/core";
@@ -15,6 +16,7 @@ import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -56,62 +58,92 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
   const title = "Leia o texto e responda à pergunta.";
   return (
     <>
-      <Title color="dark.3" size="2.5vh">{title}</Title>
 
-      <Group noWrap grow spacing={75}>
-        <ScrollArea h={380}>
-          <Stack align="center" p={20}>
-            <Text
-              className={classes.typography}
-              dangerouslySetInnerHTML={{
-                __html:
-                  textTitles.find(
-                    (title) =>
-                      title.classification ===
-                      QuestionTitleClassification.HISTORIA
-                  )?.description ?? "",
-              }}
-            />
-            {imageTitles.map((title) => (
-              <Image
-                src={title.file_url}
-                alt={title.file_name}
-                width={102}
-                key={title.file_url}
-              />
-            ))}
-          </Stack>
-        </ScrollArea>
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+      >
+        <Title color="dark.3" size="2.5vh" mx="auto">{title}</Title>
 
-        <Stack align="center" p={20}>
-          <Title align="center" color="dark.3" size={30} weight={500}>
-            {
-              textTitles.find(
-                (title) =>
-                  title.classification === QuestionTitleClassification.ENUNCIADO
-              )?.description
-            }
-          </Title>
-          <Group align="center" position="center">
-            <Stack align="strech">
-              {question.options.map((option) => (
-                <TextOptionButton
-                  key={option.description}
-                  onClick={() => setAnswer(option)}
-                  data-selected={answer?.position === option.position}
-                  className={classes.button}
-                >
-                  {option.description}
-                </TextOptionButton>
-              ))}
-            </Stack>
-          </Group>
-        </Stack>
-      </Group>
+        <Group mx="auto">
+          <Box maw={lousaWidth * 50 / 100}>
+            <ScrollArea
+              mah={scrollAreaHeight * 80 / 100}
+              maw={scrollAreaWidth * 80 / 100}
+            >
+              <Stack align="center">
+                <Text
+                  className={classes.typography}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find(
+                        (title) =>
+                          title.classification ===
+                          QuestionTitleClassification.HISTORIA
+                      )?.description ?? "",
+                  }}
+                />
+                {imageTitles.map((title) => (
+                  <Image
+                    src={title.file_url}
+                    alt={title.file_name}
+                    width={102}
+                    key={title.file_url}
+                  />
+                ))}
+              </Stack>
+            </ScrollArea>
+          </Box>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+          <Box maw={lousaWidth * 50 / 100}>
+            <ScrollArea
+              mah={scrollAreaHeight * 80 / 100}
+              maw={scrollAreaWidth * 90 / 100}
+            >
+              <Stack align="center">
+                <Title align="center" color="dark.3" size="2.5vh" weight={500}>
+                  {
+                    textTitles.find(
+                      (title) =>
+                        title.classification === QuestionTitleClassification.ENUNCIADO
+                    )?.description
+                  }
+                </Title>
+                <Group align="center" position="center">
+                  <Stack align="strech">
+                    {question.options.map((option) => (
+                      <TextOptionButton
+                        key={option.description}
+                        onClick={() => setAnswer(option)}
+                        data-selected={answer?.position === option.position}
+                        className={classes.button}
+                      >
+                        {option.description}
+                      </TextOptionButton>
+                    ))}
+                  </Stack>
+                </Group>
+              </Stack>
+            </ScrollArea>
+          </Box>
+        </Group>
+      </Stack>
+
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

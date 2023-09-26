@@ -55,9 +55,11 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
   return (
     <>
       {/* Action buttons */}
-      {audioTitles.map((title, inx) => (
-        <AudioButton key={inx} src={title.file_url ?? ""} autoPlay />
-      ))}
+      <Group mx="auto">
+        {audioTitles.map((title, inx) => (
+          <AudioButton key={inx} src={title.file_url ?? ""} autoPlay />
+        ))}
+      </Group>
 
       {/* Board content */}
       <Stack
@@ -102,7 +104,11 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
             ))}
 
           {showTextOptionExceptions.includes(question.id) && (
-            <Stack mx="auto" spacing={20} w="45%" m={0}>
+            <Stack
+              mx="auto"
+              spacing={20}
+              m={0}
+            >
               {question.options.map((option, inx) =>
                 showTextOptionExceptions.includes(question.id) ? (
                   <TextOptionButton

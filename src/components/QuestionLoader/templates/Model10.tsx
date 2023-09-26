@@ -38,7 +38,8 @@ export function Model10({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group>
+      {/* Action buttons */}
+      <Group style={{ display: 'flex', justifyContent: 'center' }}>
         {audioTitles.map((item, inx) => (
           <>
             {item.file_url && item.file_url.length &&
@@ -55,6 +56,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
         <IconButton icon={<IconBook size={34} />} variant="yellow" />
       </Group>
 
+      {/* Board content */}
       {textTitles
         .filter(
           (title) => title.description && !title.placeholder.includes("ID")
@@ -127,6 +129,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
+      {/* Continue to the next screen button */}
       <EduButton
         disabled={!answer}
         onClick={submitAnswer}
@@ -138,6 +141,8 @@ export function Model10({ question, answerCallback }: ModelProps) {
       >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

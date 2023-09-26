@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { useGetExamQuestion } from "~/api/student";
 import { produce } from "immer";
-import { lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -86,7 +86,12 @@ export function Model18({ question, answerCallback }: ModelProps) {
       {/* Board content */}
       <Stack>
         {imageTitles.map((title) => (
-          <Image src={title.file_url ?? ""} key={title.file_name} width={lousaWidth * 25 / 100} m="auto" />
+          <Image
+            src={title.file_url ?? ""}
+            key={title.file_name}
+            height={lousaHeight * 35 / 100}
+            width="auto"
+            m="auto" />
         ))}
 
         <Stack spacing={20}>

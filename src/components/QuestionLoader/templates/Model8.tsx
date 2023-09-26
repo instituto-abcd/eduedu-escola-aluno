@@ -17,7 +17,7 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { BOARD_WIDTH } from "~/constants/dimensions";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
@@ -69,7 +69,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
         </Title>
       ))}
 
-      <Group my="auto" noWrap w={BOARD_WIDTH}>
+      <Group my="auto" noWrap w={lousaWidth}>
         {videoTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <VideoPlayer

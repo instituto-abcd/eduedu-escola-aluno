@@ -26,8 +26,8 @@ export function ExamPage() {
     answer:
       | Question
       | {
-          examCompleted: true;
-        }
+        examCompleted: true;
+      }
   ) {
     if ("examCompleted" in answer) {
       navigate(PATH.EXAM_EVALUATION);
@@ -46,20 +46,16 @@ export function ExamPage() {
         style={{ position: "fixed", top: 100, zIndex: 999 }}
       />
       <Stack
-        align="center"
-        justify="space-between"
         h="100%"
-        style={{ position: "relative" }}
-      >
+        w="100%"
+        style={{ position: "relative" }}>
         {isLoading && <Loader />}
-        <Stack spacing={55} align="center" h="100%" w="100%" px={54}>
-          {currentQuestion && (
-            <QuestionLoader
-              question={currentQuestion}
-              answerCallback={handleAnswer}
-            />
-          )}
-        </Stack>
+        {currentQuestion && (
+          <QuestionLoader
+            question={currentQuestion}
+            answerCallback={handleAnswer}
+          />
+        )}
       </Stack>
     </>
   );

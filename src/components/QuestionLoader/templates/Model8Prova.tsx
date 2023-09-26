@@ -1,5 +1,13 @@
+// Aux & Utils:
+import { useEffect, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useGetExamQuestion } from "~/api/student";
+import { QuestionOption } from "~/api/exam";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
+
+// Components:
 import {
   Title,
   Group,
@@ -8,18 +16,15 @@ import {
   Stack,
   Text,
   SimpleGrid,
-  Center,
+  Box,
 } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
-import { IconVolume } from "@tabler/icons-react";
-import { useGetExamQuestion } from "~/api/student";
-import { useEffect, useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { BOARD_WIDTH } from "~/constants/dimensions";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { useMediaTrackStore } from "~/stores/media-track.store";
+
+// Icons:
+import { IconVolume } from "@tabler/icons-react";
 
 const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
 
@@ -49,44 +54,61 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title, inx) => (
-        <AudioButton key={inx} src={title.file_url ?? ""} autoPlay />
-      ))}
+      {/* Action buttons */}
+      <Group mx="auto">
+        {audioTitles.map((title, inx) => (
+          <AudioButton key={inx} src={title.file_url ?? ""} autoPlay />
+        ))}
+      </Group>
 
-      {textTitles.map((title, inx) => (
-        <Title color="dark.3" size={30} align="center" key={inx}>
-          {title.description}
-        </Title>
-      ))}
-
-      <Group my="auto" w={BOARD_WIDTH} noWrap spacing={20}>
-        {imageTitles.map((title, inx) => (
-          <Center w="100%" key={inx}>
-            <Image
-              src={title.file_url}
-              alt={title.description}
-              width={"100%"}
-              key={title.file_url}
-            />
-          </Center>
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+        spacing={(lousaWidth * 5 / 100)}
+      >
+        {textTitles.map((title, inx) => (
+          <Title color="dark.3" size="2.5vh" align="center" key={inx}>
+            {title.description}
+          </Title>
         ))}
 
-        {videoTitles
-          .filter((title) => title.file_url)
-          .map((title, inx) => (
-            <Center w="100%" key={inx}>
-              <VideoPlayer
-                src={title.file_url ?? ""}
-                onPlayStatusChange={mediaTrack.setPlayStatus}
-                canPlay={mediaTrack.canPlay()}
-                autoPlay
+        <Group
+          noWrap
+          my="auto"
+          pt={lousaPaddingTop}
+        >
+          {imageTitles.map((title, inx) => (
+            <Box mx="auto" key={inx}>
+              <Image
+                src={title.file_url}
+                alt={title.description}
+                key={title.file_url}
+                width={(lousaWidth * 40 / 100).toString()}
               />
-            </Center>
+            </Box>
           ))}
 
-        <Center w="100%" maw="60%" mx="auto">
+          {videoTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <Box key={inx}>
+                <VideoPlayer
+                  src={title.file_url ?? ""}
+                  onPlayStatusChange={mediaTrack.setPlayStatus}
+                  canPlay={mediaTrack.canPlay()}
+                  autoPlay
+                  customHeight={(lousaWidth * 30 / 100).toString()}
+                />
+              </Box>
+            ))}
+
           {showTextOptionExceptions.includes(question.id) && (
-            <Stack w="100%" spacing={30}>
+            <Stack
+              mx="auto"
+              spacing={20}
+              m={0}
+            >
               {question.options.map((option, inx) =>
                 showTextOptionExceptions.includes(question.id) ? (
                   <TextOptionButton
@@ -99,7 +121,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
-                        size={24}
+                        size="1.8vh"
                         color="blue.6"
                         weight={400}
                         style={{
@@ -174,12 +196,23 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
               )}
             </SimpleGrid>
           )}
-        </Center>
-      </Group>
+        </Group>
+      </Stack>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

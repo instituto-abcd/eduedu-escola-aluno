@@ -17,7 +17,7 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { BOARD_WIDTH } from "~/constants/dimensions";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
@@ -55,21 +55,24 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.map((title, inx) => (
-        <AudioButton
-          key={inx}
-          src={title.file_url ?? ""}
-          autoPlay={inx === 0}
-        />
-      ))}
+      {/* Action buttons */}
+      <Group mx="auto">
+        {audioTitles.map((title, inx) => (
+          <AudioButton
+            key={inx}
+            src={title.file_url ?? ""}
+            autoPlay={inx === 0}
+          />
+        ))}
+      </Group>
 
       {textTitles.map((title, inx) => (
-        <Title color="dark.3" size={30} align="center" key={inx}>
+        <Title color="dark.3" size="2.5vh" align="center" key={inx}>
           {title.description}
         </Title>
       ))}
 
-      <Group my="auto" noWrap w={BOARD_WIDTH}>
+      <Group my="auto" noWrap w={lousaWidth}>
         {videoTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <VideoPlayer

@@ -64,6 +64,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       <Group>
         {audioTitles.map((title) => (
           <AudioButton
@@ -74,6 +75,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
+      {/* Board content */}
       <Stack my="auto">
         <SimpleGrid cols={question.options.length} spacing={24}>
           {answers.map((slot, inx) => (
@@ -112,9 +114,20 @@ export function Model2({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Stack>
 
-      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={answers.includes(null)}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

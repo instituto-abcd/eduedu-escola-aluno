@@ -17,7 +17,7 @@ import { EduButton } from "~/components/EduButton";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/utils/userScreen";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model24({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles, imageTitles, optionArrKey } =
@@ -109,17 +109,17 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 {textTitles.find((title) =>
                   title.placeholder.includes("completar")
                 )?.description && (
-                  <Title
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find((title) =>
-                          title.placeholder.includes("completar")
-                        )?.description ?? "",
-                    }}
-                    color="dark.3"
-                    weight={500}
-                  />
-                )}
+                    <Title
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find((title) =>
+                            title.placeholder.includes("completar")
+                          )?.description ?? "",
+                      }}
+                      color="dark.3"
+                      weight={500}
+                    />
+                  )}
                 <Group>
                   {question.options.map((option, inx) => (
                     <OptionButton

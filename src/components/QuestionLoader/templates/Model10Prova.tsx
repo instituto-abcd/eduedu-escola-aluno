@@ -1,11 +1,15 @@
-import { Group, Image, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
-import { OptionButton } from "~/components/OptionButton";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
+// Aux & Utils:
 import { useEffect, useState } from "react";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { Answer, useGetExamQuestion } from "~/api/student";
+import { lousaPaddingTop, lousaWidth, textoMedium } from "~/constants/dimensions";
+import { ModelProps } from ".";
+
+// Components:
 import { EduButton } from "~/components/EduButton";
+import { Box, Group, Image, LoadingOverlay, SimpleGrid, Stack, Title } from "@mantine/core";
+import { OptionButton } from "~/components/OptionButton";
+import { AudioButton } from "~/components/AudioButton";
 
 export function Model10Prova({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -30,7 +34,8 @@ export function Model10Prova({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group>
+      {/* Action buttons */}
+      <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
             src={title.file_url ?? ""}
@@ -42,44 +47,74 @@ export function Model10Prova({ question, answerCallback }: ModelProps) {
         {/* TODO: botão livro? */}
         {/* <IconButton icon={<IconBook size={34} />} variant="black" /> */}
       </Group>
-      {textTitles.map((title) => (
-        <Title color="dark.3" size={30} align="center" key={title.description}>
-          {title.description}
-        </Title>
-      ))}
 
-      <Group spacing={100} my="auto">
-        {imageTitles.map((title) => (
-          <Image
-            src={title.file_url}
-            alt={title.description}
-            width={270}
-            key={title.file_url}
-          />
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+      >
+        {textTitles.map((title) => (
+          <Title
+            key={title.description}
+            align="center"
+            color="dark.3"
+            size={textoMedium}
+            mb={20}
+          >
+            {title.description}
+          </Title>
         ))}
 
-        <SimpleGrid cols={2}>
-          {question.options.map((option) => (
-            <OptionButton
-              key={option.description}
-              onClick={() =>
-                setAnswer({
-                  position: option.position,
-                  positionAnswer: option.position,
-                })
-              }
-              data-selected={answer?.position === option.position}
-              isCorrect={option.isCorrect}
-            >
-              {option.description}
-            </OptionButton>
-          ))}
-        </SimpleGrid>
-      </Group>
+        <Group
+          mx="auto"
+          spacing={(lousaWidth * 5 / 100)}
+        >
+          <Box maw={lousaWidth * 50 / 100}>
+            {imageTitles.map((title) => (
+              <Image
+                src={title.file_url}
+                alt={title.description}
+                width={(lousaWidth * 30 / 100).toString()}
+                key={title.file_url}
+              />
+            ))}
+          </Box>
+          <Box maw={lousaWidth * 50 / 100}>
+            <SimpleGrid cols={2}>
+              {question.options.map((option) => (
+                <OptionButton
+                  key={option.description}
+                  onClick={() =>
+                    setAnswer({
+                      position: option.position,
+                      positionAnswer: option.position,
+                    })
+                  }
+                  data-selected={answer?.position === option.position}
+                  isCorrect={option.isCorrect}
+                >
+                  {option.description}
+                </OptionButton>
+              ))}
+            </SimpleGrid>
+          </Box>
+        </Group>
+      </Stack>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: "auto",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

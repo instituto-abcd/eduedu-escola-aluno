@@ -1,7 +1,7 @@
 import { Loader, createStyles } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useRef, useState } from "react";
-import { lousaWidth } from "~/utils/userScreen";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   wrapper: {

@@ -59,13 +59,17 @@ export function Model10Prova({ question, answerCallback }: ModelProps) {
             align="center"
             color="dark.3"
             size={textoMedium}
+            mb={20}
           >
             {title.description}
           </Title>
         ))}
 
-        <Group mx="auto" spacing={(lousaWidth * 5 / 100)}>
-          <Box maw={lousaWidth * 45 / 100}>
+        <Group
+          mx="auto"
+          spacing={(lousaWidth * 5 / 100)}
+        >
+          <Box maw={lousaWidth * 50 / 100}>
             {imageTitles.map((title) => (
               <Image
                 src={title.file_url}

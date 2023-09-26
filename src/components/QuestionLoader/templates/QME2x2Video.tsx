@@ -61,7 +61,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
           mah={scrollAreaHeight}
           maw={scrollAreaWidth * 70 / 100}
         >
-          <SimpleGrid cols={2} style={{ placeItems: "center" }} spacing={20}>
+          <SimpleGrid cols={2} style={{ placeItems: "center", marginBottom: "5px" }} spacing={20}>
             {question.options.map((option) => (
               <OptionButton
                 key={option.position}

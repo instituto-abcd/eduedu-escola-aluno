@@ -127,7 +127,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
           </ScrollArea>
 
           <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
-            <Stack>
+            <Stack style={{ marginBottom: "5px" }}>
               <Text size={20} weight={600} color="dark.3" align="center">
                 {
                   textTitles.find(

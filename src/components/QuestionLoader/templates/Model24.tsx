@@ -61,7 +61,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
   return (
     <>
       <ScrollArea w={850} h={(lousaHeight * 80) / 100}>
-        <Stack>
+        <Stack px={30}>
           <Group mx="auto">
             {audioTitles
               .filter((title) => title.file_url)

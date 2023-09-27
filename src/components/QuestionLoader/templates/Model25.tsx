@@ -86,8 +86,9 @@ export function Model25({ question }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       {audioTitles.filter((title) => title.file_url) && (
-        <Group>
+        <Group mx="auto">
           {audioTitles.map((title, inx) => (
             <AudioButton
               src={title.file_url!}
@@ -98,7 +99,8 @@ export function Model25({ question }: ModelProps) {
         </Group>
       )}
 
-      <Stack my="auto" spacing={50}>
+      {/* Board content */}
+      <Stack my="auto">
         <Group>
           {question.options.map((option, inx) => (
             <SlotCard
@@ -136,9 +138,15 @@ export function Model25({ question }: ModelProps) {
         </Group>
       </Stack>
 
-      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={answers.includes(null)}
+        onClick={submitAnswer}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} />
     </>
   );

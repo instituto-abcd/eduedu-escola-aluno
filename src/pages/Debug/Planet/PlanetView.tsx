@@ -32,14 +32,12 @@ export function PlanetView() {
         h="100%"
         style={{ position: "relative" }}
       >
-        <Stack spacing={55} align="center" h="100%" w="100%" px={54}>
-          {currentQuestion && (
-            <QuestionLoader
-              question={currentQuestion}
-              answerCallback={handleAnswer}
-            />
-          )}
-        </Stack>
+        {currentQuestion && (
+          <QuestionLoader
+            question={currentQuestion}
+            answerCallback={handleAnswer}
+          />
+        )}
       </Stack>
 
       <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>

@@ -12,6 +12,8 @@ type Props = {
 
 type Ref = { play: () => void };
 
+// TODO: bug na chave autoplay (não está funcionando como deveria)
+
 export const AudioButton = forwardRef<Ref, Props>(
   ({ buttonProps, autoPlay, src }, ref) => {
     const mediaTrack = useMediaTrackStore();

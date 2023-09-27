@@ -14,6 +14,7 @@ import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { produce } from "immer";
 import { usePlanetAnswer } from "~/api/planet";
 import { EduButton } from "~/components/EduButton";
+import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   stack: {
@@ -120,7 +121,7 @@ export function Model31({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { produce } from "immer";
 import { usePlanetAnswer } from "~/api/planet";
 import { EduButton } from "~/components/EduButton";
+import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -147,7 +148,7 @@ export function Model25({ question }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

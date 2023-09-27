@@ -11,7 +11,7 @@ import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaPaddingTop } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   letters: {
@@ -151,7 +151,7 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

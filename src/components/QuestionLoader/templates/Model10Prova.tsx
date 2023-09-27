@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { Answer, useGetExamQuestion } from "~/api/student";
-import { lousaPaddingTop, lousaWidth, textoMedium } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth, textoMedium } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -115,7 +115,7 @@ export function Model10Prova({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

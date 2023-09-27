@@ -19,7 +19,7 @@ import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -122,7 +122,7 @@ export function Model13({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

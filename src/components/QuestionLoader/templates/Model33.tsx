@@ -9,6 +9,7 @@ import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { IconMessageCircle2 } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model33({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
@@ -98,7 +99,7 @@ export function Model33({ question, answerCallback }: ModelProps) {
       <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

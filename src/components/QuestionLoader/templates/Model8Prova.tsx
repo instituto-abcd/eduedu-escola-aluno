@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -213,7 +213,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

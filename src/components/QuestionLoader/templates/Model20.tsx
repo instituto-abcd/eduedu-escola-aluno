@@ -7,6 +7,7 @@ import { usePlanetAnswer } from "~/api/planet";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DropArea, TextDropItem } from "~/components/TextDrop";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model20({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
@@ -106,7 +107,7 @@ export function Model20({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

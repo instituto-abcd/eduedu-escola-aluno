@@ -7,6 +7,7 @@ import { QuestionOption } from "~/api/exam";
 import { useEffect, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   slot: {
@@ -93,7 +94,7 @@ export function Model34({ question, answerCallback }: ModelProps) {
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

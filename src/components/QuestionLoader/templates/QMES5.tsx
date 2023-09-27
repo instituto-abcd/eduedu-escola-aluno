@@ -76,6 +76,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
           <SimpleGrid
             cols={2}
             spacing={20}
+            style={{ marginBottom: "5px" }}
           >
             {question.options.map((option, inx) => (
               <OptionButton

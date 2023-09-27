@@ -1,5 +1,5 @@
 import { Loader, Stack } from "@mantine/core";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Question } from "~/api/exam";
 import { usePlanetGetFirstQuestion } from "~/api/planet";
@@ -7,6 +7,8 @@ import { Planet } from "~/api/student";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
+import feedbackNegative from "~/assets/audio/feedback_error.mp3";
+import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 
 export function PlanetPage() {
   const location = useLocation();
@@ -27,6 +29,9 @@ export function PlanetPage() {
     },
   });
 
+  const negativeSound = useRef<HTMLAudioElement>(null);
+  const positiveSound = useRef<HTMLAudioElement>(null);
+
   function handleAnswer(
     answer:
       | Question
@@ -40,6 +45,18 @@ export function PlanetPage() {
       setCurrentQuestion(answer as Question);
       (answer as Question).progress &&
         updateProgress((answer as Question).progress as number);
+
+      /* Handle Feedback Sound */
+
+      if ("previousQuestionIsCorrect" in answer) {
+        if (answer.previousQuestionIsCorrect === true) {
+          void positiveSound.current?.play();
+        }
+
+        if (answer.previousQuestionIsCorrect === false) {
+          void negativeSound.current?.play();
+        }
+      }
     }
   }
 
@@ -61,6 +78,17 @@ export function PlanetPage() {
           )}
         </Stack>
       </Stack>
+
+      <audio
+        src={feedbackNegative}
+        ref={negativeSound}
+        style={{ display: "none" }}
+      />
+      <audio
+        src={feedbackPositive}
+        ref={positiveSound}
+        style={{ display: "none" }}
+      />
     </>
   );
 }

@@ -111,7 +111,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
                   }
                 </Title>
                 <Group align="center" position="center">
-                  <Stack align="strech">
+                  <Stack align="strech" style={{ marginBottom: "5px" }}>
                     {question.options.map((option) => (
                       <TextOptionButton
                         key={option.description}

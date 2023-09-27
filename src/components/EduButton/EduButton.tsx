@@ -46,7 +46,7 @@ export function EduButton({
   children,
   rightIcon,
   leftIcon,
-  withFeedbackSound = true,
+  withFeedbackSound = false,
   ...props
 }: EduButtonProps) {
   const { classes, cx } = useStyles();

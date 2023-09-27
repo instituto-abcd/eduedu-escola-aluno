@@ -42,6 +42,7 @@ export type Question = {
   status?: string;
   planet_id: string;
   title: string;
+  previousQuestionIsCorrect?: boolean;
   rules: {
     name: string;
     type: string;

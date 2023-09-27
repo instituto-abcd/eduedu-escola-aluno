@@ -161,7 +161,7 @@ export function Model18({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

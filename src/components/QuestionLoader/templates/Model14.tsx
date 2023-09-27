@@ -7,6 +7,7 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model14({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
@@ -67,7 +68,7 @@ export function Model14({ question, answerCallback }: ModelProps) {
       <EduButton disabled={answer === null} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -10,6 +10,7 @@ import { CardStack } from "~/components/CardStack";
 import { QuestionOption } from "~/api/exam";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model12({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
@@ -81,7 +82,7 @@ export function Model12({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

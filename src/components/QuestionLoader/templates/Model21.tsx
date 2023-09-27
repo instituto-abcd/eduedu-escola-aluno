@@ -4,6 +4,7 @@ import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model21({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles } = useQuestionHelper(question);
@@ -52,7 +53,7 @@ export function Model21({ question, answerCallback }: ModelProps) {
       </ScrollArea>
 
       <EduButton onClick={submitAnswer}>Continuar</EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -13,6 +13,7 @@ import { AudioButton } from "~/components/AudioButton";
 
 // Icons:
 import { IconBook, IconVolume } from "@tabler/icons-react";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -143,7 +144,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

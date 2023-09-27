@@ -42,7 +42,7 @@ export function ExamLayout() {
       <Center style={{ position: "relative" }}>
         <Progress
           value={examProgress}
-          w="50%"
+          w={lousaWidth * 0.95}
           style={{ position: "absolute", top: progressBarHeight }}
           size="lg"
           striped

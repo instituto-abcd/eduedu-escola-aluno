@@ -31,8 +31,8 @@ export function LottiesExam() {
           }}
           style={{
             position: "absolute",
-            left: "2%",
-            bottom: "10%",
+            left: "-8%",
+            bottom: 18,
             width: "200px",
             height: "auto",
             zIndex: 3,
@@ -50,8 +50,8 @@ export function LottiesExam() {
           style={{
             position: "absolute",
             left: "34%",
-            bottom: "2%",
-            width: "180px",
+            bottom: 0,
+            width: "140px",
             height: "auto",
             zIndex: 3,
           }}
@@ -68,8 +68,8 @@ export function LottiesExam() {
           style={{
             position: "absolute",
             right: "34%",
-            bottom: "6%",
-            width: "110px",
+            bottom: 2,
+            width: "100px",
             height: "auto",
             zIndex: 3,
           }}
@@ -87,7 +87,7 @@ export function LottiesExam() {
             position: "absolute",
             right: "27%",
             bottom: "12%",
-            width: "90px",
+            width: "80px",
             height: "auto",
             zIndex: 3,
           }}
@@ -103,7 +103,7 @@ export function LottiesExam() {
           }}
           style={{
             position: "absolute",
-            right: "2%",
+            right: "-8%",
             bottom: "5%",
             width: "200px",
             height: "auto",
@@ -140,7 +140,7 @@ export function LottiesExam() {
         }}
         style={{
           position: "absolute",
-          bottom: "18%",
+          bottom: 42,
           zIndex: 2,
           width: "100%",
           height: "auto",

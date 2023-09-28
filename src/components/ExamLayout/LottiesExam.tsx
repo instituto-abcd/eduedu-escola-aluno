@@ -19,6 +19,7 @@ const useStyles = createStyles({
     height: 190,
     marginInline: "auto",
     marginTop: "auto",
+    pointerEvents: "none",
   },
 });
 

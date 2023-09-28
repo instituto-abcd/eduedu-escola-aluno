@@ -4,6 +4,7 @@ import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { lousaHeight } from "~/constants/dimensions";
 
 // Components:
 import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
@@ -157,7 +158,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

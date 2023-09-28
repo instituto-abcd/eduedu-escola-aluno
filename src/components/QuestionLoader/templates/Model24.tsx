@@ -189,7 +189,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
       >
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

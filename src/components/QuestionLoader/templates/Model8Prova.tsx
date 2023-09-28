@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth, currentHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -68,7 +68,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         spacing={(lousaWidth * 5 / 100)}
       >
         {textTitles.map((title, inx) => (
-          <Title color="dark.3" size="2.5vh" align="center" key={inx}>
+          <Title color="dark.3" size="3vh" align="center" key={inx}>
             {title.description}
           </Title>
         ))}
@@ -120,7 +120,10 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
-                        size="2.2vh"
+                        // size="clamp(10px, 3vh, 23px)"
+                        // size="2.5vh"
+                        // size={lousaHeight * 0.028}
+                        size={currentHeight > 900 ? "2.6vh" : "2vh"}
                         color="blue.6"
                         weight={400}
                         style={{
@@ -213,7 +216,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

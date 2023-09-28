@@ -17,7 +17,7 @@ import { QuestionOption } from "~/api/exam";
 import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 import { usePlanetAnswer } from "~/api/planet";
-import { textoMedium, textoExtraBig, lousaWidth } from "~/constants/dimensions";
+import { textoMedium, textoExtraBig, lousaWidth, lousaHeight } from "~/constants/dimensions";
 
 /*
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
@@ -168,7 +168,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

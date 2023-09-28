@@ -5,6 +5,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model30({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
@@ -52,7 +53,7 @@ export function Model30({ question, answerCallback }: ModelProps) {
       <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

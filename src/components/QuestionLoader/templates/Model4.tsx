@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaWidth, lousaPaddingTop } from "~/constants/dimensions";
+import { lousaWidth, lousaPaddingTop, lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -139,7 +139,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     )}
                   </>
                 )}
-                {!option.image_url && <Text>{option.description}</Text>}
+                {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
               </OptionButton>
             ))}
           </Group>
@@ -160,7 +160,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

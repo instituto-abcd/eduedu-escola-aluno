@@ -17,6 +17,7 @@ import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 // TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
 
@@ -123,7 +124,7 @@ export function Model27({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function QME2x2Audio({ question, answerCallback }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
@@ -175,7 +176,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
@@ -76,7 +76,6 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         <Group
           noWrap
           my="auto"
-          pt={lousaPaddingTop}
         >
           {imageTitles.map((title, inx) => (
             <Box mx="auto" key={inx}>
@@ -121,12 +120,13 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
-                        size="1.8vh"
+                        size="2.2vh"
                         color="blue.6"
                         weight={400}
                         style={{
                           wordWrap: "break-word",
                           wordBreak: "break-word",
+                          maxWidth: lousaWidth * 40 / 100,
                         }}
                       >
                         {option.description}
@@ -213,7 +213,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -16,7 +16,7 @@ import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -111,7 +111,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
                   }
                 </Title>
                 <Group align="center" position="center">
-                  <Stack align="strech">
+                  <Stack align="strech" style={{ marginBottom: "5px" }}>
                     {question.options.map((option) => (
                       <TextOptionButton
                         key={option.description}
@@ -144,7 +144,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

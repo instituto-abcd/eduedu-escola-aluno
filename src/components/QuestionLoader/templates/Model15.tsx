@@ -5,6 +5,7 @@ import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { usePlanetAnswer } from "~/api/planet";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model15({ question, answerCallback }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
@@ -42,7 +43,7 @@ export function Model15({ question, answerCallback }: ModelProps) {
       >
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

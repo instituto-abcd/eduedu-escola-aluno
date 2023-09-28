@@ -19,6 +19,7 @@ import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -77,7 +78,7 @@ export function Model13({ question, answerCallback }: ModelProps) {
   return (
     <>
       {audioTitles.filter((title) => title.file_url).length > 0 && (
-        <Group>
+        <Group mx="auto">
           {audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
@@ -90,7 +91,12 @@ export function Model13({ question, answerCallback }: ModelProps) {
         </Group>
       )}
 
-      <Stack spacing={60} my="auto" align="center">
+      {/* Board content */}
+      <Stack
+        my="auto"
+        pt={lousaPaddingTop}
+        spacing={(lousaWidth * 3 / 100)}
+      >
         <Group my="auto">
           {imageTitles
             .filter((title) => title.file_url)
@@ -107,10 +113,16 @@ export function Model13({ question, answerCallback }: ModelProps) {
         <CardStack options={options} />
       </Stack>
 
-      <EduButton disabled={options.length > 0} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={options.length > 0}
+        onClick={submitAnswer}
+      >
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+
+      {/* Loading animation */}
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -10,6 +10,7 @@ import { QuestionOption } from "~/api/exam";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model5({ question, answerCallback }: ModelProps) {
   const { audioTitles, videoTitles, textTitles, imageTitles, isExam } =
@@ -162,7 +163,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

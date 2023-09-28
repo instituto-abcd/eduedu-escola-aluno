@@ -9,6 +9,7 @@ import { produce } from "immer";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
+import { lousaHeight } from "~/constants/dimensions";
 
 export function Model26({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
@@ -110,7 +111,7 @@ export function Model26({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

@@ -76,6 +76,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
           <SimpleGrid
             cols={2}
             spacing={20}
+            style={{ marginBottom: "5px" }}
           >
             {question.options.map((option, inx) => (
               <OptionButton
@@ -112,7 +113,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

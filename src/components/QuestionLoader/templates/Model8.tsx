@@ -17,7 +17,7 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
@@ -120,7 +120,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

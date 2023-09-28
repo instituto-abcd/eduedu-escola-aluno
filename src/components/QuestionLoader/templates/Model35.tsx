@@ -6,6 +6,7 @@ import { usePlanetAnswer } from "~/api/planet";
 import { EduButton } from "~/components/EduButton";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
+import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   textArea: {
@@ -81,7 +82,7 @@ export function Model35({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

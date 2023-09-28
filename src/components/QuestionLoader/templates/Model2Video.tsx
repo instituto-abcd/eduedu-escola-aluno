@@ -60,7 +60,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
         my="auto"
         pt={lousaPaddingTop}
       >
-        <Box maw={lousaWidth * 50 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Box w={lousaWidth * 50 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}

@@ -1,22 +1,23 @@
 // Utils & Aux:
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
+import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
 // Components:
 import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
-import { EduButton, IconButton } from "~/components/EduButton";
+import { EduButton } from "~/components/EduButton";
 import { AudioButton } from "~/components/AudioButton";
 
 // Icons:
-import { IconBook, IconVolume } from "@tabler/icons-react";
+import { IconVolume } from "@tabler/icons-react";
+import { ReadButton } from "~/components/ReadButton";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, supportText } = useQuestionHelper(question);
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -36,6 +37,17 @@ export function Model10({ question, answerCallback }: ModelProps) {
     setAnswer(null);
   }, [question]);
 
+
+  // Getting the old question with support text:
+  const [oldQuestion, setOldQuestion] = useState({});
+  if (supportText[0]['description']) {
+    usePlanetGetQuestion(question.planet_id, supportText[0]['description'], {
+      onSuccess: (question) => {
+        setOldQuestion(question)
+      }
+    });
+  }
+
   return (
     <>
       {/* Action buttons */}
@@ -52,8 +64,10 @@ export function Model10({ question, answerCallback }: ModelProps) {
           </>
         ))}
 
-        {/* TODO: como que faz isso meu pai? x.x */}
-        <IconButton icon={<IconBook size={34} />} variant="yellow" />
+        {oldQuestion &&
+          oldQuestion != 'undefined' &&
+          <ReadButton content={oldQuestion} />
+        }
       </Group>
 
       {/* Board content */}

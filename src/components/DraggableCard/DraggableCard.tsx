@@ -109,8 +109,8 @@ export function DraggableCard<T>({
         <img
           src={image}
           style={{
-            maxHeight: "95%",
-            maxWidth: "95%",
+            maxHeight: "auto",
+            maxWidth: "120px",
             objectFit: "contain",
             marginInline: "auto",
             pointerEvents: "none",

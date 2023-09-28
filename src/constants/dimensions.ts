@@ -1,5 +1,17 @@
+
+// let coefficient = window.innerHeight > window.outerHeight ? 1.64 : 1.55
+
+console.log(window.innerHeight);
+console.log(window.outerHeight);
+export const currentHeight = Math.max(window.innerHeight, window.outerHeight);
+
+let coefficient = 1.55;
+if (currentHeight <= 900) {
+    coefficient = 1.55
+}
+
 /* Board */
-export const screenWidth = window.innerWidth;
+export const screenWidth = innerHeight * coefficient;
 export const lousaWidth = screenWidth * 60.7 / 100
 export const lousaHeight = lousaWidth * 74.5 / 100
 

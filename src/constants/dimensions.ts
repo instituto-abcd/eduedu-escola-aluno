@@ -1,8 +1,8 @@
 
 // let coefficient = window.innerHeight > window.outerHeight ? 1.64 : 1.55
 
-console.log(window.innerHeight);
-console.log(window.outerHeight);
+// console.log(window.innerHeight);
+// console.log(window.outerHeight);
 export const currentHeight = Math.max(window.innerHeight, window.outerHeight);
 
 let coefficient = 1.55;

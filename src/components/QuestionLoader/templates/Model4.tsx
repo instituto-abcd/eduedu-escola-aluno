@@ -17,6 +17,7 @@ import {
   Stack,
   Center,
   createStyles,
+  ScrollArea,
 } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -86,64 +87,66 @@ export function Model4({ question, answerCallback }: ModelProps) {
         pt={lousaPaddingTop}
         spacing={(lousaWidth * 5 / 100)}
       >
-        {textTitles.map((title) => (
-          <Title
-            key={title.description}
-            dangerouslySetInnerHTML={{ __html: title.description }}
-            align="center"
-            color="dark.3"
-            className={classes.h1}
-          />
-        ))}
+        <ScrollArea w={850} h={(lousaHeight * 50) / 100}>
+          {textTitles.map((title) => (
+            <Title
+              key={title.description}
+              dangerouslySetInnerHTML={{ __html: title.description }}
+              align="center"
+              color="dark.3"
+              className={classes.h1}
+            />
+          ))}
 
-        {imageTitles.map((title) => (
-          <Image
-            mx="auto"
-            src={title.file_url}
-            alt={title.description}
-            width={lousaWidth * 25 / 100}
-            key={title.file_url}
-          />
-        ))}
+          {imageTitles.map((title) => (
+            <Image
+              mx="auto"
+              src={title.file_url}
+              alt={title.description}
+              width={lousaWidth * 25 / 100}
+              key={title.file_url}
+            />
+          ))}
 
-        <Center>
-          <Group>
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={optionArrKey(option, inx)}
-                data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-                onClick={() => setAnswer(option)}
-                sound={option.sound_url ?? undefined}
-                isCorrect={option.isCorrect}
-              >
-                {option.image_url && (
-                  <>
-                    <img
-                      src={option.image_url}
-                      alt={option.description}
-                      height={105}
-                      width="auto"
-                      style={{
-                        maxHeight: 120,
-                        maxWidth: "100%",
-                        objectFit: "contain",
-                        marginInline: "auto",
-                        pointerEvents: "none",
-                        userSelect: "none",
-                      }}
-                    />
-                    {!question.axis_code && question.axis_code === null && (
-                      <Text size={14} color="gray.7" weight={600}>
-                        {option.description}
-                      </Text>
-                    )}
-                  </>
-                )}
-                {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
-              </OptionButton>
-            ))}
-          </Group>
-        </Center>
+          <Center>
+            <Group>
+              {question.options.map((option, inx) => (
+                <OptionButton
+                  key={optionArrKey(option, inx)}
+                  data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+                  onClick={() => setAnswer(option)}
+                  sound={option.sound_url ?? undefined}
+                  isCorrect={option.isCorrect}
+                >
+                  {option.image_url && (
+                    <>
+                      <img
+                        src={option.image_url}
+                        alt={option.description}
+                        height={105}
+                        width="auto"
+                        style={{
+                          maxHeight: 120,
+                          maxWidth: "100%",
+                          objectFit: "contain",
+                          marginInline: "auto",
+                          pointerEvents: "none",
+                          userSelect: "none",
+                        }}
+                      />
+                      {!question.axis_code && question.axis_code === null && (
+                        <Text size={14} color="gray.7" weight={600}>
+                          {option.description}
+                        </Text>
+                      )}
+                    </>
+                  )}
+                  {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
+                </OptionButton>
+              ))}
+            </Group>
+          </Center>
+        </ScrollArea>
       </Stack>
 
       {/* Continue to the next screen button */}

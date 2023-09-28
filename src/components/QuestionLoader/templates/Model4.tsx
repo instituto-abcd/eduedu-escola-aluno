@@ -139,7 +139,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                     )}
                   </>
                 )}
-                {!option.image_url && <Text>{option.description}</Text>}
+                {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
               </OptionButton>
             ))}
           </Group>

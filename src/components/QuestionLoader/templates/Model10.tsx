@@ -42,8 +42,6 @@ export function Model10({ question, answerCallback }: ModelProps) {
     }
   );
 
-  console.log(supportText);
-
   return (
     <>
       <Group style={{ display: "flex", justifyContent: "center" }}>

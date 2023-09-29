@@ -1,15 +1,25 @@
-import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
-import { EduButton } from "~/components/EduButton";
-import { OptionButton, TextOptionButton } from "~/components/OptionButton";
+// Aux & Utils:
+import { useState } from "react";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
 import { useGetExamQuestion } from "~/api/student";
-import { useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { usePlanetAnswer } from "~/api/planet";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+
+// Components:
+import {
+  Group,
+  SimpleGrid,
+  Title,
+  LoadingOverlay,
+} from "@mantine/core";
+import { EduButton } from "~/components/EduButton";
+import { AudioButton } from "~/components/AudioButton";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import {
+  OptionButton,
+  TextOptionButton,
+} from "~/components/OptionButton";
 import { lousaHeight } from "~/constants/dimensions";
 
 export function Model5({ question, answerCallback }: ModelProps) {
@@ -41,8 +51,8 @@ export function Model5({ question, answerCallback }: ModelProps) {
         optionsAnswered: question.multiplesAnswer
           ? multipleAnswer
           : answer
-          ? [answer]
-          : [],
+            ? [answer]
+            : [],
       });
     } else {
       mutatePlanet({
@@ -51,8 +61,8 @@ export function Model5({ question, answerCallback }: ModelProps) {
         optionsAnswered: question.multiplesAnswer
           ? multipleAnswer
           : answer
-          ? [answer]
-          : [],
+            ? [answer]
+            : [],
       });
     }
   }
@@ -87,6 +97,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       <Group>
         {audioTitles.map((title, inx) => (
           <AudioButton
@@ -97,7 +108,8 @@ export function Model5({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      <Group spacing={80} align="center" my="auto">
+      {/* Board content */}
+      <Group spacing={80} m="auto">
         {!hasVideo && hasText && (
           <Title color="dark.3" size="2.5vh" align="center" my="auto" maw={400}>
             {textTitles[0].description}
@@ -135,11 +147,10 @@ export function Model5({ question, answerCallback }: ModelProps) {
                 <img
                   src={option.image_url}
                   alt={option.description}
-                  width={100}
                   style={{
-                    maxHeight: 140,
-                    objectFit: "contain",
-                    marginInline: "auto",
+                    maxWidth: 120,
+                    maxHeight: 120,
+                    objectFit: "contain"
                   }}
                 />
               </OptionButton>
@@ -158,6 +169,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
+      {/* Continue to the next screen button */}
       <EduButton
         disabled={disabled}
         onClick={submitAnswer}
@@ -170,6 +182,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
         Continuar
       </EduButton>
 
+      {/* Loading animation */}
       <LoadingOverlay
         visible={isLoading}
         style={{ maxHeight: (lousaHeight * 80) / 100 }}

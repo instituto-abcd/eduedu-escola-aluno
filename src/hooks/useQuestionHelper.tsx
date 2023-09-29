@@ -46,15 +46,13 @@ export function useQuestionHelper(question: Question) {
     return fetch(url)
       .then((res) => res.json())
       .catch((err) => {
-        console.error(err);
         return null;
       });
   }
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
-      option.image_url ?? option.sound_url ?? "_"
-    })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
+      })`;
   }
 
   return {

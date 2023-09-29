@@ -17,7 +17,7 @@ import { QuestionOption } from "~/api/exam";
 import { Fragment, useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
 import { usePlanetAnswer } from "~/api/planet";
-import { textoMedium, textoExtraBig, lousaWidth, lousaHeight } from "~/constants/dimensions";
+import { textoMedium, lousaWidth, lousaHeight } from "~/constants/dimensions";
 
 /*
  *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
@@ -84,13 +84,13 @@ export function Model11({ question, answerCallback }: ModelProps) {
           <Image
             src={title.file_url}
             alt={title.file_name}
-            width={362}
+            width={lousaWidth * 30 / 100}
             key={title.file_url}
             mx="auto"
           />
         ))}
 
-        <Stack align="center" spacing={40}>
+        <Stack align="center" spacing={30}>
           {textTitles.map((title) => (
             <Title color="dark.3" size={textoMedium} key={title.description}>
               {title.description.split("/")[0]}
@@ -140,9 +140,10 @@ export function Model11({ question, answerCallback }: ModelProps) {
                   <DraggableLetters
                     key={option.position}
                     option={option}
+                    customFontSize="2rem"
                     style={{
-                      width: '87px',
-                      height: '78px',
+                      width: lousaWidth * 9 / 100,
+                      height: lousaWidth * 8 / 100,
                       textAlign: 'center'
                     }}
                   >

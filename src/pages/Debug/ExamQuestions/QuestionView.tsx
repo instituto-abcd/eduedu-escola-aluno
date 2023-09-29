@@ -1,8 +1,5 @@
-// Aux & Utils:
 import { Question } from "~/api/exam";
 import { Link, Navigate, useLocation } from "react-router-dom";
-
-// Components:
 import { QuestionInfo } from "../Planet/components/QuestionInfo";
 import { Button, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
@@ -15,11 +12,7 @@ export function QuestionView() {
 
   return (
     <>
-      <Stack
-        h="100%"
-        w="100%"
-        style={{ position: "relative" }}
-      >
+      <Stack h="100%" w="100%" style={{ position: "relative" }}>
         {question && (
           <QuestionLoader question={question} answerCallback={() => null} />
         )}
@@ -33,7 +26,15 @@ export function QuestionView() {
         Voltar
       </Button>
       <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
-        <QuestionInfo question={question} next={() => { }} previous={() => { }} />
+        <QuestionInfo
+          question={question}
+          next={() => {
+            return;
+          }}
+          previous={() => {
+            return;
+          }}
+        />
       </Stack>
     </>
   );

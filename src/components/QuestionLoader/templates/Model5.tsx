@@ -28,20 +28,31 @@ export function Model5({ question, answerCallback }: ModelProps) {
   });
 
   const isLoading = isLoadingExam || isLoadingPlanet;
+  const disabled = question.multiplesAnswer
+    ? multipleAnswer.length === 0
+    : !answer;
 
   function submitAnswer() {
-    if (!answer) return;
+    if (disabled) return;
 
     if (isExam) {
       mutateExam({
         questionId: question.id,
-        optionsAnswered: [answer],
+        optionsAnswered: question.multiplesAnswer
+          ? multipleAnswer
+          : answer
+          ? [answer]
+          : [],
       });
     } else {
       mutatePlanet({
         questionId: question.id,
         planetId: question.planet_id,
-        optionsAnswered: [answer],
+        optionsAnswered: question.multiplesAnswer
+          ? multipleAnswer
+          : answer
+          ? [answer]
+          : [],
       });
     }
   }
@@ -76,7 +87,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
       <Group>
         {audioTitles.map((title, inx) => (
           <AudioButton
@@ -87,7 +97,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      {/* Board content */}
       <Group spacing={80} align="center" my="auto">
         {!hasVideo && hasText && (
           <Title color="dark.3" size="2.5vh" align="center" my="auto" maw={400}>
@@ -149,9 +158,8 @@ export function Model5({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
-      {/* Continue to the next screen button */}
       <EduButton
-        disabled={!answer}
+        disabled={disabled}
         onClick={submitAnswer}
         style={{
           marginTop: "auto",
@@ -162,8 +170,10 @@ export function Model5({ question, answerCallback }: ModelProps) {
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

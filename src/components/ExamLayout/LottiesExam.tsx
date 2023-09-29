@@ -7,11 +7,27 @@ import luzRodape from "~/assets/lotties/exam/luz_rodape.json";
 import luzMesa from "~/assets/lotties/exam/luz_mesa.json";
 import vaso1 from "~/assets/lotties/exam/vaso_1.json";
 import vaso2 from "~/assets/lotties/exam/vaso_2.json";
-import { Box } from "@mantine/core";
+import { Box, createStyles } from "@mantine/core";
+
+const useStyles = createStyles({
+  wrapper: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    maxWidth: screenWidth,
+    height: 190,
+    marginInline: "auto",
+    marginTop: "auto",
+    pointerEvents: "none",
+  },
+});
 
 export function LottiesExam() {
+  const { classes } = useStyles();
+
   return (
-    <Box mx="auto" maw={screenWidth} h={190} style={{ position: "relative" }}>
+    <Box className={classes.wrapper}>
       <Box
         my={0}
         p={0}

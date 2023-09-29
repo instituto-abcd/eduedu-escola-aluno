@@ -21,7 +21,9 @@ export function useQuestionHelper(question: Question) {
 
   const getSupportText = useCallback(
     function getSupportText(text: string) {
-      const supportText = question.titles.filter((title) => title.placeholder === text)
+      const supportText = question.titles.filter(
+        (title) => title.placeholder === text && !!title.description
+      );
 
       return supportText;
     },
@@ -50,8 +52,9 @@ export function useQuestionHelper(question: Question) {
   }
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
-      })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
+      option.image_url ?? option.sound_url ?? "_"
+    })`;
   }
 
   return {

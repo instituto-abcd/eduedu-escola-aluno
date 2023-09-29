@@ -1,24 +1,20 @@
-// Utils & Aux:
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { lousaHeight } from "~/constants/dimensions";
-
-// Components:
 import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
 import { AudioButton } from "~/components/AudioButton";
-
-// Icons:
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, supportText } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, supportText } =
+    useQuestionHelper(question);
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -38,37 +34,32 @@ export function Model10({ question, answerCallback }: ModelProps) {
     setAnswer(null);
   }, [question]);
 
+  const { data: auxQuestion } = usePlanetGetQuestion(
+    question.planet_id,
+    supportText[0]?.["description"] ?? "",
+    {
+      enabled: !!supportText[0]?.["description"],
+    }
+  );
 
-  // Getting the old question with support text:
-  const [oldQuestion, setOldQuestion] = useState({});
-  if (supportText[0]['description']) {
-    usePlanetGetQuestion(question.planet_id, supportText[0]['description'], {
-      onSuccess: (question) => {
-        setOldQuestion(question)
-      }
-    });
-  }
+  console.log(supportText);
 
   return (
     <>
-      {/* Action buttons */}
-      <Group style={{ display: 'flex', justifyContent: 'center' }}>
+      <Group style={{ display: "flex", justifyContent: "center" }}>
         {audioTitles.map((item, inx) => (
           <>
-            {item.file_url && item.file_url.length &&
+            {item.file_url && item.file_url.length && (
               <AudioButton
                 src={item.file_url ?? ""}
                 key={inx}
                 autoPlay={inx === 0}
               />
-            }
+            )}
           </>
         ))}
 
-        {oldQuestion &&
-          oldQuestion != 'undefined' &&
-          <ReadButton content={oldQuestion} />
-        }
+        {auxQuestion && <ReadButton question={auxQuestion} />}
       </Group>
 
       {/* Board content */}
@@ -158,7 +149,10 @@ export function Model10({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

@@ -2,7 +2,7 @@ import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { lousaWidth } from "~/constants/dimensions";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -53,6 +53,8 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   sound?: string | null;
   image?: string | null;
   disabled?: boolean;
+  customWith?: string | number | null;
+  customHeight?: string | number | null;
   onClear?: () => void;
 };
 
@@ -63,6 +65,8 @@ export function DraggableCard<T>({
   image,
   hidden,
   onClear,
+  customWith,
+  customHeight,
   disabled,
   textClasses,
   itemType = "ANSWER_CARD",
@@ -85,6 +89,8 @@ export function DraggableCard<T>({
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden ? "none" : "all",
+    height: customHeight ? customHeight : lousaWidth * 16 / 100,
+    width: customWith ? customWith : lousaHeight * 14 / 100,
   };
 
   const soundRef = useRef<HTMLAudioElement>(null);

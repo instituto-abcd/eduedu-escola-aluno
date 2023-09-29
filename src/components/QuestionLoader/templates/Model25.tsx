@@ -13,8 +13,8 @@ import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   slot: {
-    width: 240,
-    height: 148,
+    width: 200,
+    height: 123,
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "solid",
@@ -40,7 +40,7 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
   },
   text: {
-    fontSize: 20,
+    fontSize: "1.1rem",
     fontWeight: 400,
     color: theme.colors.gray[7],
     textAlign: "center",
@@ -123,6 +123,8 @@ export function Model25({ question }: ModelProps) {
                 hidden={hideTitle(title.position)}
                 text={title.description}
                 textClasses={classes.text}
+                customHeight={ 123 }
+                customWith={ 200 }
               />
             ) : (
               <DraggableCard<QuestionTitle>
@@ -131,6 +133,8 @@ export function Model25({ question }: ModelProps) {
                 item={title}
                 image={title.file_url}
                 hidden={hideTitle(title.position)}
+                customHeight={ 123 }
+                customWith={ 200 }
               />
             )
           )}
@@ -186,6 +190,8 @@ function SlotCard({
         item={droppedTitle}
         image={droppedTitle.file_url}
         text={droppedTitle.description}
+        customHeight={ 123 }
+        customWith={ 200 }
         onClear={() => {
           setDropppedTitle(null), onDrop(null);
         }}

@@ -87,7 +87,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
         pt={lousaPaddingTop}
         spacing={(lousaWidth * 5 / 100)}
       >
-        <ScrollArea w={850} h={(lousaHeight * 50) / 100}>
+        <ScrollArea maw={lousaWidth} h={(lousaHeight * 50) / 100}>
           {textTitles.map((title) => (
             <Title
               key={title.description}

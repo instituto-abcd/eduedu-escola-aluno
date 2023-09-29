@@ -87,7 +87,6 @@ export function Model25({ question }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
       {audioTitles.filter((title) => title.file_url) && (
         <Group mx="auto">
           {audioTitles.map((title, inx) => (
@@ -100,7 +99,6 @@ export function Model25({ question }: ModelProps) {
         </Group>
       )}
 
-      {/* Board content */}
       <Stack my="auto">
         <Group>
           {question.options.map((option, inx) => (
@@ -139,16 +137,14 @@ export function Model25({ question }: ModelProps) {
         </Group>
       </Stack>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={answers.includes(null)}
-        onClick={submitAnswer}
-      >
+      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

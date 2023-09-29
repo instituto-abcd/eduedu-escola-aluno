@@ -15,7 +15,8 @@ const URL = {
     `/student/${studentId}/planets/${planetId}/first-question`,
   ANSWER_QUESTION: (studentId: string, planetId: string) =>
     `/student/${studentId}/planets/${planetId}/answer`,
-  PLANET_QUESTION: (planetId: string, questionId: string) => `planet/${planetId}/questions/${questionId}`
+  PLANET_QUESTION: (planetId: string, questionId: string) =>
+    `planet/${planetId}/questions/${questionId}`,
 };
 
 class PlanetAPI extends API {
@@ -27,7 +28,9 @@ class PlanetAPI extends API {
   }
 
   static async getQuestion(planetId: string, questionId: string) {
-    const { data } = await this.api.get<Question>(URL.PLANET_QUESTION(planetId, questionId));
+    const { data } = await this.api.get<Question>(
+      URL.PLANET_QUESTION(planetId, questionId)
+    );
     return data;
   }
 
@@ -72,7 +75,7 @@ export function usePlanetAnswer(
   }: AnswerInput & { planetId: string }) {
     return PlanetAPI.answerQuestion(studentId, planetId, answer);
   },
-    []);
+  []);
 
   return useMutation(handler, options);
 }
@@ -80,9 +83,8 @@ export function usePlanetAnswer(
 export function usePlanetGetQuestion(
   planetId: string,
   questionId: string,
-  options?: QueryOptions<Question, ["PLANET_QUESTION"]>
+  options?: QueryOptions<Question, ["PLANET_QUESTION", string, string]>
 ) {
-
   const handler = useCallback(
     function () {
       return PlanetAPI.getQuestion(planetId, questionId);
@@ -90,5 +92,5 @@ export function usePlanetGetQuestion(
     [planetId, questionId]
   );
 
-  return useQuery(["PLANET_QUESTION"], handler, options);
+  return useQuery(["PLANET_QUESTION", planetId, questionId], handler, options);
 }

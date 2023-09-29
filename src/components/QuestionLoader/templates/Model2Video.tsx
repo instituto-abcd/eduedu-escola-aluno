@@ -60,7 +60,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
         my="auto"
         pt={lousaPaddingTop}
       >
-        <Box w={lousaWidth * 50 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Box w={lousaWidth * 38 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}
@@ -70,7 +70,10 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
           />
         </Box>
 
-        <Stack maw={lousaWidth * 50 / 100}>
+        <Stack maw={lousaWidth * 62 / 100}
+          style={{
+            padding: "1vw"
+          }}>
           <SimpleGrid cols={question.options.length} style={{ placeItems: "center" }} spacing={20}>
             {slots.map((slot, inx) => (
               <DraggableCardSlot

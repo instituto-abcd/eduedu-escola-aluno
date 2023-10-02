@@ -2,8 +2,8 @@ import { Stack } from "@mantine/core";
 import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { QuestionLoader } from "~/components/QuestionLoader";
-import { QuestionInfo } from "./components/QuestionInfo";
-import { QuestionNavigator } from "./components/QuestionNavigator";
+import { QuestionInfo } from "../components/QuestionInfo";
+import { QuestionNavigator } from "../components/QuestionNavigator";
 import { Planet } from "~/api/student";
 
 export function PlanetView() {

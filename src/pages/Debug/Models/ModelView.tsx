@@ -1,13 +1,17 @@
-import { Link, useParams } from "react-router-dom";
-import { QuestionInfo } from "../Planet/components/QuestionInfo";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { QuestionInfo } from "../components/QuestionInfo";
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useDebugModelQuestions } from "~/api/debug";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { lousaHeight } from "~/constants/dimensions";
+import { ModelProgress } from "../components/ModelProgress";
 
 export function ModelView() {
   const { modelId } = useParams();
+  const [query, setQuery] = useSearchParams();
+  const searchIndex = query.get("index");
+
   const [currentQuestion, setCurrentQuestion] = useState(-1);
 
   const { data, isFetching } = useDebugModelQuestions(modelId ?? "", {
@@ -15,7 +19,16 @@ export function ModelView() {
     initialData: [],
     onSuccess: (data) => {
       if (data.length > 0) {
-        setCurrentQuestion(0);
+        if (
+          searchIndex === null ||
+          !Number.isInteger(+searchIndex) ||
+          +searchIndex < 0 ||
+          +searchIndex >= data.length
+        ) {
+          return setCurrentQuestion(0);
+        } else {
+          return setCurrentQuestion(parseInt(searchIndex));
+        }
       }
     },
   });
@@ -33,6 +46,13 @@ export function ModelView() {
       setCurrentQuestion(currentQuestion - 1);
     }
   }
+
+  useEffect(() => {
+    setQuery((prev) => {
+      prev.set("index", currentQuestion.toString());
+      return prev;
+    });
+  }, [currentQuestion]);
 
   return (
     <>
@@ -58,7 +78,7 @@ export function ModelView() {
       </Stack>
       <Button
         component={Link}
-        to="/debug/questions"
+        to="/debug/model"
         style={{ position: "absolute", top: 50, right: 50 }}
         variant="default"
       >
@@ -67,6 +87,12 @@ export function ModelView() {
 
       {currentQuestion !== -1 && data?.[currentQuestion] && (
         <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+          <ModelProgress
+            current={currentQuestion}
+            total={data.length}
+            question={data[currentQuestion]}
+            onQuestionChange={setCurrentQuestion}
+          />
           <QuestionInfo
             question={data[currentQuestion]}
             next={handleNextQuestion}

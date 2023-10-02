@@ -1,6 +1,6 @@
 import { Question } from "~/api/exam";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { QuestionInfo } from "../Planet/components/QuestionInfo";
+import { QuestionInfo } from "../components/QuestionInfo";
 import { Button, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 

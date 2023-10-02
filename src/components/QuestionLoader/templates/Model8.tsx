@@ -21,7 +21,10 @@ import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
-    width: "100%",
+    minWidth: "unset",
+    width: lousaWidth / 2.5,
+    wordBreak: "keep-all",
+    fontSize: lousaWidth * 0.02,
   },
 });
 
@@ -47,32 +50,43 @@ export function Model8({ question, answerCallback }: ModelProps) {
     });
   }
 
-  const halfWidthOptions = imageTitles.length === 0 && videoTitles.length === 0;
-
   useEffect(() => {
     setAnswer(null);
   }, [question]);
 
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto">
-        {audioTitles.map((title, inx) => (
-          <AudioButton
+      {audioTitles.some((title) => title.file_url !== null) && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              src={title.file_url ?? ""}
+              autoPlay={inx === 0}
+            />
+          ))}
+        </Group>
+      )}
+
+      <Group
+        my="auto"
+        align="center"
+        position="center"
+        noWrap
+        w={lousaWidth}
+        px={20}
+      >
+        {textTitles.map((title, inx) => (
+          <Title
+            color="dark.3"
+            size="2.5vh"
+            align="center"
             key={inx}
-            src={title.file_url ?? ""}
-            autoPlay={inx === 0}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            w="100%"
           />
         ))}
-      </Group>
 
-      {textTitles.map((title, inx) => (
-        <Title color="dark.3" size="2.5vh" align="center" key={inx}>
-          {title.description}
-        </Title>
-      ))}
-
-      <Group my="auto" noWrap w={lousaWidth}>
         {videoTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <VideoPlayer
@@ -95,18 +109,17 @@ export function Model8({ question, answerCallback }: ModelProps) {
         ))}
 
         <Stack
-          align={"stretch"}
           mx={"auto"}
-          spacing={40}
+          spacing={lousaWidth * 0.025}
           justify="center"
-          w={halfWidthOptions ? "50%" : "100%"}
+          w={lousaWidth / 2.1}
           px={20}
         >
           {question.options.map((option, inx) => (
             <TextOptionButton
               key={optionArrKey(option, inx)}
               onClick={() => setAnswer(option)}
-              data-selected={answer?.position === option.position}
+              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               sound={option.sound_url ?? undefined}
               isCorrect={option.isCorrect}
               className={classes.button}
@@ -120,7 +133,10 @@ export function Model8({ question, answerCallback }: ModelProps) {
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

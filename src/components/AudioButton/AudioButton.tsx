@@ -3,6 +3,7 @@ import { IconButton } from "../EduButton";
 import { IconButtonProps } from "../EduButton/IconButton";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { lousaWidth } from "~/constants/dimensions";
 
 type Props = {
   buttonProps?: IconButtonProps;
@@ -44,7 +45,11 @@ export const AudioButton = forwardRef<Ref, Props>(
         onClick={play}
         disabled={mediaTrack.isPlaying}
         {...buttonProps}
-        icon={buttonProps?.icon ?? <OuvirIcon />}
+        icon={
+          buttonProps?.icon ?? (
+            <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
+          )
+        }
       />
     );
   }

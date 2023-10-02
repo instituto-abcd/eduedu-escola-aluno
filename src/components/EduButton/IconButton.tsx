@@ -1,12 +1,13 @@
 import { createStyles } from "@mantine/core";
+import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles(
   (_, palette: { bg: string; accent: string; text: string }) => ({
     button: {
       all: "unset",
       cursor: "pointer",
-      width: 50,
-      height: 50,
+      width: lousaWidth * 0.05,
+      height: lousaWidth * 0.05,
       backgroundColor: palette.bg,
       boxShadow: `0px 8px 0px 0px ${palette.accent}`,
       display: "grid",

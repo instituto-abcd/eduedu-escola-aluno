@@ -1,38 +1,23 @@
-// Utils & Aux:
-import { useEffect, useState } from "react";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useGetExamQuestion } from "~/api/student";
-import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaWidth, lousaPaddingTop, lousaHeight } from "~/constants/dimensions";
-import { ModelProps } from ".";
-
-// Components:
 import {
+  Group,
   Image,
   LoadingOverlay,
-  Group,
+  Stack,
   Text,
   Title,
-  Stack,
-  Center,
-  createStyles,
-  ScrollArea,
 } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { usePlanetAnswer } from "~/api/planet";
+import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
-import { OptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
-
-const useStyles = createStyles(() => ({
-  h1: {
-    h1: {
-      fontSize: '2.2vw',
-    },
-  },
-}));
+import { OptionButton } from "~/components/OptionButton";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 export function Model4({ question, answerCallback }: ModelProps) {
-  const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { audioTitles, textTitles, imageTitles, optionArrKey, isExam } =
     useQuestionHelper(question);
@@ -70,7 +55,6 @@ export function Model4({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
       <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
@@ -81,20 +65,16 @@ export function Model4({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
-      {/* Board content */}
-      <Stack
-        my="auto"
-        pt={lousaPaddingTop}
-        spacing={(lousaWidth * 5 / 100)}
-      >
-        <ScrollArea maw={lousaWidth} h={(lousaHeight * 50) / 100}>
+      <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
+        <Group noWrap spacing={20} align="center" position="center">
           {textTitles.map((title) => (
             <Title
               key={title.description}
               dangerouslySetInnerHTML={{ __html: title.description }}
               align="center"
               color="dark.3"
-              className={classes.h1}
+              size={imageTitles.length > 0 ? 20 : 30}
+              w={imageTitles.length > 0 ? "50%" : undefined}
             />
           ))}
 
@@ -103,50 +83,52 @@ export function Model4({ question, answerCallback }: ModelProps) {
               mx="auto"
               src={title.file_url}
               alt={title.description}
-              width={lousaWidth * 25 / 100}
+              width={(lousaWidth * 15) / 100}
               key={title.file_url}
+              style={{ flexGrow: 1 }}
+              styles={{ image: { marginInline: "auto" } }}
             />
           ))}
+        </Group>
 
-          <Center>
-            <Group>
-              {question.options.map((option, inx) => (
-                <OptionButton
-                  key={optionArrKey(option, inx)}
-                  data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-                  onClick={() => setAnswer(option)}
-                  sound={option.sound_url ?? undefined}
-                  isCorrect={option.isCorrect}
-                >
-                  {option.image_url && (
-                    <>
-                      <img
-                        src={option.image_url}
-                        alt={option.description}
-                        height={105}
-                        width="auto"
-                        style={{
-                          maxHeight: 120,
-                          maxWidth: "100%",
-                          objectFit: "contain",
-                          marginInline: "auto",
-                          pointerEvents: "none",
-                          userSelect: "none",
-                        }}
-                      />
-                      {!question.axis_code && question.axis_code === null && (
-                        <Text size={14} color="gray.7" weight={600}>
-                          {option.description}
-                        </Text>
-                      )}
-                    </>
+        <Group>
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={optionArrKey(option, inx)}
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              onClick={() => setAnswer(option)}
+              sound={option.sound_url ?? undefined}
+              isCorrect={option.isCorrect}
+            >
+              {option.image_url && (
+                <>
+                  <img
+                    src={option.image_url}
+                    alt={option.description}
+                    height={105}
+                    width="auto"
+                    style={{
+                      maxHeight: 120,
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      marginInline: "auto",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                  />
+                  {!question.axis_code && question.axis_code === null && (
+                    <Text size={14} color="gray.7" weight={600}>
+                      {option.description}
+                    </Text>
                   )}
-                  {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
-                </OptionButton>
-              ))}
-            </Group>
-          </Center>
-        </ScrollArea>
+                </>
+              )}
+              {!option.image_url && (
+                <Text size={"2vh"}>{option.description}</Text>
+              )}
+            </OptionButton>
+          ))}
+        </Group>
       </Stack>
 
       {/* Continue to the next screen button */}
@@ -163,7 +145,10 @@ export function Model4({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

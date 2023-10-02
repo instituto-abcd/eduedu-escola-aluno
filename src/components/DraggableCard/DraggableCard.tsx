@@ -90,7 +90,7 @@ export function DraggableCard<T>({
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden ? "none" : "all",
     height: customHeight ? customHeight : lousaWidth * 16 / 100,
-    width: customWith ? customWith : lousaHeight * 14 / 100,
+    width: customWith ? customWith : lousaWidth * 14 / 100,
   };
 
   const soundRef = useRef<HTMLAudioElement>(null);

@@ -71,6 +71,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
             <ScrollArea
               mah={scrollAreaHeight * 80 / 100}
               maw={scrollAreaWidth * 80 / 100}
+              h={(lousaHeight * 80) / 100}
             >
               <Stack align="center">
                 <Text
@@ -100,6 +101,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
             <ScrollArea
               mah={scrollAreaHeight * 80 / 100}
               maw={scrollAreaWidth * 90 / 100}
+              h={(lousaHeight * 80) / 100}
             >
               <Stack align="center">
                 <Title align="center" color="dark.3" size="2.5vh" weight={500}>

@@ -14,9 +14,18 @@ import { EduButton } from "~/components/EduButton";
 
 const useStyles = createStyles({
   slot: {
+    width: lousaWidth * 40 / 100,
+    height: lousaHeight * 40 / 100,
     display: "grid",
     placeItems: "center",
   },
+  card: {
+    width: lousaWidth * 40 / 100,
+    height: lousaHeight * 40 / 100,
+  },
+  cardWide: {
+    width: '100%!important'
+  }
 });
 
 export function Model34({ question, answerCallback }: ModelProps) {
@@ -76,8 +85,6 @@ export function Model34({ question, answerCallback }: ModelProps) {
             item={answer}
             onDrop={(item) => setAnswer(item)}
             className={classes.slot}
-            customWidth={lousaWidth * 40 / 100}
-            customHeight={lousaHeight * 40 / 100}
             replaceWith={
               <DraggableCard
                 item={answer}
@@ -86,8 +93,7 @@ export function Model34({ question, answerCallback }: ModelProps) {
                 sound={answer?.sound_url}
                 onClear={() => setAnswer(null)}
                 disabled
-                customWidth={lousaWidth * 40 / 100}
-                customHeight={lousaHeight * 40 / 100}
+                className={classes.card}
               />
             }
           >
@@ -111,7 +117,7 @@ export function Model34({ question, answerCallback }: ModelProps) {
                 text={item.description}
                 sound={item.sound_url}
                 hidden={!!answer}
-                customWidth="100%"
+                className={classes.cardWide}
               />
             ))}
           </SimpleGrid>

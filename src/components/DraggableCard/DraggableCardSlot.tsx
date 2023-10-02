@@ -18,8 +18,6 @@ const useStyles = createStyles({
 type Props<T> = {
   onDrop: (item: T | null) => void;
   accept?: string | string[];
-  customWidth?: string | number;
-  customHeight?: string | number;
   item: T | null;
   replaceWith?: React.ReactNode;
 } & Omit<
@@ -32,8 +30,6 @@ export function DraggableCardSlot<T = QuestionOption>({
   onDrop,
   className,
   replaceWith,
-  customWidth,
-  customHeight,
   accept = "ANSWER_CARD",
   ...props
 }: Props<T>) {
@@ -55,10 +51,7 @@ export function DraggableCardSlot<T = QuestionOption>({
     <div
       {...props}
       className={cx(classes.card, className)}
-      style={{
-        width: customWidth ? customWidth : classes?.card?.width,
-        height: customHeight ? customHeight : classes?.card?.height
-      }}
+      style={{}}
       ref={drop}
     />
   );

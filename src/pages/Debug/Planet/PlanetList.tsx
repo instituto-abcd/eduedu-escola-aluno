@@ -13,16 +13,18 @@ import { Link } from "react-router-dom";
 import { useDebugPlanets } from "~/api/debug";
 
 export function PlanetList() {
-  const { data, isLoading } = useDebugPlanets({ initialData: [] });
+  const { data, isFetching } = useDebugPlanets({ initialData: [] });
 
   return (
     <Stack mih="100vh" align="center" p="xl">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isFetching} loaderProps={{ color: "yellow" }} />
 
-      <Title color="dark.6" order={1}>
-        Planetas
-      </Title>
-      {data && <Text>Total de planetas: {data.length}</Text>}
+      <Stack spacing={0} justify="center" align="center">
+        <Title color="dark.4" order={1}>
+          Planetas
+        </Title>
+        {data && <Text color="dark.4">Total de planetas: {data.length}</Text>}
+      </Stack>
 
       <SimpleGrid cols={7}>
         {data?.map((planet) => (

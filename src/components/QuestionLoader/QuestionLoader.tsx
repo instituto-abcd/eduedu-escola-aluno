@@ -39,6 +39,7 @@ import { Model35 } from "./templates/Model35";
 import { Model34 } from "./templates/Model34";
 import { useEffect } from "react";
 import { useMediaTrackStore } from "~/stores/media-track.store";
+import { Model18Prova } from "./templates/Model18Prova";
 
 type QuestionLoaderProps = ModelProps;
 
@@ -87,6 +88,8 @@ export function QuestionLoader({
       return <Model16 {...commonProps} />;
     case "MODEL18":
       return <Model18 {...commonProps} />;
+    case "MODEL18-PROVA":
+      return <Model18Prova {...commonProps} />;
     case "MODEL19":
       return <Model19 {...commonProps} />;
     case "MODEL20":

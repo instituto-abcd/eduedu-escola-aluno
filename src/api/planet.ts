@@ -15,12 +15,21 @@ const URL = {
     `/student/${studentId}/planets/${planetId}/first-question`,
   ANSWER_QUESTION: (studentId: string, planetId: string) =>
     `/student/${studentId}/planets/${planetId}/answer`,
+  PLANET_QUESTION: (planetId: string, questionId: string) =>
+    `planet/${planetId}/questions/${questionId}`,
 };
 
 class PlanetAPI extends API {
   static async getFirstQuestion(studentId: string, planetId: string) {
     const { data } = await this.api.get<Question>(
       URL.FIRST_QUESTION(studentId, planetId)
+    );
+    return data;
+  }
+
+  static async getQuestion(planetId: string, questionId: string) {
+    const { data } = await this.api.get<Question>(
+      URL.PLANET_QUESTION(planetId, questionId)
     );
     return data;
   }
@@ -69,4 +78,19 @@ export function usePlanetAnswer(
   []);
 
   return useMutation(handler, options);
+}
+
+export function usePlanetGetQuestion(
+  planetId: string,
+  questionId: string,
+  options?: QueryOptions<Question, ["PLANET_QUESTION", string, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return PlanetAPI.getQuestion(planetId, questionId);
+    },
+    [planetId, questionId]
+  );
+
+  return useQuery(["PLANET_QUESTION", planetId, questionId], handler, options);
 }

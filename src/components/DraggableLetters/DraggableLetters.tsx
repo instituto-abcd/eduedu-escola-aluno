@@ -15,7 +15,6 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "#fff",
     color: theme.colors.blue[6],
     cursor: "grab",
-    fontSize: 40,
     fontWeight: 600,
     lineHeight: 58,
     userSelect: "none",
@@ -42,6 +41,7 @@ type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   option: QuestionOption;
   type?: string;
   disabled?: boolean;
+  customFontSize?: string;
 };
 
 export function DraggableLetters({
@@ -50,6 +50,7 @@ export function DraggableLetters({
   type = "ANSWER_LETTERS",
   hidden,
   disabled,
+  customFontSize,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
@@ -87,7 +88,7 @@ export function DraggableLetters({
         />
       )}
       {!option.image_url && option.description && (
-        <Text>{option.description}</Text>
+        <Text size={customFontSize ? customFontSize : 40}>{option.description}</Text>
       )}
       {onClear && (
         <button className={classes.close} onClick={onClear}>

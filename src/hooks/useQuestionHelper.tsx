@@ -19,6 +19,17 @@ export function useQuestionHelper(question: Question) {
     [question]
   );
 
+  const getSupportText = useCallback(
+    function getSupportText(text: string) {
+      const supportText = question.titles.filter(
+        (title) => title.placeholder === text && !!title.description
+      );
+
+      return supportText;
+    },
+    [question]
+  );
+
   const textTitles = useMemo(() => getTitlesOfType("TEXT"), [getTitlesOfType]);
 
   const imageTitles = useMemo(
@@ -29,20 +40,19 @@ export function useQuestionHelper(question: Question) {
   const audioTitles = getTitlesOfType("AUDIO");
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
+  const supportText = getSupportText("ID da historinha");
 
   function getLottieJson(url: string) {
     return fetch(url)
       .then((res) => res.json())
       .catch((err) => {
-        console.error(err);
         return null;
       });
   }
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
-      option.image_url ?? option.sound_url ?? "_"
-    })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
+      })`;
   }
 
   return {
@@ -53,6 +63,7 @@ export function useQuestionHelper(question: Question) {
     audioTitles,
     videoTitles,
     lottieTitles,
+    supportText,
     getLottieJson,
     optionArrKey,
     isExam,

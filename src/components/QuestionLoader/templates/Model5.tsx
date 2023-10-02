@@ -1,15 +1,25 @@
-import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
-import { EduButton } from "~/components/EduButton";
-import { OptionButton, TextOptionButton } from "~/components/OptionButton";
+// Aux & Utils:
+import { useState } from "react";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
 import { useGetExamQuestion } from "~/api/student";
-import { useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { usePlanetAnswer } from "~/api/planet";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+
+// Components:
+import {
+  Group,
+  SimpleGrid,
+  Title,
+  LoadingOverlay,
+} from "@mantine/core";
+import { EduButton } from "~/components/EduButton";
+import { AudioButton } from "~/components/AudioButton";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import {
+  OptionButton,
+  TextOptionButton,
+} from "~/components/OptionButton";
 import { lousaHeight } from "~/constants/dimensions";
 
 export function Model5({ question, answerCallback }: ModelProps) {
@@ -28,20 +38,31 @@ export function Model5({ question, answerCallback }: ModelProps) {
   });
 
   const isLoading = isLoadingExam || isLoadingPlanet;
+  const disabled = question.multiplesAnswer
+    ? multipleAnswer.length === 0
+    : !answer;
 
   function submitAnswer() {
-    if (!answer) return;
+    if (disabled) return;
 
     if (isExam) {
       mutateExam({
         questionId: question.id,
-        optionsAnswered: [answer],
+        optionsAnswered: question.multiplesAnswer
+          ? multipleAnswer
+          : answer
+            ? [answer]
+            : [],
       });
     } else {
       mutatePlanet({
         questionId: question.id,
         planetId: question.planet_id,
-        optionsAnswered: [answer],
+        optionsAnswered: question.multiplesAnswer
+          ? multipleAnswer
+          : answer
+            ? [answer]
+            : [],
       });
     }
   }
@@ -88,7 +109,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Board content */}
-      <Group spacing={80} align="center" my="auto">
+      <Group spacing={80} m="auto">
         {!hasVideo && hasText && (
           <Title color="dark.3" size="2.5vh" align="center" my="auto" maw={400}>
             {textTitles[0].description}
@@ -126,11 +147,10 @@ export function Model5({ question, answerCallback }: ModelProps) {
                 <img
                   src={option.image_url}
                   alt={option.description}
-                  width={100}
                   style={{
-                    maxHeight: 140,
-                    objectFit: "contain",
-                    marginInline: "auto",
+                    maxWidth: 120,
+                    maxHeight: 120,
+                    objectFit: "contain"
                   }}
                 />
               </OptionButton>
@@ -151,7 +171,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
 
       {/* Continue to the next screen button */}
       <EduButton
-        disabled={!answer}
+        disabled={disabled}
         onClick={submitAnswer}
         style={{
           marginTop: "auto",
@@ -163,7 +183,10 @@ export function Model5({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

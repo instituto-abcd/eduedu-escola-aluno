@@ -41,6 +41,7 @@ export type Question = {
   progress?: number;
   status?: string;
   planet_id: string;
+  planetTitle: string;
   title: string;
   previousQuestionIsCorrect?: boolean;
   rules: {
@@ -60,6 +61,7 @@ export type Question = {
     | "MODEL16"
     | "MODEL17"
     | "MODEL18"
+    | "MODEL18-PROVA"
     | "MODEL19"
     | "MODEL2"
     | "MODEL2-VIDEO"

@@ -3,29 +3,31 @@ import {
   SimpleGrid,
   Paper,
   Group,
-  Loader,
   Stack,
   Text,
   Badge,
   Table,
   MultiSelect,
+  LoadingOverlay,
 } from "@mantine/core";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDebugQuestions } from "~/api/debug";
 
 export function QuestionListPage() {
-  const { data, isLoading } = useDebugQuestions({ initialData: [] });
+  const { data, isFetching } = useDebugQuestions({ initialData: [] });
   const [filter, setFilter] = useState<string[]>([]);
 
   return (
     <Stack mih="100vh" align="center" p="xl">
-      {isLoading && <Loader />}
+      <LoadingOverlay visible={isFetching} loaderProps={{ color: "lime" }} />
 
-      <Title color="dark.6" order={1}>
-        Questões de Prova
-      </Title>
-      {data && <Text>Total de questões: {data.length}</Text>}
+      <Stack spacing={0} justify="center" align="center">
+        <Title color="dark.4" order={1}>
+          Questões de Prova
+        </Title>
+        {data && <Text color="dark.4">Total de questões: {data.length}</Text>}
+      </Stack>
 
       {data && (
         <Group my="xl">

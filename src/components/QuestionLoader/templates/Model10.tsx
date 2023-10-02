@@ -1,23 +1,20 @@
-// Utils & Aux:
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
+import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-
-// Components:
+import { lousaHeight } from "~/constants/dimensions";
 import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
-import { EduButton, IconButton } from "~/components/EduButton";
+import { EduButton } from "~/components/EduButton";
 import { AudioButton } from "~/components/AudioButton";
-
-// Icons:
-import { IconBook, IconVolume } from "@tabler/icons-react";
-import { lousaHeight } from "~/constants/dimensions";
+import { IconVolume } from "@tabler/icons-react";
+import { ReadButton } from "~/components/ReadButton";
 
 export function Model10({ question, answerCallback }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, supportText } =
+    useQuestionHelper(question);
 
   const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
@@ -37,24 +34,30 @@ export function Model10({ question, answerCallback }: ModelProps) {
     setAnswer(null);
   }, [question]);
 
+  const { data: auxQuestion } = usePlanetGetQuestion(
+    question.planet_id,
+    supportText[0]?.["description"] ?? "",
+    {
+      enabled: !!supportText[0]?.["description"],
+    }
+  );
+
   return (
     <>
-      {/* Action buttons */}
-      <Group style={{ display: 'flex', justifyContent: 'center' }}>
+      <Group style={{ display: "flex", justifyContent: "center" }}>
         {audioTitles.map((item, inx) => (
           <>
-            {item.file_url && item.file_url.length &&
+            {item.file_url && item.file_url.length && (
               <AudioButton
                 src={item.file_url ?? ""}
                 key={inx}
                 autoPlay={inx === 0}
               />
-            }
+            )}
           </>
         ))}
 
-        {/* TODO: como que faz isso meu pai? x.x */}
-        <IconButton icon={<IconBook size={34} />} variant="yellow" />
+        {auxQuestion && <ReadButton question={auxQuestion} />}
       </Group>
 
       {/* Board content */}
@@ -144,7 +147,10 @@ export function Model10({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

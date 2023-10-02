@@ -4,7 +4,7 @@ import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useDebugModelQuestions } from "~/api/debug";
 import { useEffect, useState } from "react";
-import { lousaHeight } from "~/constants/dimensions";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { ModelProgress } from "../components/ModelProgress";
 
 export function ModelView() {
@@ -48,6 +48,7 @@ export function ModelView() {
   }
 
   useEffect(() => {
+    if (currentQuestion === -1) return;
     setQuery((prev) => {
       prev.set("index", currentQuestion.toString());
       return prev;
@@ -57,7 +58,7 @@ export function ModelView() {
   return (
     <>
       <Stack
-        spacing={55}
+        spacing={lousaWidth * 0.055}
         align="center"
         h="100%"
         w="100%"

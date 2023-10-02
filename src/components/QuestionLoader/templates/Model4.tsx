@@ -87,7 +87,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
         pt={lousaPaddingTop}
         spacing={(lousaWidth * 5 / 100)}
       >
-        <ScrollArea maw={lousaWidth} h={(lousaHeight * 50) / 100}>
+        <ScrollArea maw={lousaWidth} h={(lousaHeight * 60) / 100}>
           {textTitles.map((title) => (
             <Title
               key={title.description}
@@ -141,7 +141,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                       )}
                     </>
                   )}
-                  {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
+                  {!option.image_url && <Text size={"1.8vh"}>{option.description}</Text>}
                 </OptionButton>
               ))}
             </Group>

@@ -23,7 +23,7 @@ export function ModelProgress({
   question,
   onQuestionChange,
 }: Props) {
-  const progress = (current / total) * 100;
+  const progress = (current / (total - 1)) * 100;
   const [jumper, setJumper] = useState<number>();
 
   return (
@@ -33,7 +33,7 @@ export function ModelProgress({
       </Text>
       <Stack align="center" w="100%" spacing={4} my="md">
         <Text weight={600} color="dark.3">
-          {current} / {total}
+          {current} / {total - 1}
         </Text>
         <Progress value={progress} w="100%" striped color="teal" animate />
       </Stack>

@@ -117,6 +117,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                   onClick={() => setAnswer(option)}
                   sound={option.sound_url ?? undefined}
                   isCorrect={option.isCorrect}
+                  style={{ marginBottom: "5px" }}
                 >
                   {option.image_url && (
                     <>
@@ -141,7 +142,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
                       )}
                     </>
                   )}
-                  {!option.image_url && <Text size={"2vh"}>{option.description}</Text>}
+                  {!option.image_url && <Text size={"1.8vh"}>{option.description}</Text>}
                 </OptionButton>
               ))}
             </Group>

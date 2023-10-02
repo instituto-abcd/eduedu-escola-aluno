@@ -58,9 +58,10 @@ export function Model22({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {hasAudio && (
-        <Group>
-          {audioTitles
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
+        {hasAudio && (
+          audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
@@ -68,12 +69,20 @@ export function Model22({ question, answerCallback }: ModelProps) {
                 key={inx}
                 autoPlay={inx === 0}
               />
-            ))}
-        </Group>
-      )}
+            ))
+        )}
+      </Group>
 
-      {hasText && <Title color="dark.3">{textTitles[0].description}</Title>}
+      {hasText &&
+        <Title
+          dangerouslySetInnerHTML={{
+            __html: textTitles[0].description,
+          }}
+          color="dark.3"
+        />
+      }
 
+      {/* Board content */}
       <Group
         align="center"
         my="auto"
@@ -91,9 +100,12 @@ export function Model22({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
+      {/* Continue to the next screen button */}
       <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

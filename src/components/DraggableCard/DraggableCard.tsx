@@ -53,7 +53,7 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   sound?: string | null;
   image?: string | null;
   disabled?: boolean;
-  customWith?: string | number | null;
+  customWidth?: string | number | null;
   customHeight?: string | number | null;
   onClear?: () => void;
 };
@@ -65,7 +65,7 @@ export function DraggableCard<T>({
   image,
   hidden,
   onClear,
-  customWith,
+  customWidth,
   customHeight,
   disabled,
   textClasses,
@@ -90,7 +90,7 @@ export function DraggableCard<T>({
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden ? "none" : "all",
     height: customHeight ? customHeight : lousaWidth * 16 / 100,
-    width: customWith ? customWith : lousaWidth * 14 / 100,
+    width: customWidth ? customWidth : lousaWidth * 14 / 100,
   };
 
   const soundRef = useRef<HTMLAudioElement>(null);
@@ -115,9 +115,8 @@ export function DraggableCard<T>({
         <img
           src={image}
           style={{
-            maxHeight: "auto",
-            maxWidth: "120px",
-            objectFit: "contain",
+            maxHeight: `${styles.height * 80 / 100}px`,
+            maxWidth: `${styles.width * 80 / 100}px`,
             marginInline: "auto",
             pointerEvents: "none",
             userSelect: "none",

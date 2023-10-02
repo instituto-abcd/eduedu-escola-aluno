@@ -62,7 +62,6 @@ export function ModelView() {
         align="center"
         h="100%"
         w="100%"
-        px={54}
         style={{ position: "relative" }}
       >
         {currentQuestion !== -1 && data?.[currentQuestion] && (

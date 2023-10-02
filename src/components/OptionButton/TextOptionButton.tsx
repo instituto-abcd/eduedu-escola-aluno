@@ -10,7 +10,7 @@ const useStyles = createStyles({
     paddingInline: 32,
     paddingBlock: 10,
     fontWeight: 400,
-    fontSize: 20,
+    fontSize: '1.2rem',
     color: "#228BE6",
   },
 });

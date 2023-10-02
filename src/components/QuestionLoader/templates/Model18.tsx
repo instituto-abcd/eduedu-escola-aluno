@@ -1,27 +1,30 @@
-// Aux & Utils:
+import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
+import { produce } from "immer";
 import { useEffect, useState } from "react";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { useGetExamQuestion } from "~/api/student";
-import { produce } from "immer";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
-import { ModelProps } from ".";
-
-// Components:
-import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { TextOptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
+import { TextOptionButton } from "~/components/OptionButton";
+import { boardW, lousaHeight } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 export function Model18({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
-  const text = textTitles[0].description;
+  const text = textTitles.filter(
+    (title) => title.description && title.description.length > 0
+  )[0].description;
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
-    () => text.split("").map((char) => (char === "_" ? null : char))
+    () =>
+      text
+        .replace(/\s/g, "")
+        .split("")
+        .map((char) => (char === "_" ? null : char))
   );
 
   const { mutate, isLoading } = useGetExamQuestion({
@@ -68,100 +71,80 @@ export function Model18({ question, answerCallback }: ModelProps) {
   }, [question]);
 
   useEffect(() => {
-    setSlots(text.split("").map((char) => (char === "_" ? null : char)));
+    setSlots(
+      text
+        .replace(/\s/g, "")
+        .split("")
+        .map((char) => (char === "_" ? null : char))
+    );
   }, [text]);
 
   return (
     <>
-      <Group mx="auto">
-        {audioTitles.map((title) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            key={title.file_name}
-            autoPlay
-          />
-        ))}
-      </Group>
-
-      {/* Board content */}
-      <Stack>
-        {imageTitles.map((title) => (
-          <Image
-            src={title.file_url ?? ""}
-            key={title.file_name}
-            height={lousaHeight * 35 / 100}
-            width="auto"
-            m="auto" />
-        ))}
-
-        <Stack spacing={20}>
-          <Group mx="auto">
-            {slots.map((slot, inx) => {
-              if (typeof slot === "string")
-                return <TextOptionButton
-                  key={slot}
-                  style={{ width: lousaWidth * 8 / 100, height: lousaWidth * 8 / 100, fontSize: '2.5vw', fontWeight: 600 }}
-                >
-                  {slot}
-                </TextOptionButton>;
-
-              return (
-                <DragLetterSlot
-                  onDrop={(item) => handleDrop(item, inx)}
-                  option={slot}
-                  onClear={() => handleClear(inx)}
-                  key={inx}
-                  style={{
-                    width: lousaWidth * 8 / 100,
-                    height: lousaWidth * 8 / 100,
-                    textAlign: 'center'
-                  }}
-                />
-              );
-            })}
-          </Group>
-
-          <Group mx="auto">
-            {question.options.map((option) => (
-              <DraggableLetters
-                key={option.description}
-                option={option}
-                hidden={
-                  !!slots.find(
-                    (item) =>
-                      item &&
-                      typeof item !== "string" &&
-                      item.position === option.position
-                  )
-                }
-                style={{
-                  width: lousaWidth * 8 / 100,
-                  height: lousaWidth * 8 / 100,
-                  textAlign: 'center'
-                }}
-              >
-                {option.description}
-              </DraggableLetters>
+      {audioTitles.some((title) => title.file_url) && (
+        <Group mx="auto">
+          {audioTitles
+            .filter((title) => !!title.file_url)
+            .map((title, inx) => (
+              <AudioButton src={title.file_url ?? ""} key={inx} autoPlay />
             ))}
-          </Group>
-        </Stack>
+        </Group>
+      )}
+
+      {imageTitles.map((title) => (
+        <Image
+          src={title.file_url ?? ""}
+          key={title.file_url}
+          height={boardW(180)}
+          width="auto"
+        />
+      ))}
+
+      <Stack spacing={boardW(20)} my="auto" justify="center" align="center">
+        <Group spacing={boardW(14)}>
+          {slots.map((slot, inx) => {
+            if (typeof slot === "string")
+              return <TextOptionButton key={inx}>{slot}</TextOptionButton>;
+
+            return (
+              <DragLetterSlot
+                onDrop={(item) => handleDrop(item, inx)}
+                option={slot}
+                onClear={() => handleClear(inx)}
+                key={inx}
+              />
+            );
+          })}
+        </Group>
+
+        <Group>
+          {question.options.map((option, inx) => (
+            <DraggableLetters
+              key={inx}
+              option={option}
+              hidden={
+                !!slots.find(
+                  (item) =>
+                    item &&
+                    typeof item !== "string" &&
+                    JSON.stringify(item) === JSON.stringify(option)
+                )
+              }
+            >
+              {option.description}
+            </DraggableLetters>
+          ))}
+        </Group>
       </Stack>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={selected.length < 3}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
+      <EduButton disabled={selected.length < 3} onClick={submitAnswer}>
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

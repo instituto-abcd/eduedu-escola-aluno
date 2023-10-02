@@ -1,6 +1,7 @@
 import { createStyles } from "@mantine/core";
 import { QuestionOption } from "~/api/exam";
 import { Card, StackCardProps } from "./Card";
+import { boardW } from "~/constants/dimensions";
 
 type StyleProps = {
   width?: number;
@@ -10,8 +11,8 @@ type StyleProps = {
 const useStyles = createStyles((_, props: StyleProps) => ({
   wrapper: {
     position: "relative",
-    height: props.height ? props.height : 153,
-    width: props.width ? props.width : 170,
+    height: props.height ? props.height : boardW(153),
+    width: props.width ? props.width : boardW(170),
   },
 }));
 
@@ -23,8 +24,8 @@ type Props = {
 
 export function CardStack({ options, className, cardProps }: Props) {
   const { classes, cx } = useStyles({
-    width: cardProps?.variant === "square" ? 170 : 308,
-    height: cardProps?.variant === "square" ? 153 : 210,
+    width: cardProps?.variant === "square" ? boardW(170) : boardW(308),
+    height: cardProps?.variant === "square" ? boardW(153) : boardW(210),
   });
 
   return (

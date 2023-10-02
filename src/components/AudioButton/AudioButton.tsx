@@ -9,14 +9,15 @@ type Props = {
   buttonProps?: IconButtonProps;
   autoPlay?: boolean;
   src?: string;
-};
+} & React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>;
 
 type Ref = { play: () => void };
 
-// TODO: bug na chave autoplay (não está funcionando como deveria)
-
 export const AudioButton = forwardRef<Ref, Props>(
-  ({ buttonProps, autoPlay, src }, ref) => {
+  ({ autoPlay, src, ...props }, ref) => {
     const mediaTrack = useMediaTrackStore();
 
     const play = () => {
@@ -44,9 +45,9 @@ export const AudioButton = forwardRef<Ref, Props>(
         variant="gray"
         onClick={play}
         disabled={mediaTrack.isPlaying}
-        {...buttonProps}
+        {...props}
         icon={
-          buttonProps?.icon ?? (
+          props.buttonProps?.icon ?? (
             <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
           )
         }

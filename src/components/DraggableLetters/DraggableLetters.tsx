@@ -3,20 +3,22 @@ import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties } from "react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   option: {
-    padding: 10,
+    paddingInline: boardW(24),
+    paddingBlock: boardW(10),
+    fontSize: boardW(40),
     borderWidth: 1,
     borderColor: theme.colors.blue[6],
     borderStyle: "solid",
     borderRadius: 16,
-    boxShadow: `0px 8px 0px 0px ${theme.colors.blue[6]}`,
+    boxShadow: `0px 5px 0px 0px ${theme.colors.blue[6]}`,
     backgroundColor: "#fff",
     color: theme.colors.blue[6],
     cursor: "grab",
     fontWeight: 600,
-    lineHeight: 58,
     userSelect: "none",
     position: "relative",
   },
@@ -41,7 +43,6 @@ type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   option: QuestionOption;
   type?: string;
   disabled?: boolean;
-  customFontSize?: string;
 };
 
 export function DraggableLetters({
@@ -50,7 +51,6 @@ export function DraggableLetters({
   type = "ANSWER_LETTERS",
   hidden,
   disabled,
-  customFontSize,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
@@ -84,11 +84,13 @@ export function DraggableLetters({
         <Image
           src={option.image_url}
           alt={option.image_name ?? ""}
-          style={{ maxWidth: 65 }}
+          style={{ maxWidth: boardW(65) }}
         />
       )}
       {!option.image_url && option.description && (
-        <Text size={customFontSize ? customFontSize : 40}>{option.description}</Text>
+        <Text p={0} m={0}>
+          {option.description}
+        </Text>
       )}
       {onClear && (
         <button className={classes.close} onClick={onClear}>

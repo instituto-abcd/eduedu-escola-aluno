@@ -79,12 +79,12 @@ export function Model11({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Board content */}
-      <Group m="auto" spacing={(lousaWidth * 5 / 100)}>
+      <Group m="auto" spacing={(lousaWidth * 5) / 100}>
         {imageTitles.map((title) => (
           <Image
             src={title.file_url}
             alt={title.file_name}
-            width={lousaWidth * 30 / 100}
+            width={(lousaWidth * 30) / 100}
             key={title.file_url}
             mx="auto"
           />
@@ -101,11 +101,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
             {word &&
               word.split("_").map((w, inx, arr) => (
                 <Fragment key={w}>
-                  <Text
-                    color="dark.3"
-                    size="3rem"
-                    weight={700}
-                  >
+                  <Text color="dark.3" size="3rem" weight={700}>
                     {w}
                   </Text>
                   {arr.length !== inx + 1 && (
@@ -114,9 +110,9 @@ export function Model11({ question, answerCallback }: ModelProps) {
                       option={answer}
                       onClear={() => setAnswer(null)}
                       style={{
-                        width: '87px',
-                        height: '78px',
-                        textAlign: 'center'
+                        width: "87px",
+                        height: "78px",
+                        textAlign: "center",
                       }}
                     />
                   )}
@@ -140,11 +136,10 @@ export function Model11({ question, answerCallback }: ModelProps) {
                   <DraggableLetters
                     key={option.position}
                     option={option}
-                    customFontSize="2rem"
                     style={{
-                      width: lousaWidth * 9 / 100,
-                      height: lousaWidth * 8 / 100,
-                      textAlign: 'center'
+                      width: (lousaWidth * 9) / 100,
+                      height: (lousaWidth * 8) / 100,
+                      textAlign: "center",
                     }}
                   >
                     {option.description}
@@ -169,7 +164,10 @@ export function Model11({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

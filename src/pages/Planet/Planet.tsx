@@ -36,8 +36,8 @@ export function PlanetPage() {
     answer:
       | Question
       | {
-          planetCompleted?: true;
-        }
+        planetCompleted?: true;
+      }
   ) {
     if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
@@ -69,7 +69,7 @@ export function PlanetPage() {
         style={{ position: "relative" }}
       >
         {isLoading && <Loader />}
-        <Stack spacing={55} align="center" h="100%" w="100%" px={54}>
+        <Stack align="center" h="100%" w="100%">
           {currentQuestion && (
             <QuestionLoader
               question={currentQuestion}

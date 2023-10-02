@@ -28,8 +28,8 @@ export function ExamPage() {
     answer:
       | Question
       | {
-          examCompleted?: true;
-        }
+        examCompleted?: true;
+      }
   ) {
     if ("examCompleted" in answer) {
       navigate(PATH.EXAM_EVALUATION);

@@ -1,12 +1,15 @@
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { Group, LoadingOverlay, Textarea, createStyles } from "@mantine/core";
-import { AudioButton } from "~/components/AudioButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { EduButton } from "~/components/EduButton";
+// Aux & Utils:
 import { useEffect, useState } from "react";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
 import { lousaHeight } from "~/constants/dimensions";
+import { ModelProps } from ".";
+
+// Components:
+import { Group, LoadingOverlay, Textarea, createStyles } from "@mantine/core";
+import { AudioButton } from "~/components/AudioButton";
+import { EduButton } from "~/components/EduButton";
 
 const useStyles = createStyles((theme) => ({
   textArea: {
@@ -50,9 +53,10 @@ export function Model35({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.some((title) => title.file_url) && (
-        <Group>
-          {audioTitles
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
+        {audioTitles.some((title) => title.file_url) && (
+          audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
@@ -60,17 +64,22 @@ export function Model35({ question, answerCallback }: ModelProps) {
                 key={inx}
                 autoPlay={inx === 0}
               />
-            ))}
-        </Group>
-      )}
+            ))
+        )}
+      </Group>
 
-      <Group my="auto" spacing={60} align="center">
+      {/* Board content */}
+      <Group my="auto" spacing={10} align="center">
         {imageTitles[0] && (
-          <img
-            src={imageTitles[0].file_url!}
-            width={260}
-            style={{ maxHeight: 300 }}
-          />
+          <>
+            <img
+              src={imageTitles[0].file_url!}
+              width="auto"
+              height={lousaHeight * 40 / 100}
+            />
+
+            {imageTitles[0].file_url?.length ? '' : "Ooops! Imagem não disponível :("}
+          </>
         )}
         <Textarea
           value={answer}
@@ -79,9 +88,12 @@ export function Model35({ question, answerCallback }: ModelProps) {
         />
       </Group>
 
+      {/* Continue to the next screen button */}
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

@@ -5,6 +5,7 @@ import {
   ScrollArea,
   Stack,
   Text,
+  Box,
   Title,
   createStyles,
 } from "@mantine/core";
@@ -16,15 +17,16 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight, lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles((theme) => ({
   typography: {
     color: theme.colors.dark[3],
-    fontSize: 20,
+    fontSize: '1.2rem',
     h1: {
-      fontSize: 30,
+      fontSize: '1.3rem',
       fontWeight: 600,
     },
   },
@@ -33,7 +35,7 @@ const useStyles = createStyles((theme) => ({
 export function Model32({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
 
-  const { textTitles, imageTitles, audioTitles, optionArrKey, isExam } =
+  const { textTitles, imageTitles, audioTitles, supportText, optionArrKey, isExam } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -69,6 +71,14 @@ export function Model32({ question, answerCallback }: ModelProps) {
     setAnswer(null);
   }, [question]);
 
+  const { data: readText } = usePlanetGetQuestion(
+    question.planet_id,
+    supportText[0]?.["description"] ?? "",
+    {
+      enabled: !!supportText[0]?.["description"],
+    }
+  );
+
   return (
     <>
       <Group mx="auto">
@@ -81,13 +91,12 @@ export function Model32({ question, answerCallback }: ModelProps) {
               autoPlay={!!title.file_url}
             />
           ))}
+
+        {readText && <ReadButton question={readText} />}
       </Group>
 
       {/* Board content */}
-      <Stack
-        my="auto"
-        pt={lousaPaddingTop}
-      >
+      <Box m="auto" w="100%" h="100%">
         <Title color="dark.3" size="2.5vh" align="center">
           {
             textTitles.find(
@@ -97,86 +106,105 @@ export function Model32({ question, answerCallback }: ModelProps) {
           }
         </Title>
 
-        <Group noWrap grow spacing={0} my="auto">
-          <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
-            <Stack align="stretch" spacing={20} py={10}>
-              <Text
-                dangerouslySetInnerHTML={{
-                  __html:
+        <Group
+          w="100%"
+          h="100%"
+          m="auto"
+          spacing={(lousaWidth * 4 / 100)}
+        >
+          <Box
+            maw={lousaWidth * 45 / 100}
+            h="100%"
+            m="auto"
+          >
+            <ScrollArea h={lousaHeight * 56 / 100}>
+              <Stack pb={5}>
+                {question?.planet_id &&
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html: textTitles.filter((item) => item.placeholder != 'ID da historinha')?.[0]?.description,
+                    }}
+                    className={classes.typography}
+                  />
+                }
+                {!question?.planet_id &&
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.classification ===
+                            QuestionTitleClassification.HISTORIA
+                        )?.description ??
+                        textTitles[0]?.description ??
+                        "",
+                    }}
+                    className={classes.typography}
+                  />
+                }
+
+                {imageTitles
+                  .filter((title) => !!title.file_url)
+                  .map((title) => (
+                    <Image
+                      src={title.file_url}
+                      key={title.file_url}
+                      width={lousaWidth * 40 / 100}
+                      m="auto"
+                    />
+                  ))}
+              </Stack>
+            </ScrollArea>
+          </Box>
+          <Box
+            maw={lousaWidth * 45 / 100}
+            h="100%"
+            m="auto"
+          >
+            <ScrollArea h={lousaHeight * 50 / 100} type="always">
+              <Stack justify="flex-start">
+                <Text size={20} weight={600} color="dark.3" align="center">
+                  {
                     textTitles.find(
                       (title) =>
-                        title.classification ===
-                        QuestionTitleClassification.HISTORIA
-                    )?.description ??
-                    textTitles[0]?.description ??
-                    "",
-                }}
-                className={classes.typography}
-              />
-              {imageTitles
-                .filter((title) => !!title.file_url)
-                .map((title) => (
-                  <Image
-                    src={title.file_url}
-                    key={title.file_url}
-                    width={204}
-                    mx="auto"
-                  />
-                ))}
-            </Stack>
-          </ScrollArea>
-
-          <ScrollArea h={lousaHeight * 60 / 100} px={30} type="always">
-            <Stack style={{ marginBottom: "5px" }}>
-              <Text size={20} weight={600} color="dark.3" align="center">
-                {
-                  textTitles.find(
-                    (title) =>
-                      title.classification === QuestionTitleClassification.ENUNCIADO
-                  )?.description
-                }
-              </Text>
-              {question.options.map((option, inx) => (
-                <TextOptionButton
-                  key={optionArrKey(option, inx)}
-                  onClick={() =>
-                    setAnswer({
-                      ...option,
-                      positionAnswer: question.orderedAnswer
-                        ? option.position
-                        : undefined,
-                    } as QuestionOption)
+                        title.classification === QuestionTitleClassification.ENUNCIADO
+                    )?.description
                   }
-                  data-selected={JSON.stringify(answer) === JSON.stringify(option)}
-                  sound={option.sound_url ?? undefined}
-                  isCorrect={option.isCorrect}
-                  style={{
-                    maxWidth: lousaWidth * 40 / 100,
-                    width: '100%',
-                    minWidth: "auto",
-                    wordWrap: "break-word",
-                    wordBreak: "break-word",
-                    textAlign: "center",
-                  }}
-                >
-                  {option.description}
-                </TextOptionButton>
-              ))}
-            </Stack>
-          </ScrollArea>
+                </Text>
+                {question.options.map((option, inx) => (
+                  <TextOptionButton
+                    key={optionArrKey(option, inx)}
+                    onClick={() =>
+                      setAnswer({
+                        ...option,
+                        positionAnswer: question.orderedAnswer
+                          ? option.position
+                          : undefined,
+                      } as QuestionOption)
+                    }
+                    data-selected={JSON.stringify(answer) === JSON.stringify(option)}
+                    sound={option.sound_url ?? undefined}
+                    isCorrect={option.isCorrect}
+                    style={{
+                      maxWidth: lousaWidth * 40 / 100,
+                      width: '100%',
+                      minWidth: "auto",
+                      wordWrap: "break-word",
+                      wordBreak: "break-word",
+                      textAlign: "center",
+                    }}
+                  >
+                    {option.description}
+                  </TextOptionButton>
+                ))}
+              </Stack>
+            </ScrollArea>
+          </Box>
         </Group>
-      </Stack>
+      </Box>
 
       {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
+      <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
 

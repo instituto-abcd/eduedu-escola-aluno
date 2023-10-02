@@ -9,7 +9,7 @@ import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { IconMessageCircle2 } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 export function Model33({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
@@ -45,6 +45,7 @@ export function Model33({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       <Group>
         {audioTitles.map((title, inx) =>
           inx === 0 ? (
@@ -62,11 +63,20 @@ export function Model33({ question, answerCallback }: ModelProps) {
         )}
       </Group>
 
-      <Group position="apart" spacing={137} w="100%" noWrap my="auto">
+      {/* Board content */}
+      <Group
+        noWrap
+        m="auto"
+        spacing={(lousaWidth * 10 / 100)}
+      >
         {hasTextOrImage && (
           <Stack align="center" spacing={0}>
             {illustration && (
-              <Image src={illustration} width={346} height="auto" />
+              <Image
+                src={illustration}
+                width={(lousaWidth * 30 / 100).toString()}
+                height="auto"
+              />
             )}
 
             {textTitles.map((title) => (
@@ -92,13 +102,19 @@ export function Model33({ question, answerCallback }: ModelProps) {
             },
           }}
           height="auto"
-          width={346}
+          width={(lousaWidth * 30 / 100)}
         />
       </Group>
 
-      <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={mediaTrack.isPlaying}
+        onClick={submitAnswer}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

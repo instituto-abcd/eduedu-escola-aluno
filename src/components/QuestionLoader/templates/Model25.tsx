@@ -123,8 +123,8 @@ export function Model25({ question }: ModelProps) {
                 hidden={hideTitle(title.position)}
                 text={title.description}
                 textClasses={classes.text}
-                customHeight={ 123 }
-                customWith={ 200 }
+                customHeight={123}
+                customWidth={200}
               />
             ) : (
               <DraggableCard<QuestionTitle>
@@ -133,8 +133,8 @@ export function Model25({ question }: ModelProps) {
                 item={title}
                 image={title.file_url}
                 hidden={hideTitle(title.position)}
-                customHeight={ 123 }
-                customWith={ 200 }
+                customHeight={123}
+                customWidth={200}
               />
             )
           )}
@@ -190,8 +190,8 @@ function SlotCard({
         item={droppedTitle}
         image={droppedTitle.file_url}
         text={droppedTitle.description}
-        customHeight={ 123 }
-        customWith={ 200 }
+        customHeight={123}
+        customWidth={200}
         onClear={() => {
           setDropppedTitle(null), onDrop(null);
         }}

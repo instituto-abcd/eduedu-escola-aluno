@@ -42,12 +42,18 @@ export function Model30({ question, answerCallback }: ModelProps) {
       )}
 
       {imageTitles.length > 0 && (
-        <img
-          src={imageTitles[0].file_url ?? ""}
-          width={424}
-          style={{ maxHeight: 430, height: "auto" }}
-          height="auto"
-        />
+        <>
+          <img
+            src={imageTitles[0].file_url ?? ""}
+            width="auto"
+            height={lousaHeight * 55 / 100}
+          />
+
+          {/* Alguns estão vindo sem file_url,
+              por isso adicionei esse texto para mostrar caso o file_url esteja vazio:
+          */}
+          {imageTitles[0].file_url?.length ? '' : "Ooops! Imagem não disponível :("}
+        </>
       )}
 
       <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>

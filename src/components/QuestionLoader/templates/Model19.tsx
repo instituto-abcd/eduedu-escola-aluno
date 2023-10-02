@@ -71,7 +71,8 @@ export function Model19({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group>
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
         {audioTitles
           .filter((title) => title.file_url)
           .map((title, inx) => (
@@ -83,10 +84,11 @@ export function Model19({ question, answerCallback }: ModelProps) {
           ))}
       </Group>
 
-      <Stack align="center" spacing={60} my="auto">
+      {/* Board content */}
+      <Stack align="center" spacing={50} my="auto">
         <CardStack
           options={options}
-          cardProps={{ imageOnly: !showOptionsDesc }}
+          cardProps={{ variant: "square", imageOnly: !showOptionsDesc }}
         />
 
         <Group>
@@ -102,9 +104,13 @@ export function Model19({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
+
+      {/* Continue to the next screen button */}
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

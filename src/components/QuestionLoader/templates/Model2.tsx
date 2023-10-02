@@ -10,7 +10,7 @@ import { useGetExamQuestion } from "~/api/student";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 export function Model2({ question, answerCallback }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
@@ -34,7 +34,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
       mutateExam({
         questionId: question.id,
         optionsAnswered: answers as QuestionOption[],
-      })
+      });
     } else {
       mutatePlanet({
         questionId: question.id,
@@ -54,7 +54,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
       })
     );
   },
-    []);
+  []);
 
   const { audioTitles, isExam } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
@@ -65,20 +65,22 @@ export function Model2({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
-      <Group>
-        {audioTitles.map((title) => (
-          <AudioButton
-            key={title.file_url}
-            src={title.file_url ?? ""}
-            autoPlay
-          />
-        ))}
-      </Group>
+      {audioTitles.some((title) => title.file_url) && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title) => (
+              <AudioButton
+                key={title.file_url}
+                src={title.file_url ?? ""}
+                autoPlay
+              />
+            ))}
+        </Group>
+      )}
 
-      {/* Board content */}
       <Stack my="auto">
-        <SimpleGrid cols={question.options.length} spacing={24}>
+        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
@@ -98,7 +100,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
 
-        <SimpleGrid cols={question.options.length} spacing={24}>
+        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {question.options.map((item) => (
             <DraggableCard
               item={item}
@@ -115,21 +117,14 @@ export function Model2({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Stack>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={answers.includes(null)}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
+      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

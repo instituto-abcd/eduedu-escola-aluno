@@ -58,7 +58,7 @@ export function ModelView() {
   return (
     <>
       <Stack
-        spacing={lousaWidth * 0.055}
+        spacing={lousaWidth * 0.045}
         align="center"
         h="100%"
         w="100%"

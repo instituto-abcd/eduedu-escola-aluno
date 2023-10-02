@@ -3,8 +3,14 @@ import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { lousaHeight } from "~/constants/dimensions";
-import { Group, LoadingOverlay, SimpleGrid, Title } from "@mantine/core";
+import { boardW, lousaHeight } from "~/constants/dimensions";
+import {
+  Group,
+  LoadingOverlay,
+  ScrollArea,
+  SimpleGrid,
+  Title,
+} from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
 import { AudioButton } from "~/components/AudioButton";
@@ -42,37 +48,47 @@ export function Model10({ question, answerCallback }: ModelProps) {
     }
   );
 
+  /* TODO: jogar para o questionhelper */
+  const canPlay = (inx: number) => {
+    if (inx !== 0) return false;
+    const rule = question.rules.find((rule) => rule.name === "autoplay");
+
+    if (!rule) return false;
+    return rule.value === "true";
+  };
+
   return (
     <>
-      <Group style={{ display: "flex", justifyContent: "center" }}>
-        {audioTitles.map((item, inx) => (
-          <>
-            {item.file_url && item.file_url.length && (
+      {audioTitles.some((title) => title.file_url) && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((item, inx) => (
               <AudioButton
                 src={item.file_url ?? ""}
                 key={inx}
-                autoPlay={inx === 0}
+                autoPlay={canPlay(inx)}
               />
-            )}
-          </>
-        ))}
+            ))}
 
-        {auxQuestion && <ReadButton question={auxQuestion} />}
-      </Group>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </Group>
+      )}
 
-      {/* Board content */}
       {textTitles
         .filter(
           (title) => title.description && !title.placeholder.includes("ID")
         )
         .map((title, inx) => (
-          <Title
-            color="dark.3"
-            size={20}
-            align="center"
-            key={inx}
-            dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-          />
+          <ScrollArea mah={boardW(100)} type="always" key={inx} px="xs">
+            <Title
+              color="dark.3"
+              size={boardW(22)}
+              align="center"
+              dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+              px={boardW(10)}
+            />
+          </ScrollArea>
         ))}
 
       <Group spacing={20} my="auto">
@@ -82,8 +98,8 @@ export function Model10({ question, answerCallback }: ModelProps) {
             <img
               src={title.file_url!}
               alt={title.description}
-              width={270}
-              style={{ maxHeight: 400, objectFit: "contain" }}
+              width={boardW(350)}
+              style={{ maxHeight: boardW(400), objectFit: "contain" }}
               key={title.file_url}
             />
           ))}
@@ -117,36 +133,26 @@ export function Model10({ question, answerCallback }: ModelProps) {
                 <img
                   src={option.image_url}
                   alt={option.description}
-                  width={100}
+                  width={boardW(100)}
                   style={{
-                    maxHeight: 140,
+                    maxHeight: boardW(110),
                     objectFit: "contain",
                     marginInline: "auto",
                   }}
                 />
               )}
               {!option.image_url && option.sound_url && (
-                <IconVolume size={80} />
+                <IconVolume size={boardW(80)} />
               )}
             </OptionButton>
           ))}
         </SimpleGrid>
       </Group>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "10px",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
+      <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
       <LoadingOverlay
         visible={isLoading}
         style={{ maxHeight: (lousaHeight * 80) / 100 }}

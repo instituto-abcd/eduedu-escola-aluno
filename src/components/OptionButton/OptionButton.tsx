@@ -18,7 +18,6 @@ const useStyles = createStyles({
     fontWeight: 600,
     color: "#228BE6",
     userSelect: "none",
-    wordBreak: "break-all",
     "*": {
       color: "#228BE6",
     },

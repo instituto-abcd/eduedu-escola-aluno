@@ -62,9 +62,10 @@ export function Model20({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
-        <Group>
-          {audioTitles
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
+        {audioTitles.filter((title) => title.file_url).length > 0 && (
+          audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
@@ -72,28 +73,30 @@ export function Model20({ question, answerCallback }: ModelProps) {
                 src={title.file_url!}
                 autoPlay={inx === 0}
               />
-            ))}
-        </Group>
-      )}
+            ))
+        )}
+      </Group>
 
-      <Stack my="auto" align="center" spacing={24}>
+      {/* Board content */}
+      <Stack my="auto" align="center" spacing={10}>
         {imageTitles
           .filter((title) => title.file_url)
           .map((title, index) => (
             <img
               src={title.file_url!}
               key={index}
-              style={{ maxHeight: 280, maxWidth: 800, objectFit: "contain" }}
+              style={{ maxHeight: lousaHeight * 30 / 100, width: "auto", objectFit: "contain" }}
             />
           ))}
 
         <DropArea items={answers} onDrop={setItem} onClear={clearItem} />
 
-        <Group spacing={28}>
+        <Group spacing={10}>
           {question.options.map((option, index) => (
             <TextDropItem
               item={option}
               key={index}
+              customFontSize={24}
               hidden={
                 !!answers.find(
                   (item) => JSON.stringify(item) === JSON.stringify(option)
@@ -104,9 +107,12 @@ export function Model20({ question, answerCallback }: ModelProps) {
         </Group>
       </Stack>
 
+      {/* Continue to the next screen button */}
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

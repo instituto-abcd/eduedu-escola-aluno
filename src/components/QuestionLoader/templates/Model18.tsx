@@ -2,7 +2,6 @@ import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
@@ -11,6 +10,7 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { boardW, lousaHeight } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model18({ question, answerCallback }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
@@ -27,7 +27,7 @@ export function Model18({ question, answerCallback }: ModelProps) {
         .map((char) => (char === "_" ? null : char))
   );
 
-  const { mutate, isLoading } = useGetExamQuestion({
+  const { mutate, isLoading } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q),
   });
 
@@ -36,6 +36,7 @@ export function Model18({ question, answerCallback }: ModelProps) {
 
     mutate({
       questionId: question.id,
+      planetId: question.planet_id,
       optionsAnswered: selected,
     });
   }

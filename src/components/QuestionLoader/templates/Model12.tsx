@@ -10,7 +10,7 @@ import { CardStack } from "~/components/CardStack";
 import { QuestionOption } from "~/api/exam";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 export function Model12({ question, answerCallback }: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
@@ -55,6 +55,7 @@ export function Model12({ question, answerCallback }: ModelProps) {
 
   useEffect(() => {
     setAnswers([]);
+    setStack(question.options);
   }, [question]);
 
   return (
@@ -67,10 +68,14 @@ export function Model12({ question, answerCallback }: ModelProps) {
           ))}
 
       {imageTitles[0] && (
-        <Image src={imageTitles[0].file_url} width={200} height="auto" />
+        <Image
+          src={imageTitles[0].file_url}
+          height={boardW(170)}
+          width="auto"
+        />
       )}
 
-      <Group position="apart" spacing={52} align="center">
+      <Group position="apart" spacing={boardW(52)} align="center" my="auto">
         <DropYesOrNo direction="left" ref={dropLeft} />
         <CardStack
           options={stack}
@@ -82,7 +87,10 @@ export function Model12({ question, answerCallback }: ModelProps) {
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }
@@ -92,8 +100,8 @@ const DropYesOrNo = forwardRef<HTMLDivElement, { direction: "left" | "right" }>(
     return (
       <div
         style={{
-          width: 170,
-          height: 198,
+          width: boardW(170),
+          height: boardW(198),
           backgroundColor: props.direction === "left" ? "#FFE3E3" : "#D3F9D8",
           display: "grid",
           placeItems: "center",
@@ -103,7 +111,7 @@ const DropYesOrNo = forwardRef<HTMLDivElement, { direction: "left" | "right" }>(
       >
         <Image
           src={props.direction === "left" ? arrowLeft : arrowRight}
-          width={50}
+          width={boardW(50)}
           height="auto"
         />
       </div>

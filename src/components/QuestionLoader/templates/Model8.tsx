@@ -17,19 +17,19 @@ import { VideoPlayer } from "~/components/VideoPlayer";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
-    minWidth: "unset",
-    width: lousaWidth / 2.5,
     wordBreak: "keep-all",
-    fontSize: lousaWidth * 0.02,
+    width: "100%",
+    height: "fit-content",
+    padding: boardW(20),
   },
 });
 
 export function Model8({ question, answerCallback }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles, optionArrKey } =
+  const { imageTitles, videoTitles, textTitles, audioTitles } =
     useQuestionHelper(question);
 
   const { classes } = useStyles();
@@ -109,15 +109,14 @@ export function Model8({ question, answerCallback }: ModelProps) {
         ))}
 
         <Stack
-          mx={"auto"}
           spacing={lousaWidth * 0.025}
           justify="center"
-          w={lousaWidth / 2.1}
-          px={20}
+          w="100%"
+          px={boardW(20)}
         >
           {question.options.map((option, inx) => (
             <TextOptionButton
-              key={optionArrKey(option, inx)}
+              key={inx}
               onClick={() => setAnswer(option)}
               data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               sound={option.sound_url ?? undefined}

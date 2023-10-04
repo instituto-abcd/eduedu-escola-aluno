@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 
-const pageUrl = 'http://localhost:5173/debug/model';
+const pageUrl = process.env.APP_DEBUG_URL ? process.env.APP_DEBUG_URL : 'http://localhost:5173/debug/model';
 const modelName = 'MODEL2';
 const maxIndex = 159
 
@@ -11,7 +11,7 @@ test('Verificando altura do botão Continuar', async t => {
     await t.resizeWindow(1440, 900);
     await t.eval(() => location.reload(true));
     
-    const modelElement = Selector("a").withExactText(modelName);
+    const modelElement = Selector("a").withExactText(modelName).with({ visibilityCheck: true, timeout: 300000 });
     await t.click(modelElement);
 
     for (let index = 0; index <= maxIndex; index++) {

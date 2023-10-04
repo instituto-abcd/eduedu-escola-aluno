@@ -30,30 +30,41 @@ export function useQuestionHelper(question: Question) {
     [question]
   );
 
-  const textTitles = useMemo(() => getTitlesOfType("TEXT"), [getTitlesOfType]);
+  const textTitles = getTitlesOfType("TEXT");
 
-  const imageTitles = useMemo(
-    () => getTitlesOfType("IMAGE"),
-    [getTitlesOfType]
+  const imageTitles = getTitlesOfType("IMAGE").filter(
+    (title) => title.file_url
   );
 
-  const audioTitles = getTitlesOfType("AUDIO");
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
   const supportText = getSupportText("ID da historinha");
 
-  function getLottieJson(url: string) {
-    return fetch(url)
-      .then((res) => res.json())
-      .catch((err) => {
-        return null;
-      });
+  function optionArrKey(option: QuestionOption, inx?: number) {
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
+      option.image_url ?? option.sound_url ?? "_"
+    })`;
   }
 
-  function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
-      })`;
-  }
+  /*
+   * Audio helpers
+   */
+  const audioTitles = getTitlesOfType("AUDIO").filter(
+    (title) => title.file_url
+  );
+  const hasAudioTitle = useMemo(
+    () => audioTitles.some((title) => title.file_url),
+    [audioTitles]
+  );
+  const audioTitleAutoplay = (index: number) => {
+    if (index !== 0) return false;
+    const rule =
+      Array.isArray(question.rules) &&
+      question.rules.find((rule) => rule.name === "autoplay");
+
+    if (!rule) return false;
+    return rule.value === "true";
+  };
 
   return {
     hasTitleOfType,
@@ -64,7 +75,8 @@ export function useQuestionHelper(question: Question) {
     videoTitles,
     lottieTitles,
     supportText,
-    getLottieJson,
+    hasAudioTitle,
+    audioTitleAutoplay,
     optionArrKey,
     isExam,
     isPlanet,

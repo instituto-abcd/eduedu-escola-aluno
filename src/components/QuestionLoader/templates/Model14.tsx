@@ -1,19 +1,17 @@
-// Aux & Utils:
-import { useState } from "react";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { Group, LoadingOverlay, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
-import { ModelProps } from ".";
-
-// Components:
-import { TextOptionButton } from "~/components/OptionButton";
-import { Box, Group, Image, LoadingOverlay, Stack } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton/EduButton";
+import { TextOptionButton } from "~/components/OptionButton";
+import { boardW, lousaHeight } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 export function Model14({ question, answerCallback }: ModelProps) {
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -32,81 +30,68 @@ export function Model14({ question, answerCallback }: ModelProps) {
     });
   }
 
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles
-          .filter((title) => title.file_url)
-          .map((title) => (
-            <AudioButton src={title.file_url!} key={title.file_url} autoPlay />
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url!}
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
           ))}
+        </Group>
+      )}
+
+      <Group w="100%" my="auto" position="center" spacing={boardW(120)}>
+        {question.options.map(
+          (option) =>
+            option.image_url && (
+              <img
+                width={boardW(280)}
+                style={{ maxHeight: boardW(280) }}
+                src={option.image_url}
+                key={option.image_url}
+              />
+            )
+        )}
+
+        <Stack w="45%">
+          {Array(circleSize)
+            .fill(null)
+            .map((_, inx) => (
+              <TextOptionButton
+                onClick={() =>
+                  setAnswer({
+                    position: inx,
+                    positionAnswer: inx,
+                  } as QuestionOption)
+                }
+                key={inx}
+                data-selected={answer?.position === inx}
+                style={{
+                  width: "100%",
+                }}
+              >
+                {inx + 1}
+              </TextOptionButton>
+            ))}
+        </Stack>
       </Group>
 
-      {/* Board content */}
-      <Group
-        w="100%"
-        h="100%"
-        mx="auto"
-        spacing={(lousaWidth * 5 / 100)}
-      >
-        <Box
-          maw={lousaWidth * 40 / 100}
-          w="100%"
-          display="flex"
-        >
-          {question.options.map(
-            (option) =>
-              option.image_url && (
-                <img
-                  style={{
-                    margin: 'auto',
-                    height: `${lousaHeight * 40 / 100}px`,
-                  }}
-                  src={option.image_url}
-                  key={option.image_url}
-                />
-              )
-          )}
-        </Box>
-        <Box maw={lousaWidth * 40 / 100} w="100%">
-          <Stack m="auto">
-            {Array(circleSize)
-              .fill(null)
-              .map((_, inx) => (
-                <TextOptionButton
-                  onClick={() =>
-                    setAnswer({
-                      position: inx,
-                      positionAnswer: inx,
-                    } as QuestionOption)
-                  }
-                  key={inx}
-                  data-selected={answer?.position === inx}
-                  style={{
-                    width: '100%'
-                  }}
-                >
-                  {inx + 1}
-                </TextOptionButton>
-              ))}
-          </Stack>
-        </Box>
-      </Group >
-
-      {/* Continue to the next screen button */}
-      < EduButton
-        disabled={answer === null}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
+      <EduButton disabled={answer === null} onClick={submitAnswer}>
         Continuar
-      </EduButton >
+      </EduButton>
 
-      {/* Loading animation */}
-      < LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

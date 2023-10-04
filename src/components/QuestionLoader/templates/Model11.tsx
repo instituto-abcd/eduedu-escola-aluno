@@ -105,11 +105,11 @@ export function Model11({ question, answerCallback }: ModelProps) {
   /* 🧙🏻 */
   const slotsQty = textToComplete
     ? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-      1 <=
+        1 <=
       0
       ? 1
       : textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-      1
+        1
     : 1;
 
   function getTextToComplete(titles: QuestionTitle[]) {
@@ -270,14 +270,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
         </Stack>
       </Group>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto"
-        }}
-      >
+      <EduButton disabled={answer.includes(null)} onClick={submitAnswer}>
         Continuar
       </EduButton>
 

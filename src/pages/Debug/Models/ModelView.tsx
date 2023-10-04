@@ -1,10 +1,7 @@
-// Aux & Utils:
 import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useDebugModelQuestions } from "~/api/debug";
 import { boardW, lousaHeight } from "~/constants/dimensions";
-
-// Components:
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";

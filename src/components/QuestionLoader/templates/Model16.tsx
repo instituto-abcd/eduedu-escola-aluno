@@ -1,25 +1,81 @@
-import { Group } from "@mantine/core";
+import { Group, LoadingOverlay } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import Lottie from "react-lottie";
-import { useEffect, useState } from "react";
+import { useDownloadLottieFile } from "~/api/lottie";
+import { useEffect, useRef } from "react";
+import { boardW, lousaHeight } from "~/constants/dimensions";
+import { EduButton } from "~/components/EduButton";
+import { usePlanetAnswer } from "~/api/planet";
 
 export function Model16({ question, answerCallback }: ModelProps) {
-  const { audioTitles, lottieTitles, getLottieJson } =
-    useQuestionHelper(question);
-  const [lottieJson, setLottieJson] = useState<string>();
+  const { audioTitles, lottieTitles } = useQuestionHelper(question);
+
+  const { data } = useDownloadLottieFile(lottieTitles[0]?.file_url ?? "", {
+    enabled: !!lottieTitles[0]?.file_url,
+    onSuccess: console.log,
+  });
+
+  const { mutate, isLoading } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  function submitAnswer() {
+    mutate({
+      planetId: question.planet_id,
+      questionId: question.id,
+      optionsAnswered: [],
+    });
+  }
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (lottieTitles) {
-      void (async () => {
-        const json = await getLottieJson(lottieTitles[0].file_url!);
-        if (json) {
-          setLottieJson(JSON.stringify(json));
-        }
-      })();
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = boardW(400);
+      canvas.height = boardW(400);
+
+      let isDrawing = false;
+      let prevX = 0;
+      let prevY = 0;
+
+      canvas.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        prevX = e.offsetX;
+        prevY = e.offsetY;
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!isDrawing) return;
+
+        const x = e.offsetX;
+        const y = e.offsetY;
+
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        prevX = x;
+        prevY = y;
+      });
+
+      canvas.addEventListener("mouseup", () => {
+        isDrawing = false;
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        isDrawing = false;
+      });
     }
-  }, []);
+  }, [canvasRef]);
 
   return (
     <>
@@ -38,12 +94,14 @@ export function Model16({ question, answerCallback }: ModelProps) {
       )}
 
       <Group position="apart" spacing={137}>
-        {lottieJson && (
+        <canvas ref={canvasRef} />
+
+        {data && (
           <Lottie
             options={{
               loop: true,
               autoplay: true,
-              animationData: lottieJson,
+              animationData: data,
               rendererSettings: {
                 preserveAspectRatio: "xMidYMid slice",
               },
@@ -53,6 +111,13 @@ export function Model16({ question, answerCallback }: ModelProps) {
           />
         )}
       </Group>
+
+      <EduButton onClick={submitAnswer}>Continuar</EduButton>
+
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

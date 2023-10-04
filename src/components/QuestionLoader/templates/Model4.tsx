@@ -13,7 +13,7 @@ import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -55,6 +55,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
@@ -65,6 +66,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
+      {/* Board content */}
       <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
         <Group noWrap spacing={20} align="center" position="center">
           {textTitles.map((title) => (
@@ -73,7 +75,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
               dangerouslySetInnerHTML={{ __html: title.description }}
               align="center"
               color="dark.3"
-              size={imageTitles.length > 0 ? 20 : 30}
+              size={imageTitles.length > 0 ? boardW(20) : boardW(20)}
               w={imageTitles.length > 0 ? "50%" : undefined}
             />
           ))}
@@ -136,9 +138,7 @@ export function Model4({ question, answerCallback }: ModelProps) {
         disabled={!answer}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

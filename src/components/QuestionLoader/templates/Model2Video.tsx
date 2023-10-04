@@ -118,8 +118,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
         disabled={slots.includes(null)}
         onClick={submitAnswer}
         style={{
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: 'auto'
         }}
       >
         Continuar

@@ -129,7 +129,13 @@ export function Model8({ question, answerCallback }: ModelProps) {
         </Stack>
       </Group>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
       <LoadingOverlay

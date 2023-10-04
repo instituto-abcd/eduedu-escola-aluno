@@ -101,7 +101,13 @@ export function Model22({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Continue to the next screen button */}
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

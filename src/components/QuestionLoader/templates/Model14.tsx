@@ -95,8 +95,13 @@ export function Model14({ question, answerCallback }: ModelProps) {
       </Group >
 
       {/* Continue to the next screen button */}
-      < EduButton disabled={answer === null
-      } onClick={submitAnswer} >
+      < EduButton
+        disabled={answer === null}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton >
 

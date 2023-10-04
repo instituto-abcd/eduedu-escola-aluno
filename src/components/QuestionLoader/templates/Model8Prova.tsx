@@ -207,9 +207,7 @@ export function Model8Prova({ question, answerCallback }: ModelProps) {
         disabled={!answer}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

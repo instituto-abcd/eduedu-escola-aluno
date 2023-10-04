@@ -138,7 +138,13 @@ export function Model18({ question, answerCallback }: ModelProps) {
         </Group>
       </Stack>
 
-      <EduButton disabled={selected.length < 3} onClick={submitAnswer}>
+      <EduButton
+        disabled={selected.length < 3}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

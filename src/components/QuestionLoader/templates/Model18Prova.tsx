@@ -70,6 +70,7 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
@@ -80,6 +81,7 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
         ))}
       </Group>
 
+      {/* Board content */}
       <Stack>
         {imageTitles.map((title) => (
           <Image
@@ -151,18 +153,18 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
         </Stack>
       </Stack>
 
+      {/* Continue to the next screen button */}
       <EduButton
         disabled={selected.length < 3}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar
       </EduButton>
 
+      {/* Loading animation */}
       <LoadingOverlay
         visible={isLoading}
         style={{ maxHeight: (lousaHeight * 80) / 100 }}

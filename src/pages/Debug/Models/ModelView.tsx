@@ -1,10 +1,13 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { QuestionInfo } from "../components/QuestionInfo";
-import { Button, LoadingOverlay, Stack } from "@mantine/core";
-import { QuestionLoader } from "~/components/QuestionLoader";
-import { useDebugModelQuestions } from "~/api/debug";
+// Aux & Utils:
 import { useEffect, useState } from "react";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useDebugModelQuestions } from "~/api/debug";
+import { boardW, lousaHeight } from "~/constants/dimensions";
+
+// Components:
+import { Button, LoadingOverlay, Stack } from "@mantine/core";
+import { QuestionInfo } from "../components/QuestionInfo";
+import { QuestionLoader } from "~/components/QuestionLoader";
 import { ModelProgress } from "../components/ModelProgress";
 
 export function ModelView() {
@@ -58,10 +61,10 @@ export function ModelView() {
   return (
     <>
       <Stack
-        spacing={lousaWidth * 0.045}
-        align="center"
         h="100%"
         w="100%"
+        align="center"
+        spacing={boardW(40)}
         style={{ position: "relative" }}
       >
         {currentQuestion !== -1 && data?.[currentQuestion] && (

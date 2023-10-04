@@ -28,7 +28,7 @@ jobs:
           yarn install
           yarn test:models
       
-      - name: Send Build Error Message
+      - name: Send Error Message
         if: failure()
         uses: appleboy/discord-action@master
         with:
@@ -37,4 +37,4 @@ jobs:
           color: "#ff0000"
           username: "GitHub Bot"
           avatar_url: https://i.imgur.com/Kvn45ev.png
-          message: Portal Aluno | Algo de errado não está certo com o código... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          message: Portal Aluno | Teste E2E contém inconsistências... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

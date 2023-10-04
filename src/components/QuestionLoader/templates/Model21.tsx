@@ -1,10 +1,10 @@
-import { Group, LoadingOverlay, ScrollArea, Text, Title } from "@mantine/core";
+import { Group, LoadingOverlay, ScrollArea, Stack, Text, Title } from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 export function Model21({ question, answerCallback }: ModelProps) {
   const { audioTitles, textTitles } = useQuestionHelper(question);
@@ -32,9 +32,10 @@ export function Model21({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
-        <Group>
-          {audioTitles
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
+        {audioTitles.filter((title) => title.file_url).length > 0 && (
+          audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
@@ -42,16 +43,24 @@ export function Model21({ question, answerCallback }: ModelProps) {
                 src={title.file_url!}
                 autoPlay={autoPlay}
               />
-            ))}
-        </Group>
-      )}
+            ))
+        )}
+      </Group>
 
-      <Title color="dark.3">{title}</Title>
+      {/* Board content */}
+      <Stack>
+        <Title color="dark.3" size={boardW(30)}>{title}</Title>
 
-      <ScrollArea maw={800} my="auto">
-        <Text dangerouslySetInnerHTML={{ __html: statement }} color="dark.3" />
-      </ScrollArea>
+        <ScrollArea maw={boardW(800)} mah={boardW(390)} type="always">
+          <Text
+            dangerouslySetInnerHTML={{ __html: statement }}
+            color="dark.3"
+            size={boardW(20)}
+          />
+        </ScrollArea>
+      </Stack>
 
+      {/* Continue to the next screen button */}
       <EduButton
         onClick={submitAnswer}
         style={{
@@ -59,6 +68,8 @@ export function Model21({ question, answerCallback }: ModelProps) {
         }}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

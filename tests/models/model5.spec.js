@@ -1,4 +1,5 @@
 import { Selector } from 'testcafe';
+const cliProgress = require('cli-progress');
 
 const pageUrl = process.env.APP_DEBUG_URL ? process.env.APP_DEBUG_URL : 'http://localhost:5173/debug/model';
 const modelName = 'MODEL5';
@@ -30,8 +31,9 @@ test('Verificando altura do botão Continuar', async t => {
             console.log(`\x1b[33m ${modelName}: ${pageUrl}/${modelName}?index=${index} - INCONSISTENTE \x1b[0m`);
         }
 
-        // await t.expect(buttonHeight).gte(33);
-        // await t.expect(buttonHeight).lte(35);
+        progressBar.update(index);
+        await t.expect(buttonHeight).gte(33);
+        await t.expect(buttonHeight).lte(35);
 
         const nextElement = Selector('a').withText('Próximo');
         await t.click(nextElement);

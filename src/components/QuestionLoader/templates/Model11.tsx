@@ -177,77 +177,78 @@ export function Model11({ question, answerCallback }: ModelProps) {
           spacing={boardW(60)}
         >
           <Group spacing={0}>
-            {textToComplete.description
-              .replaceAll("\\n", "")
-              .split(/_+/g) // separa os segmentos de texto dos underlines
-              .filter((w) => w !== "") // limpa fragmentos de texto vazio
-              .map((w, inx, arr) => {
-                const notLastFragment = arr.length !== inx + 1;
-                const isLastFragment = arr.length === 1 && w.endsWith(" ");
-                const isFirstFragment = arr.length === 1 && w.startsWith(" ");
+            {textToComplete &&
+              textToComplete.description
+                .replaceAll("\\n", "")
+                .split(/_+/g) // separa os segmentos de texto dos underlines
+                .filter((w) => w !== "") // limpa fragmentos de texto vazio
+                .map((w, inx, arr) => {
+                  const notLastFragment = arr.length !== inx + 1;
+                  const isLastFragment = arr.length === 1 && w.endsWith(" ");
+                  const isFirstFragment = arr.length === 1 && w.startsWith(" ");
 
-                const canRenderLast =
-                  (isLastFragment || notLastFragment) && !isFirstFragment;
-                const canRenderFirst = isFirstFragment && !isLastFragment;
+                  const canRenderLast =
+                    (isLastFragment || notLastFragment) && !isFirstFragment;
+                  const canRenderFirst = isFirstFragment && !isLastFragment;
 
-                /*
-                 *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
-                 *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
-                 *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
-                 */
+                  /*
+                   *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
+                   *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
+                   *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
+                   */
 
-                const isMultipleAnswer = arr.length > 2;
+                  const isMultipleAnswer = arr.length > 2;
 
-                const handleDrop = (item: QuestionOption | null) =>
-                  handleAnswer(item, isMultipleAnswer ? inx : undefined);
-                const handleClear = () =>
-                  handleAnswer(null, isMultipleAnswer ? inx : undefined);
+                  const handleDrop = (item: QuestionOption | null) =>
+                    handleAnswer(item, isMultipleAnswer ? inx : undefined);
+                  const handleClear = () =>
+                    handleAnswer(null, isMultipleAnswer ? inx : undefined);
 
-                return (
-                  <Fragment key={w}>
-                    {canRenderFirst && (
-                      <DragLetterSlot
-                        onDrop={handleDrop}
-                        option={answer[inx] ?? null}
-                        onClear={handleClear}
-                        className={classes.slot}
-                        style={{
-                          width: "auto",
-                          height: boardW(50),
-                          fontSize: boardW(18),
-                        }}
-                      />
-                    )}
-                    {w.split(" ").map((frag, inx) => (
-                      <Text
-                        color="dark.3"
-                        size={boardW(24)}
-                        weight={700}
-                        p={0}
-                        my={6}
-                        key={inx}
-                      >
-                        &nbsp;
-                        {frag === " " ? "\u00A0" : frag}
-                      </Text>
-                    ))}
+                  return (
+                    <Fragment key={w}>
+                      {canRenderFirst && (
+                        <DragLetterSlot
+                          onDrop={handleDrop}
+                          option={answer[inx] ?? null}
+                          onClear={handleClear}
+                          className={classes.slot}
+                          style={{
+                            width: "auto",
+                            height: boardW(50),
+                            fontSize: boardW(18),
+                          }}
+                        />
+                      )}
+                      {w.split(" ").map((frag, inx) => (
+                        <Text
+                          color="dark.3"
+                          size={boardW(24)}
+                          weight={700}
+                          p={0}
+                          my={2.5}
+                          mx={2.5}
+                          key={inx}
+                        >
+                          {frag}
+                        </Text>
+                      ))}
 
-                    {canRenderLast && (
-                      <DragLetterSlot
-                        onDrop={handleDrop}
-                        option={answer[inx] ?? null}
-                        onClear={handleClear}
-                        className={classes.slot}
-                        style={{
-                          width: "auto",
-                          height: boardW(50),
-                          fontSize: boardW(18),
-                        }}
-                      />
-                    )}
-                  </Fragment>
-                );
-              })}
+                      {canRenderLast && (
+                        <DragLetterSlot
+                          onDrop={handleDrop}
+                          option={answer[inx] ?? null}
+                          onClear={handleClear}
+                          className={classes.slot}
+                          style={{
+                            width: "auto",
+                            height: boardW(50),
+                            fontSize: boardW(18),
+                          }}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
           </Group>
 
           <Group align="center" position="center">

@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max_old_space_size=4096"
+      APP_DEBUG_URL: ${{ secrets.APP_DEBUG_URL }}
 
     steps:
       - name: Checkout 

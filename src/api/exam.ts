@@ -54,6 +54,7 @@ export type Question = {
     | "MODEL10"
     | "MODEL10-PROVA"
     | "MODEL11"
+    | "MODEL11-PROVA"
     | "MODEL12"
     | "MODEL13"
     | "MODEL14"

@@ -66,6 +66,13 @@ export function useQuestionHelper(question: Question) {
     return rule.value === "true";
   };
 
+  /*
+   * Rule helpers
+   */
+
+  const getRule = (rule: string) =>
+    question.rules?.find((r) => r.name === rule);
+
   return {
     hasTitleOfType,
     getTitlesOfType,
@@ -78,6 +85,7 @@ export function useQuestionHelper(question: Question) {
     hasAudioTitle,
     audioTitleAutoplay,
     optionArrKey,
+    getRule,
     isExam,
     isPlanet,
   };

@@ -37,6 +37,7 @@ export function Model11({ question, answerCallback }: ModelProps) {
   const { classes } = useStyles();
   const {
     isExam,
+    getRule,
 
     imageTitles,
     textTitles,
@@ -101,7 +102,28 @@ export function Model11({ question, answerCallback }: ModelProps) {
    *    Helpers para o texto de completar
    */
   const textToComplete = getTextToComplete(textTitles);
-  const isCompleteText = !!textToComplete;
+  const shouldRepeatAnswer = checkShouldRepeatAnswer();
+  const isFullWidth = imageTitles.length === 0;
+
+  function checkShouldRepeatAnswer() {
+    const answerRule = getRule("answers");
+    if (!answerRule) return false;
+
+    const answers = answerRule.value.split(",");
+    if (answers.length === 1) return false;
+    if (new Set(answers).size !== answers.length) return true;
+    return false;
+  }
+
+  function getTextToComplete(titles: QuestionTitle[]) {
+    return titles.find(
+      (title) =>
+        title.placeholder?.startsWith("Texto a ser preenchido") ||
+        title.placeholder?.includes("preenchido") ||
+        title.placeholder?.includes("preencher")
+    ) as QuestionTitle;
+  }
+
   /* 🧙🏻 */
   const slotsQty = textToComplete
     ? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
@@ -111,15 +133,6 @@ export function Model11({ question, answerCallback }: ModelProps) {
       : textToComplete.description.split(/_./g).filter((w) => w !== "").length -
         1
     : 1;
-
-  function getTextToComplete(titles: QuestionTitle[]) {
-    return titles.find(
-      (title) =>
-        title.placeholder?.startsWith("Texto a ser preenchido") ||
-        title.placeholder?.includes("preenchido") ||
-        title.placeholder?.includes("preencher")
-    );
-  }
 
   useEffect(() => {
     const initialSlots = new Array<null>(slotsQty).fill(null);
@@ -158,83 +171,84 @@ export function Model11({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-        <Stack align="center" w="45%" spacing={boardW(60)}>
-          {isCompleteText && (
-            <Group spacing={0}>
-              {textToComplete.description
-                .replaceAll("\\n", "")
-                .split(/_+/g) // separa os segmentos de texto dos underlines
-                .filter((w) => w !== "") // limpa fragmentos de texto vazio
-                .map((w, inx, arr) => {
-                  const notLastFragment = arr.length !== inx + 1;
-                  const isLastFragment = arr.length === 1 && w.endsWith(" ");
-                  const isFirstFragment = arr.length === 1 && w.startsWith(" ");
+        <Stack
+          align="center"
+          w={isFullWidth ? "100%" : "45%"}
+          spacing={boardW(60)}
+        >
+          <Group spacing={0}>
+            {textToComplete.description
+              .replaceAll("\\n", "")
+              .split(/_+/g) // separa os segmentos de texto dos underlines
+              .filter((w) => w !== "") // limpa fragmentos de texto vazio
+              .map((w, inx, arr) => {
+                const notLastFragment = arr.length !== inx + 1;
+                const isLastFragment = arr.length === 1 && w.endsWith(" ");
+                const isFirstFragment = arr.length === 1 && w.startsWith(" ");
 
-                  const canRenderLast =
-                    (isLastFragment || notLastFragment) && !isFirstFragment;
-                  const canRenderFirst = isFirstFragment && !isLastFragment;
+                const canRenderLast =
+                  (isLastFragment || notLastFragment) && !isFirstFragment;
+                const canRenderFirst = isFirstFragment && !isLastFragment;
 
-                  /*
-                   *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
-                   *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
-                   *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
-                   */
+                /*
+                 *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
+                 *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
+                 *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
+                 */
 
-                  const isMultipleAnswer = arr.length > 2;
+                const isMultipleAnswer = arr.length > 2;
 
-                  const handleDrop = (item: QuestionOption | null) =>
-                    handleAnswer(item, isMultipleAnswer ? inx : undefined);
-                  const handleClear = () =>
-                    handleAnswer(null, isMultipleAnswer ? inx : undefined);
+                const handleDrop = (item: QuestionOption | null) =>
+                  handleAnswer(item, isMultipleAnswer ? inx : undefined);
+                const handleClear = () =>
+                  handleAnswer(null, isMultipleAnswer ? inx : undefined);
 
-                  return (
-                    <Fragment key={w}>
-                      {canRenderFirst && (
-                        <DragLetterSlot
-                          onDrop={handleDrop}
-                          option={answer[inx] ?? null}
-                          onClear={handleClear}
-                          className={classes.slot}
-                          style={{
-                            width: "auto",
-                            height: boardW(50),
-                            fontSize: boardW(18),
-                            marginInline: 2,
-                          }}
-                        />
-                      )}
-                      {w.split("").map((frag, inx) => (
-                        <Text
-                          color="dark.3"
-                          size={boardW(24)}
-                          weight={700}
-                          p={0}
-                          m={0}
-                          key={inx}
-                        >
-                          {frag === " " ? "\u00A0" : frag}
-                        </Text>
-                      ))}
+                return (
+                  <Fragment key={w}>
+                    {canRenderFirst && (
+                      <DragLetterSlot
+                        onDrop={handleDrop}
+                        option={answer[inx] ?? null}
+                        onClear={handleClear}
+                        className={classes.slot}
+                        style={{
+                          width: "auto",
+                          height: boardW(50),
+                          fontSize: boardW(18),
+                        }}
+                      />
+                    )}
+                    {w.split(" ").map((frag, inx) => (
+                      <Text
+                        color="dark.3"
+                        size={boardW(24)}
+                        weight={700}
+                        p={0}
+                        my={6}
+                        key={inx}
+                      >
+                        &nbsp;
+                        {frag === " " ? "\u00A0" : frag}
+                      </Text>
+                    ))}
 
-                      {canRenderLast && (
-                        <DragLetterSlot
-                          onDrop={handleDrop}
-                          option={answer[inx] ?? null}
-                          onClear={handleClear}
-                          className={classes.slot}
-                          style={{
-                            width: "auto",
-                            height: boardW(50),
-                            fontSize: boardW(18),
-                            marginInline: 2,
-                          }}
-                        />
-                      )}
-                    </Fragment>
-                  );
-                })}
-            </Group>
-          )}
+                    {canRenderLast && (
+                      <DragLetterSlot
+                        onDrop={handleDrop}
+                        option={answer[inx] ?? null}
+                        onClear={handleClear}
+                        className={classes.slot}
+                        style={{
+                          width: "auto",
+                          height: boardW(50),
+                          fontSize: boardW(18),
+                        }}
+                      />
+                    )}
+                  </Fragment>
+                );
+              })}
+          </Group>
 
           <Group align="center" position="center">
             {question.options
@@ -253,14 +267,20 @@ export function Model11({ question, answerCallback }: ModelProps) {
                     option={option}
                     key={inx}
                     className={classes.option}
-                    hidden={answer.some(
-                      (item) =>
-                        JSON.stringify({
-                          ...item,
-                          positionAnswer: undefined,
-                        }) ===
-                        JSON.stringify({ ...option, positionAnswer: undefined })
-                    )}
+                    hidden={
+                      !shouldRepeatAnswer &&
+                      answer.some(
+                        (item) =>
+                          JSON.stringify({
+                            ...item,
+                            positionAnswer: undefined,
+                          }) ===
+                          JSON.stringify({
+                            ...option,
+                            positionAnswer: undefined,
+                          })
+                      )
+                    }
                   >
                     {option.description}
                   </DraggableLetters>

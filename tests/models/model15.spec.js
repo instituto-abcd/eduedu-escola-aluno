@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 
-const pageUrl = 'http://localhost:5173/debug/model';
+const pageUrl = process.env.APP_DEBUG_URL ? process.env.APP_DEBUG_URL : 'http://localhost:5173/debug/model';
 const modelName = 'MODEL15';
 const maxIndex = 222
 

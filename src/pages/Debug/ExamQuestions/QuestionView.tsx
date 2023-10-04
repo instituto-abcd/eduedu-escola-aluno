@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { Button, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
+import { lousaWidth } from "~/constants/dimensions";
 
 export function QuestionView() {
   const location = useLocation();
@@ -12,7 +13,13 @@ export function QuestionView() {
 
   return (
     <>
-      <Stack h="100%" w="100%" style={{ position: "relative" }}>
+      <Stack
+        spacing={lousaWidth * 0.045}
+        align="center"
+        h="100%"
+        w="100%"
+        style={{ position: "relative" }}
+      >
         {question && (
           <QuestionLoader question={question} answerCallback={() => null} />
         )}

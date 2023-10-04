@@ -9,6 +9,7 @@ import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import feedbackNegative from "~/assets/audio/feedback_error.mp3";
 import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
+import { lousaWidth } from "~/constants/dimensions";
 
 export function PlanetPage() {
   const location = useLocation();
@@ -36,8 +37,8 @@ export function PlanetPage() {
     answer:
       | Question
       | {
-        planetCompleted?: true;
-      }
+          planetCompleted?: true;
+        }
   ) {
     if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
@@ -63,20 +64,19 @@ export function PlanetPage() {
   return (
     <>
       <Stack
+        spacing={lousaWidth * 0.045}
         align="center"
-        justify="space-between"
         h="100%"
+        w="100%"
         style={{ position: "relative" }}
       >
         {isLoading && <Loader />}
-        <Stack align="center" h="100%" w="100%">
-          {currentQuestion && (
-            <QuestionLoader
-              question={currentQuestion}
-              answerCallback={handleAnswer}
-            />
-          )}
-        </Stack>
+        {currentQuestion && (
+          <QuestionLoader
+            question={currentQuestion}
+            answerCallback={handleAnswer}
+          />
+        )}
       </Stack>
 
       <audio

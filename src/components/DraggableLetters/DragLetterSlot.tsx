@@ -32,9 +32,10 @@ export function DragLetterSlot({
   accept = "ANSWER_LETTERS",
   option,
   onClear,
+  className,
   ...props
 }: Props) {
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
 
   const [, drop] = useDrop(
     () => ({
@@ -58,7 +59,7 @@ export function DragLetterSlot({
     );
 
   return (
-    <div className={classes.card} ref={drop} {...props}>
+    <div className={cx(classes.card, className)} ref={drop} {...props}>
       <p style={{ opacity: 0 }}>GG</p>
     </div>
   );

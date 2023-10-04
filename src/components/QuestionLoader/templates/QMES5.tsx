@@ -71,7 +71,6 @@ export function QMES5({ question, answerCallback }: ModelProps) {
         {/* Second column (ATTENTION: it was coded to use only 2 cards!!! )*/}
         <ScrollArea
           mah={scrollAreaHeight}
-          maw={scrollAreaWidth * 70 / 100}
         >
           <SimpleGrid
             cols={2}
@@ -104,9 +103,7 @@ export function QMES5({ question, answerCallback }: ModelProps) {
         disabled={selected.length === 0}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

@@ -40,6 +40,9 @@ export function Model15({ question, answerCallback }: ModelProps) {
         onClick={submitAnswer}
         disabled={mediaTrack.isPlaying}
         withFeedbackSound={false}
+        style={{
+          marginTop: 'auto'
+        }}
       >
         Continuar
       </EduButton>

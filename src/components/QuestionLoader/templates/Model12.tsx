@@ -84,7 +84,13 @@ export function Model12({ question, answerCallback }: ModelProps) {
         <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
 
-      <EduButton disabled={disabled} onClick={submitAnswer}>
+      <EduButton
+        disabled={disabled}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
       <LoadingOverlay

@@ -27,9 +27,10 @@ export function Model30({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {audioTitles.length > 0 && (
-        <Group>
-          {audioTitles
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
+        {audioTitles.length > 0 && (
+          audioTitles
             .filter((title) => !!title.file_url)
             .map((title, inx) => (
               <AudioButton
@@ -37,10 +38,11 @@ export function Model30({ question, answerCallback }: ModelProps) {
                 autoPlay={inx === 0}
                 key={title.file_url}
               />
-            ))}
-        </Group>
-      )}
+            ))
+        )}
+      </Group>
 
+      {/* Board content */}
       {imageTitles.length > 0 && (
         <>
           <img
@@ -56,9 +58,18 @@ export function Model30({ question, answerCallback }: ModelProps) {
         </>
       )}
 
-      <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={mediaTrack.isPlaying}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

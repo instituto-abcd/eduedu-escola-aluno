@@ -17,7 +17,7 @@ import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 // TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
 
@@ -100,7 +100,7 @@ export function Model27({ question, answerCallback }: ModelProps) {
         }
 
         {currentSlide.description && (
-          <ScrollArea w={800} mah={400}>
+          <ScrollArea w={boardW(900)} mah={boardW(300)}>
             <Box>
               <Text
                 fz="lg"
@@ -121,9 +121,18 @@ export function Model27({ question, answerCallback }: ModelProps) {
           </TextOptionButton>
         </Group>
       </Stack>
-      <EduButton disabled={disabled} onClick={submitAnswer}>
+
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={disabled}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

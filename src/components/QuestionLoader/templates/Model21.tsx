@@ -52,7 +52,13 @@ export function Model21({ question, answerCallback }: ModelProps) {
         <Text dangerouslySetInnerHTML={{ __html: statement }} color="dark.3" />
       </ScrollArea>
 
-      <EduButton onClick={submitAnswer}>Continuar</EduButton>
+      <EduButton
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}>
+        Continuar
+      </EduButton>
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

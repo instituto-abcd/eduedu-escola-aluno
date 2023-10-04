@@ -174,9 +174,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
         disabled={disabled}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

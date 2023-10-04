@@ -96,7 +96,13 @@ export function Model13({ question, answerCallback }: ModelProps) {
 
       <CardStack options={options} />
 
-      <EduButton disabled={options.length > 0} onClick={submitAnswer}>
+      <EduButton
+        disabled={options.length > 0}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

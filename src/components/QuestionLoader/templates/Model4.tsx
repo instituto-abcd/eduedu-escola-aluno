@@ -5,6 +5,7 @@ import {
   Stack,
   Text,
   Title,
+  createStyles,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
@@ -13,14 +14,29 @@ import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
+const useStyles = createStyles({
+  title: {
+    "*": {
+      fontSize: boardW(20),
+    },
+  },
+});
+
 export function Model4({ question, answerCallback }: ModelProps) {
+  const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { audioTitles, textTitles, imageTitles, optionArrKey, isExam } =
-    useQuestionHelper(question);
+  const {
+    audioTitles,
+    textTitles,
+    imageTitles,
+    isExam,
+    hasAudioTitle,
+    audioTitleAutoplay,
+  } = useQuestionHelper(question);
 
   const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q),
@@ -55,46 +71,46 @@ export function Model4({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group mx="auto">
-        {audioTitles.map((title) => (
-          <AudioButton
-            key={title.position}
-            src={title.file_url ?? ""}
-            autoPlay={!!title.file_url}
-          />
-        ))}
-      </Group>
-
-      <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
-        <Group noWrap spacing={20} align="center" position="center">
-          {textTitles.map((title) => (
-            <Title
-              key={title.description}
-              dangerouslySetInnerHTML={{ __html: title.description }}
-              align="center"
-              color="dark.3"
-              size={imageTitles.length > 0 ? 20 : 30}
-              w={imageTitles.length > 0 ? "50%" : undefined}
-            />
-          ))}
-
-          {imageTitles.map((title) => (
-            <Image
-              mx="auto"
-              src={title.file_url}
-              alt={title.description}
-              width={(lousaWidth * 15) / 100}
-              key={title.file_url}
-              style={{ flexGrow: 1 }}
-              styles={{ image: { marginInline: "auto" } }}
+      {hasAudioTitle && (
+        <Group mx="auto">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={title.position}
+              src={title.file_url ?? ""}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
         </Group>
+      )}
+
+      <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
+        {textTitles.map((title) => (
+          <Title
+            key={title.description}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            align="center"
+            color="dark.3"
+            w={imageTitles.length > 0 ? "50%" : undefined}
+            className={classes.title}
+          />
+        ))}
+
+        {imageTitles.map((title) => (
+          <Image
+            mx="auto"
+            src={title.file_url}
+            alt={title.description}
+            width={(lousaWidth * 15) / 100}
+            key={title.file_url}
+            style={{ flexGrow: 1 }}
+            styles={{ image: { marginInline: "auto" } }}
+          />
+        ))}
 
         <Group>
           {question.options.map((option, inx) => (
             <OptionButton
-              key={optionArrKey(option, inx)}
+              key={inx}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               onClick={() => setAnswer(option)}
               sound={option.sound_url ?? undefined}
@@ -131,20 +147,10 @@ export function Model4({ question, answerCallback }: ModelProps) {
         </Group>
       </Stack>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
+      <EduButton disabled={!answer} onClick={submitAnswer}>
         Continuar
       </EduButton>
 
-      {/* Loading animation */}
       <LoadingOverlay
         visible={isLoading}
         style={{ maxHeight: (lousaHeight * 80) / 100 }}

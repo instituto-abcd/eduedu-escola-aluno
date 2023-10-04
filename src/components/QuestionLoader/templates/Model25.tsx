@@ -141,7 +141,14 @@ export function Model25({ question }: ModelProps) {
         </Group>
       </Stack>
 
-      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={answers.includes(null)}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

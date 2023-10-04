@@ -149,7 +149,13 @@ export function Model10({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Group>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

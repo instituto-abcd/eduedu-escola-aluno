@@ -59,7 +59,6 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
         {/* Second column (ATTENTION: it was coded to use only 2 cards!!! )*/}
         <ScrollArea
           mah={scrollAreaHeight}
-          maw={scrollAreaWidth * 70 / 100}
         >
           <SimpleGrid cols={2} style={{ placeItems: "center", marginBottom: "5px" }} spacing={20}>
             {question.options.map((option) => (
@@ -94,9 +93,7 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
         disabled={answer === null}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

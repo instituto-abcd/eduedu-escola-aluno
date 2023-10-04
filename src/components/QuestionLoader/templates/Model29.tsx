@@ -14,24 +14,25 @@ import { useEffect, useState } from "react";
 import { produce } from "immer";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   slot: {
-    width: 128,
-    height: 133,
+    width: boardW(120),
+    height: boardW(120),
     display: "grid",
     placeItems: "center",
   },
   card: {
-    width: 128,
-    height: 133,
+    width: boardW(120),
+    height: boardW(120),
     img: {
-      maxWidth: "85% !important",
+      marginBottom: '2px',
+      width: boardW(100),
     },
   },
   text: {
-    fontSize: 20,
+    fontSize: boardW(20),
     color: "#495057",
   },
 });
@@ -87,13 +88,14 @@ export function Model29({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Stack my="auto">
+      {/* Board content */}
+      <Stack my="auto" w={boardW(800)}>
         {textTitles[0]?.description && (
-          <ScrollArea h={225}>
+          <ScrollArea h={boardW(230)} type="always">
             <Text
               color="dark.3"
               dangerouslySetInnerHTML={{ __html: textTitles[0].description }}
-              size={20}
+              size={boardW(22)}
             />
           </ScrollArea>
         )}
@@ -117,7 +119,7 @@ export function Model29({ question, answerCallback }: ModelProps) {
                 />
               }
             >
-              <Text size={40} weight={700} color="dark.3">
+              <Text size={boardW(40)} weight={700} color="dark.3">
                 {inx + 1}
               </Text>
             </DraggableCardSlot>
@@ -142,9 +144,12 @@ export function Model29({ question, answerCallback }: ModelProps) {
         </Group>
       </Stack>
 
+      {/* Continue to the next screen button */}
       <EduButton disabled={disabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

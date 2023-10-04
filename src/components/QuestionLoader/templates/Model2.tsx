@@ -54,7 +54,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
       })
     );
   },
-  []);
+    []);
 
   const { audioTitles, isExam } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
@@ -65,6 +65,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
 
   return (
     <>
+      {/* Action buttons */}
       {audioTitles.some((title) => title.file_url) && (
         <Group>
           {audioTitles
@@ -79,6 +80,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
         </Group>
       )}
 
+      {/* Board content */}
       <Stack my="auto">
         <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {answers.map((slot, inx) => (
@@ -117,10 +119,18 @@ export function Model2({ question, answerCallback }: ModelProps) {
         </SimpleGrid>
       </Stack>
 
-      <EduButton disabled={answers.includes(null)} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={answers.includes(null)}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 
+      {/* Loading animation */}
       <LoadingOverlay
         visible={isLoading}
         style={{ maxHeight: (lousaHeight * 80) / 100 }}

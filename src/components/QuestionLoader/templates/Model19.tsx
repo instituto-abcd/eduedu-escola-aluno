@@ -106,7 +106,13 @@ export function Model19({ question, answerCallback }: ModelProps) {
       </Stack>
 
       {/* Continue to the next screen button */}
-      <EduButton disabled={disabled} onClick={submitAnswer}>
+      <EduButton
+        disabled={disabled}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}
+      >
         Continuar
       </EduButton>
 

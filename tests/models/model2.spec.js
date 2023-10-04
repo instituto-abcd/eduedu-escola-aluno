@@ -16,9 +16,9 @@ test('Verificando altura do botão Continuar', async t => {
 
     for (let index = 0; index <= maxIndex; index++) {
 
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(`\x1b[34m ${modelName}: ${index}/${maxIndex}`);
+        global.process.stdout.clearLine();
+        global.process.stdout.cursorTo(0);
+        global.process.stdout.write(`\x1b[34m ${modelName}: ${index}/${maxIndex}`);
         
         const continueButton = Selector("button")
             .withExactText("Continuar")

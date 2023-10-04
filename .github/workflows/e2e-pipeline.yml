@@ -27,7 +27,7 @@ jobs:
       - name: E2E Test Run
         run: |
           yarn install
-          yarn test:models
+          yarn test:model2
       
       - name: Send Error Message
         if: failure()

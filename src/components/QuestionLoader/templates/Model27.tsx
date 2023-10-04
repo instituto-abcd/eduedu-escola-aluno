@@ -81,13 +81,13 @@ export function Model27({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Stack spacing={20} align="center" my="auto">
+      <Stack spacing={boardW(20)} align="center" my="auto">
         {currentSlide.image_url && (
           <Image
             src={currentSlide.image_url}
             alt={currentSlide.description}
             width="auto"
-            height={currentSlide.description ? 140 : 280}
+            height={currentSlide.description ? boardW(200) : boardW(280)}
           />
         )}
 

@@ -1,4 +1,5 @@
 import {
+  Box,
   Group,
   Image,
   LoadingOverlay,
@@ -86,7 +87,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Board content */}
-      <Stack my="auto">
+      <Box align="center">
         {imageTitles.map(
           (title) =>
             title.file_url && (
@@ -160,7 +161,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                   color="dark.3"
                 />
               ))}
-            <Group mb={20}>
+            <Group>
               {question.options.map((option, inx) => (
                 <OptionButton
                   key={optionArrKey(option, inx)}
@@ -188,7 +189,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
             </Group>
           </Stack>
         )}
-      </Stack>
+      </Box>
 
       {/* Continue to the next screen button */}
       <EduButton

@@ -181,7 +181,6 @@ export function Model11({ question, answerCallback }: ModelProps) {
               textToComplete.description
                 .replaceAll("\\n", "")
                 .split(/_+/g) // separa os segmentos de texto dos underlines
-                .filter((w) => w !== "") // limpa fragmentos de texto vazio
                 .map((w, inx, arr) => {
                   const notLastFragment = arr.length !== inx + 1;
                   const isLastFragment = arr.length === 1 && w.endsWith(" ");

@@ -1,4 +1,4 @@
-import { Group, LoadingOverlay, Title, createStyles } from "@mantine/core";
+import { Group, LoadingOverlay, Stack, Title, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -7,7 +7,7 @@ import { QuestionOption } from "~/api/exam";
 import { useEffect, useState } from "react";
 import { EduButton } from "~/components/EduButton";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   group: {
@@ -18,7 +18,7 @@ const useStyles = createStyles((theme) => ({
     borderColor: theme.colors.gray[6],
     paddingInline: 45,
     paddingBlock: 25,
-    maxWidth: 750,
+    maxWidth: boardW(800),
   },
 }));
 
@@ -73,32 +73,36 @@ export function Model22({ question, answerCallback }: ModelProps) {
         )}
       </Group>
 
-      {hasText &&
-        <Title
-          dangerouslySetInnerHTML={{
-            __html: textTitles[0].description,
-          }}
-          color="dark.3"
-        />
-      }
-
       {/* Board content */}
-      <Group
-        align="center"
-        my="auto"
-        className={classes.group}
-        position="center"
-      >
-        {question.options.map((option, inx) => (
-          <TextOptionButton
-            key={inx}
-            onClick={() => handleAnswer(option)}
-            data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-          >
-            {option.description}
-          </TextOptionButton>
-        ))}
-      </Group>
+      <Stack align="center" spacing={boardW(50)}>
+        {hasText &&
+          <Title
+            dangerouslySetInnerHTML={{
+              __html: textTitles[0].description,
+            }}
+            color="dark.3"
+            size={boardW(40)}
+          />
+        }
+        <Group
+          align="center"
+          className={classes.group}
+          position="center"
+        >
+          {question.options.map((option, inx) => (
+            <TextOptionButton
+              key={inx}
+              onClick={() => handleAnswer(option)}
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              style={{
+                fontSize: boardW(25)
+              }}
+            >
+              {option.description}
+            </TextOptionButton>
+          ))}
+        </Group>
+      </Stack>
 
       {/* Continue to the next screen button */}
       <EduButton

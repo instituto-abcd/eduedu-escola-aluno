@@ -84,28 +84,29 @@ export function Model4({ question, answerCallback }: ModelProps) {
       )}
 
       <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
-        {textTitles.map((title) => (
-          <Title
-            key={title.description}
-            dangerouslySetInnerHTML={{ __html: title.description }}
-            align="center"
-            color="dark.3"
-            w={imageTitles.length > 0 ? "50%" : undefined}
-            className={classes.title}
-          />
-        ))}
-
-        {imageTitles.map((title) => (
-          <Image
-            mx="auto"
-            src={title.file_url}
-            alt={title.description}
-            width={(lousaWidth * 15) / 100}
-            key={title.file_url}
-            style={{ flexGrow: 1 }}
-            styles={{ image: { marginInline: "auto" } }}
-          />
-        ))}
+        <Group noWrap spacing={20} align="center" position="center">
+          {textTitles.map((title) => (
+            <Title
+              key={title.description}
+              dangerouslySetInnerHTML={{ __html: title.description }}
+              align="center"
+              color="dark.3"
+              w={imageTitles.length > 0 ? "50%" : undefined}
+              className={classes.title}
+            />
+          ))}
+          {imageTitles.map((title) => (
+            <Image
+              mx="auto"
+              src={title.file_url}
+              alt={title.description}
+              width={(lousaWidth * 15) / 100}
+              key={title.file_url}
+              style={{ flexGrow: 1 }}
+              styles={{ image: { marginInline: "auto" } }}
+            />
+          ))}
+        </Group>
 
         <Group>
           {question.options.map((option, inx) => (

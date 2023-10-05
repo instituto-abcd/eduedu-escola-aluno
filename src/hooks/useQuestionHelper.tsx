@@ -22,7 +22,7 @@ export function useQuestionHelper(question: Question) {
   const getSupportText = useCallback(
     function getSupportText(text: string) {
       const supportText = question.titles.filter(
-        (title) => title?.placeholder === text && !!title?.description
+        (title) => title?.placeholder?.includes(text) && !!title?.description
       );
 
       return supportText;

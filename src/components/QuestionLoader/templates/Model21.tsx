@@ -1,4 +1,11 @@
-import { Group, LoadingOverlay, ScrollArea, Stack, Text, Title } from "@mantine/core";
+import {
+  Group,
+  LoadingOverlay,
+  ScrollArea,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { EduButton } from "~/components/EduButton/EduButton";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -7,7 +14,8 @@ import { usePlanetAnswer } from "~/api/planet";
 import { boardW, lousaHeight } from "~/constants/dimensions";
 
 export function Model21({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const { audioTitles, textTitles, hasAudioTitle } =
+    useQuestionHelper(question);
   const autoPlay =
     question.rules.find((rule) => rule.name === "autoplay")?.value === "true" ??
     false;
@@ -32,26 +40,29 @@ export function Model21({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles.filter((title) => title.file_url).length > 0 && (
-          audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={inx}
-                src={title.file_url!}
-                autoPlay={autoPlay}
-              />
-            ))
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.filter((title) => title.file_url).length > 0 &&
+            audioTitles
+              .filter((title) => title.file_url)
+              .map((title, inx) => (
+                <AudioButton
+                  key={inx}
+                  src={title.file_url!}
+                  autoPlay={autoPlay}
+                />
+              ))}
+        </Group>
+      )}
+
+      <Stack my="auto">
+        {title !== "" && (
+          <Title color="dark.3" size={boardW(30)}>
+            {title}
+          </Title>
         )}
-      </Group>
 
-      {/* Board content */}
-      <Stack>
-        <Title color="dark.3" size={boardW(30)}>{title}</Title>
-
-        <ScrollArea maw={boardW(800)} mah={boardW(390)} type="always">
+        <ScrollArea maw={boardW(800)} mah={boardW(360)} type="always" px={20}>
           <Text
             dangerouslySetInnerHTML={{ __html: statement }}
             color="dark.3"
@@ -60,17 +71,12 @@ export function Model21({ question, answerCallback }: ModelProps) {
         </ScrollArea>
       </Stack>
 
-      {/* Continue to the next screen button */}
-      <EduButton
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}>
-        Continuar
-      </EduButton>
+      <EduButton onClick={submitAnswer}>Continuar</EduButton>
 
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

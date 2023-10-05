@@ -8,6 +8,7 @@ import {
 import { IconButton } from "../EduButton";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { intervalToDuration, formatDuration } from "date-fns";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   bar: {
@@ -69,25 +70,45 @@ export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
       <Group>
         <IconButton
           icon={
-            <IconRotateClockwise style={{ transform: "rotateX(180deg)" }} />
+            <IconRotateClockwise
+              style={{ transform: "rotateX(180deg)" }}
+              width={lousaWidth * 0.04}
+              height={lousaWidth * 0.029}
+            />
           }
           onClick={rewind}
         />
         <IconButton
           icon={
-            isPlaying ? <IconPlayerPauseFilled /> : <IconPlayerPlayFilled />
+            isPlaying ? (
+              <IconPlayerPauseFilled
+                width={lousaWidth * 0.04}
+                height={lousaWidth * 0.029}
+              />
+            ) : (
+              <IconPlayerPlayFilled
+                width={lousaWidth * 0.04}
+                height={lousaWidth * 0.029}
+              />
+            )
           }
           variant="yellow"
           onClick={playPause}
         />
         <IconButton
-          icon={<IconRotate style={{ transform: "rotateX(180deg)" }} />}
+          icon={
+            <IconRotate
+              style={{ transform: "rotateX(180deg)" }}
+              width={lousaWidth * 0.04}
+              height={lousaWidth * 0.029}
+            />
+          }
           onClick={forward}
         />
       </Group>
       <Slider
         value={currentTime}
-        w={650}
+        w={boardW(650)}
         radius="xs"
         classNames={{ bar: classes.bar }}
         thumbSize={30}

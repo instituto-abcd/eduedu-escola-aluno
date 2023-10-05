@@ -16,7 +16,13 @@ import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { lousaHeight, lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
+import {
+  lousaHeight,
+  lousaPaddingTop,
+  lousaWidth,
+  scrollAreaHeight,
+  scrollAreaWidth,
+} from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -58,19 +64,17 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
   const title = "Leia o texto e responda à pergunta.";
   return (
     <>
-
       {/* Board content */}
-      <Stack
-        my="auto"
-        pt={lousaPaddingTop}
-      >
-        <Title color="dark.3" size="2.5vh" mx="auto">{title}</Title>
+      <Stack my="auto" pt={lousaPaddingTop}>
+        <Title color="dark.3" size="2.5vh" mx="auto">
+          {title}
+        </Title>
 
         <Group mx="auto">
-          <Box maw={lousaWidth * 50 / 100}>
+          <Box maw={(lousaWidth * 50) / 100}>
             <ScrollArea
-              mah={scrollAreaHeight * 80 / 100}
-              maw={scrollAreaWidth * 80 / 100}
+              mah={(scrollAreaHeight * 80) / 100}
+              maw={(scrollAreaWidth * 80) / 100}
               h={(lousaHeight * 80) / 100}
             >
               <Stack align="center">
@@ -97,10 +101,10 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
             </ScrollArea>
           </Box>
 
-          <Box maw={lousaWidth * 50 / 100}>
+          <Box maw={(lousaWidth * 50) / 100}>
             <ScrollArea
-              mah={scrollAreaHeight * 80 / 100}
-              maw={scrollAreaWidth * 90 / 100}
+              mah={(scrollAreaHeight * 80) / 100}
+              maw={(scrollAreaWidth * 90) / 100}
               h={(lousaHeight * 80) / 100}
             >
               <Stack align="center">
@@ -108,7 +112,8 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
                   {
                     textTitles.find(
                       (title) =>
-                        title.classification === QuestionTitleClassification.ENUNCIADO
+                        title.classification ===
+                        QuestionTitleClassification.ENUNCIADO
                     )?.description
                   }
                 </Title>
@@ -146,7 +151,10 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
       </EduButton>
 
       {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <LoadingOverlay
+        visible={isLoading}
+        style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      />
     </>
   );
 }

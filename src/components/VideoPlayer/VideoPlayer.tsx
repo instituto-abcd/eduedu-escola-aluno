@@ -1,6 +1,7 @@
 import { Loader, createStyles } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useRef, useState } from "react";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   wrapper: {
@@ -47,7 +48,7 @@ export function VideoPlayer({
       <video
         {...props}
         ref={ref}
-        style={{ maxHeight: 500, ...props.style }}
+        style={{ height: boardW(250), ...props.style }}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

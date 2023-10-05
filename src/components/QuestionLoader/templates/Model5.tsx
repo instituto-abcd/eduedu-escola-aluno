@@ -188,7 +188,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
                 autoPlay
                 onPlayStatusChange={mediaTrack.setPlayStatus}
                 canPlay={mediaTrack.canPlay()}
-                style={{ height: boardW(250) }}
               />
             ))}
         </Stack>

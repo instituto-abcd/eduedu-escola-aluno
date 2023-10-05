@@ -38,4 +38,4 @@ jobs:
           color: "#ff0000"
           username: "GitHub Bot"
           avatar_url: https://i.imgur.com/Kvn45ev.png
-          message: Portal Aluno | Teste E2E contém inconsistências... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          message: Portal Aluno | Teste E2E contém inconsistências... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job_id }}

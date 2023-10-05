@@ -9,8 +9,8 @@ fixture(modelName)
     .page(pageUrl);
 
 test('Verificando altura do botão Continuar', async t => {
-    await t.resizeWindow(1440, 900);
-    await t.eval(() => location.reload(true));
+    // await t.resizeWindow(1440, 900);
+    // await t.eval(() => location.reload(true));
     
     const modelElement = Selector("a").withExactText(modelName);
     await t.click(modelElement);

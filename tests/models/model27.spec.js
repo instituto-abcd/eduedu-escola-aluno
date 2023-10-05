@@ -25,7 +25,6 @@ test('Verificando altura do botão Continuar', async t => {
             .with({ visibilityCheck: true });
 
         let buttonHeight = await continueButton.clientHeight;
-        console.log(`Altura do botão: ${buttonHeight}`);
 
         if (buttonHeight < 33 || buttonHeight > 35) {
             console.log(`\x1b[33m ${modelName}: ${pageUrl}/${modelName}?index=${index} - INCONSISTENTE \x1b[0m`);

@@ -15,6 +15,9 @@ test('Verificando altura do botão Continuar', async t => {
     const modelElement = Selector("a").withExactText(modelName);
     await t.click(modelElement);
 
+    const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
+    progressBar.start(maxIndex, 0);
+
     for (let index = 0; index <= maxIndex; index++) {
 
         const continueButton = Selector("button")

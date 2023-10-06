@@ -8,6 +8,7 @@ import {
   Box,
   Title,
   createStyles,
+  Flex,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useGetExamQuestion } from "~/api/student";
@@ -18,15 +19,15 @@ import { ModelProps } from ".";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles((theme) => ({
   typography: {
     color: theme.colors.dark[3],
-    fontSize: '1.2rem',
+    fontSize: boardW(24),
     h1: {
-      fontSize: '1.3rem',
+      fontSize: boardW(24),
       fontWeight: 600,
     },
   },
@@ -81,7 +82,8 @@ export function Model32({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Group mx="auto">
+      {/* Action buttons */}
+      <Group mx="auto" h="50px">
         {audioTitles
           .filter((title) => !!title.file_url)
           .map((title) => (
@@ -96,8 +98,12 @@ export function Model32({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Board content */}
-      <Box m="auto" w="100%" h="100%">
-        <Title color="dark.3" size="2.5vh" align="center">
+      <Stack my="auto" w={boardW(800)}>
+        <Title
+          color="dark.3"
+          size={boardW(24)}
+          align="center"
+        >
           {
             textTitles.find(
               (title) =>
@@ -106,18 +112,9 @@ export function Model32({ question, answerCallback }: ModelProps) {
           }
         </Title>
 
-        <Group
-          w="100%"
-          h="100%"
-          m="auto"
-          spacing={(lousaWidth * 4 / 100)}
-        >
-          <Box
-            maw={lousaWidth * 45 / 100}
-            h="100%"
-            m="auto"
-          >
-            <ScrollArea h={lousaHeight * 56 / 100}>
+        <Flex w="100%" gap={boardW(50)} m="auto">
+          <Box w="100%" maw={boardW(400)}>
+            <ScrollArea h={boardW(400)} type="always">
               <Stack pb={5}>
                 {question?.planet_id &&
                   <Text
@@ -149,21 +146,22 @@ export function Model32({ question, answerCallback }: ModelProps) {
                     <Image
                       src={title.file_url}
                       key={title.file_url}
-                      width={lousaWidth * 40 / 100}
+                      width={boardW(300)}
                       m="auto"
                     />
                   ))}
               </Stack>
             </ScrollArea>
           </Box>
-          <Box
-            maw={lousaWidth * 45 / 100}
-            h="100%"
-            m="auto"
-          >
-            <ScrollArea h={lousaHeight * 50 / 100} type="always">
-              <Stack justify="flex-start">
-                <Text size={20} weight={600} color="dark.3" align="center">
+          <Box w="100%" maw={boardW(400)}>
+            <ScrollArea h={boardW(400)}>
+              <Stack my="auto">
+                <Text
+                  size={boardW(20)}
+                  weight={600}
+                  color="dark.3"
+                  align="center"
+                >
                   {
                     textTitles.find(
                       (title) =>
@@ -186,12 +184,13 @@ export function Model32({ question, answerCallback }: ModelProps) {
                     sound={option.sound_url ?? undefined}
                     isCorrect={option.isCorrect}
                     style={{
-                      maxWidth: lousaWidth * 40 / 100,
+                      // maxWidth: lousaWidth * 40 / 100,
+                      // minWidth: "auto",
                       width: '100%',
-                      minWidth: "auto",
                       wordWrap: "break-word",
                       wordBreak: "break-word",
                       textAlign: "center",
+                      fontSize: boardW(20)
                     }}
                   >
                     {option.description}
@@ -200,11 +199,11 @@ export function Model32({ question, answerCallback }: ModelProps) {
               </Stack>
             </ScrollArea>
           </Box>
-        </Group>
-      </Box>
+        </Flex>
+      </Stack>
 
       {/* Continue to the next screen button */}
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton disabled={!answer} onClick={submitAnswer} style={{ marginTop: "auto" }}>
         Continuar
       </EduButton>
 

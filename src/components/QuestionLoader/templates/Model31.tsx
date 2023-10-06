@@ -1,4 +1,5 @@
 import {
+  Box,
   Group,
   LoadingOverlay,
   Stack,
@@ -14,18 +15,19 @@ import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { produce } from "immer";
 import { usePlanetAnswer } from "~/api/planet";
 import { EduButton } from "~/components/EduButton";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles({
-  stack: {
-    width: 400,
-    height: 100,
+  slot: {
+    width: boardW(500),
+    height: boardW(90),
   },
-  stackCard: {
-    fontSize: 4,
+  stack: {
+    width: `${boardW(500)}px!important`,
+    height: `${boardW(90)}px!important`,
   },
   text: {
-    fontSize: 20,
+    fontSize: boardW(20),
     textAlign: "center",
   },
 });
@@ -82,11 +84,18 @@ export function Model31({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      <Title maw={533} color="dark.3" size={25} weight={500} align="center">
-        {statement}
-      </Title>
-      <Group my="auto" spacing={60}>
-        <Stack>
+      {/* Board content */}
+      <Stack
+        w="100%"
+        my="auto"
+        pt={boardW(20)}
+        align="center"
+        spacing={boardW(1)}
+      >
+        <Title color="dark.3" size={boardW(24)} weight={500} align="center">
+          {statement}
+        </Title>
+        <Stack spacing={0}>
           {imageTitles
             .filter((title) => title.file_url)
             .map((imageTitle, inx) => (
@@ -95,7 +104,7 @@ export function Model31({ question, answerCallback }: ModelProps) {
                 <DraggableCardSlot<QuestionOption>
                   onDrop={(item) => item && handleDrop(item, inx)}
                   item={answers[inx] ?? null}
-                  className={classes.stack}
+                  className={classes.slot}
                   replaceWith={
                     <DraggableCard
                       item={null}
@@ -114,13 +123,20 @@ export function Model31({ question, answerCallback }: ModelProps) {
         <CardStack
           options={options}
           className={classes.stack}
-          cardProps={{ textProps: { size: 20 } }}
+          cardProps={{ textProps: { size: boardW(20) } }}
         />
-      </Group>
+      </Stack>
 
-      <EduButton disabled={disabled} onClick={submitAnswer}>
+      {/* Continue to the next screen button */}
+      <EduButton
+        disabled={disabled}
+        onClick={submitAnswer}
+        style={{ marginTop: 'auto' }}
+      >
         Continuar
       </EduButton>
+
+      {/* Loading animation */}
       <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );

@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
 
 // Components:
 import { Group, LoadingOverlay, SimpleGrid, createStyles, Box } from "@mantine/core";
@@ -69,15 +69,14 @@ export function Model34({ question, answerCallback }: ModelProps) {
 
       {/* Board content */}
       <Group
+        my="auto"
         w="100%"
-        h="85%"
-        spacing={(lousaWidth * 5 / 100)}
+        spacing={boardW(4)}
         style={{ display: 'flex', justifyContent: "center" }}
       >
         <Box
           w="100%"
           maw={lousaWidth * 40 / 100}
-          h="100%"
           display="flex"
           style={{ alignItems: "center" }}
         >
@@ -107,7 +106,7 @@ export function Model34({ question, answerCallback }: ModelProps) {
             />
           </DraggableCardSlot>
         </Box>
-        <Box maw={lousaWidth * 40 / 100} w="100%" h="100%">
+        <Box maw={lousaWidth * 40 / 100} w="100%">
           <SimpleGrid cols={2}>
             {question.options.map((item, inx) => (
               <DraggableCard
@@ -125,7 +124,12 @@ export function Model34({ question, answerCallback }: ModelProps) {
       </Group>
 
       {/* Continue to the next screen button */}
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton
+        disabled={!answer}
+        onClick={submitAnswer}
+        style={{
+          marginTop: 'auto'
+        }}>
         Continuar
       </EduButton>
 

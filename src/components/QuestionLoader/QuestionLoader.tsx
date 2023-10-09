@@ -4,6 +4,7 @@ import { Model11 } from "./templates/Model11";
 import { Model2 } from "./templates/Model2";
 import { Model2Video } from "./templates/Model2Video";
 import { Model32 } from "./templates/Model32";
+import { Model3 } from "./templates/Model3";
 import { Model4 } from "./templates/Model4";
 import { Model5 } from "./templates/Model5";
 import { Model8 } from "./templates/Model8";
@@ -63,6 +64,8 @@ export function QuestionLoader({
       return <Model2 {...commonProps} />;
     case "MODEL2-VIDEO":
       return <Model2Video {...commonProps} />;
+    case "MODEL3":
+      return <Model3 {...commonProps} />;
     case "MODEL4":
       return <Model4 {...commonProps} />;
     case "MODEL5":

@@ -15,12 +15,11 @@ test('Verificando altura do botão Continuar', async t => {
     const modelElement = Selector("a").withExactText(modelName);
     await t.click(modelElement);
 
+    const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
+    progressBar.start(maxIndex, 0);
+
     for (let index = 0; index <= maxIndex; index++) {
 
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(`\x1b[33m ${modelName}: ${index}/${maxIndex}`);
-        
         const continueButton = Selector("button")
             .withExactText("Continuar")
             .with({ visibilityCheck: true });

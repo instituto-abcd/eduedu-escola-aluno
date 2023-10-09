@@ -31,8 +31,8 @@ test('Verificando altura do botão Continuar', async t => {
         }
 
         progressBar.update(index);
-        // await t.expect(buttonHeight).gte(33);
-        // await t.expect(buttonHeight).lte(35);
+        await t.expect(buttonHeight).gte(33);
+        await t.expect(buttonHeight).lte(35);
 
         const nextElement = Selector('a').withText('Próximo');
         await t.click(nextElement);

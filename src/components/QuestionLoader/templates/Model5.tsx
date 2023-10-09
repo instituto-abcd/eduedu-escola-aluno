@@ -177,7 +177,12 @@ export function Model5({ question, answerCallback }: ModelProps) {
             imageTitles
               .filter((title) => title.file_url)
               .map((title, inx) => (
-                <img src={title.file_url!} width={boardW(300)} key={inx} />
+                <img
+                  src={title.file_url!}
+                  width={boardW(300)}
+                  style={{ maxHeight: boardW(400) }}
+                  key={inx}
+                />
               ))}
           {videoTitles
             .filter((title) => title.file_url)

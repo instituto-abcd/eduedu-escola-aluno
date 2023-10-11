@@ -12,6 +12,7 @@
     "test:model10": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model10.spec.js",
     "test:model10-prova": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model10-prova.spec.js",
     "test:model11": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model11.spec.js",
+    "test:model11-prova": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model11-prova.spec.js",
     "test:model12": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model12.spec.js",
     "test:model13": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model13.spec.js",
     "test:model14": "testcafe \"chrome:headless:emulation:width=1440;height=900 --mute-audio \" tests/models/model14.spec.js",

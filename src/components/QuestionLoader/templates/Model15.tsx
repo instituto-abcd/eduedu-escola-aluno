@@ -5,7 +5,7 @@ import { EduButton } from "~/components/EduButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { usePlanetAnswer } from "~/api/planet";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 export function Model15({ question, answerCallback }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
@@ -33,6 +33,7 @@ export function Model15({ question, answerCallback }: ModelProps) {
             key={title.file_url}
             autoPlay
             onPlayStatusChange={mediaTrack.setPlayStatus}
+            style={{ height: boardW(500) }}
           />
         ))}
       </Group>

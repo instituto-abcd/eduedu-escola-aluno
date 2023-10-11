@@ -161,7 +161,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
         })}
       </SimpleGrid>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
+      <EduButton disabled={!answer} onClick={submitAnswer} style={{ marginTop: "auto" }}>
         Continuar
       </EduButton>
 

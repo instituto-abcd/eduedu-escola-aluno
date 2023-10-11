@@ -8,6 +8,7 @@ import {
   Box,
   Title,
   createStyles,
+  Flex,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
@@ -17,25 +18,24 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import {
-  lousaHeight,
-  lousaPaddingTop,
-  lousaWidth,
-  scrollAreaHeight,
-  scrollAreaWidth,
+  boardW,
+  lousaHeight
 } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   typography: {
     color: theme.colors.dark[3],
-    fontSize: 20,
+    fontSize: boardW(24),
     textAlign: "center",
     b: {
       fontWeight: 500,
-      fontSize: 30,
+      fontSize: boardW(26),
     },
   },
   button: {
     width: "100%",
+    height: "fit-content",
+    padding: boardW(20),
   },
 }));
 
@@ -65,18 +65,14 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
   return (
     <>
       {/* Board content */}
-      <Stack my="auto" pt={lousaPaddingTop}>
-        <Title color="dark.3" size="2.5vh" mx="auto">
+      <Stack my="auto" w={boardW(800)}>
+        <Title color="dark.3" size={boardW(24)} mx="auto" pb={boardW(15)}>
           {title}
         </Title>
 
-        <Group mx="auto">
-          <Box maw={(lousaWidth * 50) / 100}>
-            <ScrollArea
-              mah={(scrollAreaHeight * 80) / 100}
-              maw={(scrollAreaWidth * 80) / 100}
-              h={(lousaHeight * 80) / 100}
-            >
+        <Flex w="100%" gap={boardW(10)} m="auto">
+          <Box w="100%" maw={boardW(440)}>
+            <ScrollArea w="100%" h={boardW(450)} pr={boardW(30)} type="always">
               <Stack align="center">
                 <Text
                   className={classes.typography}
@@ -93,7 +89,9 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
                   <Image
                     src={title.file_url}
                     alt={title.file_name}
-                    width={102}
+                    height={boardW(120)}
+                    width="auto"
+                    pt={boardW(20)}
                     key={title.file_url}
                   />
                 ))}
@@ -101,14 +99,10 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
             </ScrollArea>
           </Box>
 
-          <Box maw={(lousaWidth * 50) / 100}>
-            <ScrollArea
-              mah={(scrollAreaHeight * 80) / 100}
-              maw={(scrollAreaWidth * 90) / 100}
-              h={(lousaHeight * 80) / 100}
-            >
+          <Box w="100%" maw={boardW(400)}>
+            <ScrollArea w="100%" h={boardW(450)} type="always">
               <Stack align="center">
-                <Title align="center" color="dark.3" size="2.5vh" weight={500}>
+                <Title align="center" color="dark.3" size={boardW(26)} weight={500}>
                   {
                     textTitles.find(
                       (title) =>
@@ -118,7 +112,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
                   }
                 </Title>
                 <Group align="center" position="center">
-                  <Stack align="strech" style={{ marginBottom: "5px" }}>
+                  <Stack align="strech" style={{ marginBottom: "5px" }} w="100%">
                     {question.options.map((option) => (
                       <TextOptionButton
                         key={option.description}
@@ -134,7 +128,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
               </Stack>
             </ScrollArea>
           </Box>
-        </Group>
+        </Flex>
       </Stack>
 
       {/* Continue to the next screen button */}
@@ -142,9 +136,7 @@ export function QME2x2Text({ question, answerCallback }: ModelProps) {
         disabled={!answer}
         onClick={submitAnswer}
         style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
+          marginTop: "auto"
         }}
       >
         Continuar

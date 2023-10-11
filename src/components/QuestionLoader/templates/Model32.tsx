@@ -153,8 +153,8 @@ export function Model32({ question, answerCallback }: ModelProps) {
               </Stack>
             </ScrollArea>
           </Box>
-          <Box w="100%" maw={boardW(400)}>
-            <ScrollArea h={boardW(400)}>
+          <Box w="100%" maw={boardW(420)}>
+            <ScrollArea h={boardW(420)}>
               <Stack my="auto">
                 <Text
                   size={boardW(20)}

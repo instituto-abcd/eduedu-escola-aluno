@@ -99,7 +99,7 @@ export function Model29({ question, answerCallback }: ModelProps) {
             />
           </ScrollArea>
         )}
-        <Group>
+        <Group mx="auto">
           {answers.map((answer, inx) => (
             <DraggableCardSlot
               item={answer}
@@ -125,7 +125,7 @@ export function Model29({ question, answerCallback }: ModelProps) {
             </DraggableCardSlot>
           ))}
         </Group>
-        <Group>
+        <Group mx="auto">
           {question.options.map((option, inx) => (
             <DraggableCard
               item={option}

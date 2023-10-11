@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { Answer, useGetExamQuestion } from "~/api/student";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaHeight, lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight, lousaPaddingTop, lousaWidth, scrollAreaHeight, scrollAreaWidth } from "~/constants/dimensions";
 import { ModelProps } from ".";
 
 // Components:
-import { Box, Group, LoadingOverlay, ScrollArea, SimpleGrid, Stack } from "@mantine/core";
+import { Box, Group, LoadingOverlay, ScrollArea, SimpleGrid } from "@mantine/core";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { OptionButton } from "~/components/OptionButton";
 import { EduButton } from "~/components/EduButton";
@@ -51,27 +51,20 @@ export function QMES5({ question, answerCallback }: ModelProps) {
   return (
     <>
       {/* Board content */}
-      <Group
-        noWrap
-        grow
-        pt={lousaPaddingTop}
-      >
-
-        {/* First column */}
-        <Box maw={lousaWidth * 50 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
-          <VideoPlayer
-            src={videoTitles[0]?.file_url ?? ""}
-            onPlayStatusChange={mediaTrack.setPlayStatus}
-            canPlay={mediaTrack.canPlay()}
-            autoPlay
-            customHeight={(lousaWidth * 35 / 100).toString()}
-          />
+      <Group w="100%" m="auto" gap={boardW(10)}>
+        <Box h="100%" w="100%" maw={boardW(440)} style={{ display: "flex", justifyContent: "center" }}>
+          <Box m="auto">
+            <VideoPlayer
+              src={videoTitles[0]?.file_url ?? ""}
+              onPlayStatusChange={mediaTrack.setPlayStatus}
+              canPlay={mediaTrack.canPlay()}
+              autoPlay
+              customHeight={(lousaWidth * 35 / 100).toString()}
+            />
+          </Box>
         </Box>
 
-        {/* Second column (ATTENTION: it was coded to use only 2 cards!!! )*/}
-        <ScrollArea
-          mah={scrollAreaHeight}
-        >
+        <ScrollArea mah={boardW(510)}>
           <SimpleGrid
             cols={2}
             spacing={20}

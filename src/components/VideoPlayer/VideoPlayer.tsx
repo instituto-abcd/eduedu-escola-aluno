@@ -7,6 +7,9 @@ const useStyles = createStyles({
   wrapper: {
     position: "relative",
   },
+  video: {
+    height: boardW(250)
+  },
   controls: {
     position: "absolute",
     inset: 0,
@@ -48,7 +51,8 @@ export function VideoPlayer({
       <video
         {...props}
         ref={ref}
-        style={{ height: boardW(250), ...props.style }}
+        className={classes.video}
+        style={{ ...props.style }}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

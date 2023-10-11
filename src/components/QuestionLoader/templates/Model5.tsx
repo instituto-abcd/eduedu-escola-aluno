@@ -127,7 +127,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
   );
   const hasImage = imageTitles.some((title) => title.file_url);
   const hasSupportText = supportText.some((title) => !!title.description);
-  console.log(supportText, hasSupportText);
 
   const { data: auxQuestion } = usePlanetGetQuestion(
     question.planet_id,

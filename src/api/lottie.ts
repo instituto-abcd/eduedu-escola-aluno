@@ -4,29 +4,23 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryOptions } from "./api-types";
 
 class LottieAPI extends API {
-  static async downloadLottieFile(url: string) {
-    const { data } = await this.api.get(url, {
-      responseType: "json",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
+  static async downloadLottieFile(lottieId: string) {
+    const { data } = await this.api.get(`lottie/${lottieId}`);
 
     return data;
   }
 }
 
 export function useDownloadLottieFile(
-  lottieUrl: string,
+  lottieId: string,
   options: QueryOptions<string, ["lottie", string]>
 ) {
   const handler = useCallback(
     function () {
-      return LottieAPI.downloadLottieFile(lottieUrl);
+      return LottieAPI.downloadLottieFile(lottieId);
     },
-    [lottieUrl]
+    [lottieId]
   );
 
-  return useQuery(["lottie", lottieUrl], handler, options);
+  return useQuery(["lottie", lottieId], handler, options);
 }

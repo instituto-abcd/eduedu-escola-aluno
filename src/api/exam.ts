@@ -19,6 +19,7 @@ export type QuestionTitle = {
   description: string;
   file_name: string;
   file_url: string | null;
+  file_id: string | null;
   placeholder: string;
   position: number;
   type: string;

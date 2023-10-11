@@ -12,8 +12,8 @@ import { usePlanetAnswer } from "~/api/planet";
 export function Model16({ question, answerCallback }: ModelProps) {
   const { audioTitles, lottieTitles } = useQuestionHelper(question);
 
-  const { data } = useDownloadLottieFile(lottieTitles[0]?.file_url ?? "", {
-    enabled: !!lottieTitles[0]?.file_url,
+  const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
+    enabled: !!lottieTitles[0]?.file_id,
     onSuccess: console.log,
   });
 
@@ -30,13 +30,14 @@ export function Model16({ question, answerCallback }: ModelProps) {
   }
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const CANVAS_SIZE = boardW(450);
 
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d")!;
-      canvas.width = boardW(400);
-      canvas.height = boardW(400);
+      canvas.width = CANVAS_SIZE;
+      canvas.height = CANVAS_SIZE;
 
       let isDrawing = false;
       let prevX = 0;
@@ -77,6 +78,14 @@ export function Model16({ question, answerCallback }: ModelProps) {
     }
   }, [canvasRef]);
 
+  useEffect(() => {
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d")!;
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    }
+  }, [question]);
+
   return (
     <>
       {audioTitles.filter((title) => title.file_url).length > 0 && (
@@ -93,7 +102,12 @@ export function Model16({ question, answerCallback }: ModelProps) {
         </Group>
       )}
 
-      <Group position="apart" spacing={137}>
+      <Group
+        position="apart"
+        spacing={137}
+        style={{ position: "relative", isolation: "isolate" }}
+        my="auto"
+      >
         <canvas ref={canvasRef} />
 
         {data && (
@@ -106,8 +120,14 @@ export function Model16({ question, answerCallback }: ModelProps) {
                 preserveAspectRatio: "xMidYMid slice",
               },
             }}
-            height={400}
-            width={400}
+            width={CANVAS_SIZE}
+            height={CANVAS_SIZE}
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              zIndex: -1,
+            }}
           />
         )}
       </Group>

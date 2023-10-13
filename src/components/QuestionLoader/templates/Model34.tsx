@@ -4,24 +4,24 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
 import { usePlanetAnswer } from "~/api/planet";
-import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 
 // Components:
-import { Group, LoadingOverlay, SimpleGrid, createStyles, Box } from "@mantine/core";
+import { Group, LoadingOverlay, SimpleGrid, createStyles, Box, BackgroundImage } from "@mantine/core";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { AudioButton } from "~/components/AudioButton";
 import { EduButton } from "~/components/EduButton";
 
 const useStyles = createStyles({
   slot: {
-    width: lousaWidth * 40 / 100,
-    height: lousaHeight * 40 / 100,
+    width: boardW(100),
+    height: boardW(100),
     display: "grid",
     placeItems: "center",
   },
   card: {
-    width: lousaWidth * 40 / 100,
-    height: lousaHeight * 40 / 100,
+    width: `${boardW(100)}px!important`,
+    height: `${boardW(100)}px!important`,
   },
   cardWide: {
     width: '100%!important'
@@ -76,10 +76,14 @@ export function Model34({ question, answerCallback }: ModelProps) {
       >
         <Box
           w="100%"
-          maw={lousaWidth * 40 / 100}
-          display="flex"
-          style={{ alignItems: "center" }}
+          maw={boardW(400)}
+          align="center"
         >
+          <BackgroundImage
+            h={boardW(350)}
+            mb={10}
+            src={imageTitles[0].file_url}
+          />
           <DraggableCardSlot
             item={answer}
             onDrop={(item) => setAnswer(item)}
@@ -96,17 +100,10 @@ export function Model34({ question, answerCallback }: ModelProps) {
               />
             }
           >
-            <img
-              src={imageTitles[0].file_url!}
-              width={lousaWidth * 35 / 100}
-              style={{
-                height: 'auto',
-                maxHeight: lousaHeight * 35 / 100
-              }}
-            />
           </DraggableCardSlot>
+
         </Box>
-        <Box maw={lousaWidth * 40 / 100} w="100%">
+        <Box maw={boardW(400)} w="100%">
           <SimpleGrid cols={2}>
             {question.options.map((item, inx) => (
               <DraggableCard

@@ -69,12 +69,11 @@ export function Model8({ question, answerCallback }: ModelProps) {
       )}
 
       <Group
+        w="100%"
         my="auto"
         align="center"
         position="center"
         noWrap
-        w={lousaWidth}
-        px={20}
       >
         {textTitles.map((title, inx) => (
           <Title

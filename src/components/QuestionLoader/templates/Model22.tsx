@@ -60,7 +60,7 @@ export function Model22({ question, onAnswerChange }: ModelProps) {
             ))}
       </Group>
 
-      <Stack align="center" spacing={boardW(50)}>
+      <Stack align="center" spacing={boardW(50)} my="auto">
         {hasText && (
           <Title
             dangerouslySetInnerHTML={{

@@ -1,24 +1,14 @@
-import {
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
+import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
+import { produce } from "immer";
 import { Fragment, useEffect, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
-import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { produce } from "immer";
 
 const useStyles = createStyles({
   slot: {
@@ -33,10 +23,9 @@ const useStyles = createStyles({
   },
 });
 
-export function Model11Prova({ question, answerCallback }: ModelProps) {
+export function Model11Prova({ question, onAnswerChange }: ModelProps) {
   const { classes } = useStyles();
   const {
-    isExam,
     getRule,
 
     imageTitles,
@@ -48,16 +37,6 @@ export function Model11Prova({ question, answerCallback }: ModelProps) {
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Array<QuestionOption | null>>([null]);
-
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const isLoading = isLoadingExam || isLoadingPlanet;
 
   function handleAnswer(ans: QuestionOption | null, inx?: number) {
     if (Number.isInteger(inx)) {
@@ -71,23 +50,6 @@ export function Model11Prova({ question, answerCallback }: ModelProps) {
     } else {
       const initialSlots = new Array<null>(slotsQty).fill(null);
       setAnswer(initialSlots);
-    }
-  }
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: answer.filter(Boolean) as QuestionOption[],
-      });
-    } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: answer.filter(Boolean) as QuestionOption[],
-      });
     }
   }
 
@@ -137,6 +99,10 @@ export function Model11Prova({ question, answerCallback }: ModelProps) {
     const initialSlots = new Array<null>(slotsQty).fill(null);
     setAnswer(initialSlots);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
+  }, [answer]);
 
   return (
     <>
@@ -290,15 +256,6 @@ export function Model11Prova({ question, answerCallback }: ModelProps) {
           </Group>
         </Stack>
       </Group>
-
-      <EduButton disabled={answer.includes(null)} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

@@ -1,44 +1,26 @@
+import { Box, Group, Image, SimpleGrid, Text } from "@mantine/core";
+import { IconVolume } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
-import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-import { ModelProps } from ".";
-import {
-  Box,
-  Group,
-  Image,
-  LoadingOverlay,
-  SimpleGrid,
-  Text,
-} from "@mantine/core";
-import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { IconVolume } from "@tabler/icons-react";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+import { ModelProps } from ".";
 
-export function QME2x2Video({ question, answerCallback }: ModelProps) {
+export function QME2x2Video({ question, onAnswerChange }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (answer === null) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
-
   const { videoTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   return (
     <>
@@ -83,15 +65,6 @@ export function QME2x2Video({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
       </Group>
-
-      <EduButton disabled={answer === null} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

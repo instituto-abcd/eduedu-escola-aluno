@@ -1,8 +1,8 @@
-import { Question } from "~/api/exam";
+import { Question, QuestionOption } from "~/api/exam";
 
 export type ModelProps = {
   question: Question;
-  answerCallback: (
-    nextQuestion: Question | { examCompleted?: true; planetCompleted?: true }
-  ) => void;
+  auxQuestion?: Question;
+  onAnswerChange: (answer: QuestionOption[]) => void;
+  setContinueDisabled: (disabled: boolean) => void;
 };

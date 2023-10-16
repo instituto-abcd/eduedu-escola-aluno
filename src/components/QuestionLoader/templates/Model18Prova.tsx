@@ -1,18 +1,16 @@
-import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
+import { Group, Image, Stack } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model18Prova({ question, answerCallback }: ModelProps) {
+export function Model18Prova({ question, onAnswerChange }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
@@ -20,19 +18,6 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
     () => text.split("").map((char) => (char === "_" ? null : char))
   );
-
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (selected.length < 3) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: selected,
-    });
-  }
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -68,9 +53,12 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
     setSlots(text.split("").map((char) => (char === "_" ? null : char)));
   }, [text]);
 
+  useEffect(() => {
+    onAnswerChange(selected);
+  }, [selected]);
+
   return (
     <>
-      {/* Action buttons */}
       <Group mx="auto">
         {audioTitles.map((title) => (
           <AudioButton
@@ -80,8 +68,6 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
           />
         ))}
       </Group>
-
-      {/* Board content */}
       <Stack>
         {imageTitles.map((title) => (
           <Image
@@ -152,23 +138,6 @@ export function Model18Prova({ question, answerCallback }: ModelProps) {
           </Group>
         </Stack>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={selected.length < 3}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto"
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

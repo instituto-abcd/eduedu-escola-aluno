@@ -2,22 +2,18 @@ import {
   Center,
   Group,
   Image,
-  LoadingOverlay,
   Stack,
   Title,
   createStyles,
 } from "@mantine/core";
-
-import { EduButton } from "~/components/EduButton";
-import { TextOptionButton } from "~/components/OptionButton";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useEffect, useState } from "react";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { AudioButton } from "~/components/AudioButton";
-import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { AudioButton } from "~/components/AudioButton";
+import { TextOptionButton } from "~/components/OptionButton";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import { boardW, lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   button: {
@@ -28,7 +24,7 @@ const useStyles = createStyles({
   },
 });
 
-export function Model8({ question, answerCallback }: ModelProps) {
+export function Model8({ question, onAnswerChange }: ModelProps) {
   const { imageTitles, videoTitles, textTitles, audioTitles } =
     useQuestionHelper(question);
 
@@ -36,19 +32,9 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      questionId: question.id,
-      planetId: question.planet_id,
-      optionsAnswered: [answer] as QuestionOption[],
-    });
-  }
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
@@ -68,14 +54,7 @@ export function Model8({ question, answerCallback }: ModelProps) {
         </Group>
       )}
 
-      <Group
-        my="auto"
-        align="center"
-        position="center"
-        noWrap
-        w={lousaWidth}
-        px={20}
-      >
+      <Group my="auto" align="center" position="center" noWrap>
         {textTitles.map((title, inx) => (
           <Title
             color="dark.3"
@@ -128,20 +107,6 @@ export function Model8({ question, answerCallback }: ModelProps) {
           ))}
         </Stack>
       </Group>
-
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

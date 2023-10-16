@@ -1,18 +1,20 @@
-import { Group, Image, LoadingOverlay } from "@mantine/core";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
+import { Group, Image } from "@mantine/core";
+import { forwardRef, useEffect, useState } from "react";
+import { useDrop } from "react-dnd";
+import { QuestionOption } from "~/api/exam";
 import arrowLeft from "~/assets/planets/arrow-left-red.png";
 import arrowRight from "~/assets/planets/arrow-right-green.png";
-import { useDrop } from "react-dnd";
-import { forwardRef, useEffect, useState } from "react";
+import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
-import { QuestionOption } from "~/api/exam";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model12({ question, answerCallback }: ModelProps) {
+export function Model12({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const [stack, setStack] = useState<QuestionOption[]>(question.options);
@@ -37,26 +39,18 @@ export function Model12({ question, answerCallback }: ModelProps) {
     },
   });
 
-  const disabled = answers.length < question.options.length;
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers,
-    });
-  }
-
   useEffect(() => {
     setAnswers([]);
     setStack(question.options);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answers);
+  }, [answers]);
+
+  useEffect(() => {
+    setContinueDisabled(answers.length < question.options.length);
+  }, [question, answers]);
 
   return (
     <>
@@ -83,20 +77,6 @@ export function Model12({ question, answerCallback }: ModelProps) {
         />
         <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
-
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

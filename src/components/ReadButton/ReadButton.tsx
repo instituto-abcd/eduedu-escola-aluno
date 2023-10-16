@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useDisclosure } from "@mantine/hooks";
 import { IconButton } from "../EduButton";
-import { Modal, Image, Text } from "@mantine/core";
+import { Modal, Stack } from "@mantine/core";
 import { IconBook } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
+import { ModelMapper } from "../QuestionLoader/ModelMapper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+import { lousaWidth } from "~/constants/dimensions";
 
 type Props = {
   question: Question;
@@ -10,10 +14,12 @@ type Props = {
 
 export function ReadButton({ question }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
+  const mediaTrack = useMediaTrackStore();
 
-  const textTitle = question?.options?.[0]?.description;
-  const textImage = question?.options?.[0]?.image_url;
-  const supportText = question?.options?.[1]?.description;
+  const onClose = () => {
+    if (mediaTrack.isPlaying) return;
+    close();
+  };
 
   return (
     <>
@@ -24,25 +30,26 @@ export function ReadButton({ question }: Props) {
       />
 
       <Modal
-        size="lg"
+        size="auto"
         opened={opened}
-        onClose={close}
-        title={textTitle ? `Texto de apoio - ${textTitle}` : `Texto de apoio`}
+        onClose={onClose}
+        title="Questão de apoio"
       >
-        {textImage && (
-          <Image maw="250px" mah="250px" src={textImage} mx="auto" mb={40} />
-        )}
-
-        {supportText && (
-          <Text
-            fz="lg"
-            color="dark.3"
-            align="center"
-            dangerouslySetInnerHTML={{ __html: supportText }}
-            maw={800}
-            mb={40}
+        <Stack
+          spacing={lousaWidth * 0.045}
+          align="center"
+          h="100%"
+          w="100%"
+          style={{ position: "relative" }}
+        >
+          <ModelMapper
+            commonProps={{
+              question,
+              onAnswerChange: () => {},
+              setContinueDisabled: () => {},
+            }}
           />
-        )}
+        </Stack>
       </Modal>
     </>
   );

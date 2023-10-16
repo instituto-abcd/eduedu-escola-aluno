@@ -1,36 +1,18 @@
-// Aux & Utils:
-import { ModelProps } from ".";
-import { useCallback, useEffect, useState } from "react";
+import { Box, Group, SimpleGrid, Stack } from "@mantine/core";
 import { produce } from "immer";
-import { useMediaTrackStore } from "~/stores/media-track.store";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useGetExamQuestion } from "~/api/student";
+import { useCallback, useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { lousaHeight, lousaWidth, lousaPaddingTop } from "~/constants/dimensions";
-
-// Components:
-import { Box, Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { EduButton } from "~/components/EduButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
+import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+import { ModelProps } from ".";
 
-export function Model2Video({ question, answerCallback }: ModelProps) {
+export function Model2Video({ question, onAnswerChange }: ModelProps) {
   const [slots, setSlots] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
-
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (slots.includes(null)) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: slots as QuestionOption[],
-    });
-  }
 
   const handleDrop = useCallback(function (
     item: QuestionOption | null,
@@ -42,7 +24,7 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
       })
     );
   },
-    []);
+  []);
 
   const { videoTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
@@ -51,30 +33,38 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
     setSlots(question.options.map(() => null));
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(
+      slots.filter((answer) => answer !== null) as QuestionOption[]
+    );
+  }, [slots]);
+
   return (
     <>
-      {/* Board content */}
-      <Group
-        noWrap
-        grow
-        my="auto"
-        pt={lousaPaddingTop}
-      >
-        <Box w={lousaWidth * 38 / 100} style={{ display: 'flex', justifyContent: 'center' }}>
+      <Group noWrap grow my="auto" pt={lousaPaddingTop}>
+        <Box
+          w={(lousaWidth * 38) / 100}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
             autoPlay
-            customHeight={(lousaWidth * 30 / 100).toString()}
           />
         </Box>
 
-        <Stack maw={lousaWidth * 62 / 100}
+        <Stack
+          maw={(lousaWidth * 62) / 100}
           style={{
-            padding: "1vw"
-          }}>
-          <SimpleGrid cols={question.options.length} style={{ placeItems: "center" }} spacing={20}>
+            padding: "1vw",
+          }}
+        >
+          <SimpleGrid
+            cols={question.options.length}
+            style={{ placeItems: "center" }}
+            spacing={20}
+          >
             {slots.map((slot, inx) => (
               <DraggableCardSlot
                 key={inx}
@@ -95,7 +85,11 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
             ))}
           </SimpleGrid>
 
-          <SimpleGrid cols={question.options.length} style={{ placeItems: "center" }} spacing={20}>
+          <SimpleGrid
+            cols={question.options.length}
+            style={{ placeItems: "center" }}
+            spacing={20}
+          >
             {question.options.map((item, inx) => (
               <DraggableCard
                 item={item}
@@ -112,20 +106,6 @@ export function Model2Video({ question, answerCallback }: ModelProps) {
           </SimpleGrid>
         </Stack>
       </Group>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={slots.includes(null)}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

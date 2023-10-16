@@ -1,13 +1,11 @@
-import { Group, LoadingOverlay, Text, createStyles } from "@mantine/core";
+import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
-import { EduButton } from "~/components/EduButton";
-import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -28,7 +26,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model13({ question, answerCallback }: ModelProps) {
+export function Model13({ question, onAnswerChange }: ModelProps) {
   const { imageTitles, audioTitles } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
@@ -46,24 +44,14 @@ export function Model13({ question, answerCallback }: ModelProps) {
     );
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (options.length > 0) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers,
-    });
-  }
-
   useEffect(() => {
     setAnswers([]);
     setOptions(question.options);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answers);
+  }, [answers]);
 
   return (
     <>
@@ -95,21 +83,6 @@ export function Model13({ question, answerCallback }: ModelProps) {
       </Group>
 
       <CardStack options={options} />
-
-      <EduButton
-        disabled={options.length > 0}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

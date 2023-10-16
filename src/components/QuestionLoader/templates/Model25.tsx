@@ -1,15 +1,12 @@
-import { Group, LoadingOverlay, Stack, createStyles } from "@mantine/core";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
+import { Group, Stack, createStyles } from "@mantine/core";
+import { produce } from "immer";
+import { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { AudioButton } from "~/components/AudioButton";
 import { DraggableCard } from "~/components/DraggableCard";
-import { useEffect, useState } from "react";
-import { produce } from "immer";
-import { usePlanetAnswer } from "~/api/planet";
-import { EduButton } from "~/components/EduButton";
-import { lousaHeight } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -27,7 +24,6 @@ const useStyles = createStyles((theme) => ({
   wideButton: {
     width: 240,
     height: 148,
-    // TODO: mergear com estilo do componente raíz (não funcional)
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: "0 4px 0 0 #228BE6",
@@ -47,7 +43,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model25({ question }: ModelProps) {
+export function Model25({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
 
@@ -69,21 +69,19 @@ export function Model25({ question }: ModelProps) {
     return answers.some((answer) => answer?.positionAnswer === position);
   }
 
-  const { mutate, isLoading } = usePlanetAnswer();
-
-  function submitAnswer() {
-    if (answers.includes(null)) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers as QuestionOption[],
-    });
-  }
-
   useEffect(() => {
     setAnswers([null, null, null]);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(
+      answers.filter((answer) => answer !== null) as QuestionOption[]
+    );
+  }, [answers]);
+
+  useEffect(() => {
+    setContinueDisabled(answers.includes(null));
+  }, [answers]);
 
   return (
     <>
@@ -140,22 +138,6 @@ export function Model25({ question }: ModelProps) {
           )}
         </Group>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={answers.includes(null)}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

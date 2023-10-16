@@ -39,6 +39,8 @@ export function useQuestionHelper(question: Question) {
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
   const supportText = getSupportText("ID da historinha");
+  const hasAuxQuestion = !!supportText[0]?.["description"];
+  const auxQuestionId = hasAuxQuestion ? supportText[0].description : null;
 
   function optionArrKey(option: QuestionOption, inx?: number) {
     return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
@@ -88,5 +90,7 @@ export function useQuestionHelper(question: Question) {
     getRule,
     isExam,
     isPlanet,
+    hasAuxQuestion,
+    auxQuestionId,
   };
 }

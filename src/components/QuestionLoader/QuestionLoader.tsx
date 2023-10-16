@@ -1,151 +1,96 @@
-import { ModelProps } from "./templates";
-import { Model10 } from "./templates/Model10";
-import { Model11 } from "./templates/Model11";
-import { Model2 } from "./templates/Model2";
-import { Model2Video } from "./templates/Model2Video";
-import { Model32 } from "./templates/Model32";
-import { Model3 } from "./templates/Model3";
-import { Model4 } from "./templates/Model4";
-import { Model5 } from "./templates/Model5";
-import { Model8 } from "./templates/Model8";
-import { Model12 } from "./templates/Model12";
-import { Model13 } from "./templates/Model13";
-import { Model14 } from "./templates/Model14";
-import { Model15 } from "./templates/Model15";
-import { Model16 } from "./templates/Model16";
-import { Model18 } from "./templates/Model18";
-import { Model19 } from "./templates/Model19";
-import { Model20 } from "./templates/Model20";
-import { Model21 } from "./templates/Model21";
-import { Model22 } from "./templates/Model22";
-import { Model24 } from "./templates/Model24";
-import { Model25 } from "./templates/Model25";
-import { Model26 } from "./templates/Model26";
-import { Model27 } from "./templates/Model27";
-import { Model28 } from "./templates/Model28";
-import { Model29 } from "./templates/Model29";
-import { Model30 } from "./templates/Model30";
-import { Model31 } from "./templates/Model31";
-import { Model33 } from "./templates/Model33";
-import { QME2x2Audio } from "./templates/QME2x2Audio";
-import { QME2x2Text } from "./templates/QME2x2Text";
-import { QME2x2Text2 } from "./templates/QME2x2Text2";
-import { QME2x2Video } from "./templates/QME2x2Video";
-import { QME2x3Video } from "./templates/QMES2x3Video";
-import { QMES5 } from "./templates/QMES5";
-import { QORD3x2 } from "./templates/QORD3x2";
-import { Model8Prova } from "./templates/Model8Prova";
-import { Model10Prova } from "./templates/Model10Prova";
-import { Model35 } from "./templates/Model35";
-import { Model34 } from "./templates/Model34";
-import { useEffect } from "react";
+import { LoadingOverlay, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Question, QuestionOption } from "~/api/exam";
+import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
+import { useGetExamQuestion } from "~/api/student";
+import { lousaHeight } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { Model18Prova } from "./templates/Model18Prova";
-import { Model11Prova } from "./templates/Model11Prova";
+import { EduButton } from "../EduButton";
+import { ModelMapper } from "./ModelMapper";
+import { ModelProps } from "./templates";
 
-type QuestionLoaderProps = ModelProps;
+type QuestionLoaderProps = {
+  answerCallback: (
+    nextQuestion: Question | { examCompleted?: true; planetCompleted?: true }
+  ) => void;
+  question: Question;
+};
 
 export function QuestionLoader({
   question,
   answerCallback,
 }: QuestionLoaderProps) {
+  const [answer, setAnswer] = useState<QuestionOption[]>([]);
+  const [continueDisabled, setContinueDisabled] = useState(true);
+
+  const { hasAuxQuestion, auxQuestionId } = useQuestionHelper(question);
+
+  const { data: auxQuestion, isFetching: isLoadingAux } = usePlanetGetQuestion(
+    question.planet_id,
+    auxQuestionId ?? "",
+    {
+      enabled: hasAuxQuestion,
+    }
+  );
+
   const commonProps: ModelProps = {
     question,
-    answerCallback,
+    auxQuestion,
+    setContinueDisabled,
+    onAnswerChange: setAnswer,
   };
+
+  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+    onSuccess: (q) => answerCallback(q),
+  });
+
+  const isLoading = isLoadingExam || isLoadingPlanet || isLoadingAux;
+
+  function submitAnswer() {
+    const isExam = !question.planet_id;
+
+    if (isExam) {
+      mutateExam({
+        questionId: question.id,
+        optionsAnswered: answer,
+      });
+    } else {
+      mutatePlanet({
+        questionId: question.id,
+        planetId: question.planet_id,
+        optionsAnswered: answer,
+      });
+    }
+  }
+
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     mediaTrack.clearQueue();
+    setAnswer([]);
+    setContinueDisabled(true);
   }, [question]);
 
-  switch (question.model_id) {
-    case "MODEL2":
-      return <Model2 {...commonProps} />;
-    case "MODEL2-VIDEO":
-      return <Model2Video {...commonProps} />;
-    case "MODEL3":
-      return <Model3 {...commonProps} />;
-    case "MODEL4":
-      return <Model4 {...commonProps} />;
-    case "MODEL5":
-      return <Model5 {...commonProps} />;
-    case "MODEL8":
-      return <Model8 {...commonProps} />;
-    case "MODEL8-PROVA":
-      return <Model8Prova {...commonProps} />;
-    case "MODEL10":
-      return <Model10 {...commonProps} />;
-    case "MODEL10-PROVA":
-      return <Model10Prova {...commonProps} />;
-    case "MODEL11":
-      return <Model11 {...commonProps} />;
-    case "MODEL11-PROVA":
-      return <Model11Prova {...commonProps} />;
-    case "MODEL12":
-      return <Model12 {...commonProps} />;
-    case "MODEL13":
-      return <Model13 {...commonProps} />;
-    case "MODEL14":
-      return <Model14 {...commonProps} />;
-    case "MODEL15":
-      return <Model15 {...commonProps} />;
-    case "MODEL16":
-      return <Model16 {...commonProps} />;
-    case "MODEL18":
-      return <Model18 {...commonProps} />;
-    case "MODEL18-PROVA":
-      return <Model18Prova {...commonProps} />;
-    case "MODEL19":
-      return <Model19 {...commonProps} />;
-    case "MODEL20":
-      return <Model20 {...commonProps} />;
-    case "MODEL21":
-      return <Model21 {...commonProps} />;
-    case "MODEL22":
-      return <Model22 {...commonProps} />;
-    case "MODEL24":
-      return <Model24 {...commonProps} />;
-    case "MODEL25":
-      return <Model25 {...commonProps} />;
-    case "MODEL26":
-      return <Model26 {...commonProps} />;
-    case "MODEL27":
-      return <Model27 {...commonProps} />;
-    case "MODEL28":
-      return <Model28 {...commonProps} />;
-    case "MODEL29":
-      return <Model29 {...commonProps} />;
-    case "MODEL30":
-      return <Model30 {...commonProps} />;
-    case "MODEL31":
-      return <Model31 {...commonProps} />;
-    case "MODEL32":
-      return <Model32 {...commonProps} />;
-    case "MODEL33":
-      return <Model33 {...commonProps} />;
-    case "MODEL34":
-      return <Model34 {...commonProps} />;
-    case "MODEL35":
-      return <Model35 {...commonProps} />;
+  return (
+    <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>
+      <ModelMapper commonProps={commonProps} />
 
-    // Orfãos
-    case "QME2x2Audio":
-      return <QME2x2Audio {...commonProps} />;
-    case "QME2x2Text":
-      return <QME2x2Text {...commonProps} />;
-    case "QME2x2Text2":
-      return <QME2x2Text2 {...commonProps} />;
-    case "QMES5":
-      return <QMES5 {...commonProps} />;
-    case "QME2x2Video":
-      return <QME2x2Video {...commonProps} />;
-    case "QMES2x3Video":
-      return <QME2x3Video {...commonProps} />;
-    case "QORD3x2":
-      return <QORD3x2 {...commonProps} />;
-
-    default:
-      return <h1>Question NULL</h1>;
-  }
+      <EduButton disabled={continueDisabled} onClick={submitAnswer}>
+        Continuar
+      </EduButton>
+      <LoadingOverlay
+        visible={isLoading}
+        style={{
+          maxHeight: (lousaHeight * 80) / 100,
+          borderRadius: 40,
+          width: "100%",
+        }}
+      />
+    </Stack>
+  );
 }

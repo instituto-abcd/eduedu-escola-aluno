@@ -12,8 +12,6 @@ export function QME2x2Text2({ question }: { question: Question }) {
 
   const qtitle = "Por que a raposa disse que as uvas estavam verdes?";
 
-  // TODO: "bolinha" de indicação de scroll 🤦🏻‍♀️
-
   return (
     <>
       <Title color="dark.3" size="2.5vh" weight={500}>

@@ -11,7 +11,7 @@ export function Model15({ question, setContinueDisabled }: ModelProps) {
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
-    setContinueDisabled(!mediaTrack.isPlaying);
+    setContinueDisabled(mediaTrack.isPlaying);
   }, [question, mediaTrack.isPlaying]);
 
   return (

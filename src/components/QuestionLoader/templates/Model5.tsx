@@ -1,24 +1,14 @@
-import {
-  Group,
-  LoadingOverlay,
-  SimpleGrid,
-  Stack,
-  Title,
-  createStyles,
-} from "@mantine/core";
-import { useState } from "react";
-import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
-import { useGetExamQuestion } from "~/api/student";
+import { Group, SimpleGrid, Stack, Title, createStyles } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
-import { AuxAudioButton } from "~/components/AuxAudioButton";
+import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles({
   option: {
@@ -45,13 +35,17 @@ const useStyles = createStyles({
   },
 });
 
-export function Model5({ question, answerCallback }: ModelProps) {
+export function Model5({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+  auxQuestion,
+}: ModelProps) {
   const {
     audioTitles,
     videoTitles,
     textTitles,
     imageTitles,
-    isExam,
     hasAudioTitle,
     audioTitleAutoplay,
     supportText,
@@ -60,44 +54,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
   const [multipleAnswer, setMultipleAnswer] = useState<QuestionOption[]>([]);
   const mediaTrack = useMediaTrackStore();
   const { classes } = useStyles();
-
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const isLoading = isLoadingExam || isLoadingPlanet;
-  const disabled = question.multiplesAnswer
-    ? multipleAnswer.length === 0
-    : !answer;
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: question.multiplesAnswer
-          ? multipleAnswer
-          : answer
-          ? [answer]
-          : [],
-      });
-    } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: question.multiplesAnswer
-          ? multipleAnswer
-          : answer
-          ? [answer]
-          : [],
-      });
-    }
-  }
 
   function handleOptionClick(option: QuestionOption) {
     if (question.multiplesAnswer) {
@@ -128,15 +84,23 @@ export function Model5({ question, answerCallback }: ModelProps) {
   const hasImage = imageTitles.some((title) => title.file_url);
   const hasSupportText = supportText.some((title) => !!title.description);
 
-  const { data: auxQuestion } = usePlanetGetQuestion(
-    question.planet_id,
-    supportText.find(
-      (title) => title.description && title.description.length > 3
-    )?.description ?? "",
-    {
-      enabled: hasSupportText,
+  /* Handle answer */
+  useEffect(() => {
+    if (question.multiplesAnswer) {
+      onAnswerChange(multipleAnswer);
+    } else {
+      onAnswerChange(answer ? [answer] : []);
     }
-  );
+  }, [answer]);
+
+  /* Handle continue disable */
+  useEffect(() => {
+    if (question.multiplesAnswer) {
+      setContinueDisabled(multipleAnswer.length === 0);
+    } else {
+      setContinueDisabled(!answer);
+    }
+  }, [answer, multipleAnswer]);
 
   return (
     <>
@@ -149,7 +113,7 @@ export function Model5({ question, answerCallback }: ModelProps) {
               autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
-          {auxQuestion && <AuxAudioButton question={auxQuestion} />}
+          {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
       )}
 
@@ -226,15 +190,6 @@ export function Model5({ question, answerCallback }: ModelProps) {
           )}
         </SimpleGrid>
       </Group>
-
-      <EduButton disabled={disabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

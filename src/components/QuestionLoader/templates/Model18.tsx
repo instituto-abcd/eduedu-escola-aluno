@@ -1,18 +1,16 @@
-import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
+import { Group, Image, Stack } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { EduButton } from "~/components/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { usePlanetAnswer } from "~/api/planet";
 
-export function Model18({ question, answerCallback }: ModelProps) {
+export function Model18({ question, onAnswerChange }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
@@ -26,20 +24,6 @@ export function Model18({ question, answerCallback }: ModelProps) {
         .split("")
         .map((char) => (char === "_" ? null : char))
   );
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (selected.length < 3) return;
-
-    mutate({
-      questionId: question.id,
-      planetId: question.planet_id,
-      optionsAnswered: selected,
-    });
-  }
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -79,6 +63,10 @@ export function Model18({ question, answerCallback }: ModelProps) {
         .map((char) => (char === "_" ? null : char))
     );
   }, [text]);
+
+  useEffect(() => {
+    onAnswerChange(selected);
+  }, [selected]);
 
   return (
     <>
@@ -137,21 +125,6 @@ export function Model18({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
-      <EduButton
-        disabled={selected.length < 3}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

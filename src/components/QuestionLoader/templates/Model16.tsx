@@ -1,33 +1,19 @@
-import { Group, LoadingOverlay } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import Lottie from "react-lottie";
 import { useDownloadLottieFile } from "~/api/lottie";
 import { useEffect, useRef } from "react";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
+import { boardW } from "~/constants/dimensions";
 
-export function Model16({ question, answerCallback }: ModelProps) {
+export function Model16({ question }: ModelProps) {
   const { audioTitles, lottieTitles } = useQuestionHelper(question);
 
   const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
     enabled: !!lottieTitles[0]?.file_id,
     onSuccess: console.log,
   });
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
@@ -131,13 +117,6 @@ export function Model16({ question, answerCallback }: ModelProps) {
           />
         )}
       </Group>
-
-      <EduButton onClick={submitAnswer}>Continuar</EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

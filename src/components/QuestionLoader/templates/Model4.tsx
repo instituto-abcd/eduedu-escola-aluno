@@ -1,20 +1,9 @@
-import {
-  Group,
-  Image,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
+import { Group, Image, Stack, Text, Title, createStyles } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
-import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -27,48 +16,24 @@ const useStyles = createStyles({
   },
 });
 
-export function Model4({ question, answerCallback }: ModelProps) {
+export function Model4({ question, onAnswerChange }: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const {
     audioTitles,
     textTitles,
     imageTitles,
-    isExam,
     hasAudioTitle,
     audioTitleAutoplay,
   } = useQuestionHelper(question);
 
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const isLoading = isLoadingExam || isLoadingPlanet;
-
-  function submitAnswer() {
-    if (answer === null) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: [answer],
-      });
-    } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: [answer],
-      });
-    }
-  }
-
   useEffect(() => {
     setAnswer(null);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   return (
     <>
@@ -148,15 +113,6 @@ export function Model4({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
-      <EduButton disabled={!answer} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

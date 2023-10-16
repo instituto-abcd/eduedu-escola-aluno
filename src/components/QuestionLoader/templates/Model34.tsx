@@ -1,16 +1,11 @@
-// Aux & Utils:
+import { Box, Group, SimpleGrid, createStyles } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { AudioButton } from "~/components/AudioButton";
+import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
+import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-
-// Components:
-import { Group, LoadingOverlay, SimpleGrid, createStyles, Box, BackgroundImage } from "@mantine/core";
-import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton";
 
 const useStyles = createStyles({
   slot: {
@@ -24,61 +19,46 @@ const useStyles = createStyles({
     height: `${boardW(100)}px!important`,
   },
   cardWide: {
-    width: '100%!important'
-  }
+    width: "100%!important",
+  },
 });
 
-export function Model34({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+export function Model34({ question, onAnswerChange }: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
+    useQuestionHelper(question);
   const { classes } = useStyles();
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
+
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles
-          .filter((title) => title.file_url)
-          .map((title, inx) => (
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
             <AudioButton
               src={title.file_url!}
               key={title.file_url}
-              autoPlay={inx === 0}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
-      </Group>
+        </Group>
+      )}
 
-      {/* Board content */}
       <Group
         my="auto"
         w="100%"
         spacing={boardW(4)}
-        style={{ display: 'flex', justifyContent: "center" }}
+        style={{ display: "flex", justifyContent: "center" }}
       >
-        <Box
-          w="100%"
-          maw={boardW(400)}
-          align="center"
-        >
+        <Box w="100%" maw={boardW(400)} align="center">
           <BackgroundImage
             h={boardW(350)}
             mb={10}
@@ -99,9 +79,7 @@ export function Model34({ question, answerCallback }: ModelProps) {
                 className={classes.card}
               />
             }
-          >
-          </DraggableCardSlot>
-
+          ></DraggableCardSlot>
         </Box>
         <Box maw={boardW(400)} w="100%">
           <SimpleGrid cols={2}>
@@ -119,19 +97,6 @@ export function Model34({ question, answerCallback }: ModelProps) {
           </SimpleGrid>
         </Box>
       </Group>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}>
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

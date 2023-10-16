@@ -1,38 +1,26 @@
-import { Group, LoadingOverlay, Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
 import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton/EduButton";
 import { TextOptionButton } from "~/components/OptionButton";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model14({ question, answerCallback }: ModelProps) {
+export function Model14({ question, onAnswerChange }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (answer === null) return;
-
-    mutate({
-      optionsAnswered: [answer],
-      planetId: question.planet_id,
-      questionId: question.id,
-    });
-  }
-
   useEffect(() => {
     setAnswer(null);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   return (
     <>
@@ -83,15 +71,6 @@ export function Model14({ question, answerCallback }: ModelProps) {
             ))}
         </Stack>
       </Group>
-
-      <EduButton disabled={answer === null} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

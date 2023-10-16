@@ -48,6 +48,7 @@ const useStyles = createStyles({
   },
   debugDiv: {
     position: "relative",
+    isolation: "isolate",
     p: {
       position: "absolute",
       top: 0,

@@ -1,33 +1,38 @@
-import { Group, Image, LoadingOverlay, Stack, createStyles } from "@mantine/core";
-import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { Group, Image, Stack, createStyles } from "@mantine/core";
+import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { produce } from "immer";
+import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   letters: {
     width: boardW(100),
     height: boardW(80),
     paddingInline: 0,
-    textAlign: "center"
+    textAlign: "center",
   },
 });
-export function Model26({ question, answerCallback }: ModelProps) {
+export function Model26({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
-
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
-
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    imageTitles,
+    textTitles,
+  } = useQuestionHelper(question);
   const letterSlots = textTitles.find((title) =>
     title?.description?.includes("__")
   );
-
   const isSlotsOnly = (title: string) => !title.replace(/_|\s/g, "");
 
   const initialSlots =
@@ -37,7 +42,6 @@ export function Model26({ question, answerCallback }: ModelProps) {
 
   const [slots, setSlots] =
     useState<Array<QuestionOption | null>>(initialSlots);
-  const disabled = slots.includes(null);
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -51,42 +55,32 @@ export function Model26({ question, answerCallback }: ModelProps) {
     handleDrop(null, index);
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: slots as QuestionOption[],
-    });
-  }
-
   useEffect(() => {
     setSlots(initialSlots);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(slots.filter((slot) => slot !== null) as QuestionOption[]);
+  }, [slots]);
+
+  useEffect(() => {
+    setContinueDisabled(slots.includes(null));
+  }, [slots]);
+
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles.length > 0 && (
-          audioTitles
-            .filter((title) => !!title.file_url)
-            .map((title) => (
-              <AudioButton
-                src={title.file_url ?? ""}
-                autoPlay
-                key={title.file_url}
-              />
-            ))
-        )}
-      </Group>
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url ?? ""}
+              autoPlay={audioTitleAutoplay(inx)}
+              key={title.file_url}
+            />
+          ))}
+        </Group>
+      )}
 
-      {/* Board content */}
       <Stack my="auto" align="center">
         {imageTitles[0] && (
           <Image
@@ -131,18 +125,6 @@ export function Model26({ question, answerCallback }: ModelProps) {
           </Group>
         </Stack>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton disabled={disabled} onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

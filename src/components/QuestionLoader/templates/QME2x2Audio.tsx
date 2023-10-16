@@ -1,34 +1,19 @@
-import { Group, LoadingOverlay, SimpleGrid, Stack, Text } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { useGetExamQuestion } from "~/api/student";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioControls } from "~/components/AudioControls/AudioControls";
-import { EduButton } from "~/components/EduButton";
 import { OptionButton } from "~/components/OptionButton";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function QME2x2Audio({ question, answerCallback }: ModelProps) {
+export function QME2x2Audio({ question, onAnswerChange }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
@@ -67,6 +52,10 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
       void introRef.current?.play();
     }
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   return (
     <>
@@ -160,15 +149,6 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           );
         })}
       </SimpleGrid>
-
-      <EduButton disabled={!answer} onClick={submitAnswer} style={{ marginTop: "auto" }}>
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

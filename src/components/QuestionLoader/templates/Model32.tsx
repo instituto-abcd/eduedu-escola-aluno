@@ -1,26 +1,22 @@
 import {
+  Box,
+  Flex,
   Group,
   Image,
-  LoadingOverlay,
   ScrollArea,
   Stack,
   Text,
-  Box,
   Title,
   createStyles,
-  Flex,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useGetExamQuestion } from "~/api/student";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
+import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
+import { ReadButton } from "~/components/ReadButton";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
-import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -33,77 +29,46 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model32({ question, answerCallback }: ModelProps) {
+export function Model32({ question, auxQuestion, onAnswerChange }: ModelProps) {
   const { classes } = useStyles();
 
-  const { textTitles, imageTitles, audioTitles, supportText, optionArrKey, isExam } =
-    useQuestionHelper(question);
+  const {
+    textTitles,
+    imageTitles,
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    optionArrKey,
+  } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const isLoading = isLoadingExam || isLoadingPlanet;
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: [answer],
-      });
-    } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: [answer],
-      });
-    }
-  }
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
 
-  const { data: readText } = usePlanetGetQuestion(
-    question.planet_id,
-    supportText[0]?.["description"] ?? "",
-    {
-      enabled: !!supportText[0]?.["description"],
-    }
-  );
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles
-          .filter((title) => !!title.file_url)
-          .map((title) => (
+      {(hasAudioTitle || auxQuestion) && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
             <AudioButton
               key={title.position}
               src={title.file_url ?? ""}
-              autoPlay={!!title.file_url}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
 
-        {readText && <ReadButton question={readText} />}
-      </Group>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </Group>
+      )}
 
-      {/* Board content */}
       <Stack my="auto" w={boardW(800)}>
-        <Title
-          color="dark.3"
-          size={boardW(24)}
-          align="center"
-        >
+        <Title color="dark.3" size={boardW(24)} align="center">
           {
             textTitles.find(
               (title) =>
@@ -116,15 +81,17 @@ export function Model32({ question, answerCallback }: ModelProps) {
           <Box w="100%" maw={boardW(400)}>
             <ScrollArea h={boardW(400)} type="always">
               <Stack pb={5}>
-                {question?.planet_id &&
+                {question?.planet_id && (
                   <Text
                     dangerouslySetInnerHTML={{
-                      __html: textTitles.filter((item) => item.placeholder != 'ID da historinha')?.[0]?.description,
+                      __html: textTitles.filter(
+                        (item) => item.placeholder != "ID da historinha"
+                      )?.[0]?.description,
                     }}
                     className={classes.typography}
                   />
-                }
-                {!question?.planet_id &&
+                )}
+                {!question?.planet_id && (
                   <Text
                     dangerouslySetInnerHTML={{
                       __html:
@@ -138,7 +105,7 @@ export function Model32({ question, answerCallback }: ModelProps) {
                     }}
                     className={classes.typography}
                   />
-                }
+                )}
 
                 {imageTitles
                   .filter((title) => !!title.file_url)
@@ -165,7 +132,8 @@ export function Model32({ question, answerCallback }: ModelProps) {
                   {
                     textTitles.find(
                       (title) =>
-                        title.classification === QuestionTitleClassification.ENUNCIADO
+                        title.classification ===
+                        QuestionTitleClassification.ENUNCIADO
                     )?.description
                   }
                 </Text>
@@ -180,17 +148,19 @@ export function Model32({ question, answerCallback }: ModelProps) {
                           : undefined,
                       } as QuestionOption)
                     }
-                    data-selected={JSON.stringify(answer) === JSON.stringify(option)}
+                    data-selected={
+                      JSON.stringify(answer) === JSON.stringify(option)
+                    }
                     sound={option.sound_url ?? undefined}
                     isCorrect={option.isCorrect}
                     style={{
                       // maxWidth: lousaWidth * 40 / 100,
                       // minWidth: "auto",
-                      width: '100%',
+                      width: "100%",
                       wordWrap: "break-word",
                       wordBreak: "break-word",
                       textAlign: "center",
-                      fontSize: boardW(20)
+                      fontSize: boardW(20),
                     }}
                   >
                     {option.description}
@@ -201,14 +171,6 @@ export function Model32({ question, answerCallback }: ModelProps) {
           </Box>
         </Flex>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton disabled={!answer} onClick={submitAnswer} style={{ marginTop: "auto" }}>
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

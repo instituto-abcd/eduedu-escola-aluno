@@ -1,19 +1,10 @@
-import {
-  Group,
-  LoadingOverlay,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import { EduButton } from "~/components/EduButton/EduButton";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { Group, ScrollArea, Stack, Text, Title } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model21({ question, answerCallback }: ModelProps) {
+export function Model21({ question }: ModelProps) {
   const { audioTitles, textTitles, hasAudioTitle } =
     useQuestionHelper(question);
   const autoPlay =
@@ -26,32 +17,19 @@ export function Model21({ question, answerCallback }: ModelProps) {
   const statement =
     textTitles.find((title) => title.position === 2)?.description ?? "";
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
-
   return (
     <>
       {hasAudioTitle && (
         <Group>
-          {audioTitles.filter((title) => title.file_url).length > 0 &&
-            audioTitles
-              .filter((title) => title.file_url)
-              .map((title, inx) => (
-                <AudioButton
-                  key={inx}
-                  src={title.file_url!}
-                  autoPlay={autoPlay}
-                />
-              ))}
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <AudioButton
+                key={inx}
+                src={title.file_url!}
+                autoPlay={autoPlay}
+              />
+            ))}
         </Group>
       )}
 
@@ -70,13 +48,6 @@ export function Model21({ question, answerCallback }: ModelProps) {
           />
         </ScrollArea>
       </Stack>
-
-      <EduButton onClick={submitAnswer}>Continuar</EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

@@ -1,21 +1,12 @@
-import {
-  Box,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Title,
-  createStyles,
-} from "@mantine/core";
-import { ModelProps } from ".";
-import { CardStack } from "~/components/CardStack";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { Group, Stack, Title, createStyles } from "@mantine/core";
+import { produce } from "immer";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
+import { CardStack } from "~/components/CardStack";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { produce } from "immer";
-import { usePlanetAnswer } from "~/api/planet";
-import { EduButton } from "~/components/EduButton";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   slot: {
@@ -32,7 +23,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model31({ question, answerCallback }: ModelProps) {
+export function Model31({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { imageTitles, textTitles } = useQuestionHelper(question);
   const statement = textTitles[0]?.description ?? "MISSING_TITLE";
   const { classes } = useStyles();
@@ -60,20 +55,6 @@ export function Model31({ question, answerCallback }: ModelProps) {
     setAnswers((state) => state.filter((_, inx) => inx !== index));
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers,
-    });
-  }
-
   useEffect(() => {
     setAnswers([]);
   }, []);
@@ -82,9 +63,16 @@ export function Model31({ question, answerCallback }: ModelProps) {
     setOptions(question.options);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(answers);
+  }, [answers]);
+
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
+
   return (
     <>
-      {/* Board content */}
       <Stack
         w="100%"
         my="auto"
@@ -126,18 +114,6 @@ export function Model31({ question, answerCallback }: ModelProps) {
           cardProps={{ textProps: { size: boardW(20) } }}
         />
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{ marginTop: 'auto' }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

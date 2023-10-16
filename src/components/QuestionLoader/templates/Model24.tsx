@@ -1,25 +1,19 @@
-import {
-  Box,
-  Group,
-  Image,
-  LoadingOverlay,
-  Stack,
-  Title,
-} from "@mantine/core";
-
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
+import { Box, Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
-import { OptionButton } from "~/components/OptionButton";
-import { EduButton } from "~/components/EduButton";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight, boardW } from "~/constants/dimensions";
+import { AudioButton } from "~/components/AudioButton";
+import { OptionButton } from "~/components/OptionButton";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model24({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles, optionArrKey } =
+export function Model24({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, hasAudioTitle, textTitles, imageTitles, optionArrKey } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<number>(-1);
@@ -36,33 +30,24 @@ export function Model24({ question, answerCallback }: ModelProps) {
 
   const disabled = isTypeSelect ? !singleAnswer : answer === -1;
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (isTypeSelect && !singleAnswer) return;
-    if (isTypeComplete && answer === -1) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: isTypeSelect ? [singleAnswer as QuestionOption] : [],
-    });
-  }
-
   useEffect(() => {
     setAnswer(-1);
     setSingleAnswer(null);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(isTypeSelect ? [singleAnswer as QuestionOption] : []);
+  }, [answer, singleAnswer]);
+
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
+
   return (
     <>
-      {/* Action buttons */}
       <Group mx="auto" h="50px">
-        {audioTitles
-          .filter((title) => title.file_url)
-          .map((title, inx) =>
+        {hasAudioTitle &&
+          audioTitles.map((title, inx) =>
             inx === 0 ? (
               <AudioButton
                 key={title.position}
@@ -86,8 +71,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
           )}
       </Group>
 
-      {/* Board content */}
-      <Box align="center">
+      <Box>
         {imageTitles.map(
           (title) =>
             title.file_url && (
@@ -104,21 +88,20 @@ export function Model24({ question, answerCallback }: ModelProps) {
 
         {isTypeComplete && (
           <Stack align="center" spacing={boardW(25)}>
-            {textTitles.find((title) =>
-              title.placeholder.includes("completar")
-            )?.description && (
-                <Title
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find((title) =>
-                        title.placeholder.includes("completar")
-                      )?.description ?? "",
-                  }}
-                  size={boardW(24)}
-                  weight={500}
-                  color="dark.3"
-                />
-              )}
+            {textTitles.find((title) => title.placeholder.includes("completar"))
+              ?.description && (
+              <Title
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find((title) =>
+                      title.placeholder.includes("completar")
+                    )?.description ?? "",
+                }}
+                size={boardW(24)}
+                weight={500}
+                color="dark.3"
+              />
+            )}
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
@@ -133,7 +116,11 @@ export function Model24({ question, answerCallback }: ModelProps) {
                 >
                   {option.description}
                   {option.image_url && (
-                    <Image src={option.image_url} maw={boardW(100)} mah={boardW(100)} />
+                    <Image
+                      src={option.image_url}
+                      maw={boardW(100)}
+                      mah={boardW(100)}
+                    />
                   )}
                 </OptionButton>
               ))}
@@ -180,7 +167,7 @@ export function Model24({ question, answerCallback }: ModelProps) {
                     <img
                       src={option.image_url}
                       style={{
-                        height: boardW(100)
+                        height: boardW(100),
                       }}
                     />
                   )}
@@ -190,20 +177,6 @@ export function Model24({ question, answerCallback }: ModelProps) {
           </Stack>
         )}
       </Box>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

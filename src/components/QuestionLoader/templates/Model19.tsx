@@ -1,4 +1,4 @@
-import { Group, LoadingOverlay, Stack, createStyles } from "@mantine/core";
+import { Group, Stack, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -7,9 +7,6 @@ import { DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
 import { useEffect, useState } from "react";
 import { produce } from "immer";
-import { usePlanetAnswer } from "~/api/planet";
-import { EduButton } from "~/components/EduButton";
-import { lousaHeight } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   slot: {
@@ -23,14 +20,14 @@ const useStyles = createStyles({
   },
 });
 
-export function Model19({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+export function Model19({ question, onAnswerChange }: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+    useQuestionHelper(question);
   const { classes } = useStyles();
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const slots = textTitles[0] ? textTitles[0].description.split(" ") : [];
-  const disabled = options.length > 0;
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"
   );
@@ -50,41 +47,29 @@ export function Model19({ question, answerCallback }: ModelProps) {
     );
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers,
-    });
-  }
-
   useEffect(() => {
     setAnswers([]);
     setOptions(question.options);
   }, []);
 
+  useEffect(() => {
+    onAnswerChange(answers);
+  }, [answers]);
+
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto" h="50px">
-        {audioTitles
-          .filter((title) => title.file_url)
-          .map((title, inx) => (
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
             <AudioButton
               src={title.file_url!}
               key={title.file_url}
-              autoPlay={inx === 0}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
-      </Group>
+        </Group>
+      )}
 
-      {/* Board content */}
       <Stack align="center" spacing={50} my="auto">
         <CardStack
           options={options}
@@ -104,20 +89,6 @@ export function Model19({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

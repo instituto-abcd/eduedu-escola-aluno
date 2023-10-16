@@ -1,61 +1,26 @@
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-import {
-  Group,
-  LoadingOverlay,
-  ScrollArea,
-  SimpleGrid,
-  Title,
-} from "@mantine/core";
+import { boardW } from "~/constants/dimensions";
+import { Group, ScrollArea, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
-import { EduButton } from "~/components/EduButton";
 import { AudioButton } from "~/components/AudioButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 
-export function Model10({ question, answerCallback }: ModelProps) {
+export function Model10({ question, auxQuestion, onAnswerChange }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, supportText } =
+  const { imageTitles, textTitles, audioTitles, audioTitleAutoplay } =
     useQuestionHelper(question);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (answer === null) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
-
-  const { data: auxQuestion } = usePlanetGetQuestion(
-    question.planet_id,
-    supportText[0]?.["description"] ?? "",
-    {
-      enabled: !!supportText[0]?.["description"],
-    }
-  );
-
-  /* TODO: jogar para o questionhelper */
-  const canPlay = (inx: number) => {
-    if (inx !== 0) return false;
-    const rule = question.rules.find((rule) => rule.name === "autoplay");
-
-    if (!rule) return false;
-    return rule.value === "true";
-  };
 
   return (
     <>
@@ -67,7 +32,7 @@ export function Model10({ question, answerCallback }: ModelProps) {
               <AudioButton
                 src={item.file_url ?? ""}
                 key={inx}
-                autoPlay={canPlay(inx)}
+                autoPlay={audioTitleAutoplay(inx)}
               />
             ))}
 
@@ -148,21 +113,6 @@ export function Model10({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
       </Group>
-
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      <LoadingOverlay
-        visible={isLoading}
-        style={{ maxHeight: (lousaHeight * 80) / 100 }}
-      />
     </>
   );
 }

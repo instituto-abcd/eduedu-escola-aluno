@@ -1,53 +1,30 @@
-import { Group, LoadingOverlay } from "@mantine/core";
-import { ModelProps } from ".";
+import { Group } from "@mantine/core";
+import { useEffect } from "react";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { EduButton } from "~/components/EduButton";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { usePlanetAnswer } from "~/api/planet";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { ModelProps } from ".";
 
-export function Model15({ question, answerCallback }: ModelProps) {
+export function Model15({ question, setContinueDisabled }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
   const mediaTrack = useMediaTrackStore();
 
-  function submitAnswer() {
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
+  useEffect(() => {
+    setContinueDisabled(!mediaTrack.isPlaying);
+  }, [question, mediaTrack.isPlaying]);
 
   return (
-    <>
-      <Group my="auto">
-        {videoTitles.map((title) => (
-          <VideoPlayer
-            src={title.file_url ?? ""}
-            key={title.file_url}
-            autoPlay
-            onPlayStatusChange={mediaTrack.setPlayStatus}
-            style={{ height: boardW(500) }}
-          />
-        ))}
-      </Group>
-      <EduButton
-        onClick={submitAnswer}
-        disabled={mediaTrack.isPlaying}
-        withFeedbackSound={false}
-        style={{
-          marginTop: 'auto'
-        }}
-      >
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
-    </>
+    <Group my="auto">
+      {videoTitles.map((title) => (
+        <VideoPlayer
+          src={title.file_url ?? ""}
+          key={title.file_url}
+          autoPlay
+          onPlayStatusChange={mediaTrack.setPlayStatus}
+          style={{ height: boardW(500) }}
+        />
+      ))}
+    </Group>
   );
 }

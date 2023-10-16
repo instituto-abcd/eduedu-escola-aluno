@@ -1,9 +1,15 @@
-import { Box, Group, SimpleGrid, createStyles } from "@mantine/core";
+import {
+  BackgroundImage,
+  Box,
+  Group,
+  SimpleGrid,
+  createStyles,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { boardW, lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -58,11 +64,11 @@ export function Model34({ question, onAnswerChange }: ModelProps) {
         spacing={boardW(4)}
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <Box w="100%" maw={boardW(400)} align="center">
+        <Box w="100%" maw={boardW(400)}>
           <BackgroundImage
             h={boardW(350)}
             mb={10}
-            src={imageTitles[0].file_url}
+            src={imageTitles[0].file_url!}
           />
           <DraggableCardSlot
             item={answer}

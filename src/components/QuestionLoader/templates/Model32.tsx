@@ -29,7 +29,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model32({ question, auxQuestion, onAnswerChange }: ModelProps) {
+export function Model32({
+  question,
+  auxQuestion,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
 
   const {
@@ -49,6 +54,7 @@ export function Model32({ question, auxQuestion, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

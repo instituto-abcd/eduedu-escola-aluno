@@ -9,7 +9,12 @@ import { AudioButton } from "~/components/AudioButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 
-export function Model10({ question, auxQuestion, onAnswerChange }: ModelProps) {
+export function Model10({
+  question,
+  auxQuestion,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { imageTitles, textTitles, audioTitles, audioTitleAutoplay } =
     useQuestionHelper(question);
@@ -20,6 +25,7 @@ export function Model10({ question, auxQuestion, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     setAnswer(null);
+    setContinueDisabled(!answer);
   }, [question]);
 
   return (

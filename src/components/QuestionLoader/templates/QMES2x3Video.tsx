@@ -8,7 +8,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function QME2x3Video({ question, onAnswerChange }: ModelProps) {
+export function QME2x3Video({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
 
   function selectItem(answer: QuestionOption) {
@@ -34,6 +38,7 @@ export function QME2x3Video({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(selected);
+    setContinueDisabled(selected.length === 0);
   }, [selected]);
 
   return (

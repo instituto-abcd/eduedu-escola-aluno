@@ -20,7 +20,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model22({ question, onAnswerChange }: ModelProps) {
+export function Model22({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, audioTitleAutoplay, textTitles } =
     useQuestionHelper(question);
   const hasAudio = audioTitles.some((title) => title.file_url);
@@ -43,6 +47,7 @@ export function Model22({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

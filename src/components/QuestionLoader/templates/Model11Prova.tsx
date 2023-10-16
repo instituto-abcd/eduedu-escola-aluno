@@ -23,7 +23,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model11Prova({ question, onAnswerChange }: ModelProps) {
+export function Model11Prova({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
   const {
     getRule,
@@ -102,6 +106,7 @@ export function Model11Prova({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
+    setContinueDisabled(answer.includes(null));
   }, [answer]);
 
   return (

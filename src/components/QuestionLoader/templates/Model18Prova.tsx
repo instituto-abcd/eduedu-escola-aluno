@@ -10,7 +10,11 @@ import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model18Prova({ question, onAnswerChange }: ModelProps) {
+export function Model18Prova({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
@@ -55,6 +59,9 @@ export function Model18Prova({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(selected);
+    setContinueDisabled(
+      selected.length !== slots.filter((slot) => slot === null).length
+    );
   }, [selected]);
 
   return (

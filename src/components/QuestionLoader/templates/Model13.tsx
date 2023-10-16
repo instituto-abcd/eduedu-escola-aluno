@@ -26,7 +26,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model13({ question, onAnswerChange }: ModelProps) {
+export function Model13({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { imageTitles, audioTitles } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
@@ -51,6 +55,7 @@ export function Model13({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answers);
+    setContinueDisabled(answers.length !== question.options.length);
   }, [answers]);
 
   return (

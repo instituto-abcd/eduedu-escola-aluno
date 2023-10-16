@@ -9,7 +9,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function Model2Video({ question, onAnswerChange }: ModelProps) {
+export function Model2Video({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [slots, setSlots] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
@@ -37,6 +41,8 @@ export function Model2Video({ question, onAnswerChange }: ModelProps) {
     onAnswerChange(
       slots.filter((answer) => answer !== null) as QuestionOption[]
     );
+
+    setContinueDisabled(!slots.every((answer) => answer !== null));
   }, [slots]);
 
   return (

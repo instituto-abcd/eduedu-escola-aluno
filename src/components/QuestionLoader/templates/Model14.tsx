@@ -7,7 +7,11 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model14({ question, onAnswerChange }: ModelProps) {
+export function Model14({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
@@ -20,6 +24,7 @@ export function Model14({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

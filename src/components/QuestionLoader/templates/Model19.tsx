@@ -20,7 +20,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model19({ question, onAnswerChange }: ModelProps) {
+export function Model19({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
     useQuestionHelper(question);
   const { classes } = useStyles();
@@ -28,6 +32,7 @@ export function Model19({ question, onAnswerChange }: ModelProps) {
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const slots = textTitles[0] ? textTitles[0].description.split(" ") : [];
+
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"
   );
@@ -50,10 +55,11 @@ export function Model19({ question, onAnswerChange }: ModelProps) {
   useEffect(() => {
     setAnswers([]);
     setOptions(question.options);
-  }, []);
+  }, [question]);
 
   useEffect(() => {
     onAnswerChange(answers);
+    setContinueDisabled(answers.length !== slots.length);
   }, [answers]);
 
   return (

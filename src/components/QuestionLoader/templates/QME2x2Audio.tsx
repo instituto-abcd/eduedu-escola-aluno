@@ -59,8 +59,15 @@ export function QME2x2Audio({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  useEffect(() => {
+    setContinueDisabled(answer === null);
+  }, [answer, question]);
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   return (
     <>
@@ -128,7 +135,7 @@ export function QME2x2Audio({
           ))}
       </Group>
 
-      <SimpleGrid cols={cols} w="fit-content">
+      <SimpleGrid cols={cols} w="fit-content" my="auto">
         {question.options.map((option, inx) => {
           const hasLabel =
             option.description !== null && option.description.length > 2;

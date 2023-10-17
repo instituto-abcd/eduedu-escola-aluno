@@ -15,12 +15,14 @@ import { ModelProps } from ".";
 
 const useStyles = createStyles({
   slot: {
+    margin: "auto",
     width: boardW(100),
     height: boardW(100),
     display: "grid",
     placeItems: "center",
   },
   card: {
+    margin: "auto",
     width: `${boardW(100)}px!important`,
     height: `${boardW(100)}px!important`,
   },

@@ -1,12 +1,20 @@
-import { Group } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { lousaHeight } from "~/constants/dimensions";
+import { useTimeout } from "@mantine/hooks";
+import { useEffect } from "react";
 
-export function Model30({ question }: ModelProps) {
+export function Model30({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
     useQuestionHelper(question);
+
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+
+  useEffect(() => {
+    start();
+  }, [question]);
 
   return (
     <>
@@ -24,22 +32,24 @@ export function Model30({ question }: ModelProps) {
         </Group>
       )}
 
-      {imageTitles.length > 0 && (
-        <>
-          <img
-            src={imageTitles[0].file_url ?? ""}
-            width="auto"
-            height={(lousaHeight * 55) / 100}
-          />
+      <Stack my="auto">
+        {imageTitles.length > 0 && (
+          <>
+            <img
+              src={imageTitles[0].file_url ?? ""}
+              width="auto"
+              height={(lousaHeight * 55) / 100}
+            />
 
-          {/* Alguns estão vindo sem file_url,
+            {/* Alguns estão vindo sem file_url,
               por isso adicionei esse texto para mostrar caso o file_url esteja vazio:
           */}
-          {imageTitles[0].file_url?.length
-            ? ""
-            : "Ooops! Imagem não disponível :("}
-        </>
-      )}
+            {imageTitles[0].file_url?.length
+              ? ""
+              : "Ooops! Imagem não disponível :("}
+          </>
+        )}
+      </Stack>
     </>
   );
 }

@@ -29,7 +29,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model34({ question, onAnswerChange }: ModelProps) {
+export function Model34({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
     useQuestionHelper(question);
   const { classes } = useStyles();
@@ -42,6 +46,7 @@ export function Model34({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

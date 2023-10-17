@@ -16,7 +16,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model4({ question, onAnswerChange }: ModelProps) {
+export function Model4({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const {
@@ -33,6 +37,7 @@ export function Model4({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

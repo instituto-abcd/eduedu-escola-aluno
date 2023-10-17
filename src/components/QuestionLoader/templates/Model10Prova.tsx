@@ -16,6 +16,7 @@ export function Model10Prova({
   question,
   onAnswerChange,
   auxQuestion,
+  setContinueDisabled,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
@@ -26,6 +27,7 @@ export function Model10Prova({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

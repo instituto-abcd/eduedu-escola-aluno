@@ -9,7 +9,11 @@ import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 
-export function Model2({ question, onAnswerChange }: ModelProps) {
+export function Model2({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
@@ -37,6 +41,8 @@ export function Model2({ question, onAnswerChange }: ModelProps) {
     onAnswerChange(
       answers.filter((answer) => answer !== null) as QuestionOption[]
     );
+
+    setContinueDisabled(!answers.every((answer) => answer !== null));
   }, [answers]);
 
   return (

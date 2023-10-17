@@ -10,7 +10,11 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model18({ question, onAnswerChange }: ModelProps) {
+export function Model18({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
@@ -66,6 +70,9 @@ export function Model18({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(selected);
+    setContinueDisabled(
+      selected.length !== slots.filter((slot) => slot === null).length
+    );
   }, [selected]);
 
   return (

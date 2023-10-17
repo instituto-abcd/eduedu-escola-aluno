@@ -33,7 +33,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function QME2x2Text({ question, onAnswerChange }: ModelProps) {
+export function QME2x2Text({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
   const { textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -44,6 +48,7 @@ export function QME2x2Text({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   const title = "Leia o texto e responda à pergunta.";

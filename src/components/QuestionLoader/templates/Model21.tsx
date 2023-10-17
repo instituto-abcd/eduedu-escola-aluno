@@ -3,8 +3,10 @@ import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useEffect } from "react";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model21({ question }: ModelProps) {
+export function Model21({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles, textTitles, hasAudioTitle } =
     useQuestionHelper(question);
   const autoPlay =
@@ -16,6 +18,12 @@ export function Model21({ question }: ModelProps) {
 
   const statement =
     textTitles.find((title) => title.position === 2)?.description ?? "";
+
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+
+  useEffect(() => {
+    start();
+  }, [question]);
 
   return (
     <>

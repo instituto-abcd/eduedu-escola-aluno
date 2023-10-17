@@ -10,7 +10,7 @@ import { boardW } from "~/constants/dimensions";
 
 // TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
 
-export function Model27({ question }: ModelProps) {
+export function Model27({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
@@ -28,8 +28,10 @@ export function Model27({ question }: ModelProps) {
     setSlideIndex(slideIndex - 1);
   }
 
-  // legacy, talvez resgatar no futuro?
-  // const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
+  const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
 
   useEffect(() => {
     setSlideIndex(0);

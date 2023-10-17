@@ -76,6 +76,10 @@ export function QuestionLoader({
     setContinueDisabled(true);
   }, [question]);
 
+  useEffect(() => {
+    setContinueDisabled(mediaTrack.isPlaying);
+  }, [mediaTrack.isPlaying]);
+
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>
       <ModelMapper commonProps={commonProps} />

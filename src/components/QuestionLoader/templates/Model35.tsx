@@ -15,7 +15,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Model35({ question, onAnswerChange }: ModelProps) {
+export function Model35({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, imageTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
   const { classes } = useStyles();
@@ -34,6 +38,8 @@ export function Model35({ question, onAnswerChange }: ModelProps) {
         position: 0,
       } as QuestionOption,
     ]);
+
+    setContinueDisabled(!answer || answer === "");
   }, [answer]);
 
   return (

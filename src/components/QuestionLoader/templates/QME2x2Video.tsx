@@ -9,7 +9,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function QME2x2Video({ question, onAnswerChange }: ModelProps) {
+export function QME2x2Video({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { videoTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
@@ -20,6 +24,7 @@ export function QME2x2Video({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

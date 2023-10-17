@@ -10,7 +10,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function QME2x2Audio({ question, onAnswerChange }: ModelProps) {
+export function QME2x2Audio({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -55,6 +59,7 @@ export function QME2x2Audio({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

@@ -24,7 +24,11 @@ const useStyles = createStyles({
   },
 });
 
-export function Model8({ question, onAnswerChange }: ModelProps) {
+export function Model8({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { imageTitles, videoTitles, textTitles, audioTitles } =
     useQuestionHelper(question);
 
@@ -34,6 +38,7 @@ export function Model8({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   useEffect(() => {

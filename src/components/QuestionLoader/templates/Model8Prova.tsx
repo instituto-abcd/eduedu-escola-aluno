@@ -20,7 +20,11 @@ import { ModelProps } from ".";
 
 const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
 
-export function Model8Prova({ question, onAnswerChange }: ModelProps) {
+export function Model8Prova({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles, textTitles, imageTitles, videoTitles, hasAudioTitle } =
     useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -33,6 +37,7 @@ export function Model8Prova({ question, onAnswerChange }: ModelProps) {
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
   }, [answer]);
 
   return (

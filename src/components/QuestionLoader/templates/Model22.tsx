@@ -1,4 +1,4 @@
-import { Group, Stack, Title, createStyles } from "@mantine/core";
+import { Group, Stack, Title, Image, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -18,6 +18,9 @@ const useStyles = createStyles((theme) => ({
     paddingBlock: 25,
     maxWidth: boardW(800),
   },
+  title: {
+    fontSize: boardW(30),
+  },
 }));
 
 export function Model22({
@@ -25,10 +28,10 @@ export function Model22({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { audioTitles, audioTitleAutoplay, textTitles } =
+  const { audioTitles, audioTitleAutoplay, textTitles, imageTitles } =
     useQuestionHelper(question);
   const hasAudio = audioTitles.some((title) => title.file_url);
-  const hasText = textTitles.some((title) => title.description);
+
   const { classes } = useStyles();
 
   const [answer, setAnswer] = useState<QuestionOption>();
@@ -65,16 +68,28 @@ export function Model22({
             ))}
       </Group>
 
-      <Stack align="center" spacing={boardW(50)} my="auto">
-        {hasText && (
+      <Stack align="center" spacing={boardW(20)} my="auto">
+        {textTitles.map((title) => (
           <Title
-            dangerouslySetInnerHTML={{
-              __html: textTitles[0].description,
-            }}
+            key={title.description}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            align="center"
             color="dark.3"
-            size={boardW(40)}
+            className={classes.title}
           />
-        )}
+        ))}
+        {imageTitles.map((title) => (
+          <Image
+            mx="auto"
+            src={title.file_url}
+            alt={title.description}
+            height={boardW(200)}
+            width="auto"
+            key={title.file_url}
+            style={{ flexGrow: 1 }}
+            styles={{ image: { marginInline: "auto" } }}
+          />
+        ))}
         <Group align="center" className={classes.group} position="center">
           {question.options.map((option, inx) => (
             <TextOptionButton
@@ -82,7 +97,7 @@ export function Model22({
               onClick={() => handleAnswer(option)}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               style={{
-                fontSize: boardW(25),
+                fontSize: boardW(24)
               }}
             >
               {option.description}

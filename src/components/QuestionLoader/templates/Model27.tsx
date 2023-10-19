@@ -69,16 +69,11 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
           />
         )}
 
-        {currentSlide.position == 1 && (
-          <Text color="dark.3" fz="xl" align="center">
-            {question.description}
-          </Text>
-        )}
-
         {currentSlide.description && (
           <ScrollArea w={boardW(900)} mah={boardW(300)}>
             <Box>
               <Text
+                m="auto"
                 fz="lg"
                 color="dark.3"
                 align="center"

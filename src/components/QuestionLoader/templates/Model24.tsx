@@ -71,17 +71,17 @@ export function Model24({
           )}
       </Group>
 
-      <Box>
+      <Box mt={boardW(10)}>
         {imageTitles.map(
           (title) =>
             title.file_url && (
               <Image
-                mx="auto"
+                key={title.file_url}
                 src={title.file_url}
+                alt={title.placeholder}
+                styles={{ image: { marginInline: "auto" } }}
                 width="auto"
                 height={boardW(170)}
-                alt={title.placeholder}
-                key={title.file_url}
               />
             )
         )}
@@ -90,18 +90,18 @@ export function Model24({
           <Stack align="center" spacing={boardW(25)}>
             {textTitles.find((title) => title.placeholder.includes("completar"))
               ?.description && (
-              <Title
-                dangerouslySetInnerHTML={{
-                  __html:
-                    textTitles.find((title) =>
-                      title.placeholder.includes("completar")
-                    )?.description ?? "",
-                }}
-                size={boardW(24)}
-                weight={500}
-                color="dark.3"
-              />
-            )}
+                <Title
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find((title) =>
+                        title.placeholder.includes("completar")
+                      )?.description ?? "",
+                  }}
+                  size={boardW(24)}
+                  weight={500}
+                  color="dark.3"
+                />
+              )}
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
@@ -117,6 +117,7 @@ export function Model24({
                   {option.description}
                   {option.image_url && (
                     <Image
+                      m="auto"
                       src={option.image_url}
                       maw={boardW(100)}
                       mah={boardW(100)}
@@ -132,7 +133,7 @@ export function Model24({
           <Stack align="center" spacing={boardW(25)}>
             {textTitles
               .filter(
-                (title) => title.description && title.description.length > 5
+                (title) => title.description && title.description.length > 0
               )
               .map((title) => (
                 <Title
@@ -169,6 +170,12 @@ export function Model24({
                       style={{
                         height: boardW(100),
                       }}
+                    />
+                  )}
+                  {option.sound_url && (
+                    <AudioButton
+                      key={option.sound_id}
+                      src={option.sound_url}
                     />
                   )}
                 </OptionButton>

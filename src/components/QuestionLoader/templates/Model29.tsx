@@ -9,13 +9,13 @@ import { ModelProps } from ".";
 
 const useStyles = createStyles({
   slot: {
-    width: boardW(120),
-    height: boardW(120),
+    width: boardW(140),
+    height: boardW(160),
     display: "grid",
     placeItems: "center",
   },
   card: {
-    width: boardW(120),
+    width: boardW(200),
     height: boardW(120),
     img: {
       marginBottom: "2px",
@@ -61,12 +61,6 @@ export function Model29({
   }
 
   useEffect(() => {
-    setAnswers(
-      answers.map((ans, inx) => ({
-        ...ans,
-        positionAnswer: inx,
-      })) as QuestionOption[]
-    );
   }, [question]);
 
   useEffect(() => {
@@ -81,11 +75,11 @@ export function Model29({
     <>
       <Stack my="auto" w={boardW(800)}>
         {textTitles[0]?.description && (
-          <ScrollArea h={boardW(230)} type="always">
+          <ScrollArea h={boardW(200)} type="always">
             <Text
               color="dark.3"
               dangerouslySetInnerHTML={{ __html: textTitles[0].description }}
-              size={boardW(22)}
+              size={boardW(18)}
             />
           </ScrollArea>
         )}
@@ -109,7 +103,7 @@ export function Model29({
                 />
               }
             >
-              <Text size={boardW(40)} weight={700} color="dark.3">
+              <Text size={boardW(60)} weight={700} color="dark.3">
                 {inx + 1}
               </Text>
             </DraggableCardSlot>

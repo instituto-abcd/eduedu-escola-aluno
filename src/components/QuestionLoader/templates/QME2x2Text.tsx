@@ -48,7 +48,7 @@ export function QME2x2Text({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
+    setContinueDisabled(answer === null);
   }, [answer]);
 
   const title = "Leia o texto e responda à pergunta.";

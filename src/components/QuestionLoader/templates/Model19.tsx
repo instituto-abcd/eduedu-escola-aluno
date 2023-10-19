@@ -25,13 +25,12 @@ export function Model19({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
-    useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
-  const slots = textTitles[0] ? textTitles[0].description.split(" ") : [];
+  const slots = textTitles[0] ? textTitles[0].description.trim().split(" ") : [];
 
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"

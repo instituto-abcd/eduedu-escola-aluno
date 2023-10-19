@@ -10,7 +10,13 @@ import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 export function Model33({ question }: ModelProps) {
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    imageTitles,
+    textTitles,
+  } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
   const mediaTrack = useMediaTrackStore();
 
@@ -29,22 +35,28 @@ export function Model33({ question }: ModelProps) {
 
   return (
     <>
-      <Group>
-        {audioTitles.map((title, inx) =>
-          inx === 0 ? (
-            <AudioButton key={title.position} src={title.file_url ?? ""} />
-          ) : (
-            <AudioButton
-              key={title.position}
-              src={title.file_url ?? ""}
-              buttonProps={{
-                variant: "yellow",
-                icon: <IconMessageCircle2 size={30} />,
-              }}
-            />
-          )
-        )}
-      </Group>
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) =>
+            inx === 0 ? (
+              <AudioButton
+                key={title.position}
+                src={title.file_url ?? ""}
+                autoPlay={audioTitleAutoplay(inx)}
+              />
+            ) : (
+              <AudioButton
+                key={title.position}
+                src={title.file_url ?? ""}
+                buttonProps={{
+                  variant: "yellow",
+                  icon: <IconMessageCircle2 size={30} />,
+                }}
+              />
+            )
+          )}
+        </Group>
+      )}
 
       <Group noWrap m="auto" spacing={(lousaWidth * 10) / 100}>
         {hasTextOrImage && (

@@ -1,26 +1,19 @@
-import {
-  Center,
-  Group,
-  Image,
-  LoadingOverlay,
-  ScrollArea,
-  Stack,
-  Title,
-} from "@mantine/core";
-
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
-import { IconRotateClockwise } from "@tabler/icons-react";
-import { OptionButton } from "~/components/OptionButton";
-import { EduButton } from "~/components/EduButton";
+import { Group, Image, Stack, Title } from "@mantine/core";
+import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { AudioButton } from "~/components/AudioButton";
+import { OptionButton } from "~/components/OptionButton";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model24({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles, optionArrKey } =
+export function Model24({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, hasAudioTitle, textTitles, imageTitles, optionArrKey } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<number>(-1);
@@ -36,160 +29,157 @@ export function Model24({ question, answerCallback }: ModelProps) {
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
 
   const disabled = isTypeSelect ? !singleAnswer : answer === -1;
-  const hasImages = imageTitles.filter((title) => title.file_url).length > 0;
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (isTypeSelect && !singleAnswer) return;
-    if (isTypeComplete && answer === -1) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: isTypeSelect ? [singleAnswer as QuestionOption] : [],
-    });
-  }
 
   useEffect(() => {
     setAnswer(-1);
     setSingleAnswer(null);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(isTypeSelect ? [singleAnswer as QuestionOption] : []);
+  }, [answer, singleAnswer]);
+
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
+
   return (
     <>
-      <ScrollArea w={850} h={(lousaHeight * 80) / 100}>
-        <Stack px={30}>
-          <Group mx="auto">
-            {audioTitles
-              .filter((title) => title.file_url)
-              .map((title, inx) =>
-                inx === 0 ? (
-                  <AudioButton
-                    key={title.position}
-                    src={title.file_url ?? ""}
-                    autoPlay
-                  />
-                ) : (
-                  <AudioButton
-                    key={title.position}
-                    src={title.file_url ?? ""}
-                    buttonProps={{
-                      icon: (
-                        <IconRotateClockwise
-                          style={{ transform: "rotateX(180deg)" }}
-                          size={30}
-                        />
-                      ),
-                    }}
-                  />
-                )
-              )}
-          </Group>
+      <Group mx="auto" h="50px">
+        {hasAudioTitle &&
+          audioTitles.map((title, inx) =>
+            inx === 0 ? (
+              <AudioButton
+                key={title.position}
+                src={title.file_url ?? ""}
+                autoPlay
+              />
+            ) : (
+              <AudioButton
+                key={title.position}
+                src={title.file_url ?? ""}
+                buttonProps={{
+                  icon: (
+                    <IconRotateClockwise
+                      style={{ transform: "rotateX(180deg)" }}
+                      size={30}
+                    />
+                  ),
+                }}
+              />
+            )
+          )}
+      </Group>
 
-          {imageTitles.map(
-            (title) =>
-              title.file_url && (
-                <Image
-                  mx="auto"
-                  src={title.file_url}
-                  width="auto"
-                  height={190}
-                  alt={title.placeholder}
-                  key={title.file_url}
-                />
+      <Stack my="auto" spacing={boardW(40)}>
+        {imageTitles.map(
+          (title) =>
+            title.file_url && (
+              <Image
+                key={title.file_url}
+                src={title.file_url}
+                alt={title.placeholder}
+                styles={{ image: { marginInline: "auto" } }}
+                width="auto"
+                height={boardW(170)}
+              />
+            )
+        )}
+
+        {isTypeComplete && (
+          <Stack align="center" spacing={boardW(25)}>
+            {textTitles.find((title) => title.placeholder.includes("completar"))
+              ?.description && (
+              <Title
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find((title) =>
+                      title.placeholder.includes("completar")
+                    )?.description ?? "",
+                }}
+                size={boardW(24)}
+                weight={500}
+                color="dark.3"
+              />
+            )}
+            <Group mb={20}>
+              {question.options.map((option, inx) => (
+                <OptionButton
+                  key={optionArrKey(option, inx)}
+                  isCorrect={option.isCorrect}
+                  onClick={() => setAnswer(inx)}
+                  data-selected={answer === inx}
+                  style={{
+                    width: boardW(120),
+                    height: boardW(120),
+                  }}
+                >
+                  {option.description}
+                  {option.image_url && (
+                    <Image
+                      m="auto"
+                      src={option.image_url}
+                      maw={boardW(100)}
+                      mah={boardW(100)}
+                    />
+                  )}
+                </OptionButton>
+              ))}
+            </Group>
+          </Stack>
+        )}
+
+        {isTypeSelect && (
+          <Stack align="center" spacing={boardW(25)}>
+            {textTitles
+              .filter(
+                (title) => title.description && title.description.length > 0
               )
-          )}
-
-          {isTypeComplete && (
-            <Stack my="auto" align="center" spacing={100}>
-              {textTitles.find((title) =>
-                title.placeholder.includes("completar")
-              )?.description && (
-                  <Title
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find((title) =>
-                          title.placeholder.includes("completar")
-                        )?.description ?? "",
-                    }}
-                    color="dark.3"
-                    weight={500}
-                  />
-                )}
-              <Group mb={20}>
-                {question.options.map((option, inx) => (
-                  <OptionButton
-                    key={optionArrKey(option, inx)}
-                    isCorrect={option.isCorrect}
-                    onClick={() => setAnswer(inx)}
-                    data-selected={answer === inx}
-                  >
-                    {option.description}
-                    {option.image_url && (
-                      <Image src={option.image_url} maw="80%" mah="80%" />
-                    )}
-                  </OptionButton>
-                ))}
-              </Group>
-            </Stack>
-          )}
-
-          {isTypeSelect && (
-            <Stack my="auto" align="center" spacing={hasImages ? 40 : 100}>
-              {textTitles
-                .filter(
-                  (title) => title.description && title.description.length > 5
-                )
-                .map((title) => (
-                  <Title
-                    dangerouslySetInnerHTML={{
-                      __html: title.description.replace(
-                        /_+/g,
-                        singleAnswer?.description ?? "_____"
-                      ),
-                    }}
-                    color="dark.3"
-                    weight={500}
-                    size={24}
-                    key={title.description}
-                  />
-                ))}
-              <Group mb={20}>
-                {question.options.map((option, inx) => (
-                  <OptionButton
-                    key={optionArrKey(option, inx)}
-                    isCorrect={option.isCorrect}
-                    onClick={() => setSingleAnswer(option)}
-                    data-selected={
-                      JSON.stringify(singleAnswer) === JSON.stringify(option)
-                    }
-                  >
-                    {option.description}
-                    {option.image_url && (
-                      <Image src={option.image_url} maw="80%" mah="80%" />
-                    )}
-                  </OptionButton>
-                ))}
-              </Group>
-            </Stack>
-          )}
-        </Stack>
-      </ScrollArea>
-      <EduButton
-        disabled={disabled}
-        style={{
-          marginTop: "20px",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-        onClick={submitAnswer}
-      >
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+              .map((title) => (
+                <Title
+                  dangerouslySetInnerHTML={{
+                    __html: title.description.replace(
+                      /_+/g,
+                      singleAnswer?.description ?? "_____"
+                    ),
+                  }}
+                  key={title.description}
+                  size={boardW(24)}
+                  weight={500}
+                  color="dark.3"
+                />
+              ))}
+            <Group>
+              {question.options.map((option, inx) => (
+                <OptionButton
+                  key={optionArrKey(option, inx)}
+                  isCorrect={option.isCorrect}
+                  onClick={() => setSingleAnswer(option)}
+                  data-selected={
+                    JSON.stringify(singleAnswer) === JSON.stringify(option)
+                  }
+                  style={{
+                    width: boardW(190),
+                    height: boardW(120),
+                  }}
+                  sound={option.sound_url ?? undefined}
+                >
+                  {option.description}
+                  {option.image_url && (
+                    <img
+                      src={option.image_url}
+                      style={{
+                        height: boardW(100),
+                      }}
+                    />
+                  )}
+                  {option.sound_url && <IconVolume size={boardW(62)} />}
+                </OptionButton>
+              ))}
+            </Group>
+          </Stack>
+        )}
+      </Stack>
     </>
   );
 }

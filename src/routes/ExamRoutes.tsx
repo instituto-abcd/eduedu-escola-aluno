@@ -7,7 +7,7 @@ export function ExamRoutes() {
   function nested(route: string) {
     return route.endsWith("/") ? route + "*" : `${route}/*`;
   }
-  
+
   return (
     <Routes>
       <Route index Component={ExamPage} />

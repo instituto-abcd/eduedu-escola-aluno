@@ -16,7 +16,6 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "#fff",
     color: theme.colors.blue[6],
     cursor: "grab",
-    fontSize: 30,
     fontWeight: 600,
     userSelect: "none",
     position: "relative",
@@ -43,6 +42,7 @@ type Props = {
   hidden?: boolean;
   onClear?: () => void;
   item: TextAreaItem;
+  customFontSize?: string | number;
 };
 
 export function TextDropItem({
@@ -51,6 +51,7 @@ export function TextDropItem({
   disabled,
   onClear,
   type = "ANSWER_CARD",
+  customFontSize
 }: Props) {
   const { classes } = useStyles();
 
@@ -67,6 +68,7 @@ export function TextDropItem({
   );
 
   const styles: CSSProperties = {
+    fontSize: customFontSize ? customFontSize : 30,
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden ? "none" : "all",

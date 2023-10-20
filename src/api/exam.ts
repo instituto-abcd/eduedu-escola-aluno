@@ -19,6 +19,7 @@ export type QuestionTitle = {
   description: string;
   file_name: string;
   file_url: string | null;
+  file_id: string | null;
   placeholder: string;
   position: number;
   type: string;
@@ -54,6 +55,7 @@ export type Question = {
     | "MODEL10"
     | "MODEL10-PROVA"
     | "MODEL11"
+    | "MODEL11-PROVA"
     | "MODEL12"
     | "MODEL13"
     | "MODEL14"

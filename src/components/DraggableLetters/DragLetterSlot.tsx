@@ -2,11 +2,13 @@ import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
 import { DraggableLetters } from ".";
 import { QuestionOption } from "~/api/exam";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   card: {
-    width: 87,
-    height: 78,
+    paddingInline: boardW(24),
+    paddingBlock: boardW(10),
+    fontSize: boardW(20),
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "solid",
@@ -30,9 +32,10 @@ export function DragLetterSlot({
   accept = "ANSWER_LETTERS",
   option,
   onClear,
+  className,
   ...props
 }: Props) {
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
 
   const [, drop] = useDrop(
     () => ({
@@ -46,6 +49,18 @@ export function DragLetterSlot({
   );
 
   if (option !== null)
-    return <DraggableLetters onClear={onClear} option={option} disabled style={{ ...props.style }} />;
-  return <div {...props} className={classes.card} style={{ ...props.style }} ref={drop} />;
+    return (
+      <DraggableLetters
+        onClear={onClear}
+        option={option}
+        disabled
+        style={{ ...props.style }}
+      />
+    );
+
+  return (
+    <div className={cx(classes.card, className)} ref={drop} {...props}>
+      <p style={{ opacity: 0 }}>GG</p>
+    </div>
+  );
 }

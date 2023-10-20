@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { MutationOptions, QueryOptions } from "./api-types";
 import { API } from "./base";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SchoolGrade, SchoolPeriod } from "./school-class";
 import { useStudent } from "~/stores/student";
 import { Question, QuestionOption } from "./exam";
@@ -199,10 +199,34 @@ export function usePlanetFeedback(
   options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>
 ) {
   const studentId = useStudent((state) => state.id);
+  const queryClient = useQueryClient();
 
   const handler = useCallback(function () {
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
-  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
+  return useQuery([KEY.GET_STUDENT_AWARDS], handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      options?.onSuccess?.(data, vars, ctx);
+      queryClient.setQueryData([KEY.PLANET_TRACK], (oldData: PlanetTrack) => {
+        const toUpdate = oldData.planetTrack.find(
+          (planet) => planet.planetName === data.name
+        );
+
+        if (!toUpdate) return oldData;
+
+        toUpdate.stars = data.stars;
+        const newTrack = oldData.planetTrack.filter(
+          (p) => p.planetName !== data.name
+        );
+        newTrack.push(toUpdate);
+
+        return {
+          ...oldData,
+          planetTrack: newTrack,
+        };
+      });
+    },
+  });
 }

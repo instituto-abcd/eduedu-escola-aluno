@@ -1,34 +1,23 @@
-import { Group, LoadingOverlay, SimpleGrid, Stack, Text } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
-import { OptionButton } from "~/components/OptionButton";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useEffect, useRef, useState } from "react";
+import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioControls } from "~/components/AudioControls/AudioControls";
-import { useGetExamQuestion } from "~/api/student";
-import { useEffect, useRef, useState } from "react";
-import { EduButton } from "~/components/EduButton";
-import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
+import { OptionButton } from "~/components/OptionButton";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaHeight } from "~/constants/dimensions";
+import { ModelProps } from ".";
 
-export function QME2x2Audio({ question, answerCallback }: ModelProps) {
+export function QME2x2Audio({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
@@ -68,6 +57,18 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
     }
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
+
+  useEffect(() => {
+    setContinueDisabled(answer === null);
+  }, [answer, question]);
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
+
   return (
     <>
       {audioTitles
@@ -91,7 +92,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Group mx="auto">
+      <Group>
         {audioTitles
           .filter(
             (title) =>
@@ -134,8 +135,7 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           ))}
       </Group>
 
-      {/* Board content */}
-      <SimpleGrid cols={cols} mt={20} w="fit-content" mx="auto">
+      <SimpleGrid cols={cols} w="fit-content" my="auto">
         {question.options.map((option, inx) => {
           const hasLabel =
             option.description !== null && option.description.length > 2;
@@ -148,9 +148,9 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
               isCorrect={option.isCorrect}
             >
               <Stack justify="space-evenly">
-                {!hasLabel && <IconVolume size={62} />}
+                {!hasLabel && <IconVolume size={boardW(70)} />}
                 <Text
-                  size={hasLabel ? 20 : 30}
+                  size={hasLabel ? boardW(20) : boardW(30)}
                   weight={hasLabel ? 400 : 600}
                   style={{ wordBreak: "break-word" }}
                 >
@@ -161,22 +161,6 @@ export function QME2x2Audio({ question, answerCallback }: ModelProps) {
           );
         })}
       </SimpleGrid>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

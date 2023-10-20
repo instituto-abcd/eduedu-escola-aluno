@@ -1,72 +1,77 @@
-import { Group, Image, LoadingOverlay, Stack, Text } from "@mantine/core";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { Group, Image, Stack, Text } from "@mantine/core";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
-import { IconMessageCircle2 } from "@tabler/icons-react";
+import { AudioButton } from "~/components/AudioButton";
+import { lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 import { useEffect } from "react";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model33({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+export function Model33({ question, setContinueDisabled }: ModelProps) {
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    imageTitles,
+    textTitles,
+  } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
-  const mediaTrack = useMediaTrackStore();
 
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
+  const autoplayLaterAudio = () => {
+    const rule =
+      Array.isArray(question.rules) &&
+      question.rules.find((rule) => rule.name === "autoplay");
 
-  function submitAnswer() {
-    if (mediaTrack.isPlaying) return;
+    if (!rule) return true;
+    return rule.value === "false";
+  };
 
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
 
   useEffect(() => {
-    if (audioTitles[0].file_url && !mediaTrack.isPlaying) {
-      mediaTrack.play({
-        mediaType: MediaType.AUDIO,
-        trackId: audioTitles[0].file_url,
-        trackUrl: audioTitles[0].file_url,
-      });
-    }
+    start();
   }, [question]);
 
   return (
     <>
-      <Group>
-        {audioTitles.map((title, inx) =>
-          inx === 0 ? (
-            <AudioButton key={title.position} src={title.file_url ?? ""} />
-          ) : (
-            <AudioButton
-              key={title.position}
-              src={title.file_url ?? ""}
-              buttonProps={{
-                variant: "yellow",
-                icon: <IconMessageCircle2 size={30} />,
-              }}
-            />
-          )
-        )}
-      </Group>
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) =>
+            inx === 0 ? (
+              <AudioButton
+                key={inx}
+                src={title.file_url ?? ""}
+                autoPlay={audioTitleAutoplay(inx)}
+              />
+            ) : (
+              <AudioButton
+                key={inx}
+                src={title.file_url ?? ""}
+                buttonProps={{
+                  variant: "yellow",
+                  icon: <IconMessageCircle2 size={30} />,
+                }}
+                autoPlay={autoplayLaterAudio()}
+              />
+            )
+          )}
+        </Group>
+      )}
 
-      <Group position="apart" spacing={137} w="100%" noWrap my="auto">
+      <Group noWrap m="auto" spacing={(lousaWidth * 10) / 100}>
         {hasTextOrImage && (
           <Stack align="center" spacing={0}>
             {illustration && (
-              <Image src={illustration} width={346} height="auto" />
+              <Image
+                src={illustration}
+                width={((lousaWidth * 30) / 100).toString()}
+                height="auto"
+              />
             )}
 
             {textTitles.map((title) => (
@@ -92,14 +97,9 @@ export function Model33({ question, answerCallback }: ModelProps) {
             },
           }}
           height="auto"
-          width={346}
+          width={(lousaWidth * 30) / 100}
         />
       </Group>
-
-      <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

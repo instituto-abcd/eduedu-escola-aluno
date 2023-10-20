@@ -1,24 +1,45 @@
-import { Group, Image, LoadingOverlay, Stack } from "@mantine/core";
-import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useEffect, useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
+import { Group, Image, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
+import { CSSProperties, Fragment, useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model26({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+const useStyles = createStyles({
+  letters: {
+    width: boardW(60),
+    height: boardW(40),
+    padding: 0,
+    textAlign: "center",
+    fontSize: boardW(16),
+    display: "grid",
+    placeContent: "center",
+  },
+});
 
+export function Model26({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { classes } = useStyles();
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    imageTitles,
+    textTitles,
+  } = useQuestionHelper(question);
   const letterSlots = textTitles.find((title) =>
-    title.description.includes("__")
+    title?.description?.includes("__")
   );
 
-  const isSlotsOnly = (title: string) => !title.replace(/_|\s/g, "");
+  const isSlotsOnly = (title: string) =>
+    title.replace(/_|\s/g, "").length === 0;
 
   const initialSlots =
     letterSlots && isSlotsOnly(letterSlots.description)
@@ -27,7 +48,6 @@ export function Model26({ question, answerCallback }: ModelProps) {
 
   const [slots, setSlots] =
     useState<Array<QuestionOption | null>>(initialSlots);
-  const disabled = slots.includes(null);
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -41,77 +61,133 @@ export function Model26({ question, answerCallback }: ModelProps) {
     handleDrop(null, index);
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: slots as QuestionOption[],
-    });
-  }
-
   useEffect(() => {
     setSlots(initialSlots);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(slots.filter((slot) => slot !== null) as QuestionOption[]);
+  }, [slots]);
+
+  useEffect(() => {
+    setContinueDisabled(slots.includes(null));
+  }, [slots]);
+
   return (
     <>
-      {audioTitles.length > 0 && (
-        <Group position="center">
-          {audioTitles
-            .filter((title) => !!title.file_url)
-            .map((title) => (
-              <AudioButton
-                src={title.file_url ?? ""}
-                autoPlay
-                key={title.file_url}
-              />
-            ))}
-        </Group>
-      )}
-
-      {imageTitles[0] && (
-        <Image src={imageTitles[0].file_url ?? ""} width={225} height={225} />
-      )}
-
-      <Stack align="center" spacing={24}>
-        {letterSlots && isSlotsOnly(letterSlots.description) && (
-          <Group>
-            {slots.map((slot, inx) => (
-              <DragLetterSlot
-                onDrop={(item) => handleDrop(item, inx)}
-                option={slot}
-                onClear={() => handleClear(inx)}
-                key={inx}
-              />
-            ))}
-          </Group>
-        )}
-        <Group>
-          {question.options.map((option) => (
-            <DraggableLetters
-              option={option}
-              key={option.description}
-              hidden={
-                !!slots.find(
-                  (item) =>
-                    JSON.stringify(item) === JSON.stringify(option) && item
-                )
-              }
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url ?? ""}
+              autoPlay={audioTitleAutoplay(inx)}
+              key={title.file_url}
             />
           ))}
         </Group>
-      </Stack>
+      )}
 
-      <EduButton disabled={disabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <Stack my="auto" align="center">
+        {imageTitles[0] && (
+          <Image
+            src={imageTitles[0].file_url ?? ""}
+            width="auto"
+            height={boardW(200)}
+          />
+        )}
+        <Stack align="center" spacing={boardW(20)} my="xl">
+          {letterSlots && isSlotsOnly(letterSlots.description) && (
+            <Group>
+              {slots.map((slot, inx) => (
+                <DragLetterSlot
+                  onDrop={(item) => handleDrop(item, inx)}
+                  option={slot}
+                  onClear={() => handleClear(inx)}
+                  key={inx}
+                  className={classes.letters}
+                  style={{
+                    fontSize: boardW(16),
+                  }}
+                />
+              ))}
+            </Group>
+          )}
+
+          {letterSlots && !isSlotsOnly(letterSlots.description) && (
+            <Group spacing={0}>
+              {letterSlots.description
+                .replaceAll("\\n", "")
+                .split(/_+/g) // separa os segmentos de texto dos underlines
+                .map((w, inx, arr) => {
+                  const notLastFragment = arr.length !== inx + 1;
+                  const isLastFragment = arr.length === 1 && w.endsWith(" ");
+                  const isFirstFragment = arr.length === 1 && w.startsWith(" ");
+
+                  const canRenderLast =
+                    (isLastFragment || notLastFragment) && !isFirstFragment;
+                  const canRenderFirst = isFirstFragment && !isLastFragment;
+
+                  const slotLetterStyle: CSSProperties = {
+                    fontSize: boardW(16),
+                  };
+
+                  return (
+                    <Fragment key={inx}>
+                      {canRenderFirst && (
+                        <DragLetterSlot
+                          onDrop={(item) => handleDrop(item, inx)}
+                          option={slots[inx] ?? null}
+                          onClear={() => handleClear(inx)}
+                          className={classes.letters}
+                          style={slotLetterStyle}
+                        />
+                      )}
+                      {w.split(" ").map((frag, inx) => (
+                        <Text
+                          color="dark.3"
+                          size={boardW(18)}
+                          weight={700}
+                          p={0}
+                          my={2.5}
+                          mx={2.5}
+                          key={inx}
+                        >
+                          {frag}
+                        </Text>
+                      ))}
+
+                      {canRenderLast && (
+                        <DragLetterSlot
+                          onDrop={(item) => handleDrop(item, inx)}
+                          option={slots[inx] ?? null}
+                          onClear={() => handleClear(inx)}
+                          className={classes.letters}
+                          style={slotLetterStyle}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
+            </Group>
+          )}
+
+          <Group>
+            {question.options.map((option) => (
+              <DraggableLetters
+                option={option}
+                key={option.description}
+                hidden={
+                  !!slots.find(
+                    (item) =>
+                      JSON.stringify(item) === JSON.stringify(option) && item
+                  )
+                }
+                className={classes.letters}
+              />
+            ))}
+          </Group>
+        </Stack>
+      </Stack>
     </>
   );
 }

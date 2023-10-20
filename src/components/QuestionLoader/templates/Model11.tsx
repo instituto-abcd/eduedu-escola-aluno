@@ -1,151 +1,256 @@
-import {
-  Group,
-  Image,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
-import { EduButton } from "~/components/EduButton";
-import { TextOptionButton } from "~/components/OptionButton";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
+import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
+import { produce } from "immer";
+import { Fragment, useEffect, useState } from "react";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { QuestionOption } from "~/api/exam";
-import { Fragment, useEffect, useState } from "react";
-import { useGetExamQuestion } from "~/api/student";
-import { usePlanetAnswer } from "~/api/planet";
-import { textoMedium, lousaWidth, lousaHeight } from "~/constants/dimensions";
+import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
+import { TextOptionButton } from "~/components/OptionButton";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-/*
- *   TODO: implementar "audio alternativo" (botao amarelo) removido temporariamente
- */
+const useStyles = createStyles({
+  slot: {
+    width: boardW(60),
+    height: boardW(50),
+  },
 
-export function Model11({ question, answerCallback }: ModelProps) {
-  const { imageTitles, audioTitles, textTitles, isExam } =
-    useQuestionHelper(question);
+  option: {
+    width: "auto",
+    paddingBlock: boardW(10),
+    fontSize: boardW(18),
+  },
+});
 
-  const [, word] = textTitles[0].description.split("/") ?? ["", ""];
-  const [answer, setAnswer] = useState<QuestionOption | null>(null);
+export function Model11({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { classes } = useStyles();
+  const {
+    getRule,
 
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
+    imageTitles,
+    textTitles,
 
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+  } = useQuestionHelper(question);
 
-  const isLoading = isLoadingExam || isLoadingPlanet;
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: [
-          { position: answer.position, positionAnswer: 0 } as QuestionOption,
-        ],
-      });
+  const [answer, setAnswer] = useState<Array<QuestionOption | null>>([null]);
+  function handleAnswer(ans: QuestionOption | null, inx?: number) {
+    if (Number.isInteger(inx)) {
+      setAnswer((state) =>
+        produce(state, (draft) => {
+          draft[inx!] = ans ? { ...ans, positionAnswer: inx } : null;
+        })
+      );
+    } else if (ans && typeof inx === "undefined") {
+      setAnswer([ans]);
     } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: [
-          { position: answer.position, positionAnswer: 0 } as QuestionOption,
-        ],
-      });
+      const initialSlots = new Array<null>(slotsQty).fill(null);
+      setAnswer(initialSlots);
     }
   }
 
+  /*
+   *    Helpers para o título da questão
+   *    Referente ao texto que apresenta a questão (enunciado)
+   */
+  const hasTitle = false;
+  const questionTitle = "";
+
+  /*
+   *    Helpers para o texto de completar
+   */
+  const textToComplete = getTextToComplete(textTitles);
+  const shouldRepeatAnswer = checkShouldRepeatAnswer();
+  const isFullWidth = imageTitles.length === 0;
+
+  function checkShouldRepeatAnswer() {
+    const answerRule = getRule("answers");
+    if (!answerRule) return false;
+
+    const answers = answerRule.value.split(",");
+    if (answers.length === 1) return false;
+    if (new Set(answers).size !== answers.length) return true;
+    return false;
+  }
+
+  function getTextToComplete(titles: QuestionTitle[]) {
+    return titles.find(
+      (title) =>
+        title.placeholder?.startsWith("Texto a ser preenchido") ||
+        title.placeholder?.includes("preenchido") ||
+        title.placeholder?.includes("preencher")
+    ) as QuestionTitle;
+  }
+
+  /* 🧙🏻 */
+  const slotsQty = textToComplete
+    ? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
+        1 <=
+      0
+      ? 1
+      : textToComplete.description.split(/_./g).filter((w) => w !== "").length -
+        1
+    : 1;
+
   useEffect(() => {
-    setAnswer(null);
+    const initialSlots = new Array<null>(slotsQty).fill(null);
+    setAnswer(initialSlots);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
+    setContinueDisabled(answer.includes(null));
+  }, [answer]);
 
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto">
-        {audioTitles.map((title) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            autoPlay
-            key={title.file_url}
-          />
-        ))}
-      </Group>
-
-      {/* Board content */}
-      <Group m="auto" spacing={(lousaWidth * 5 / 100)}>
-        {imageTitles.map((title) => (
-          <Image
-            src={title.file_url}
-            alt={title.file_name}
-            width={lousaWidth * 30 / 100}
-            key={title.file_url}
-            mx="auto"
-          />
-        ))}
-
-        <Stack align="center" spacing={30}>
-          {textTitles.map((title) => (
-            <Title color="dark.3" size={textoMedium} key={title.description}>
-              {title.description.split("/")[0]}
-            </Title>
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url ?? ""}
+              autoPlay={audioTitleAutoplay(inx)}
+              key={inx}
+            />
           ))}
+        </Group>
+      )}
 
-          <Group>
-            {word &&
-              word.split("_").map((w, inx, arr) => (
-                <Fragment key={w}>
-                  <Text
-                    color="dark.3"
-                    size="3rem"
-                    weight={700}
-                  >
-                    {w}
-                  </Text>
-                  {arr.length !== inx + 1 && (
-                    <DragLetterSlot
-                      onDrop={(item) => setAnswer(item)}
-                      option={answer}
-                      onClear={() => setAnswer(null)}
-                      style={{
-                        width: '87px',
-                        height: '78px',
-                        textAlign: 'center'
-                      }}
-                    />
-                  )}
-                </Fragment>
-              ))}
+      {hasTitle && (
+        <Title color="dark.3" size={boardW(24)}>
+          {questionTitle}
+        </Title>
+      )}
+
+      <Group w="100%" noWrap position="center" spacing={boardW(100)} my="auto">
+        {imageTitles.map((title) => (
+          <img
+            src={title.file_url!}
+            alt={title.file_name}
+            key={title.file_url}
+            width={boardW(240)}
+            height="auto"
+            style={{ maxHeight: boardW(240), objectFit: "contain" }}
+          />
+        ))}
+
+        <Stack
+          align="center"
+          w={isFullWidth ? "100%" : "45%"}
+          spacing={boardW(60)}
+        >
+          <Group spacing={0}>
+            {textToComplete &&
+              textToComplete.description
+                .replaceAll("\\n", "")
+                .split(/_+/g) // separa os segmentos de texto dos underlines
+                .map((w, inx, arr) => {
+                  const notLastFragment = arr.length !== inx + 1;
+                  const isLastFragment = arr.length === 1 && w.endsWith(" ");
+                  const isFirstFragment = arr.length === 1 && w.startsWith(" ");
+
+                  const canRenderLast =
+                    (isLastFragment || notLastFragment) && !isFirstFragment;
+                  const canRenderFirst = isFirstFragment && !isLastFragment;
+
+                  /*
+                   *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
+                   *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
+                   *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
+                   */
+
+                  const isMultipleAnswer = arr.length > 2;
+
+                  const handleDrop = (item: QuestionOption | null) =>
+                    handleAnswer(item, isMultipleAnswer ? inx : undefined);
+                  const handleClear = () =>
+                    handleAnswer(null, isMultipleAnswer ? inx : undefined);
+
+                  return (
+                    <Fragment key={w}>
+                      {canRenderFirst && (
+                        <DragLetterSlot
+                          onDrop={handleDrop}
+                          option={answer[inx] ?? null}
+                          onClear={handleClear}
+                          className={classes.slot}
+                          style={{
+                            width: "auto",
+                            height: boardW(50),
+                            fontSize: boardW(18),
+                          }}
+                        />
+                      )}
+                      {w.split(" ").map((frag, inx) => (
+                        <Text
+                          color="dark.3"
+                          size={boardW(24)}
+                          weight={700}
+                          p={0}
+                          my={2.5}
+                          mx={2.5}
+                          key={inx}
+                        >
+                          {frag}
+                        </Text>
+                      ))}
+
+                      {canRenderLast && (
+                        <DragLetterSlot
+                          onDrop={handleDrop}
+                          option={answer[inx] ?? null}
+                          onClear={handleClear}
+                          className={classes.slot}
+                          style={{
+                            width: "auto",
+                            height: boardW(50),
+                            fontSize: boardW(18),
+                          }}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
           </Group>
 
-          <Group>
+          <Group align="center" position="center">
             {question.options
               .sort((a, b) => a.position - b.position)
-              .map((option) =>
+              .map((option, inx) =>
                 question.axis_code === "LC" ? (
                   /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
                    *  contempla alternativas em texto longo,
                    *  já as demais apenas 1 palavra ou poucas letas
                    */
-                  <TextOptionButton key={option.position}>
+                  <TextOptionButton key={inx}>
                     {option.description}
                   </TextOptionButton>
                 ) : (
                   <DraggableLetters
-                    key={option.position}
                     option={option}
-                    customFontSize="2rem"
-                    style={{
-                      width: lousaWidth * 9 / 100,
-                      height: lousaWidth * 8 / 100,
-                      textAlign: 'center'
-                    }}
+                    key={inx}
+                    className={classes.option}
+                    hidden={
+                      !shouldRepeatAnswer &&
+                      answer.some(
+                        (item) =>
+                          JSON.stringify({
+                            ...item,
+                            positionAnswer: undefined,
+                          }) ===
+                          JSON.stringify({
+                            ...option,
+                            positionAnswer: undefined,
+                          })
+                      )
+                    }
                   >
                     {option.description}
                   </DraggableLetters>
@@ -154,22 +259,6 @@ export function Model11({ question, answerCallback }: ModelProps) {
           </Group>
         </Stack>
       </Group>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={!answer}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

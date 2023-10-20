@@ -1,13 +1,14 @@
-import { Group, LoadingOverlay, ScrollArea, Text, Title } from "@mantine/core";
-import { EduButton } from "~/components/EduButton/EduButton";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { Group, ScrollArea, Stack, Text, Title } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { useEffect } from "react";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model21({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+export function Model21({ question, setContinueDisabled }: ModelProps) {
+  const { audioTitles, textTitles, hasAudioTitle } =
+    useQuestionHelper(question);
   const autoPlay =
     question.rules.find((rule) => rule.name === "autoplay")?.value === "true" ??
     false;
@@ -18,21 +19,15 @@ export function Model21({ question, answerCallback }: ModelProps) {
   const statement =
     textTitles.find((title) => title.position === 2)?.description ?? "";
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
 
-  function submitAnswer() {
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
+  useEffect(() => {
+    start();
+  }, [question]);
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
+      {hasAudioTitle && (
         <Group>
           {audioTitles
             .filter((title) => title.file_url)
@@ -46,14 +41,21 @@ export function Model21({ question, answerCallback }: ModelProps) {
         </Group>
       )}
 
-      <Title color="dark.3">{title}</Title>
+      <Stack my="auto">
+        {title !== "" && (
+          <Title color="dark.3" size={boardW(30)}>
+            {title}
+          </Title>
+        )}
 
-      <ScrollArea maw={800} my="auto">
-        <Text dangerouslySetInnerHTML={{ __html: statement }} color="dark.3" />
-      </ScrollArea>
-
-      <EduButton onClick={submitAnswer}>Continuar</EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+        <ScrollArea maw={boardW(800)} mah={boardW(360)} type="always" px={20}>
+          <Text
+            dangerouslySetInnerHTML={{ __html: statement }}
+            color="dark.3"
+            size={boardW(20)}
+          />
+        </ScrollArea>
+      </Stack>
     </>
   );
 }

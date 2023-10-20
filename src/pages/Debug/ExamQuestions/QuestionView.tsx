@@ -1,7 +1,11 @@
-import { Question } from "~/api/exam";
+// Aux & Utils:
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { QuestionInfo } from "../components/QuestionInfo";
+import { Question } from "~/api/exam";
+import { boardW } from "~/constants/dimensions";
+
+// Components:
 import { Button, Stack } from "@mantine/core";
+import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";
 
 export function QuestionView() {
@@ -12,7 +16,13 @@ export function QuestionView() {
 
   return (
     <>
-      <Stack h="100%" w="100%" style={{ position: "relative" }}>
+      <Stack
+        h="100%"
+        w="100%"
+        align="center"
+        spacing={boardW(40)}
+        style={{ position: "relative" }}
+      >
         {question && (
           <QuestionLoader question={question} answerCallback={() => null} />
         )}

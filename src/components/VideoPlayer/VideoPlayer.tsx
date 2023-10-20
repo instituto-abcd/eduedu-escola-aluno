@@ -1,11 +1,14 @@
 import { Loader, createStyles } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useRef, useState } from "react";
-import { lousaWidth } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   wrapper: {
     position: "relative",
+  },
+  video: {
+    height: boardW(250)
   },
   controls: {
     position: "absolute",
@@ -24,16 +27,15 @@ const useStyles = createStyles({
 type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   onPlayStatusChange?: (isPlaying: boolean) => void;
   canPlay?: boolean;
-  customHeight?: string;
 };
 
 export function VideoPlayer({
   onPlayStatusChange,
   canPlay = true,
-  customHeight,
+  className,
   ...props
 }: Props) {
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
   const ref = useRef<HTMLVideoElement>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,16 +46,13 @@ export function VideoPlayer({
     }
   }
 
-  const defaultHeight = (lousaWidth * 50) / 100;
-
   return (
-    <div className={classes.wrapper}>
+    <div className={cx(className, classes.wrapper)}>
       <video
         {...props}
         ref={ref}
-        style={{ maxHeight: 500 }}
-        width="auto"
-        height={customHeight ?? defaultHeight}
+        className={classes.video}
+        style={{ ...props.style }}
         onLoadedData={() => setIsLoadingData(false)}
         onPlay={(e) => {
           props.onPlay?.(e);

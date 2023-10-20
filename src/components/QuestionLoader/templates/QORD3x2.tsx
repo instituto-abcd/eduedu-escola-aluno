@@ -1,17 +1,15 @@
-import { Group, LoadingOverlay, SimpleGrid, Stack, createStyles } from "@mantine/core";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { AudioButton } from "~/components/AudioButton";
+import { Group, SimpleGrid, Stack, createStyles } from "@mantine/core";
+import { produce } from "immer";
 import { useEffect, useState } from "react";
-import { useGetExamQuestion } from "~/api/student";
 import { QuestionOption } from "~/api/exam";
-import { EduButton } from "~/components/EduButton";
+import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { produce } from "immer";
 import { TextOptionButton } from "~/components/OptionButton";
+import { lousaPaddingTop } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaHeight, lousaPaddingTop } from "~/constants/dimensions";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   letters: {
@@ -22,14 +20,19 @@ const useStyles = createStyles({
 
 type Slot = string | null | QuestionOption;
 
-export function QORD3x2({ question, answerCallback }: ModelProps) {
+export function QORD3x2({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { classes } = useStyles();
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+    useQuestionHelper(question);
   const startingSlots =
     textTitles.length > 0
       ? textTitles[0].description
-        .split("")
-        .map((char) => (char === "_" ? null : char))
+          .split("")
+          .map((char) => (char === "_" ? null : char))
       : [null, null];
 
   const [selected, setSelected] = useState<QuestionOption[]>([]);
@@ -38,19 +41,6 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
   const disabled =
     selected.filter(Boolean).length <
     slots.filter((slot) => typeof slot !== "string").length;
-
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: selected,
-    });
-  }
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -81,19 +71,31 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
     setSlots(startingSlots);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(selected);
+  }, [selected]);
+
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
+
   const mediaTrack = useMediaTrackStore();
 
   return (
     <>
-      <Group mx="auto">
-        {audioTitles.map((title) => (
-          <AudioButton autoPlay src={title.file_url ?? ""} key={title.file_url} />
-        ))}
-      </Group>
+      {hasAudioTitle && (
+        <Group mx="auto">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url ?? ""}
+              key={title.file_url}
+            />
+          ))}
+        </Group>
+      )}
 
-      {/* Board content */}
       <Stack pt={lousaPaddingTop} m="auto">
-
         {/* Slots */}
         <Group mx="auto" mb={20}>
           {slots.map((slot, inx) => {
@@ -136,22 +138,6 @@ export function QORD3x2({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={disabled}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

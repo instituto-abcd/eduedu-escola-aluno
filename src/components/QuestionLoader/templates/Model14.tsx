@@ -1,51 +1,60 @@
-import { Group, Image, LoadingOverlay } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { TextOptionButton } from "~/components/OptionButton";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { TextOptionButton } from "~/components/OptionButton";
-import { useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
 
-export function Model14({ question, answerCallback }: ModelProps) {
-  const { audioTitles } = useQuestionHelper(question);
+export function Model14({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
-  function submitAnswer() {
-    if (answer === null) return;
-
-    mutate({
-      optionsAnswered: [answer],
-      planetId: question.planet_id,
-      questionId: question.id,
-    });
-  }
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
+  }, [answer]);
 
   return (
     <>
-      {audioTitles
-        .filter((title) => title.file_url)
-        .map((title) => (
-          <AudioButton src={title.file_url!} key={title.file_url} autoPlay />
-        ))}
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url!}
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
+          ))}
+        </Group>
+      )}
 
-      <Group my="auto" position="apart" noWrap>
+      <Group w="100%" my="auto" position="center" spacing={boardW(120)}>
         {question.options.map(
           (option) =>
             option.image_url && (
-              <Image src={option.image_url} key={option.image_url} />
+              <img
+                width={boardW(280)}
+                style={{ maxHeight: boardW(280) }}
+                src={option.image_url}
+                key={option.image_url}
+              />
             )
         )}
 
-        <Group noWrap>
+        <Stack w="45%">
           {Array(circleSize)
             .fill(null)
             .map((_, inx) => (
@@ -58,17 +67,15 @@ export function Model14({ question, answerCallback }: ModelProps) {
                 }
                 key={inx}
                 data-selected={answer?.position === inx}
+                style={{
+                  width: "100%",
+                }}
               >
                 {inx + 1}
               </TextOptionButton>
             ))}
-        </Group>
+        </Stack>
       </Group>
-
-      <EduButton disabled={answer === null} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

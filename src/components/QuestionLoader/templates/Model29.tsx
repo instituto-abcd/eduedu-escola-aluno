@@ -1,42 +1,38 @@
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import {
-  Group,
-  LoadingOverlay,
-  ScrollArea,
-  Stack,
-  Text,
-  createStyles,
-} from "@mantine/core";
+import { Group, ScrollArea, Stack, Text, createStyles } from "@mantine/core";
+import { produce } from "immer";
+import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { useEffect, useState } from "react";
-import { produce } from "immer";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   slot: {
-    width: 128,
-    height: 133,
+    width: boardW(140),
+    height: boardW(160),
     display: "grid",
     placeItems: "center",
   },
   card: {
-    width: 128,
-    height: 133,
+    width: boardW(160),
+    height: boardW(120),
     img: {
-      maxWidth: "85% !important",
+      marginBottom: "2px",
+      width: boardW(100),
     },
   },
   text: {
-    fontSize: 20,
+    fontSize: boardW(20),
     color: "#495057",
   },
 });
 
-export function Model29({ question, answerCallback }: ModelProps) {
+export function Model29({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const { textTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
 
@@ -64,40 +60,27 @@ export function Model29({ question, answerCallback }: ModelProps) {
     );
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers.map((ans, inx) => ({
-        ...ans,
-        positionAnswer: inx,
-      })) as QuestionOption[],
-    });
-  }
+  useEffect(() => {
+    onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
+  }, [answers]);
 
   useEffect(() => {
-    setAnswers(question.options.map(() => null));
-  }, [question]);
+    setContinueDisabled(disabled);
+  }, [disabled]);
 
   return (
     <>
-      <Stack my="auto">
+      <Stack my="auto" w={boardW(800)}>
         {textTitles[0]?.description && (
-          <ScrollArea h={225}>
+          <ScrollArea h={boardW(200)} type="always">
             <Text
               color="dark.3"
               dangerouslySetInnerHTML={{ __html: textTitles[0].description }}
-              size={20}
+              size={boardW(18)}
             />
           </ScrollArea>
         )}
-        <Group>
+        <Group mx="auto">
           {answers.map((answer, inx) => (
             <DraggableCardSlot
               item={answer}
@@ -117,13 +100,13 @@ export function Model29({ question, answerCallback }: ModelProps) {
                 />
               }
             >
-              <Text size={40} weight={700} color="dark.3">
+              <Text size={boardW(60)} weight={700} color="dark.3">
                 {inx + 1}
               </Text>
             </DraggableCardSlot>
           ))}
         </Group>
-        <Group>
+        <Group mx="auto">
           {question.options.map((option, inx) => (
             <DraggableCard
               item={option}
@@ -141,11 +124,6 @@ export function Model29({ question, answerCallback }: ModelProps) {
           ))}
         </Group>
       </Stack>
-
-      <EduButton disabled={disabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

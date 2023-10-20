@@ -3,8 +3,8 @@ import { SVGProps } from "react";
 export const OuvirIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={40}
-    height={29}
+    width={props.width ?? 40}
+    height={props.height ?? 29}
     viewBox="0 0 40 29"
     fill="none"
     {...props}

@@ -21,6 +21,13 @@ export function ExamLayout() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  useMediaTrackStore.subscribe((state) => {
+    if (!state.currentTrack) {
+      audioRef.current?.pause();
+      return;
+    }
+  });
+
   useEffect(() => {
     if (currentAudio) {
       void audioRef.current?.play();
@@ -53,7 +60,7 @@ export function ExamLayout() {
           src={lousa}
           h={lousaHeight}
           w={lousaWidth}
-          mt={progressBarHeight * 22 / 100}
+          mt={(progressBarHeight * 22) / 100}
           style={{
             display: "flex",
             alignItems: "center",
@@ -62,9 +69,9 @@ export function ExamLayout() {
           }}
         >
           <Box
-            w={lousaWidth * 90 / 100}
-            h={lousaHeight * 86 / 100}
-            mt={progressBarHeight * 350 / 100}
+            w={(lousaWidth * 94) / 100}
+            h={(lousaHeight * 86) / 100}
+            mt={(progressBarHeight * 350) / 100}
           >
             <Outlet />
           </Box>

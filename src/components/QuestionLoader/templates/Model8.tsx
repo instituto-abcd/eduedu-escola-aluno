@@ -2,52 +2,44 @@ import {
   Center,
   Group,
   Image,
-  LoadingOverlay,
   Stack,
   Title,
   createStyles,
 } from "@mantine/core";
-
-import { EduButton } from "~/components/EduButton";
-import { TextOptionButton } from "~/components/OptionButton";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { useEffect, useState } from "react";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { AudioButton } from "~/components/AudioButton";
-import { usePlanetAnswer } from "~/api/planet";
 import { QuestionOption } from "~/api/exam";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { AudioButton } from "~/components/AudioButton";
+import { TextOptionButton } from "~/components/OptionButton";
+import { VideoPlayer } from "~/components/VideoPlayer";
+import { boardW, lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   button: {
+    wordBreak: "keep-all",
     width: "100%",
+    height: "fit-content",
+    padding: boardW(20),
   },
 });
 
-export function Model8({ question, answerCallback }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles, optionArrKey } =
+export function Model8({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { imageTitles, videoTitles, textTitles, audioTitles } =
     useQuestionHelper(question);
 
   const { classes } = useStyles();
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      questionId: question.id,
-      planetId: question.planet_id,
-      optionsAnswered: [answer] as QuestionOption[],
-    });
-  }
-
-  const halfWidthOptions = imageTitles.length === 0 && videoTitles.length === 0;
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
+  }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
@@ -55,24 +47,30 @@ export function Model8({ question, answerCallback }: ModelProps) {
 
   return (
     <>
-      {/* Action buttons */}
-      <Group mx="auto">
-        {audioTitles.map((title, inx) => (
-          <AudioButton
+      {audioTitles.some((title) => title.file_url !== null) && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              src={title.file_url ?? ""}
+              autoPlay={inx === 0}
+            />
+          ))}
+        </Group>
+      )}
+
+      <Group w="100%" my="auto" align="center" position="center" noWrap>
+        {textTitles.map((title, inx) => (
+          <Title
+            color="dark.3"
+            size="2.5vh"
+            align="center"
             key={inx}
-            src={title.file_url ?? ""}
-            autoPlay={inx === 0}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            w="100%"
           />
         ))}
-      </Group>
 
-      {textTitles.map((title, inx) => (
-        <Title color="dark.3" size="2.5vh" align="center" key={inx}>
-          {title.description}
-        </Title>
-      ))}
-
-      <Group my="auto" noWrap w={lousaWidth}>
         {videoTitles.map((title, inx) => (
           <Center w="100%" key={inx}>
             <VideoPlayer
@@ -95,18 +93,16 @@ export function Model8({ question, answerCallback }: ModelProps) {
         ))}
 
         <Stack
-          align={"stretch"}
-          mx={"auto"}
-          spacing={40}
+          spacing={lousaWidth * 0.025}
           justify="center"
-          w={halfWidthOptions ? "50%" : "100%"}
-          px={20}
+          w="100%"
+          px={boardW(20)}
         >
           {question.options.map((option, inx) => (
             <TextOptionButton
-              key={optionArrKey(option, inx)}
+              key={inx}
               onClick={() => setAnswer(option)}
-              data-selected={answer?.position === option.position}
+              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               sound={option.sound_url ?? undefined}
               isCorrect={option.isCorrect}
               className={classes.button}
@@ -116,11 +112,6 @@ export function Model8({ question, answerCallback }: ModelProps) {
           ))}
         </Stack>
       </Group>
-
-      <EduButton disabled={!answer} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

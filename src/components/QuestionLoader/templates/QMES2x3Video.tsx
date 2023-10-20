@@ -1,47 +1,32 @@
-import { Box, Group, Image, LoadingOverlay, SimpleGrid, Text } from "@mantine/core";
+import { Box, Group, Image, SimpleGrid, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { Answer, useGetExamQuestion } from "~/api/student";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { EduButton } from "~/components/EduButton";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { useMediaTrackStore } from "~/stores/media-track.store";
+import { ModelProps } from ".";
 
-export function QME2x3Video({ question, answerCallback }: ModelProps) {
-  const [selected, setSelected] = useState<Answer[]>([]);
-  const { mutate, isLoading } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
+export function QME2x3Video({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const [selected, setSelected] = useState<QuestionOption[]>([]);
 
-  function selectItem(_answer: QuestionOption) {
-    const answer = {
-      position: _answer.position,
-      positionAnswer: _answer.position,
-    };
-
+  function selectItem(answer: QuestionOption) {
     if (selected.find((item) => item.position === answer.position)) {
       setSelected(selected.filter((item) => item.position !== answer.position));
     } else {
       setSelected([
         ...selected,
         {
-          position: _answer.position,
-          positionAnswer: _answer.position,
+          ...answer,
+          positionAnswer: answer.position,
         },
       ]);
     }
-  }
-
-  function submitAnswer() {
-    if (selected.length === 0) return;
-
-    mutate({
-      questionId: question.id,
-      optionsAnswered: selected,
-    });
   }
 
   useEffect(() => {
@@ -51,27 +36,30 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
   const { videoTitles, optionArrKey } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
+  useEffect(() => {
+    onAnswerChange(selected);
+    setContinueDisabled(selected.length === 0);
+  }, [selected]);
+
   return (
     <>
-      {/* Board content */}
       <Group
         noWrap
         grow
-        spacing={(lousaHeight * 0.5 / 100).toString() + 'vh'}
+        spacing={((lousaHeight * 0.5) / 100).toString() + "vh"}
         my="auto"
-        pt={(lousaHeight * 0.5 / 100).toString() + 'vh'}
+        pt={((lousaHeight * 0.5) / 100).toString() + "vh"}
       >
-        <Box maw={lousaWidth * 50 / 100}>
+        <Box maw={(lousaWidth * 50) / 100}>
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
             onPlayStatusChange={mediaTrack.setPlayStatus}
             canPlay={mediaTrack.canPlay()}
-            customHeight={(lousaWidth * 35 / 100).toString()}
             autoPlay
           />
         </Box>
 
-        <Box maw={lousaWidth * 50 / 100}>
+        <Box maw={(lousaWidth * 50) / 100}>
           <SimpleGrid cols={2} spacing={20}>
             {question.options.map((option, inx) => (
               <OptionButton
@@ -97,22 +85,6 @@ export function QME2x3Video({ question, answerCallback }: ModelProps) {
           </SimpleGrid>
         </Box>
       </Group>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={selected.length === 0}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

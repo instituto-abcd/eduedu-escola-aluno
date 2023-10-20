@@ -1,16 +1,17 @@
 import { createStyles } from "@mantine/core";
 import { OptionButton } from ".";
 import { OptionButtonProps } from "./OptionButton";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
     width: "auto",
-    minWidth: "max-content",
-    height: "max-content",
-    paddingInline: 32,
-    paddingBlock: 10,
-    fontWeight: 400,
-    fontSize: 20,
+    height: "auto",
+    paddingInline: boardW(24),
+    paddingBlock: boardW(10),
+    fontSize: boardW(40),
+    borderRadius: 16,
+    fontWeight: 700,
     color: "#228BE6",
   },
 });
@@ -19,6 +20,6 @@ export function TextOptionButton(props: OptionButtonProps) {
   const { classes, cx } = useStyles();
 
   return (
-    <OptionButton {...props} className={cx(classes.button, props.className)} style={{ ...props.style }} />
+    <OptionButton className={cx(props.className, classes.button)} {...props} />
   );
 }

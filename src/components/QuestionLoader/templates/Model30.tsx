@@ -1,59 +1,55 @@
-import { Group, LoadingOverlay } from "@mantine/core";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { Group, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useMediaTrackStore } from "~/stores/media-track.store";
-import { usePlanetAnswer } from "~/api/planet";
 import { lousaHeight } from "~/constants/dimensions";
+import { useTimeout } from "@mantine/hooks";
+import { useEffect } from "react";
 
-export function Model30({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
+export function Model30({ question, setContinueDisabled }: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
+    useQuestionHelper(question);
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
 
-  function submitAnswer() {
-    if (mediaTrack.isPlaying) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
+  useEffect(() => {
+    start();
+  }, [question]);
 
   return (
     <>
-      {audioTitles.length > 0 && (
-        <Group>
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
           {audioTitles
             .filter((title) => !!title.file_url)
             .map((title, inx) => (
               <AudioButton
                 src={title.file_url!}
-                autoPlay={inx === 0}
+                autoPlay={audioTitleAutoplay(inx)}
                 key={title.file_url}
               />
             ))}
         </Group>
       )}
 
-      {imageTitles.length > 0 && (
-        <img
-          src={imageTitles[0].file_url ?? ""}
-          width={424}
-          style={{ maxHeight: 430, height: "auto" }}
-          height="auto"
-        />
-      )}
+      <Stack my="auto">
+        {imageTitles.length > 0 && (
+          <>
+            <img
+              src={imageTitles[0].file_url ?? ""}
+              width="auto"
+              height={(lousaHeight * 55) / 100}
+            />
 
-      <EduButton disabled={mediaTrack.isPlaying} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+            {/* Alguns estão vindo sem file_url,
+              por isso adicionei esse texto para mostrar caso o file_url esteja vazio:
+          */}
+            {imageTitles[0].file_url?.length
+              ? ""
+              : "Ooops! Imagem não disponível :("}
+          </>
+        )}
+      </Stack>
     </>
   );
 }

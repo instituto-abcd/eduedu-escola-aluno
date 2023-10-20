@@ -10,6 +10,7 @@ import { IconTrash } from "@tabler/icons-react";
 import { useRef } from "react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
+import { boardW } from "~/constants/dimensions";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 
 type StyleProps = {
@@ -31,8 +32,8 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
     boxShadow: "0px 5px 0px 0px #228BE6",
     placeItems: "center",
     position: props.stacked ? "absolute" : "initial",
-    width: props.stacked ? "100%" : props.width ?? 170,
-    height: props.stacked ? "100%" : props.height ?? 153,
+    width: props.stacked ? "100%" : props.width ?? boardW(170),
+    height: props.stacked ? "100%" : props.height ?? boardW(153),
     opacity: props.isDragging ? 1 : props.hidden ? 0.1 : 1,
     display: "grid",
     cursor: props.isDragging ? "move" : "grab",
@@ -97,8 +98,8 @@ export function Card({
     stacked,
     isDragging,
     order,
-    width: variant === "square" ? 170 : 308,
-    height: variant === "square" ? 153 : 210,
+    width: variant === "square" ? boardW(170) : boardW(308),
+    height: variant === "square" ? boardW(153) : boardW(210),
   });
 
   const soundRef = useRef<HTMLAudioElement>(null);
@@ -117,7 +118,7 @@ export function Card({
     >
       {!imageOnly && (
         <Text
-          size={30}
+          size={boardW(30)}
           weight={600}
           color="blue.6"
           align="center"
@@ -130,9 +131,9 @@ export function Card({
       {option.image_url && (
         <img
           src={option.image_url}
-          width={130}
+          width={boardW(130)}
           height="auto"
-          style={{ maxHeight: 140 }}
+          style={{ maxHeight: boardW(140), objectFit: "contain" }}
         />
       )}
 

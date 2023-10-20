@@ -3,19 +3,21 @@ import { IconButton } from "../EduButton";
 import { IconButtonProps } from "../EduButton/IconButton";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { lousaWidth } from "~/constants/dimensions";
 
 type Props = {
   buttonProps?: IconButtonProps;
   autoPlay?: boolean;
   src?: string;
-};
+} & React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>;
 
 type Ref = { play: () => void };
 
-// TODO: bug na chave autoplay (não está funcionando como deveria)
-
 export const AudioButton = forwardRef<Ref, Props>(
-  ({ buttonProps, autoPlay, src }, ref) => {
+  ({ autoPlay, src, buttonProps, ...props }, ref) => {
     const mediaTrack = useMediaTrackStore();
 
     const play = () => {
@@ -43,8 +45,12 @@ export const AudioButton = forwardRef<Ref, Props>(
         variant="gray"
         onClick={play}
         disabled={mediaTrack.isPlaying}
-        {...buttonProps}
-        icon={buttonProps?.icon ?? <OuvirIcon />}
+        {...props}
+        icon={
+          buttonProps?.icon ?? (
+            <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
+          )
+        }
       />
     );
   }

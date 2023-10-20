@@ -2,12 +2,12 @@ import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   card: {
-    width: lousaWidth * 14 / 100,
-    height: lousaWidth * 16 / 100,
+    width: (lousaWidth * 14) / 100,
+    height: (lousaWidth * 16) / 100,
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: "0 4px 0 0 #228BE6",
@@ -53,8 +53,6 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   sound?: string | null;
   image?: string | null;
   disabled?: boolean;
-  customWith?: string | number | null;
-  customHeight?: string | number | null;
   onClear?: () => void;
 };
 
@@ -65,8 +63,6 @@ export function DraggableCard<T>({
   image,
   hidden,
   onClear,
-  customWith,
-  customHeight,
   disabled,
   textClasses,
   itemType = "ANSWER_CARD",
@@ -89,8 +85,6 @@ export function DraggableCard<T>({
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden ? "none" : "all",
-    height: customHeight ? customHeight : lousaWidth * 16 / 100,
-    width: customWith ? customWith : lousaWidth * 14 / 100,
   };
 
   const soundRef = useRef<HTMLAudioElement>(null);
@@ -115,12 +109,12 @@ export function DraggableCard<T>({
         <img
           src={image}
           style={{
-            maxHeight: "auto",
-            maxWidth: "120px",
-            objectFit: "contain",
-            marginInline: "auto",
             pointerEvents: "none",
             userSelect: "none",
+            maxWidth: boardW(100),
+            maxHeight: boardW(60),
+            marginInline: "auto",
+            objectFit: "contain",
           }}
         />
       )}

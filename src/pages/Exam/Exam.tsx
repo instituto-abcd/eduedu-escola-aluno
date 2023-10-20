@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
+import { lousaWidth } from "~/constants/dimensions";
 
 export function ExamPage() {
   const navigate = useNavigate();
@@ -49,7 +50,13 @@ export function ExamPage() {
         value={currentQuestion?.progress ?? 0}
         style={{ position: "fixed", top: 100, zIndex: 999 }}
       />
-      <Stack h="100%" w="100%" style={{ position: "relative" }}>
+      <Stack
+        spacing={lousaWidth * 0.045}
+        align="center"
+        h="100%"
+        w="100%"
+        style={{ position: "relative" }}
+      >
         {isLoading && <Loader />}
         {currentQuestion && (
           <QuestionLoader

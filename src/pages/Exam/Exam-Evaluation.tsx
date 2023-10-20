@@ -19,7 +19,7 @@ export function ExamEvaluationPage() {
   const navigate = useNavigate();
 
   useSubmitExamEvaluation({
-    onSuccess: () => navigate(PATH.DASH_ALT),
+    onSuccess: () => navigate(PATH.DASHBOARD),
   });
 
   const defaultOptions = {

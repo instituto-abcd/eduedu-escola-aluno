@@ -1,12 +1,12 @@
 import { createStyles } from "@mantine/core";
 import { forwardRef, useRef } from "react";
 import { useMediaTrackStore } from "~/stores/media-track.store";
-import { lousaWidth } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   button: {
-    width: lousaWidth * 15 / 100,
-    height: lousaWidth * 15 / 100,
+    width: boardW(170),
+    height: boardW(148),
     borderRadius: 8,
     border: "1px solid #228BE6",
     backgroundColor: "#fff",
@@ -14,11 +14,10 @@ const useStyles = createStyles({
     boxShadow: "0px 5px 0px 0px #228BE6",
     display: "grid",
     placeItems: "center",
-    fontSize: 20,
+    fontSize: boardW(20),
     fontWeight: 600,
     color: "#228BE6",
     userSelect: "none",
-    wordBreak: "break-all",
     "*": {
       color: "#228BE6",
     },
@@ -49,6 +48,7 @@ const useStyles = createStyles({
   },
   debugDiv: {
     position: "relative",
+    isolation: "isolate",
     p: {
       position: "absolute",
       top: 0,

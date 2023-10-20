@@ -1,19 +1,22 @@
-import { Group, Image, LoadingOverlay } from "@mantine/core";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
+import { Group, Image } from "@mantine/core";
+import { forwardRef, useEffect, useState } from "react";
+import { useDrop } from "react-dnd";
+import { QuestionOption } from "~/api/exam";
 import arrowLeft from "~/assets/planets/arrow-left-red.png";
 import arrowRight from "~/assets/planets/arrow-right-green.png";
-import { useDrop } from "react-dnd";
-import { forwardRef, useEffect, useState } from "react";
+import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
-import { QuestionOption } from "~/api/exam";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
-export function Model12({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+export function Model12({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, imageTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const [stack, setStack] = useState<QuestionOption[]>(question.options);
 
@@ -37,40 +40,44 @@ export function Model12({ question, answerCallback }: ModelProps) {
     },
   });
 
-  const disabled = answers.length < question.options.length;
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: answers,
-    });
-  }
-
   useEffect(() => {
     setAnswers([]);
+    setStack(question.options);
   }, [question]);
+
+  useEffect(() => {
+    onAnswerChange(answers);
+  }, [answers]);
+
+  useEffect(() => {
+    setContinueDisabled(answers.length < question.options.length);
+  }, [question, answers]);
 
   return (
     <>
-      {audioTitles.length > 0 &&
-        audioTitles
-          .filter((title) => title.file_url)
-          .map((title) => (
-            <AudioButton src={title.file_url!} key={title.file_url} />
-          ))}
-
-      {imageTitles[0] && (
-        <Image src={imageTitles[0].file_url} width={200} height="auto" />
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <AudioButton
+                key={inx}
+                src={title.file_url!}
+                autoPlay={audioTitleAutoplay(inx)}
+              />
+            ))}
+        </Group>
       )}
 
-      <Group position="apart" spacing={52} align="center">
+      {imageTitles[0] && (
+        <Image
+          src={imageTitles[0].file_url}
+          height={boardW(170)}
+          width="auto"
+        />
+      )}
+
+      <Group position="apart" spacing={boardW(52)} align="center" my="auto">
         <DropYesOrNo direction="left" ref={dropLeft} />
         <CardStack
           options={stack}
@@ -78,11 +85,6 @@ export function Model12({ question, answerCallback }: ModelProps) {
         />
         <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
-
-      <EduButton disabled={disabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }
@@ -92,8 +94,8 @@ const DropYesOrNo = forwardRef<HTMLDivElement, { direction: "left" | "right" }>(
     return (
       <div
         style={{
-          width: 170,
-          height: 198,
+          width: boardW(170),
+          height: boardW(198),
           backgroundColor: props.direction === "left" ? "#FFE3E3" : "#D3F9D8",
           display: "grid",
           placeItems: "center",
@@ -103,7 +105,7 @@ const DropYesOrNo = forwardRef<HTMLDivElement, { direction: "left" | "right" }>(
       >
         <Image
           src={props.direction === "left" ? arrowLeft : arrowRight}
-          width={50}
+          width={boardW(50)}
           height="auto"
         />
       </div>

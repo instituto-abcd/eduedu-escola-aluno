@@ -1,14 +1,4 @@
-import {
-  Group,
-  Box,
-  Image,
-  Text,
-  Space,
-  Stack,
-  LoadingOverlay,
-  ScrollArea,
-} from "@mantine/core";
-import { EduButton } from "~/components/EduButton/EduButton";
+import { Group, Box, Image, Text, Stack, ScrollArea } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -16,12 +6,11 @@ import { useEffect, useState } from "react";
 import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 
 // TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
 
-export function Model27({ question, answerCallback }: ModelProps) {
+export function Model27({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
@@ -40,20 +29,9 @@ export function Model27({ question, answerCallback }: ModelProps) {
   }
 
   const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (disabled) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [],
-    });
-  }
+  useEffect(() => {
+    setContinueDisabled(disabled);
+  }, [disabled]);
 
   useEffect(() => {
     setSlideIndex(0);
@@ -81,28 +59,21 @@ export function Model27({ question, answerCallback }: ModelProps) {
           />
         ))}
 
-      <Stack spacing={20} align="center" my="auto">
+      <Stack spacing={boardW(20)} align="center" my="auto">
         {currentSlide.image_url && (
           <Image
             src={currentSlide.image_url}
             alt={currentSlide.description}
             width="auto"
-            height={currentSlide.description ? 140 : 280}
+            height={currentSlide.description ? boardW(200) : boardW(280)}
           />
         )}
 
-        {
-          currentSlide.position == 1 && (
-            <Text color="dark.3" fz="xl" align="center">
-              {question.description}
-            </Text>
-          )
-        }
-
         {currentSlide.description && (
-          <ScrollArea w={800} mah={400}>
+          <ScrollArea w={boardW(900)} mah={boardW(300)}>
             <Box>
               <Text
+                m="auto"
                 fz="lg"
                 color="dark.3"
                 align="center"
@@ -116,15 +87,14 @@ export function Model27({ question, answerCallback }: ModelProps) {
           <TextOptionButton onClick={previousSlide}>
             <IconChevronLeft size={40} />
           </TextOptionButton>
-          <TextOptionButton onClick={nextSlide} disabled={(slideIndex + 1) == totalSlides ? true : false}>
+          <TextOptionButton
+            onClick={nextSlide}
+            disabled={slideIndex + 1 == totalSlides ? true : false}
+          >
             <IconChevronRight size={40} />
           </TextOptionButton>
         </Group>
       </Stack>
-      <EduButton disabled={disabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

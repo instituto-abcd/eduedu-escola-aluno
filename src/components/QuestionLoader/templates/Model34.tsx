@@ -1,100 +1,115 @@
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { Group, LoadingOverlay, SimpleGrid, createStyles } from "@mantine/core";
+import {
+  BackgroundImage,
+  Box,
+  Group,
+  SimpleGrid,
+  createStyles,
+} from "@mantine/core";
+import { useEffect, useState } from "react";
+import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
-import { QuestionOption } from "~/api/exam";
-import { useEffect, useState } from "react";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
   slot: {
+    margin: "auto",
+    width: boardW(100),
+    height: boardW(100),
     display: "grid",
     placeItems: "center",
   },
+  card: {
+    margin: "auto",
+    width: `${boardW(100)}px!important`,
+    height: `${boardW(100)}px!important`,
+  },
+  cardWide: {
+    width: "100%!important",
+  },
 });
 
-export function Model34({ question, answerCallback }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+export function Model34({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
+    useQuestionHelper(question);
   const { classes } = useStyles();
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
+  }, [answer]);
+
   return (
     <>
-      <Group>
-        {audioTitles
-          .filter((title) => title.file_url)
-          .map((title, inx) => (
+      {hasAudioTitle && (
+        <Group mx="auto" h="50px">
+          {audioTitles.map((title, inx) => (
             <AudioButton
               src={title.file_url!}
               key={title.file_url}
-              autoPlay={inx === 0}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
-      </Group>
+        </Group>
+      )}
 
-      <Group my="auto" spacing={100} align="center">
-        <DraggableCardSlot
-          item={answer}
-          onDrop={(item) => setAnswer(item)}
-          className={classes.slot}
-          replaceWith={
-            <DraggableCard
-              item={answer}
-              image={answer?.image_url}
-              text={answer?.description}
-              sound={answer?.sound_url}
-              onClear={() => setAnswer(null)}
-              disabled
-            />
-          }
-        >
-          <img
+      <Group
+        my="auto"
+        w="100%"
+        spacing={boardW(4)}
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <Box w="100%" maw={boardW(400)}>
+          <BackgroundImage
+            h={boardW(350)}
+            mb={10}
             src={imageTitles[0].file_url!}
-            width={160}
-            style={{ maxHeight: 200 }}
           />
-        </DraggableCardSlot>
-
-        <SimpleGrid cols={2}>
-          {question.options.map((item, inx) => (
-            <DraggableCard
-              key={inx}
-              item={item}
-              image={item.image_url}
-              text={item.description}
-              sound={item.sound_url}
-              hidden={!!answer}
-            />
-          ))}
-        </SimpleGrid>
+          <DraggableCardSlot
+            item={answer}
+            onDrop={(item) => setAnswer(item)}
+            className={classes.slot}
+            replaceWith={
+              <DraggableCard
+                item={answer}
+                image={answer?.image_url}
+                text={answer?.description}
+                sound={answer?.sound_url}
+                onClear={() => setAnswer(null)}
+                disabled
+                className={classes.card}
+              />
+            }
+          ></DraggableCardSlot>
+        </Box>
+        <Box maw={boardW(400)} w="100%">
+          <SimpleGrid cols={2}>
+            {question.options.map((item, inx) => (
+              <DraggableCard
+                key={inx}
+                item={item}
+                image={item.image_url}
+                text={item.description}
+                sound={item.sound_url}
+                hidden={!!answer}
+                className={classes.cardWide}
+              />
+            ))}
+          </SimpleGrid>
+        </Box>
       </Group>
-
-      <EduButton disabled={!answer} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

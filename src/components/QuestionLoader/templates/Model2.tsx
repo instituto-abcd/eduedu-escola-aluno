@@ -1,48 +1,22 @@
-import { Group, LoadingOverlay, SimpleGrid, Stack } from "@mantine/core";
+import { Group, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
 import { useCallback, useEffect, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { EduButton } from "~/components/EduButton";
-import { useGetExamQuestion } from "~/api/student";
 import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 
-export function Model2({ question, answerCallback }: ModelProps) {
+export function Model2({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
-
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  const isLoading = isLoadingExam || isLoadingPlanet;
-
-  function submitAnswer() {
-    if (answers.includes(null)) return;
-
-    if (isExam) {
-      mutateExam({
-        questionId: question.id,
-        optionsAnswered: answers as QuestionOption[],
-      })
-    } else {
-      mutatePlanet({
-        questionId: question.id,
-        planetId: question.planet_id,
-        optionsAnswered: answers as QuestionOption[],
-      });
-    }
-  }
 
   const handleDrop = useCallback(function (
     item: QuestionOption | null,
@@ -54,31 +28,43 @@ export function Model2({ question, answerCallback }: ModelProps) {
       })
     );
   },
-    []);
+  []);
 
-  const { audioTitles, isExam } = useQuestionHelper(question);
+  const { audioTitles } = useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(
+      answers.filter((answer) => answer !== null) as QuestionOption[]
+    );
+
+    setContinueDisabled(!answers.every((answer) => answer !== null));
+  }, [answers]);
+
   return (
     <>
       {/* Action buttons */}
-      <Group>
-        {audioTitles.map((title) => (
-          <AudioButton
-            key={title.file_url}
-            src={title.file_url ?? ""}
-            autoPlay
-          />
-        ))}
-      </Group>
+      {audioTitles.some((title) => title.file_url) && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title) => (
+              <AudioButton
+                key={title.file_url}
+                src={title.file_url ?? ""}
+                autoPlay
+              />
+            ))}
+        </Group>
+      )}
 
       {/* Board content */}
       <Stack my="auto">
-        <SimpleGrid cols={question.options.length} spacing={24}>
+        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
@@ -98,7 +84,7 @@ export function Model2({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
 
-        <SimpleGrid cols={question.options.length} spacing={24}>
+        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {question.options.map((item) => (
             <DraggableCard
               item={item}
@@ -114,22 +100,6 @@ export function Model2({ question, answerCallback }: ModelProps) {
           ))}
         </SimpleGrid>
       </Stack>
-
-      {/* Continue to the next screen button */}
-      <EduButton
-        disabled={answers.includes(null)}
-        onClick={submitAnswer}
-        style={{
-          marginTop: "auto",
-          marginRight: "auto",
-          marginLeft: "auto",
-        }}
-      >
-        Continuar
-      </EduButton>
-
-      {/* Loading animation */}
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
     </>
   );
 }

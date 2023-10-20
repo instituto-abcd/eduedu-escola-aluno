@@ -1,18 +1,20 @@
 import { createStyles } from "@mantine/core";
 import { useRef } from "react";
 import feedbackButtonNext from "~/assets/audio/feedback_button_next.mp3";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles(() => ({
   button: {
     all: "unset",
     cursor: "pointer",
     width: "max-content",
-    minWidth: 113,
-    height: 20,
+    minWidth: boardW(113),
+    height: boardW(20),
     backgroundColor: "#47cdff",
     boxShadow: "0px 4px 0px 0px #25abe6",
-    paddingBlock: 10,
-    paddingInline: 22,
+    paddingBlock: boardW(10),
+    paddingInline: boardW(22),
+    fontSize: boardW(20),
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

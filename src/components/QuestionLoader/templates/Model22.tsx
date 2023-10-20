@@ -1,13 +1,11 @@
-import { Group, LoadingOverlay, Title, createStyles } from "@mantine/core";
+import { Group, Stack, Title, Image, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { QuestionOption } from "~/api/exam";
 import { useEffect, useState } from "react";
-import { EduButton } from "~/components/EduButton";
-import { usePlanetAnswer } from "~/api/planet";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
   group: {
@@ -18,14 +16,22 @@ const useStyles = createStyles((theme) => ({
     borderColor: theme.colors.gray[6],
     paddingInline: 45,
     paddingBlock: 25,
-    maxWidth: 750,
+    maxWidth: boardW(800),
+  },
+  title: {
+    fontSize: boardW(30),
   },
 }));
 
-export function Model22({ question, answerCallback }: ModelProps) {
-  const { audioTitles, textTitles } = useQuestionHelper(question);
+export function Model22({
+  question,
+  onAnswerChange,
+  setContinueDisabled,
+}: ModelProps) {
+  const { audioTitles, audioTitleAutoplay, textTitles, imageTitles } =
+    useQuestionHelper(question);
   const hasAudio = audioTitles.some((title) => title.file_url);
-  const hasText = textTitles.some((title) => title.description);
+
   const { classes } = useStyles();
 
   const [answer, setAnswer] = useState<QuestionOption>();
@@ -38,63 +44,67 @@ export function Model22({ question, answerCallback }: ModelProps) {
     }
   }
 
-  const { mutate, isLoading } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
-  });
-
-  function submitAnswer() {
-    if (!answer) return;
-
-    mutate({
-      planetId: question.planet_id,
-      questionId: question.id,
-      optionsAnswered: [answer],
-    });
-  }
-
   useEffect(() => {
     setAnswer(undefined);
   }, [question]);
 
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(!answer);
+  }, [answer]);
+
   return (
     <>
-      {hasAudio && (
-        <Group>
-          {audioTitles
+      <Group mx="auto" h="50px">
+        {hasAudio &&
+          audioTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
                 src={title.file_url!}
                 key={inx}
-                autoPlay={inx === 0}
+                autoPlay={audioTitleAutoplay(inx)}
               />
             ))}
-        </Group>
-      )}
-
-      {hasText && <Title color="dark.3">{textTitles[0].description}</Title>}
-
-      <Group
-        align="center"
-        my="auto"
-        className={classes.group}
-        position="center"
-      >
-        {question.options.map((option, inx) => (
-          <TextOptionButton
-            key={inx}
-            onClick={() => handleAnswer(option)}
-            data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-          >
-            {option.description}
-          </TextOptionButton>
-        ))}
       </Group>
 
-      <EduButton disabled={!answer} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} style={{ maxHeight: lousaHeight * 80 / 100 }} />
+      <Stack align="center" spacing={boardW(20)} my="auto">
+        {textTitles.map((title) => (
+          <Title
+            key={title.description}
+            dangerouslySetInnerHTML={{ __html: title.description }}
+            align="center"
+            color="dark.3"
+            className={classes.title}
+          />
+        ))}
+        {imageTitles.map((title) => (
+          <Image
+            mx="auto"
+            src={title.file_url}
+            alt={title.description}
+            height={boardW(200)}
+            width="auto"
+            key={title.file_url}
+            style={{ flexGrow: 1 }}
+            styles={{ image: { marginInline: "auto" } }}
+          />
+        ))}
+        <Group align="center" className={classes.group} position="center">
+          {question.options.map((option, inx) => (
+            <TextOptionButton
+              key={inx}
+              onClick={() => handleAnswer(option)}
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              style={{
+                fontSize: boardW(24)
+              }}
+            >
+              {option.description}
+            </TextOptionButton>
+          ))}
+        </Group>
+      </Stack>
     </>
   );
 }

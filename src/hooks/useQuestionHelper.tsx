@@ -22,7 +22,7 @@ export function useQuestionHelper(question: Question) {
   const getSupportText = useCallback(
     function getSupportText(text: string) {
       const supportText = question.titles.filter(
-        (title) => title.placeholder === text && !!title.description
+        (title) => title?.placeholder?.includes(text) && !!title?.description
       );
 
       return supportText;
@@ -30,30 +30,50 @@ export function useQuestionHelper(question: Question) {
     [question]
   );
 
-  const textTitles = useMemo(() => getTitlesOfType("TEXT"), [getTitlesOfType]);
+  const textTitles = getTitlesOfType("TEXT");
 
-  const imageTitles = useMemo(
-    () => getTitlesOfType("IMAGE"),
-    [getTitlesOfType]
+  const imageTitles = getTitlesOfType("IMAGE").filter(
+    (title) => title.file_url
   );
 
-  const audioTitles = getTitlesOfType("AUDIO");
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
   const supportText = getSupportText("ID da historinha");
-
-  function getLottieJson(url: string) {
-    return fetch(url)
-      .then((res) => res.json())
-      .catch((err) => {
-        return null;
-      });
-  }
+  const hasAuxQuestion = !!supportText[0]?.["description"];
+  const auxQuestionId = hasAuxQuestion ? supportText[0].description : null;
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
-      })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
+      option.image_url ?? option.sound_url ?? "_"
+    })`;
   }
+
+  /*
+   * Audio helpers
+   */
+  const audioTitles = getTitlesOfType("AUDIO").filter(
+    (title) => title.file_url
+  );
+  const hasAudioTitle = useMemo(
+    () => audioTitles.some((title) => title.file_url),
+    [audioTitles]
+  );
+  const audioTitleAutoplay = (index: number) => {
+    if (index !== 0) return false;
+    const rule =
+      Array.isArray(question.rules) &&
+      question.rules.find((rule) => rule.name === "autoplay");
+
+    if (!rule) return true;
+    return rule.value === "true";
+  };
+
+  /*
+   * Rule helpers
+   */
+
+  const getRule = (rule: string) =>
+    question.rules?.find((r) => r.name === rule);
 
   return {
     hasTitleOfType,
@@ -64,9 +84,13 @@ export function useQuestionHelper(question: Question) {
     videoTitles,
     lottieTitles,
     supportText,
-    getLottieJson,
+    hasAudioTitle,
+    audioTitleAutoplay,
     optionArrKey,
+    getRule,
     isExam,
     isPlanet,
+    hasAuxQuestion,
+    auxQuestionId,
   };
 }

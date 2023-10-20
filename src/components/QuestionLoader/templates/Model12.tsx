@@ -15,7 +15,8 @@ export function Model12({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, imageTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
   const [stack, setStack] = useState<QuestionOption[]>(question.options);
 
@@ -54,12 +55,19 @@ export function Model12({
 
   return (
     <>
-      {audioTitles.length > 0 &&
-        audioTitles
-          .filter((title) => title.file_url)
-          .map((title) => (
-            <AudioButton src={title.file_url!} key={title.file_url} />
-          ))}
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles
+            .filter((title) => title.file_url)
+            .map((title, inx) => (
+              <AudioButton
+                key={inx}
+                src={title.file_url!}
+                autoPlay={audioTitleAutoplay(inx)}
+              />
+            ))}
+        </Group>
+      )}
 
       {imageTitles[0] && (
         <Image

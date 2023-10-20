@@ -1,5 +1,5 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
-import { IconRotateClockwise } from "@tabler/icons-react";
+import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -162,6 +162,7 @@ export function Model24({
                     width: boardW(190),
                     height: boardW(120),
                   }}
+                  sound={option.sound_url ?? undefined}
                 >
                   {option.description}
                   {option.image_url && (
@@ -172,12 +173,7 @@ export function Model24({
                       }}
                     />
                   )}
-                  {option.sound_url && (
-                    <AudioButton
-                      key={option.sound_url}
-                      src={option.sound_url}
-                    />
-                  )}
+                  {option.sound_url && <IconVolume size={boardW(62)} />}
                 </OptionButton>
               ))}
             </Group>

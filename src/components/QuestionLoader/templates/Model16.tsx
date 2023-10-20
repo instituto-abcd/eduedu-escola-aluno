@@ -1,12 +1,12 @@
 import { Group } from "@mantine/core";
-import { ModelProps } from ".";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
+import { useTimeout } from "@mantine/hooks";
+import { useEffect, useRef } from "react";
 import Lottie from "react-lottie";
 import { useDownloadLottieFile } from "~/api/lottie";
-import { useEffect, useRef } from "react";
+import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
-import { useTimeout } from "@mantine/hooks";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
 
 export function Model16({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles, lottieTitles } = useQuestionHelper(question);
@@ -72,10 +72,14 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
     }
   }, [question]);
 
-  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const { start } = useTimeout(() => {
+    void audioRef.current?.play();
+  }, 4000);
 
   useEffect(() => {
     start();
+    setContinueDisabled(false);
   }, [question]);
 
   return (
@@ -88,7 +92,8 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
               <AudioButton
                 key={inx}
                 src={title.file_url!}
-                autoPlay={inx === 0}
+                autoPlay={false}
+                ref={audioRef}
               />
             ))}
         </Group>
@@ -105,6 +110,7 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
         {data && (
           <Lottie
             options={{
+              loop: false,
               autoplay: true,
               animationData: data,
               rendererSettings: {

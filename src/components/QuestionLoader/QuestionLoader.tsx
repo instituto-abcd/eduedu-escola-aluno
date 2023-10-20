@@ -77,7 +77,6 @@ export function QuestionLoader({
   }, [question]);
 
   useEffect(() => {
-    if (continueDisabled) return;
     setContinueDisabled(mediaTrack.isPlaying);
   }, [mediaTrack.isPlaying]);
 

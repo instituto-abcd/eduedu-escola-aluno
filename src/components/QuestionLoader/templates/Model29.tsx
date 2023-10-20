@@ -15,7 +15,7 @@ const useStyles = createStyles({
     placeItems: "center",
   },
   card: {
-    width: boardW(200),
+    width: boardW(160),
     height: boardW(120),
     img: {
       marginBottom: "2px",
@@ -59,9 +59,6 @@ export function Model29({
       })
     );
   }
-
-  useEffect(() => {
-  }, [question]);
 
   useEffect(() => {
     onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);

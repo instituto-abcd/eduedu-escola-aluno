@@ -85,7 +85,7 @@ export function QuestionLoader({
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>
       <ModelMapper commonProps={commonProps} />
 
-      <EduButton style={{ marginTop: "auto" }} disabled={continueDisabled} onClick={submitAnswer}>
+      <EduButton disabled={continueDisabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
       <LoadingOverlay

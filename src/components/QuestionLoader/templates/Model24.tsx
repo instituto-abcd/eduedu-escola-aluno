@@ -1,4 +1,4 @@
-import { Box, Group, Image, Stack, Title } from "@mantine/core";
+import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { QuestionOption } from "~/api/exam";
@@ -71,7 +71,7 @@ export function Model24({
           )}
       </Group>
 
-      <Box mt={boardW(10)}>
+      <Stack my="auto" spacing={boardW(40)}>
         {imageTitles.map(
           (title) =>
             title.file_url && (
@@ -90,18 +90,18 @@ export function Model24({
           <Stack align="center" spacing={boardW(25)}>
             {textTitles.find((title) => title.placeholder.includes("completar"))
               ?.description && (
-                <Title
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find((title) =>
-                        title.placeholder.includes("completar")
-                      )?.description ?? "",
-                  }}
-                  size={boardW(24)}
-                  weight={500}
-                  color="dark.3"
-                />
-              )}
+              <Title
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find((title) =>
+                      title.placeholder.includes("completar")
+                    )?.description ?? "",
+                }}
+                size={boardW(24)}
+                weight={500}
+                color="dark.3"
+              />
+            )}
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
@@ -174,7 +174,7 @@ export function Model24({
                   )}
                   {option.sound_url && (
                     <AudioButton
-                      key={option.sound_id}
+                      key={option.sound_url}
                       src={option.sound_url}
                     />
                   )}
@@ -183,7 +183,7 @@ export function Model24({
             </Group>
           </Stack>
         )}
-      </Box>
+      </Stack>
     </>
   );
 }

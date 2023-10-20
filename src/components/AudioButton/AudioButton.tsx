@@ -17,7 +17,7 @@ type Props = {
 type Ref = { play: () => void };
 
 export const AudioButton = forwardRef<Ref, Props>(
-  ({ autoPlay, src, ...props }, ref) => {
+  ({ autoPlay, src, buttonProps, ...props }, ref) => {
     const mediaTrack = useMediaTrackStore();
 
     const play = () => {
@@ -47,7 +47,7 @@ export const AudioButton = forwardRef<Ref, Props>(
         disabled={mediaTrack.isPlaying}
         {...props}
         icon={
-          props.buttonProps?.icon ?? (
+          buttonProps?.icon ?? (
             <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
           )
         }

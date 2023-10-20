@@ -1,12 +1,10 @@
 import { Group, Image, Stack, Text } from "@mantine/core";
 import { IconMessageCircle2 } from "@tabler/icons-react";
-import { useEffect } from "react";
 import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { AudioButton } from "~/components/AudioButton";
 import { lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 export function Model33({ question }: ModelProps) {
@@ -18,20 +16,18 @@ export function Model33({ question }: ModelProps) {
     textTitles,
   } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
-  const mediaTrack = useMediaTrackStore();
 
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
 
-  useEffect(() => {
-    if (audioTitles[0].file_url && !mediaTrack.isPlaying) {
-      mediaTrack.play({
-        mediaType: MediaType.AUDIO,
-        trackId: audioTitles[0].file_url,
-        trackUrl: audioTitles[0].file_url,
-      });
-    }
-  }, [question]);
+  const autoplayLaterAudio = () => {
+    const rule =
+      Array.isArray(question.rules) &&
+      question.rules.find((rule) => rule.name === "autoplay");
+
+    if (!rule) return true;
+    return rule.value === "false";
+  };
 
   return (
     <>
@@ -40,18 +36,19 @@ export function Model33({ question }: ModelProps) {
           {audioTitles.map((title, inx) =>
             inx === 0 ? (
               <AudioButton
-                key={title.position}
+                key={inx}
                 src={title.file_url ?? ""}
                 autoPlay={audioTitleAutoplay(inx)}
               />
             ) : (
               <AudioButton
-                key={title.position}
+                key={inx}
                 src={title.file_url ?? ""}
                 buttonProps={{
                   variant: "yellow",
                   icon: <IconMessageCircle2 size={30} />,
                 }}
+                autoPlay={autoplayLaterAudio()}
               />
             )
           )}

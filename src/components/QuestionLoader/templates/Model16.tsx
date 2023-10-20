@@ -6,13 +6,13 @@ import Lottie from "react-lottie";
 import { useDownloadLottieFile } from "~/api/lottie";
 import { useEffect, useRef } from "react";
 import { boardW } from "~/constants/dimensions";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model16({ question }: ModelProps) {
+export function Model16({ question, setContinueDisabled }: ModelProps) {
   const { audioTitles, lottieTitles } = useQuestionHelper(question);
 
   const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
     enabled: !!lottieTitles[0]?.file_id,
-    onSuccess: console.log,
   });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -72,6 +72,12 @@ export function Model16({ question }: ModelProps) {
     }
   }, [question]);
 
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+
+  useEffect(() => {
+    start();
+  }, [question]);
+
   return (
     <>
       {audioTitles.filter((title) => title.file_url).length > 0 && (
@@ -99,7 +105,6 @@ export function Model16({ question }: ModelProps) {
         {data && (
           <Lottie
             options={{
-              loop: true,
               autoplay: true,
               animationData: data,
               rendererSettings: {

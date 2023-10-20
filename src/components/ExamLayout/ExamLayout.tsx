@@ -21,6 +21,13 @@ export function ExamLayout() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  useMediaTrackStore.subscribe((state) => {
+    if (!state.currentTrack) {
+      audioRef.current?.pause();
+      return;
+    }
+  });
+
   useEffect(() => {
     if (currentAudio) {
       void audioRef.current?.play();

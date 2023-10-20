@@ -21,11 +21,11 @@ export function Model10({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
+    setContinueDisabled(answer === null);
   }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
-    setContinueDisabled(!answer);
   }, [question]);
 
   return (

@@ -6,8 +6,10 @@ import { AudioButton } from "~/components/AudioButton";
 import { lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useEffect } from "react";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model33({ question }: ModelProps) {
+export function Model33({ question, setContinueDisabled }: ModelProps) {
   const {
     audioTitles,
     hasAudioTitle,
@@ -28,6 +30,12 @@ export function Model33({ question }: ModelProps) {
     if (!rule) return true;
     return rule.value === "false";
   };
+
+  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+
+  useEffect(() => {
+    start();
+  }, [question]);
 
   return (
     <>

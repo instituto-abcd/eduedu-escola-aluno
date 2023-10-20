@@ -59,10 +59,11 @@ export function Model18Prova({
 
   useEffect(() => {
     onAnswerChange(selected);
+    const _slots = text.split("").map((char) => (char === "_" ? null : char));
     setContinueDisabled(
-      selected.length !== slots.filter((slot) => slot === null).length
+      selected.length !== _slots.filter((slot) => slot === null).length
     );
-  }, [selected]);
+  }, [selected, slots]);
 
   return (
     <>
@@ -75,75 +76,61 @@ export function Model18Prova({
           />
         ))}
       </Group>
-      <Stack>
-        {imageTitles.map((title) => (
-          <Image
-            src={title.file_url ?? ""}
-            key={title.file_name}
-            height={(lousaHeight * 35) / 100}
-            width="auto"
-            m="auto"
-          />
-        ))}
+      {imageTitles.map((title) => (
+        <Image
+          src={title.file_url ?? ""}
+          key={title.file_name}
+          height={(lousaHeight * 35) / 100}
+          width="auto"
+          mx="auto"
+        />
+      ))}
 
-        <Stack spacing={20}>
-          <Group mx="auto">
-            {slots.map((slot, inx) => {
-              if (typeof slot === "string")
-                return (
-                  <TextOptionButton
-                    key={slot}
-                    style={{
-                      width: (lousaWidth * 8) / 100,
-                      height: (lousaWidth * 8) / 100,
-                      fontSize: "2.5vw",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {slot}
-                  </TextOptionButton>
-                );
+      <Stack spacing={20} my="auto">
+        <Group mx="auto">
+          {slots.map((slot, inx) => {
+            if (typeof slot === "string")
+              return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
 
-              return (
-                <DragLetterSlot
-                  onDrop={(item) => handleDrop(item, inx)}
-                  option={slot}
-                  onClear={() => handleClear(inx)}
-                  key={inx}
-                  style={{
-                    width: (lousaWidth * 8) / 100,
-                    height: (lousaWidth * 8) / 100,
-                    textAlign: "center",
-                  }}
-                />
-              );
-            })}
-          </Group>
-
-          <Group mx="auto">
-            {question.options.map((option) => (
-              <DraggableLetters
-                key={option.description}
-                option={option}
-                hidden={
-                  !!slots.find(
-                    (item) =>
-                      item &&
-                      typeof item !== "string" &&
-                      item.position === option.position
-                  )
-                }
+            return (
+              <DragLetterSlot
+                onDrop={(item) => handleDrop(item, inx)}
+                option={slot}
+                onClear={() => handleClear(inx)}
+                key={inx}
                 style={{
                   width: (lousaWidth * 8) / 100,
                   height: (lousaWidth * 8) / 100,
                   textAlign: "center",
                 }}
-              >
-                {option.description}
-              </DraggableLetters>
-            ))}
-          </Group>
-        </Stack>
+              />
+            );
+          })}
+        </Group>
+
+        <Group mx="auto">
+          {question.options.map((option) => (
+            <DraggableLetters
+              key={option.description}
+              option={option}
+              hidden={
+                !!slots.find(
+                  (item) =>
+                    item &&
+                    typeof item !== "string" &&
+                    item.position === option.position
+                )
+              }
+              style={{
+                width: (lousaWidth * 8) / 100,
+                height: (lousaWidth * 8) / 100,
+                textAlign: "center",
+              }}
+            >
+              {option.description}
+            </DraggableLetters>
+          ))}
+        </Group>
       </Stack>
     </>
   );

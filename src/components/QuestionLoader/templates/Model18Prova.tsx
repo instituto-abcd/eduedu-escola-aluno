@@ -60,10 +60,9 @@ export function Model18Prova({
   useEffect(() => {
     onAnswerChange(selected);
     const _slots = text.split("").map((char) => (char === "_" ? null : char));
-    setContinueDisabled(
-      selected.length !== _slots.filter((slot) => slot === null).length
-    );
-  }, [selected, slots]);
+    const emptySlots = _slots.filter((slot) => slot === null);
+    setContinueDisabled(selected.length !== emptySlots.length);
+  }, [selected, text]);
 
   return (
     <>
@@ -73,6 +72,16 @@ export function Model18Prova({
             src={title.file_url ?? ""}
             key={title.file_name}
             autoPlay
+            onEnded={() => {
+              const _slots = text
+                .split("")
+                .map((char) => (char === "_" ? null : char));
+              const emptySlots = _slots.filter((slot) => slot === null);
+
+              console.log("ended");
+
+              setContinueDisabled(selected.length !== emptySlots.length);
+            }}
           />
         ))}
       </Group>

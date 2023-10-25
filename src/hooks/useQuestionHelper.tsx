@@ -75,6 +75,8 @@ export function useQuestionHelper(question: Question) {
   const getRule = (rule: string) =>
     question.rules?.find((r) => r.name === rule);
 
+  const skipFeedback = getRule("skipFeedback")?.value === "true";
+
   return {
     hasTitleOfType,
     getTitlesOfType,
@@ -92,5 +94,6 @@ export function useQuestionHelper(question: Question) {
     isPlanet,
     hasAuxQuestion,
     auxQuestionId,
+    skipFeedback,
   };
 }

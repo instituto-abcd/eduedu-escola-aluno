@@ -12,7 +12,8 @@ import { ModelProps } from "./templates";
 
 type QuestionLoaderProps = {
   answerCallback: (
-    nextQuestion: Question | { examCompleted?: true; planetCompleted?: true }
+    nextQuestion: Question | { examCompleted?: true; planetCompleted?: true },
+    skipFeedback?: boolean
   ) => void;
   question: Question;
 };
@@ -24,7 +25,8 @@ export function QuestionLoader({
   const [answer, setAnswer] = useState<QuestionOption[]>([]);
   const [continueDisabled, setContinueDisabled] = useState(true);
 
-  const { hasAuxQuestion, auxQuestionId } = useQuestionHelper(question);
+  const { hasAuxQuestion, auxQuestionId, skipFeedback } =
+    useQuestionHelper(question);
 
   const { data: auxQuestion, isFetching: isLoadingAux } = usePlanetGetQuestion(
     question.planet_id,
@@ -42,11 +44,11 @@ export function QuestionLoader({
   };
 
   const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
-    onSuccess: (q) => answerCallback(q),
+    onSuccess: (q) => answerCallback(q, skipFeedback),
   });
 
   const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
-    onSuccess: (q) => answerCallback(q),
+    onSuccess: (q) => answerCallback(q, skipFeedback),
   });
 
   const isLoading = isLoadingExam || isLoadingPlanet || isLoadingAux;

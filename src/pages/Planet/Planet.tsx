@@ -38,7 +38,8 @@ export function PlanetPage() {
       | Question
       | {
           planetCompleted?: true;
-        }
+        },
+    skipFeedback?: boolean
   ) {
     if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
@@ -48,6 +49,7 @@ export function PlanetPage() {
         updateProgress((answer as Question).progress as number);
 
       /* Handle Feedback Sound */
+      if (skipFeedback) return;
 
       if ("previousQuestionIsCorrect" in answer) {
         if (answer.previousQuestionIsCorrect === true) {

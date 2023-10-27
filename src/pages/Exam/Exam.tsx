@@ -45,7 +45,8 @@ export function ExamPage() {
     }
   }
 
-  const showStagingInfo = !import.meta.env.PROD;
+  // const showStagingInfo = !import.meta.env.PROD;
+  const showStagingInfo = true; // TODO: workaround
 
   return (
     <>

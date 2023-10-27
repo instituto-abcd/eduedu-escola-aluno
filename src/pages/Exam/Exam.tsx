@@ -8,6 +8,7 @@ import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 import { lousaWidth } from "~/constants/dimensions";
+import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 
 export function ExamPage() {
   const navigate = useNavigate();
@@ -44,6 +45,8 @@ export function ExamPage() {
     }
   }
 
+  const showStagingInfo = !import.meta.env.PROD;
+
   return (
     <>
       <Progress
@@ -71,6 +74,12 @@ export function ExamPage() {
         ref={positiveSound}
         style={{ display: "none" }}
       />
+
+      {currentQuestion && showStagingInfo && (
+        <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+          <StagingQuestionInfo question={currentQuestion} />
+        </Stack>
+      )}
     </>
   );
 }

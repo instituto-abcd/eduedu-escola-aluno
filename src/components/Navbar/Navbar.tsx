@@ -1,33 +1,22 @@
-import { useStudent } from "~/stores/student";
 import {
-  Header as MantineHeader,
-  Image,
-  Text,
-  Group,
-  createStyles,
   Flex,
+  Group,
+  Image,
+  Header as MantineHeader,
+  Text,
 } from "@mantine/core";
 import logo from "~/assets/logos/eduedu-azul.svg";
+import { useStudent } from "~/stores/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
 
-const useStyles = createStyles({
-  anchor: {
-    textDecoration: "none",
-    color: "inherit",
-    ":hover": {
-      textDecoration: "underline",
-    },
-  },
-});
-
 export function Navbar() {
-  const student = useStudent()
+  const student = useStudent();
   const links = [
-    { id: '1', label: student?.name, value: "" },
-    { id: '2', label: "Matrícula", value: student?.registry },
-    { id: '3', label: "Série", value: student?.schoolClassName },
-    { id: '4', label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
-    { id: '5', label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
+    { id: "1", label: student?.name, value: "" },
+    { id: "2", label: "Matrícula", value: student?.registry },
+    { id: "3", label: "Série", value: student?.schoolClassName },
+    { id: "4", label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
+    { id: "5", label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
   ] as const;
 
   return (

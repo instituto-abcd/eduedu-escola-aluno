@@ -1,5 +1,5 @@
 import { Group, Image } from "@mantine/core";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import arrowLeft from "~/assets/planets/arrow-left-red.png";
@@ -9,6 +9,8 @@ import { CardStack } from "~/components/CardStack";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import feedbackNegative from "~/assets/audio/feedback_error.mp3";
+import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 
 export function Model12({
   question,
@@ -27,6 +29,7 @@ export function Model12({
       setStack(
         stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
       );
+      handleFeedback("left", option);
     },
   });
 
@@ -37,8 +40,22 @@ export function Model12({
       setStack(
         stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
       );
+      handleFeedback("right", option);
     },
   });
+
+  const negativeSound = useRef<HTMLAudioElement>(null);
+  const positiveSound = useRef<HTMLAudioElement>(null);
+
+  function handleFeedback(position: "left" | "right", option: QuestionOption) {
+    if (position === "left" && option.isCorrect === false) {
+      void positiveSound.current?.play();
+    } else if (position === "right" && option.isCorrect === true) {
+      void positiveSound.current?.play();
+    } else {
+      void negativeSound.current?.play();
+    }
+  }
 
   useEffect(() => {
     setAnswers([]);
@@ -85,6 +102,17 @@ export function Model12({
         />
         <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
+
+      <audio
+        src={feedbackNegative}
+        ref={negativeSound}
+        style={{ display: "none" }}
+      />
+      <audio
+        src={feedbackPositive}
+        ref={positiveSound}
+        style={{ display: "none" }}
+      />
     </>
   );
 }

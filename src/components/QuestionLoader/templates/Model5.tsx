@@ -91,7 +91,7 @@ export function Model5({
     } else {
       onAnswerChange(answer ? [answer] : []);
     }
-  }, [answer]);
+  }, [answer, multipleAnswer]);
 
   /* Handle continue disable */
   useEffect(() => {
@@ -101,6 +101,12 @@ export function Model5({
       setContinueDisabled(!answer);
     }
   }, [answer, multipleAnswer]);
+
+  /* handle clear answers */
+  useEffect(() => {
+    setAnswer(null);
+    setMultipleAnswer([]);
+  }, [question]);
 
   return (
     <>
@@ -178,10 +184,8 @@ export function Model5({
             ) : (
               <TextOptionButton
                 key={inx}
-                onClick={() => setAnswer(option)}
-                data-selected={
-                  JSON.stringify(answer) === JSON.stringify(option)
-                }
+                onClick={() => handleOptionClick(option)}
+                data-selected={getSelectedState(option)}
                 className={classes.textOption}
               >
                 {option.description}

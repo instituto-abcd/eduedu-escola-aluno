@@ -3,19 +3,20 @@ import { useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Question } from "~/api/exam";
 import { usePlanetGetFirstQuestion } from "~/api/planet";
-import { Planet } from "~/api/student";
+import { SimplifiedPlanet } from "~/api/student";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import feedbackNegative from "~/assets/audio/feedback_error.mp3";
 import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 import { lousaWidth } from "~/constants/dimensions";
+import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 
 export function PlanetPage() {
   const location = useLocation();
   const params = useParams();
-  const planet: Planet = location.state?.planet;
-  const planetId = planet?.id ?? params.planetId ?? "--ID_MISSING--";
+  const planet: SimplifiedPlanet = location.state?.planet;
+  const planetId = planet?.planetId ?? params.planetId ?? "--ID_MISSING--";
 
   const navigate = useNavigate();
 
@@ -38,7 +39,8 @@ export function PlanetPage() {
       | Question
       | {
           planetCompleted?: true;
-        }
+        },
+    skipFeedback?: boolean
   ) {
     if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
@@ -48,6 +50,7 @@ export function PlanetPage() {
         updateProgress((answer as Question).progress as number);
 
       /* Handle Feedback Sound */
+      if (skipFeedback) return;
 
       if ("previousQuestionIsCorrect" in answer) {
         if (answer.previousQuestionIsCorrect === true) {
@@ -60,6 +63,9 @@ export function PlanetPage() {
       }
     }
   }
+
+  // const showStagingInfo = !import.meta.env.PROD;
+  const showStagingInfo = true; // TODO: workaround
 
   return (
     <>
@@ -89,6 +95,14 @@ export function PlanetPage() {
         ref={positiveSound}
         style={{ display: "none" }}
       />
+
+      {currentQuestion && showStagingInfo && (
+        <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+          <StagingQuestionInfo
+            question={{ ...currentQuestion, planetTitle: planet.planetName }}
+          />
+        </Stack>
+      )}
     </>
   );
 }

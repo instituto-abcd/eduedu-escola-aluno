@@ -168,7 +168,7 @@ export function Model5({
 
         <SimpleGrid
           cols={question.options.some((op) => !!op.image_url) ? 2 : 1}
-          w="45%"
+          w="fit-content"
         >
           {question.options.map((option, inx) =>
             option.image_url ? (

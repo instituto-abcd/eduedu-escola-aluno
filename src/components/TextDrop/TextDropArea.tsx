@@ -48,7 +48,7 @@ export function DropArea<T extends TextAreaItem>({
 
   return (
     <div className={classes.area} ref={drop}>
-      <Group w="100%">
+      <Group w="100%" style={{ fontSize: 6 }}>
         {items.filter(Boolean).map((item, index) => (
           <TextDropItem
             item={item!}

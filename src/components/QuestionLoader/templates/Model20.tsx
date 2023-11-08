@@ -56,15 +56,13 @@ export function Model20({
     <>
       {hasAudioTitle && (
         <Group mx="auto" h="50px">
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={title.file_url}
-                src={title.file_url!}
-                autoPlay={audioTitleAutoplay(inx)}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={title.file_url}
+              src={title.file_url!}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
+          ))}
         </Group>
       )}
       <Stack my="auto" align="center" spacing={10}>
@@ -89,7 +87,6 @@ export function Model20({
             <TextDropItem
               item={option}
               key={index}
-              customFontSize={24}
               hidden={
                 !!answers.find(
                   (item) => JSON.stringify(item) === JSON.stringify(option)

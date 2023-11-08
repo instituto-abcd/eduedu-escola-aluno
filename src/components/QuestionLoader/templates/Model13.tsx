@@ -31,7 +31,7 @@ export function Model13({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { imageTitles, audioTitles } = useQuestionHelper(question);
+  const { imageTitles, audioTitles, getRule } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
@@ -47,6 +47,9 @@ export function Model13({
       state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
     );
   }
+
+  const showOptionsText = getRule("showOptionsText");
+  const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
 
   useEffect(() => {
     setAnswers([]);
@@ -87,7 +90,7 @@ export function Model13({
           ))}
       </Group>
 
-      <CardStack options={options} />
+      <CardStack options={options} cardProps={{ imageOnly: !imageOnly }} />
     </>
   );
 }

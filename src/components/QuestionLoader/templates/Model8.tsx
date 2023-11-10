@@ -29,7 +29,7 @@ export function Model8({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles } =
+  const { imageTitles, videoTitles, textTitles, audioTitles, audioTitleAutoplay } =
     useQuestionHelper(question);
 
   const { classes } = useStyles();
@@ -53,7 +53,7 @@ export function Model8({
             <AudioButton
               key={inx}
               src={title.file_url ?? ""}
-              autoPlay={inx === 0}
+              autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
         </Group>

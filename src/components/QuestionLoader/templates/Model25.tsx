@@ -109,7 +109,7 @@ export function Model25({
                   ? onDrop(
                       {
                         ...(option as QuestionOption),
-                        positionAnswer: option?.position,
+                        positionAnswer: inx,
                       },
                       inx
                     )

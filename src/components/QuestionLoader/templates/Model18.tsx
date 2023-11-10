@@ -37,14 +37,10 @@ export function Model18({
     );
 
     if (item) {
-      const indexOffset = index - text.replace(/_/gi, "").length;
-
-      setSelected((state) =>
-        produce(state, (draft) => {
-          draft[indexOffset] = {
-            ...item,
-            positionAnswer: indexOffset,
-          };
+      setSelected((prevSelected) =>
+        prevSelected.concat({
+          ...item,
+          positionAnswer: index,
         })
       );
     }
@@ -52,7 +48,7 @@ export function Model18({
 
   function handleClear(index: number) {
     handleDrop(null, index);
-    setSelected(selected.filter((_, inx) => inx !== index));
+    setSelected(selected.filter((_) => _.positionAnswer !== index));
   }
 
   useEffect(() => {
@@ -70,9 +66,7 @@ export function Model18({
 
   useEffect(() => {
     onAnswerChange(selected);
-    setContinueDisabled(
-      selected.length !== slots.filter((slot) => slot === null).length
-    );
+    setContinueDisabled(slots.filter((slot) => slot === null).length > 0);
   }, [selected]);
 
   return (

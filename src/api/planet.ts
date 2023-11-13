@@ -41,7 +41,7 @@ class PlanetAPI extends API {
   ) {
     const { data } = await this.api.post<Question | { planetCompleted: true }>(
       URL.ANSWER_QUESTION(studentId, planetId),
-      answer
+      { ...answer, planetId }
     );
 
     return data;

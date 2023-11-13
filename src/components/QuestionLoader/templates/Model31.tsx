@@ -13,9 +13,13 @@ const useStyles = createStyles({
     width: boardW(500),
     height: boardW(90),
   },
-  stack: {
+  stackAnswers: {
     width: `${boardW(500)}px!important`,
-    height: `${boardW(90)}px!important`,
+    height: `auto !important`,
+  },
+  stackOptions: {
+    width: `${boardW(500)}px!important`,
+    height: `${boardW(70)}px!important`,
   },
   text: {
     fontSize: boardW(20),
@@ -57,7 +61,7 @@ export function Model31({
 
   useEffect(() => {
     setAnswers([]);
-  }, []);
+  }, [statement, question]);
 
   useEffect(() => {
     setOptions(question.options);
@@ -97,7 +101,7 @@ export function Model31({
                     <DraggableCard
                       item={null}
                       text={answers[inx]?.description}
-                      className={classes.stack}
+                      className={classes.stackAnswers}
                       disabled
                       onClear={() => handleClear(inx)}
                       textClasses={classes.text}
@@ -110,7 +114,7 @@ export function Model31({
 
         <CardStack
           options={options}
-          className={classes.stack}
+          className={classes.stackOptions}
           cardProps={{ textProps: { size: boardW(20) } }}
         />
       </Stack>

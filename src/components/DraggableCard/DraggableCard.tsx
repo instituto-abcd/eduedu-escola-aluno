@@ -1,6 +1,6 @@
 import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CSSProperties, useRef } from "react";
+import { CSSProperties, useCallback, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { boardW, lousaWidth } from "~/constants/dimensions";
 
@@ -87,7 +87,9 @@ export function DraggableCard<T>({
     pointerEvents: hidden ? "none" : "all",
   };
 
+  const [hasSmallHeight, setHasSmallHeight] = useState(false);
   const soundRef = useRef<HTMLAudioElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     if (sound) {
@@ -95,6 +97,20 @@ export function DraggableCard<T>({
     }
     props?.onClick?.(e);
   }
+
+  const handleImageLoad = useCallback(() => {
+    const minimumHeight = 55;
+    if (isImageSmall(imageRef.current, minimumHeight)) {
+      setHasSmallHeight(true);
+    }
+  }, [imageRef.current]);
+
+  const isImageSmall = (imgElement: HTMLImageElement | null, minimumHeight: number) => {
+    if (imgElement) {
+      return imgElement.height <= minimumHeight;
+    }
+    return false;
+  };
 
   return (
     <div
@@ -112,10 +128,12 @@ export function DraggableCard<T>({
             pointerEvents: "none",
             userSelect: "none",
             maxWidth: boardW(100),
-            maxHeight: boardW(60),
+            maxHeight: hasSmallHeight ? boardW(90) : boardW(60),
             marginInline: "auto",
             objectFit: "contain",
           }}
+          ref={imageRef}
+          onLoad={handleImageLoad}
         />
       )}
       {text && <Text className={cx(classes.text, textClasses)}>{text}</Text>}

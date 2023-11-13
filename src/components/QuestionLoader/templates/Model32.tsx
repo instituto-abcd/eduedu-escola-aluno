@@ -27,6 +27,9 @@ const useStyles = createStyles((theme) => ({
       fontWeight: 600,
     },
   },
+  centralizedText: {
+    textAlign: 'center'
+  }
 }));
 
 export function Model32({
@@ -35,7 +38,7 @@ export function Model32({
   onAnswerChange,
   setContinueDisabled,
 }: ModelProps) {
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
 
   const {
     textTitles,
@@ -94,7 +97,7 @@ export function Model32({
                         (item) => item.placeholder != "ID da historinha"
                       )?.[0]?.description,
                     }}
-                    className={classes.typography}
+                    className={cx(classes.typography, classes.centralizedText)}
                   />
                 )}
                 {!question?.planet_id && (

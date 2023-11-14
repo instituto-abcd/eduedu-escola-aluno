@@ -20,16 +20,14 @@ export function Model3({ question }: ModelProps) {
 
     const { videoTitles } = useQuestionHelper(question);
     const mediaTrack = useMediaTrackStore();
-    const [answer, setAnswer] = useState<Answer | null>(null);
-
+    const [answer, setAnswer] = useState({});
     const [options, setOptions] = useState(null);
 
     useEffect(() => {
-        setAnswer(null);
-        setOptions(null)
+        setAnswer({});
+        setOptions({})
         setOptions(question?.options)
     }, [question]);
-
     return (
         <>
             <Group
@@ -47,24 +45,22 @@ export function Model3({ question }: ModelProps) {
                 </Box>
                 <Box maw={boardW(550)}>
                     <SimpleGrid cols={2}>
-                        {options && options.map((option: Array<{}>) => (
+                        {options && options.map(({ image_id, description, position, isCorrect, image_url, sound_url }: any) => (
                             <OptionButton
-                                key={option?.image_id ?? option?.description}
+                                key={image_id ?? description}
                                 onClick={() =>
                                     setAnswer({
-                                        position: option?.position,
-                                        positionAnswer: option?.position,
+                                        position: position,
+                                        positionAnswer: position,
                                     })
                                 }
-                                data-selected={answer?.position === option?.position}
-                                isCorrect={option?.isCorrect}
+                                data-selected={answer?.position === position}
+                                isCorrect={isCorrect}
                                 className={classes.option}
+                                sound={sound_url ?? undefined}
                             >
-                                <Image
-                                    height={boardW(120)}
-                                    width="auto"
-                                    src={option?.image_url} />
-                                {option?.description}
+                                <Image height={boardW(120)} width="auto" src={image_url} />
+                                {description}
                             </OptionButton>
                         ))}
                     </SimpleGrid>

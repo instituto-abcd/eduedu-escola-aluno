@@ -1,5 +1,4 @@
 import { Group } from "@mantine/core";
-import { useTimeout } from "@mantine/hooks";
 import { useEffect, useRef } from "react";
 import Lottie from "react-lottie";
 import { useDownloadLottieFile } from "~/api/lottie";
@@ -9,7 +8,8 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
 export function Model16({ question, setContinueDisabled }: ModelProps) {
-  const { audioTitles, lottieTitles } = useQuestionHelper(question);
+  const { audioTitles, lottieTitles, audioTitleAutoplay, hasAudioTitle } =
+    useQuestionHelper(question);
 
   const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
     enabled: !!lottieTitles[0]?.file_id,
@@ -72,30 +72,21 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
     }
   }, [question]);
 
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const { start } = useTimeout(() => {
-    void audioRef.current?.play();
-  }, 4000);
-
   useEffect(() => {
-    start();
     setContinueDisabled(false);
   }, [question]);
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={inx}
-                src={title.file_url!}
-                autoPlay={false}
-                ref={audioRef}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              src={title.file_url!}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
+          ))}
         </Group>
       )}
 

@@ -7,8 +7,16 @@ import {
   TextProps,
 } from "@mantine/core";
 import {
+  IconSquare0Filled,
   IconSquare1Filled,
   IconSquare2Filled,
+  IconSquare3Filled,
+  IconSquare4Filled,
+  IconSquare5Filled,
+  IconSquare6Filled,
+  IconSquare7Filled,
+  IconSquare8Filled,
+  IconSquare9Filled,
   IconTrash,
 } from "@tabler/icons-react";
 import { useDrag } from "react-dnd";
@@ -123,7 +131,20 @@ export function Card({
     skipPlayStatus: true,
   });
 
+  /* debug */
   const debug = useDebugInfo((s) => s.answer);
+  const numberIcons: Record<number, JSX.Element> = {
+    1: <IconSquare1Filled />,
+    2: <IconSquare2Filled />,
+    3: <IconSquare3Filled />,
+    4: <IconSquare4Filled />,
+    5: <IconSquare5Filled />,
+    6: <IconSquare6Filled />,
+    7: <IconSquare7Filled />,
+    8: <IconSquare8Filled />,
+    9: <IconSquare9Filled />,
+    0: <IconSquare0Filled />,
+  };
 
   return (
     <Paper
@@ -169,15 +190,7 @@ export function Card({
       {debug && (
         <div className={classes.debugDiv}>
           {debugProperty === "isCorrect" && <>option.isCorrect ? "✅" : "❌"</>}
-          {debugProperty === "position" && (
-            <>
-              {+option.position === 1 ? (
-                <IconSquare1Filled />
-              ) : (
-                <IconSquare2Filled />
-              )}
-            </>
-          )}
+          {debugProperty === "position" && numberIcons[+option.position ?? 0]}
         </div>
       )}
     </Paper>

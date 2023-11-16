@@ -61,7 +61,7 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
     position: "absolute",
     top: 0,
     left: 0,
-    transform: "translate(-50%, -50%)",
+    transform: "translate(50%, 50%)",
     zIndex: 5,
     pointerEvents: "none",
   },
@@ -159,7 +159,9 @@ export function Card({
         </ActionIcon>
       )}
 
-      {debug && <div>{option.isCorrect ? "✅" : "❌"}</div>}
+      {debug && (
+        <div className={classes.debugDiv}>{option.isCorrect ? "✅" : "❌"}</div>
+      )}
     </Paper>
   );
 }

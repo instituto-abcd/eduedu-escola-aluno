@@ -28,6 +28,13 @@ export function Model10({
     setAnswer(null);
   }, [question]);
 
+  const hideTextRule = question.rules.find(
+    (rule) => rule.name === "options_hide_text"
+  );
+  const showOptionsHideText = Boolean(
+    hideTextRule === undefined ? true : hideTextRule.value === "false" ? false : true
+  );
+
   return (
     <>
       {audioTitles.some((title) => title.file_url) && (
@@ -99,7 +106,10 @@ export function Model10({
               isCorrect={option.isCorrect}
               sound={option.sound_url ?? undefined}
             >
-              {option.description}
+              {showOptionsHideText &&
+                <>{option.description}</>
+              }
+
               {option.image_url && (
                 <img
                   src={option.image_url}

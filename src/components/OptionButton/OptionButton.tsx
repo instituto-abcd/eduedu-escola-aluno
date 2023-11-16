@@ -61,13 +61,18 @@ const useStyles = createStyles({
 
 export type OptionButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    option: QuestionOption;
+    option?: QuestionOption;
+    skipDebug?: boolean;
   };
 
-export function OptionButton({ option, ...props }: OptionButtonProps) {
+export function OptionButton({
+  option,
+  skipDebug,
+  ...props
+}: OptionButtonProps) {
   const { classes, cx } = useStyles();
   const { sound, isPlaying } = useCreateSound({
-    src: option.sound_url ?? "",
+    src: option?.sound_url ?? "",
   });
 
   function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -88,7 +93,7 @@ export function OptionButton({ option, ...props }: OptionButtonProps) {
         disabled={props.disabled || isPlaying}
       />
 
-      {debug && <p>{option.isCorrect ? "✅" : "❌"}</p>}
+      {debug && !skipDebug && <p>{option?.isCorrect ? "✅" : "❌"}</p>}
     </div>
   );
 }

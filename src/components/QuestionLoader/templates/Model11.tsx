@@ -232,42 +232,40 @@ export function Model11({
           </Group>
 
           <Group align="center" position="center">
-            {question.options
-              .sort((a, b) => a.position - b.position)
-              .map((option, inx) =>
-                question.axis_code === "LC" ? (
-                  /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
-                   *  contempla alternativas em texto longo,
-                   *  já as demais apenas 1 palavra ou poucas letas
-                   */
-                  <TextOptionButton key={inx} option={option}>
-                    {option.description}
-                  </TextOptionButton>
-                ) : (
-                  <DraggableLetters
-                    option={option}
-                    key={inx}
-                    className={classes.option}
-                    overwrite_isCorrect={overwrite(option)}
-                    hidden={
-                      !shouldRepeatAnswer &&
-                      answer.some(
-                        (item) =>
-                          JSON.stringify({
-                            ...item,
-                            positionAnswer: undefined,
-                          }) ===
-                          JSON.stringify({
-                            ...option,
-                            positionAnswer: undefined,
-                          })
-                      )
-                    }
-                  >
-                    {option.description}
-                  </DraggableLetters>
-                )
-              )}
+            {question.options.map((option, inx) =>
+              question.axis_code === "LC" ? (
+                /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
+                 *  contempla alternativas em texto longo,
+                 *  já as demais apenas 1 palavra ou poucas letas
+                 */
+                <TextOptionButton key={inx} option={option}>
+                  {option.description}
+                </TextOptionButton>
+              ) : (
+                <DraggableLetters
+                  option={option}
+                  key={inx}
+                  className={classes.option}
+                  overwrite_isCorrect={overwrite(option)}
+                  hidden={
+                    !shouldRepeatAnswer &&
+                    answer.some(
+                      (item) =>
+                        JSON.stringify({
+                          ...item,
+                          positionAnswer: undefined,
+                        }) ===
+                        JSON.stringify({
+                          ...option,
+                          positionAnswer: undefined,
+                        })
+                    )
+                  }
+                >
+                  {option.description}
+                </DraggableLetters>
+              )
+            )}
           </Group>
         </Stack>
       </Group>

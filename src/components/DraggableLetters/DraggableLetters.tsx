@@ -65,6 +65,7 @@ type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   onClear?: () => void;
   option: QuestionOption;
   overwrite_isCorrect?: boolean;
+  skipDebug?: boolean;
   type?: string;
   disabled?: boolean;
 };
@@ -76,6 +77,7 @@ export function DraggableLetters({
   hidden,
   disabled,
   overwrite_isCorrect,
+  skipDebug,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
@@ -126,7 +128,7 @@ export function DraggableLetters({
           <IconTrash size={16} />
         </button>
       )}
-      {debug && (
+      {debug && !skipDebug && (
         <div className={classes.debugDiv}>
           {overwrite_isCorrect || option.isCorrect ? "✅" : "❌"}
         </div>

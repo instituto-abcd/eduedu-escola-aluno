@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
@@ -13,15 +13,25 @@ export function Model10({
   question,
   auxQuestion,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const {
+    imageTitles,
+    textTitles,
+    audioTitles,
+    audioTitleAutoplay,
+    hasAudioTitle,
+  } = useQuestionHelper(question);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(answer === null);
   }, [answer]);
 
   useEffect(() => {
@@ -30,17 +40,15 @@ export function Model10({
 
   return (
     <>
-      {audioTitles.some((title) => title.file_url) && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((item, inx) => (
-              <AudioButton
-                src={item.file_url ?? ""}
-                key={inx}
-                autoPlay={audioTitleAutoplay(inx)}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
 
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
@@ -96,8 +104,7 @@ export function Model10({
                     : undefined,
                 })
               }
-              isCorrect={option.isCorrect}
-              sound={option.sound_url ?? undefined}
+              option={option}
             >
               {option.description}
               {option.image_url && (

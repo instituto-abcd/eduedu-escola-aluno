@@ -24,6 +24,7 @@ export function QuestionLoader({
 }: QuestionLoaderProps) {
   const [answer, setAnswer] = useState<QuestionOption[]>([]);
   const [continueDisabled, setContinueDisabled] = useState(true);
+  const [conditions, setConditions] = useState<boolean[]>([]);
 
   const { hasAuxQuestion, auxQuestionId, skipFeedback } =
     useQuestionHelper(question);
@@ -41,6 +42,7 @@ export function QuestionLoader({
     auxQuestion,
     setContinueDisabled,
     onAnswerChange: setAnswer,
+    onConditionsChange: setConditions,
   };
 
   const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
@@ -78,14 +80,12 @@ export function QuestionLoader({
   const { isPlaying } = useAudioStatus();
 
   useEffect(() => {
-    const prevState = continueDisabled;
+    const shouldEnableContinue = [...conditions, !isPlaying].every(
+      (bool) => bool === true
+    );
 
-    if (isPlaying) {
-      setContinueDisabled(true);
-    } else {
-      setContinueDisabled(prevState);
-    }
-  }, [isPlaying]);
+    setContinueDisabled(!shouldEnableContinue);
+  }, [conditions, isPlaying]);
 
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>

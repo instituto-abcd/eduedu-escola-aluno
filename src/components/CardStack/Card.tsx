@@ -6,7 +6,11 @@ import {
   PaperProps,
   TextProps,
 } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
+import {
+  IconSquare1Filled,
+  IconSquare2Filled,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
@@ -64,6 +68,7 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
     transform: "translate(50%, 50%)",
     zIndex: 5,
     pointerEvents: "none",
+    color: "#25abe6",
   },
 }));
 
@@ -77,6 +82,7 @@ export type StackCardProps = {
   variant?: "wide" | "square";
   imageOnly?: boolean;
   textProps?: Partial<TextProps>;
+  debugProperty?: "isCorrect" | "position";
 } & Partial<PaperProps>;
 
 export function Card({
@@ -89,6 +95,7 @@ export function Card({
   stacked = false,
   draggable = true,
   variant = "square",
+  debugProperty = "isCorrect",
   ...props
 }: StackCardProps) {
   const [{ isDragging }, drag] = useDrag(
@@ -160,7 +167,18 @@ export function Card({
       )}
 
       {debug && (
-        <div className={classes.debugDiv}>{option.isCorrect ? "✅" : "❌"}</div>
+        <div className={classes.debugDiv}>
+          {debugProperty === "isCorrect" && <>option.isCorrect ? "✅" : "❌"</>}
+          {debugProperty === "position" && (
+            <>
+              {+option.position === 1 ? (
+                <IconSquare1Filled />
+              ) : (
+                <IconSquare2Filled />
+              )}
+            </>
+          )}
+        </div>
       )}
     </Paper>
   );

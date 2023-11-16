@@ -91,7 +91,7 @@ export function Model10({
                 setAnswer({
                   ...option,
                   positionAnswer: question.orderedAnswer
-                    ? option.position
+                    ? +option.position
                     : undefined,
                 })
               }

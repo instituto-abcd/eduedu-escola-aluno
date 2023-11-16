@@ -3,7 +3,7 @@ export type QuestionOption = {
   image_name: string | null;
   image_url: string | null;
   isCorrect: boolean;
-  position: number;
+  position: string | number;
   sound_name: string | null;
   sound_url: string | null;
   positionAnswer?: number;

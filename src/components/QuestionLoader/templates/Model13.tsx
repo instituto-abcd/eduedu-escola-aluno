@@ -1,6 +1,6 @@
 import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -29,9 +29,15 @@ const useStyles = createStyles((theme) => ({
 export function Model13({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { imageTitles, audioTitles, getRule } = useQuestionHelper(question);
+  const {
+    imageTitles,
+    audioTitles,
+    getRule,
+    audioTitleAutoplay,
+    hasAudioTitle,
+  } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
@@ -58,22 +64,28 @@ export function Model13({
 
   useEffect(() => {
     onAnswerChange(answers);
-    setContinueDisabled(answers.length !== question.options.length);
   }, [answers]);
+
+  const conditions = useMemo(
+    () => [answers.length === question.options.length],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
-        <Group mx="auto">
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={title.file_url}
-                src={title.file_url!}
-                autoPlay={inx === 0}
-              />
-            ))}
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
         </Group>
       )}
 
@@ -90,7 +102,10 @@ export function Model13({
           ))}
       </Group>
 
-      <CardStack options={options} cardProps={{ imageOnly: !imageOnly }} />
+      <CardStack
+        options={options}
+        cardProps={{ imageOnly: !imageOnly, debugProperty: "position" }}
+      />
     </>
   );
 }

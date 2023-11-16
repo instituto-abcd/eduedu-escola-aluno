@@ -1,6 +1,6 @@
 import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
@@ -31,7 +31,7 @@ const useStyles = createStyles({
 export function Model11Prova({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const {
@@ -109,8 +109,19 @@ export function Model11Prova({
 
   useEffect(() => {
     onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
-    setContinueDisabled(answer.includes(null));
   }, [answer]);
+
+  const conditions = useMemo(() => [!answer.includes(null)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  /* debug */
+  const overwrite = (option: QuestionOption) =>
+    question.options.map((q) => q.isCorrect).every((bool) => !bool)
+      ? getRule("answers")?.value === option.description
+      : undefined;
 
   return (
     <>
@@ -212,7 +223,7 @@ export function Model11Prova({
                      *  contempla alternativas em texto longo,
                      *  já as demais apenas 1 palavra ou poucas letas
                      */
-                    <TextOptionButton key={inx}>
+                    <TextOptionButton key={inx} option={option}>
                       {option.description}
                     </TextOptionButton>
                   ) : (
@@ -234,6 +245,7 @@ export function Model11Prova({
                             })
                         )
                       }
+                      overwrite_isCorrect={overwrite(option)}
                     >
                       {option.description}
                     </DraggableLetters>

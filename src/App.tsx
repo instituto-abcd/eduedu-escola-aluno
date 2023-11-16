@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
 
 useDebugInfo.setState({
   AudioButton: import.meta.env.DEV,
+  VideoPlayer: import.meta.env.DEV,
   answer: import.meta.env.DEV,
 });
 

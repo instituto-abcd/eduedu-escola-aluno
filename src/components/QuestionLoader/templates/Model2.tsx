@@ -31,7 +31,6 @@ export function Model2({
     []);
 
   const { audioTitles, textTitles } = useQuestionHelper(question);
-  console.log('textTitles:', textTitles)
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
@@ -42,9 +41,15 @@ export function Model2({
     onAnswerChange(
       answers.filter((answer) => answer !== null) as QuestionOption[]
     );
-
     setContinueDisabled(!answers.every((answer) => answer !== null));
   }, [answers]);
+
+  const auxAutoPlayRule = question.rules.find(
+    (rule) => rule.name === "auxAutoPlay"
+  );
+  const showAuxAutoPlay = Boolean(
+    auxAutoPlayRule === undefined ? true : auxAutoPlayRule.value === "false" ? false : true
+  );
 
   return (
     <>
@@ -57,7 +62,7 @@ export function Model2({
               <AudioButton
                 key={title.file_url}
                 src={title.file_url ?? ""}
-                autoPlay
+                autoPlay={showAuxAutoPlay}
               />
             ))}
         </Group>

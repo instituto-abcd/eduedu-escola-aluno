@@ -7,11 +7,11 @@ import {
   TextProps,
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { useRef } from "react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
-import { useMediaTrackStore } from "~/stores/media-track.store";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { useDebugInfo } from "~/stores/debug-info";
 
 type StyleProps = {
   stacked?: boolean;
@@ -24,6 +24,7 @@ type StyleProps = {
 
 const useStyles = createStyles((theme, props: StyleProps) => ({
   card: {
+    isolation: "isolate",
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "solid",
@@ -55,6 +56,14 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
   },
   audio: {
     display: "none",
+  },
+  debugDiv: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    transform: "translate(-50%, -50%)",
+    zIndex: 5,
+    pointerEvents: "none",
   },
 }));
 
@@ -102,8 +111,12 @@ export function Card({
     height: variant === "square" ? boardW(153) : boardW(210),
   });
 
-  const soundRef = useRef<HTMLAudioElement>(null);
-  const mediaTrack = useMediaTrackStore();
+  const { sound, isPlaying } = useCreateSound({
+    src: option.sound_url ?? "",
+    skipPlayStatus: true,
+  });
+
+  const debug = useDebugInfo((s) => s.answer);
 
   return (
     <Paper
@@ -111,9 +124,12 @@ export function Card({
       ref={draggable ? drag : null}
       onDragStart={() => {
         if (option.sound_url) {
-          void soundRef.current?.play();
+          sound.play();
         }
         onDragStart?.(option);
+      }}
+      style={{
+        pointerEvents: isPlaying ? "none" : "all",
       }}
     >
       {!imageOnly && (
@@ -143,16 +159,7 @@ export function Card({
         </ActionIcon>
       )}
 
-      {option.sound_url && (
-        <audio
-          src={option.sound_url}
-          ref={soundRef}
-          className={classes.audio}
-          onPlay={() => mediaTrack.setPlayStatus(true)}
-          onPause={() => mediaTrack.setPlayStatus(false)}
-          onEnded={() => mediaTrack.setPlayStatus(false)}
-        ></audio>
-      )}
+      {debug && <div>{option.isCorrect ? "✅" : "❌"}</div>}
     </Paper>
   );
 }

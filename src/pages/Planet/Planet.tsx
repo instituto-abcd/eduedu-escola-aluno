@@ -9,7 +9,7 @@ import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import { lousaWidth } from "~/constants/dimensions";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
-import { feedbackNegative, feedbackPositive } from "~/sounds";
+import { AudioInterface } from "~/sounds";
 
 export function PlanetPage() {
   const location = useLocation();
@@ -50,11 +50,11 @@ export function PlanetPage() {
 
       if ("previousQuestionIsCorrect" in answer) {
         if (answer.previousQuestionIsCorrect === true) {
-          feedbackPositive.play();
+          AudioInterface.feedback.positive.play();
         }
 
         if (answer.previousQuestionIsCorrect === false) {
-          feedbackNegative.play();
+          AudioInterface.feedback.negative.play();
         }
       }
     }
@@ -82,7 +82,10 @@ export function PlanetPage() {
       </Stack>
 
       {currentQuestion && showStagingInfo && (
-        <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+        <Stack
+          style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}
+          id="debugger"
+        >
           <StagingQuestionInfo
             question={{ ...currentQuestion, planetTitle: planet.planetName }}
           />

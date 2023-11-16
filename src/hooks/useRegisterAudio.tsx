@@ -1,7 +1,11 @@
-import { useEffect } from "react";
 import { Howler } from "howler";
+import { useEffect } from "react";
 
-export function useRegisterAudio() {
+type useRegisterAudioProps = {
+  debugger?: boolean;
+};
+
+export function useRegisterAudio(_?: useRegisterAudioProps) {
   function registerApi() {
     void Howler.ctx.resume();
 

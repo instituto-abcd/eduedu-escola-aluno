@@ -86,7 +86,10 @@ export function ModelView() {
       </Button>
 
       {currentQuestion !== -1 && data?.[currentQuestion] && (
-        <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+        <Stack
+          style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}
+          id="debugger"
+        >
           <ModelProgress
             current={currentQuestion}
             total={data.length}

@@ -37,7 +37,7 @@ export function QuestionInfo({
             </Button>
           )}
         </CopyButton>
-        <Table fontSize={14}>
+        <Table fontSize={12}>
           <tbody>
             <tr>
               <td>Multipla escolha</td>
@@ -46,10 +46,6 @@ export function QuestionInfo({
             <tr>
               <td>Resposta ordenada</td>
               <td>{question.orderedAnswer ? "✅" : "❌"}</td>
-            </tr>
-            <tr>
-              <td>Nível</td>
-              <td>{question.level}</td>
             </tr>
             <tr>
               <td>Títulos</td>

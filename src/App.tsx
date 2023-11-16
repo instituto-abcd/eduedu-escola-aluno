@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AppRoutes } from "./routes";
-import { useRegisterAudio } from "./hooks/useRegisterAudio";
+import { useDebugInfo } from "./stores/debug-info";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,9 +13,12 @@ const queryClient = new QueryClient({
   },
 });
 
-function App() {
-  useRegisterAudio();
+useDebugInfo.setState({
+  AudioButton: import.meta.env.DEV,
+  answer: import.meta.env.DEV,
+});
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

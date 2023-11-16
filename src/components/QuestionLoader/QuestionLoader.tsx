@@ -5,10 +5,10 @@ import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useGetExamQuestion } from "~/api/student";
 import { lousaHeight } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
+import { useAudioStatus } from "~/stores/audio";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -70,17 +70,22 @@ export function QuestionLoader({
     }
   }
 
-  const mediaTrack = useMediaTrackStore();
-
   useEffect(() => {
-    mediaTrack.clearQueue();
     setAnswer([]);
     setContinueDisabled(true);
   }, [question]);
 
+  const { isPlaying } = useAudioStatus();
+
   useEffect(() => {
-    setContinueDisabled(mediaTrack.isPlaying);
-  }, [mediaTrack.isPlaying]);
+    const prevState = continueDisabled;
+
+    if (isPlaying) {
+      setContinueDisabled(true);
+    } else {
+      setContinueDisabled(prevState);
+    }
+  }, [isPlaying]);
 
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>

@@ -1,6 +1,6 @@
 import { Box, Group, SimpleGrid, Stack } from "@mantine/core";
 import { produce } from "immer";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { VideoPlayer } from "~/components/VideoPlayer";
@@ -12,7 +12,7 @@ import { ModelProps } from ".";
 export function Model2Video({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [slots, setSlots] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
@@ -41,9 +41,16 @@ export function Model2Video({
     onAnswerChange(
       slots.filter((answer) => answer !== null) as QuestionOption[]
     );
-
-    setContinueDisabled(!slots.every((answer) => answer !== null));
   }, [slots]);
+
+  const conditions = useMemo(
+    () => [slots.every((slot) => slot !== null)],
+    [slots]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -52,12 +59,7 @@ export function Model2Video({
           w={(lousaWidth * 38) / 100}
           style={{ display: "flex", justifyContent: "center" }}
         >
-          <VideoPlayer
-            src={videoTitles[0]?.file_url ?? ""}
-            onPlayStatusChange={mediaTrack.setPlayStatus}
-            canPlay={mediaTrack.canPlay()}
-            autoPlay
-          />
+          <VideoPlayer src={videoTitles[0]?.file_url ?? ""} autoPlay />
         </Box>
 
         <Stack

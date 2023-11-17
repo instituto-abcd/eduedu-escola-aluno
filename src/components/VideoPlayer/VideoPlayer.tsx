@@ -13,6 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { ReactNode, useRef, useState } from "react";
 import { boardW } from "~/constants/dimensions";
+import { useAudioStatus } from "~/stores/audio";
 import { useDebugInfo } from "~/stores/debug-info";
 
 const useStyles = createStyles({
@@ -36,24 +37,17 @@ const useStyles = createStyles({
   },
 });
 
-type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
-  onPlayStatusChange?: (isPlaying: boolean) => void;
-  canPlay?: boolean;
-};
+type Props = React.VideoHTMLAttributes<HTMLVideoElement>;
 
-export function VideoPlayer({
-  onPlayStatusChange,
-  canPlay = true,
-  className,
-  ...props
-}: Props) {
-  const { classes, cx } = useStyles();
+export function VideoPlayer({ className, ...props }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const { classes, cx } = useStyles();
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioStatus = useAudioStatus();
 
   function play() {
-    if (canPlay) {
+    if (!audioStatus.isPlaying) {
       void ref.current?.play();
     }
   }
@@ -70,7 +64,12 @@ export function VideoPlayer({
   }
 
   return (
-    <Debug isPlaying={isPlaying} stop={stop} pause={pause} canPlay={canPlay}>
+    <Debug
+      isPlaying={isPlaying}
+      stop={stop}
+      pause={pause}
+      canPlay={!audioStatus.isPlaying}
+    >
       <div className={cx(className, classes.wrapper)}>
         <video
           {...props}
@@ -80,17 +79,17 @@ export function VideoPlayer({
           onLoadedData={() => setIsLoadingData(false)}
           onPlay={(e) => {
             props.onPlay?.(e);
-            onPlayStatusChange?.(true);
+            audioStatus.setPlaying(true);
             setIsPlaying(true);
           }}
           onPause={(e) => {
             props.onPause?.(e);
-            onPlayStatusChange?.(false);
+            audioStatus.setPlaying(false);
             setIsPlaying(false);
           }}
           onEnded={(e) => {
             props.onEnded?.(e);
-            onPlayStatusChange?.(false);
+            audioStatus.setPlaying(false);
             setIsPlaying(false);
           }}
         ></video>

@@ -1,7 +1,7 @@
 import { Group, SimpleGrid, Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -12,7 +12,7 @@ import { boardW } from "~/constants/dimensions";
 export function Model2({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
@@ -30,7 +30,8 @@ export function Model2({
   },
   []);
 
-  const { audioTitles } = useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
   const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
@@ -41,28 +42,31 @@ export function Model2({
     onAnswerChange(
       answers.filter((answer) => answer !== null) as QuestionOption[]
     );
-
-    setContinueDisabled(!answers.every((answer) => answer !== null));
   }, [answers]);
+
+  const conditions = useMemo(
+    () => [answers.every((answer) => answer !== null)],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {/* Action buttons */}
-      {audioTitles.some((title) => title.file_url) && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title) => (
-              <AudioButton
-                key={title.file_url}
-                src={title.file_url ?? ""}
-                autoPlay
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
         </Group>
       )}
 
-      {/* Board content */}
       <Stack my="auto">
         <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
           {answers.map((slot, inx) => (

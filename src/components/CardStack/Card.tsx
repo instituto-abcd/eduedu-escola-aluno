@@ -6,24 +6,14 @@ import {
   PaperProps,
   TextProps,
 } from "@mantine/core";
-import {
-  IconSquare0Filled,
-  IconSquare1Filled,
-  IconSquare2Filled,
-  IconSquare3Filled,
-  IconSquare4Filled,
-  IconSquare5Filled,
-  IconSquare6Filled,
-  IconSquare7Filled,
-  IconSquare8Filled,
-  IconSquare9Filled,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { debug_getNumberIcon } from "../Debug";
 
 type StyleProps = {
   stacked?: boolean;
@@ -68,15 +58,6 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
   },
   audio: {
     display: "none",
-  },
-  debugDiv: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    transform: "translate(50%, 50%)",
-    zIndex: 5,
-    pointerEvents: "none",
-    color: "#25abe6",
   },
 }));
 
@@ -133,18 +114,6 @@ export function Card({
 
   /* debug */
   const debug = useDebugInfo((s) => s.answer);
-  const numberIcons: Record<number, JSX.Element> = {
-    1: <IconSquare1Filled />,
-    2: <IconSquare2Filled />,
-    3: <IconSquare3Filled />,
-    4: <IconSquare4Filled />,
-    5: <IconSquare5Filled />,
-    6: <IconSquare6Filled />,
-    7: <IconSquare7Filled />,
-    8: <IconSquare8Filled />,
-    9: <IconSquare9Filled />,
-    0: <IconSquare0Filled />,
-  };
 
   return (
     <Paper
@@ -188,10 +157,10 @@ export function Card({
       )}
 
       {debug && (
-        <div className={classes.debugDiv}>
-          {debugProperty === "isCorrect" && <>option.isCorrect ? "✅" : "❌"</>}
-          {debugProperty === "position" && numberIcons[+option.position ?? 0]}
-        </div>
+        <DebugDiv>
+          {debugProperty === "isCorrect" && (option.isCorrect ? "✅" : "❌")}
+          {debugProperty === "position" && debug_getNumberIcon(option.position)}
+        </DebugDiv>
       )}
     </Paper>
   );

@@ -6,6 +6,8 @@ import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 import { useAudioStatus } from "~/stores/audio";
 import { useDebugInfo } from "~/stores/debug-info";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { DebugProps } from "../Debug";
 
 const useStyles = createStyles((theme) => ({
   option: {
@@ -64,10 +66,9 @@ const useStyles = createStyles((theme) => ({
 type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   onClear?: () => void;
   option: QuestionOption;
-  overwrite_isCorrect?: boolean;
-  skipDebug?: boolean;
   type?: string;
   disabled?: boolean;
+  debug?: DebugProps;
 };
 
 export function DraggableLetters({
@@ -76,8 +77,7 @@ export function DraggableLetters({
   type = "ANSWER_LETTERS",
   hidden,
   disabled,
-  overwrite_isCorrect,
-  skipDebug,
+  debug,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
@@ -101,7 +101,7 @@ export function DraggableLetters({
     pointerEvents: hidden || isPlaying ? "none" : "all",
   };
 
-  const debug = useDebugInfo((s) => s.answer);
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <div
@@ -128,10 +128,15 @@ export function DraggableLetters({
           <IconTrash size={16} />
         </button>
       )}
-      {debug && !skipDebug && (
-        <div className={classes.debugDiv}>
-          {overwrite_isCorrect || option.isCorrect ? "✅" : "❌"}
-        </div>
+      {canDebug && !debug?.skipDebug && (
+        <DebugDiv
+          position={
+            debug?.debugProperty === "position" ? option.position : undefined
+          }
+          debug={debug}
+        >
+          {debug?.overwriteIsCorrect || option.isCorrect}
+        </DebugDiv>
       )}
     </div>
   );

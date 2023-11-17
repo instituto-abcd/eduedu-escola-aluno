@@ -1,6 +1,6 @@
 import { Group, Stack, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -47,7 +47,7 @@ const useStyles = createStyles((theme) => ({
 export function Model25({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, imageTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
@@ -67,7 +67,9 @@ export function Model25({
   }
 
   function hideOption(option: QuestionOption) {
-    return !!answers.find((op) => op?.positionAnswer === option.position);
+    return !!answers.find(
+      (op) => JSON.stringify(op) === JSON.stringify(option)
+    );
   }
 
   useEffect(() => {
@@ -80,9 +82,14 @@ export function Model25({
     );
   }, [answers]);
 
+  const conditions = useMemo(
+    () => [answers.every((ans) => ans !== null)],
+    [answers]
+  );
+
   useEffect(() => {
-    setContinueDisabled(answers.includes(null));
-  }, [answers]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -128,6 +135,7 @@ export function Model25({
                 hidden={hideOption(option)}
                 text={option.description}
                 textClasses={classes.text}
+                sound={option.sound_url}
               />
             ) : (
               <DraggableCard<QuestionOption>
@@ -136,6 +144,7 @@ export function Model25({
                 item={option}
                 image={option.image_url}
                 hidden={hideOption(option)}
+                sound={option.sound_url}
               />
             )
           )}

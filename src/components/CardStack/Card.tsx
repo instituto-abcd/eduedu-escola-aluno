@@ -13,7 +13,7 @@ import { boardW } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
-import { debug_getNumberIcon } from "../Debug";
+import { DebugProps, debug_getNumberIcon } from "../Debug";
 
 type StyleProps = {
   stacked?: boolean;
@@ -71,7 +71,7 @@ export type StackCardProps = {
   variant?: "wide" | "square";
   imageOnly?: boolean;
   textProps?: Partial<TextProps>;
-  debugProperty?: "isCorrect" | "position";
+  debug?: DebugProps;
 } & Partial<PaperProps>;
 
 export function Card({
@@ -84,7 +84,7 @@ export function Card({
   stacked = false,
   draggable = true,
   variant = "square",
-  debugProperty = "isCorrect",
+  debug: { debugProperty = "isCorrect", ...debug } = {},
   ...props
 }: StackCardProps) {
   const [{ isDragging }, drag] = useDrag(
@@ -113,7 +113,7 @@ export function Card({
   });
 
   /* debug */
-  const debug = useDebugInfo((s) => s.answer);
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <Paper
@@ -156,8 +156,8 @@ export function Card({
         </ActionIcon>
       )}
 
-      {debug && (
-        <DebugDiv>
+      {canDebug && (
+        <DebugDiv debug={debug}>
           {debugProperty === "isCorrect" && (option.isCorrect ? "✅" : "❌")}
           {debugProperty === "position" && debug_getNumberIcon(option.position)}
         </DebugDiv>

@@ -122,7 +122,7 @@ export function Model18({
           {question.options.map((option, inx) => (
             <DraggableLetters
               key={inx}
-              skipDebug
+              debug={{ skipDebug: true }}
               option={option}
               hidden={
                 !!slots.find(

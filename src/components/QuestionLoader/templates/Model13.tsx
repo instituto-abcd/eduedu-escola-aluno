@@ -104,7 +104,10 @@ export function Model13({
 
       <CardStack
         options={options}
-        cardProps={{ imageOnly: !imageOnly, debugProperty: "position" }}
+        cardProps={{
+          imageOnly: !imageOnly,
+          debug: { debugProperty: "position" },
+        }}
       />
     </>
   );

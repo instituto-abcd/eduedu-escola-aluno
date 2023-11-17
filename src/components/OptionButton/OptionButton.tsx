@@ -3,6 +3,7 @@ import { boardW } from "~/constants/dimensions";
 import { useDebugInfo } from "~/stores/debug-info";
 import { QuestionOption } from "~/api/exam";
 import { useCreateSound } from "~/hooks/useCreateSound";
+import { DebugDiv } from "../Debug/DebugDiv";
 
 const useStyles = createStyles({
   button: {
@@ -18,6 +19,7 @@ const useStyles = createStyles({
     fontSize: boardW(20),
     fontWeight: 600,
     color: "#228BE6",
+    position: "relative",
     userSelect: "none",
     "*": {
       color: "#228BE6",
@@ -47,16 +49,6 @@ const useStyles = createStyles({
   audio: {
     display: "none",
   },
-  debugDiv: {
-    position: "relative",
-    isolation: "isolate",
-    p: {
-      position: "absolute",
-      top: 0,
-      marginInline: "auto",
-      zIndex: 55,
-    },
-  },
 });
 
 export type OptionButtonProps =
@@ -68,6 +60,7 @@ export type OptionButtonProps =
 export function OptionButton({
   option,
   skipDebug,
+  children,
   ...props
 }: OptionButtonProps) {
   const { classes, cx } = useStyles();
@@ -85,15 +78,16 @@ export function OptionButton({
   const debug = useDebugInfo((s) => s.answer);
 
   return (
-    <div className={classes.debugDiv}>
-      <button
-        {...props}
-        className={cx(classes.button, props.className)}
-        onClick={onClick}
-        disabled={props.disabled || isPlaying}
-      />
-
-      {debug && !skipDebug && <p>{option?.isCorrect ? "✅" : "❌"}</p>}
-    </div>
+    <button
+      {...props}
+      className={cx(classes.button, props.className)}
+      onClick={onClick}
+      disabled={props.disabled || isPlaying}
+    >
+      {debug && !skipDebug && option && (
+        <DebugDiv size={12}>{option.isCorrect}</DebugDiv>
+      )}
+      {children}
+    </button>
   );
 }

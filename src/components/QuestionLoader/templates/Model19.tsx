@@ -87,7 +87,9 @@ export function Model19({
           cardProps={{
             variant: "square",
             imageOnly: !showOptionsDesc,
-            debugProperty: "position",
+            debug: {
+              debugProperty: "position",
+            },
           }}
         />
 

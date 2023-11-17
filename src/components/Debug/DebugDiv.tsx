@@ -1,17 +1,19 @@
-import { debug_getNumberIcon } from ".";
+import { DebugProps, debug_getNumberIcon } from ".";
 
 export const DebugDiv: React.FC<{
   children?: React.ReactNode;
   position?: unknown;
-}> = ({ children, position }) => {
+  debug?: DebugProps;
+}> = ({ children, position, debug }) => {
   const styles: React.CSSProperties = {
     position: "absolute",
     top: 0,
     left: 0,
-    transform: "translate(50%, 50%)",
+    transform: debug?.outside ? "translate(-50%, -50%)" : "translate(50%, 50%)",
     zIndex: 5,
     pointerEvents: "none",
     color: "#25abe6",
+    fontSize: debug?.size,
   };
 
   if (position !== undefined)

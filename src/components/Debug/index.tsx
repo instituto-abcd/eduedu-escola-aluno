@@ -38,3 +38,11 @@ export const debug_getNumberIcon = (entry: unknown) => {
     : debug_numberIcons[0];
   return icon;
 };
+
+export type DebugProps = {
+  skipDebug?: boolean;
+  debugProperty?: "isCorrect" | "position";
+  overwriteIsCorrect?: boolean;
+  size?: number;
+  outside?: boolean;
+};

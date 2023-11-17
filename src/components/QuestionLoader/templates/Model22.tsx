@@ -97,8 +97,9 @@ export function Model22({
               onClick={() => handleAnswer(option)}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               style={{
-                fontSize: boardW(24)
+                fontSize: boardW(24),
               }}
+              option={option}
             >
               {option.description}
             </TextOptionButton>

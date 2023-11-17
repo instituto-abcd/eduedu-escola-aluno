@@ -6,7 +6,7 @@ import { ModelProps } from ".";
 import { useEffect } from "react";
 import { useTimeout } from "@mantine/hooks";
 
-export function Model21({ question, setContinueDisabled }: ModelProps) {
+export function Model21({ question, onConditionsChange }: ModelProps) {
   const { audioTitles, textTitles, hasAudioTitle } =
     useQuestionHelper(question);
   const autoPlay =
@@ -19,7 +19,7 @@ export function Model21({ question, setContinueDisabled }: ModelProps) {
   const statement =
     textTitles.find((title) => title.position === 2)?.description ?? "";
 
-  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+  const { start } = useTimeout(() => onConditionsChange([true]), 1000);
 
   useEffect(() => {
     start();

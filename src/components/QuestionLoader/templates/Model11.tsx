@@ -246,7 +246,10 @@ export function Model11({
                   option={option}
                   key={inx}
                   className={classes.option}
-                  overwrite_isCorrect={overwrite(option)}
+                  debug={{
+                    overwriteIsCorrect: overwrite(option),
+                    outside: true,
+                  }}
                   hidden={
                     !shouldRepeatAnswer &&
                     answer.some(

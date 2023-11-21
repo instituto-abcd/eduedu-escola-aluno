@@ -14,22 +14,20 @@ const useStyles = createStyles((theme) => ({
     width: 418,
     height: 212,
   },
-  slot: {
+  input: {
     width: boardW(120),
     height: boardW(120),
+
     color: "#495057",
-    fontSize: 50,
+    fontSize: boardW(50),
     fontWeight: 600,
-    display: "grid",
-    placeItems: "center",
-  },
-  input: {
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: 'none',
+
+    border: '#868E96 solid 1px',
+    borderRadius: '16px',
     textAlign: 'center',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+
+    backgroundColor: '#F1F3F5',
   }
 }));
 
@@ -108,17 +106,10 @@ export function Model35({
           // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
           <Group>
             {slots && slots.map((slot, inx) => (
-              <DraggableCardSlot<QuestionOption>
-                onDrop={(item) => item && handleDrop(item, inx)}
-                item={null}
-                key={inx}
-                className={classes.slot}
-              >
-                <input
-                  maxLength={1}
-                  className={classes.input}
-                />
-              </DraggableCardSlot>
+              <input
+                maxLength={1}
+                className={classes.input}
+              />
             ))}
           </Group>
 

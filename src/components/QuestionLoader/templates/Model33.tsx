@@ -22,15 +22,6 @@ export function Model33({ question, setContinueDisabled }: ModelProps) {
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
 
-  const autoplayLaterAudio = () => {
-    const rule =
-      Array.isArray(question.rules) &&
-      question.rules.find((rule) => rule.name === "autoplay");
-
-    if (!rule) return true;
-    return rule.value === "false";
-  };
-
   const { start } = useTimeout(() => setContinueDisabled(false), 1000);
 
   useEffect(() => {
@@ -56,7 +47,6 @@ export function Model33({ question, setContinueDisabled }: ModelProps) {
                   variant: "yellow",
                   icon: <IconMessageCircle2 size={30} />,
                 }}
-                autoPlay={autoplayLaterAudio()}
               />
             )
           )}

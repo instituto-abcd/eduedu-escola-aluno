@@ -103,19 +103,19 @@ export function Model35({
 
         {isFill ?
           // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
-          <Group>
+          <>
             {slots && slots.map((slot, inx) => (
               <input
                 maxLength={1}
                 className={classes.input}
               />
             ))}
-          </Group>
-
+          </>
           :
           // se for falso, a regra diz que é uma questão de ditado
           <Textarea
             value={answer}
+            maxLength={100} // não tem no doc regra maxLength, bloqueei pro aluno não subir lorem ipsum gigante
             onChange={(e) => setAnswer(e.target.value)}
             classNames={{ input: classes.textArea }}
           />

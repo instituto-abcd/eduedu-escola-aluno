@@ -3,9 +3,8 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW, lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Group, Input, Textarea, Title, createStyles } from "@mantine/core";
+import { Group, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
-import { DraggableCardSlot } from "~/components/DraggableCard/DraggableCardSlot";
 
 const useStyles = createStyles((theme) => ({
   textArea: {

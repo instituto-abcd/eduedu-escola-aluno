@@ -3,7 +3,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Group, Textarea, createStyles } from "@mantine/core";
+import { Group, Textarea, Title, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 
 const useStyles = createStyles((theme) => ({
@@ -42,6 +42,30 @@ export function Model35({
     setContinueDisabled(!answer || answer === "");
   }, [answer]);
 
+  const fillRule = question.rules.find(
+    (rule) => rule.name === "fill"
+  );
+  const isFill = Boolean(
+    fillRule === undefined ? true : fillRule.value === "false" ? false : true
+  );
+
+  const titleSlots = question.titles.find(
+    (title) => title.placeholder === "Texto da caixa. Exp: M O R A N _ _"
+  )?.description
+
+  const expectedAnswer = question.rules.find(
+    (rule) => rule.name === "answer"
+  )?.value
+  // console.log(titleSlots, expectedAnswer)
+
+  useEffect(() => {
+    // 
+    if (titleSlots) {
+      console.log(titleSlots[7])
+    }
+
+  })
+
   return (
     <>
       {hasAudioTitle && (
@@ -70,11 +94,18 @@ export function Model35({
               : "Ooops! Imagem não disponível :("}
           </>
         )}
-        <Textarea
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          classNames={{ input: classes.textArea }}
-        />
+
+        {isFill ?
+          // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
+          <>oh no cringuê</>
+          :
+          // se for falso, a regra diz que é uma questão de ditado
+          <Textarea
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            classNames={{ input: classes.textArea }}
+          />
+        }
       </Group>
     </>
   );

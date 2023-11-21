@@ -114,6 +114,7 @@ export function Model35({
                 className={classes.slot}
               >
                 <input
+                  maxLength={1}
                   className={classes.input}
                 />
               </DraggableCardSlot>

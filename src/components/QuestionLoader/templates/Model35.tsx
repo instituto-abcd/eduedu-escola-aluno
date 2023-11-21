@@ -51,20 +51,14 @@ export function Model35({
 
   const titleSlots = question.titles.find(
     (title) => title.placeholder === "Texto da caixa. Exp: M O R A N _ _"
-  )?.description
+  )?.description.trim().split(" ");
 
   const expectedAnswer = question.rules.find(
     (rule) => rule.name === "answer"
   )?.value
-  // console.log(titleSlots, expectedAnswer)
 
-  useEffect(() => {
-    // 
-    if (titleSlots) {
-      console.log(titleSlots[7])
-    }
 
-  })
+  console.log(titleSlots)
 
   return (
     <>

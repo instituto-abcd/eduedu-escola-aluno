@@ -57,6 +57,7 @@ export function Model35({
     setContinueDisabled(!answer || answer === "");
   }, [answer]);
 
+  // RULES:
   const fillRule = question.rules.find(
     (rule) => rule.name === "fill"
   );
@@ -64,13 +65,28 @@ export function Model35({
     fillRule === undefined ? true : fillRule.value === "false" ? false : true
   );
 
+  // In case of rule fill:
   const slots = question.titles.find(
     (title) => title.placeholder === "Texto da caixa. Exp: M O R A N _ _"
   )?.description.trim().split(" ");
-
   const expectedAnswer = question.rules.find(
     (rule) => rule.name === "answer"
   )?.value
+
+  function uepa() {
+    // GET VALUES OF EACH INPUT:
+    let inputs = document.getElementsByClassName(classes.input);
+
+    // GET ITS VALUES:
+    let answer = '';
+    for (let index = 0; index < inputs.length; index++) {
+      const element = inputs[index];
+      answer += element.value
+    }
+
+    // SET FINAL ANSWER:
+    setAnswer(answer)
+  }
 
   return (
     <>
@@ -106,8 +122,10 @@ export function Model35({
           <>
             {slots && slots.map((slot, inx) => (
               <input
+                key={inx + 1}
                 maxLength={1}
                 className={classes.input}
+                onChange={uepa}
               />
             ))}
           </>

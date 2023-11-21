@@ -73,7 +73,7 @@ export function Model35({
     (rule) => rule.name === "answer"
   )?.value
 
-  function uepa() {
+  function getInputValues() {
     // GET VALUES OF EACH INPUT:
     let inputs = document.getElementsByClassName(classes.input);
 
@@ -81,12 +81,14 @@ export function Model35({
     let answer = '';
     for (let index = 0; index < inputs.length; index++) {
       const element = inputs[index];
-      answer += element.value
+      answer += element.value.toUpperCase()
     }
 
     // SET FINAL ANSWER:
-    setAnswer(answer)
+    setFinalAnswer(answer)
   }
+
+  function setFinalAnswer(data) { setAnswer(data) }
 
   return (
     <>
@@ -125,7 +127,7 @@ export function Model35({
                 key={inx + 1}
                 maxLength={1}
                 className={classes.input}
-                onChange={uepa}
+                onChange={getInputValues}
               />
             ))}
           </>

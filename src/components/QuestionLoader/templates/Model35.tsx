@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
-import { lousaHeight } from "~/constants/dimensions";
+import { boardW, lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
 import { Group, Textarea, Title, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
+import { DraggableCardSlot } from "~/components/DraggableCard/DraggableCardSlot";
 
 const useStyles = createStyles((theme) => ({
   textArea: {
@@ -12,6 +13,15 @@ const useStyles = createStyles((theme) => ({
     borderColor: theme.colors.gray[6],
     width: 418,
     height: 212,
+  },
+  slot: {
+    width: boardW(120),
+    height: boardW(120),
+    color: "#495057",
+    fontSize: 50,
+    fontWeight: 600,
+    display: "grid",
+    placeItems: "center",
   },
 }));
 
@@ -49,16 +59,13 @@ export function Model35({
     fillRule === undefined ? true : fillRule.value === "false" ? false : true
   );
 
-  const titleSlots = question.titles.find(
+  const slots = question.titles.find(
     (title) => title.placeholder === "Texto da caixa. Exp: M O R A N _ _"
   )?.description.trim().split(" ");
 
   const expectedAnswer = question.rules.find(
     (rule) => rule.name === "answer"
   )?.value
-
-
-  console.log(titleSlots)
 
   return (
     <>
@@ -91,7 +98,18 @@ export function Model35({
 
         {isFill ?
           // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
-          <>oh no cringuê</>
+          <Group>
+            {slots.map((slot, inx) => (
+              <DraggableCardSlot<QuestionOption>
+                onDrop={(item) => item && handleDrop(item, inx)}
+                item={null}
+                key={inx}
+                className={classes.slot}
+              >
+              </DraggableCardSlot>
+            ))}
+          </Group>
+
           :
           // se for falso, a regra diz que é uma questão de ditado
           <Textarea

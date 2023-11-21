@@ -28,7 +28,8 @@ const useStyles = createStyles((theme) => ({
     width: '100%',
     backgroundColor: 'transparent',
     border: 'none',
-    textAlign: 'center'
+    textAlign: 'center',
+    textTransform: 'uppercase'
   }
 }));
 
@@ -106,7 +107,7 @@ export function Model35({
         {isFill ?
           // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
           <Group>
-            {slots.map((slot, inx) => (
+            {slots && slots.map((slot, inx) => (
               <DraggableCardSlot<QuestionOption>
                 onDrop={(item) => item && handleDrop(item, inx)}
                 item={null}

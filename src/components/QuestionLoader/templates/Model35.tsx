@@ -3,7 +3,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW, lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Group, Textarea, Title, createStyles } from "@mantine/core";
+import { Group, Input, Textarea, Title, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableCardSlot } from "~/components/DraggableCard/DraggableCardSlot";
 
@@ -23,6 +23,13 @@ const useStyles = createStyles((theme) => ({
     display: "grid",
     placeItems: "center",
   },
+  input: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'transparent',
+    border: 'none',
+    textAlign: 'center'
+  }
 }));
 
 export function Model35({
@@ -106,6 +113,9 @@ export function Model35({
                 key={inx}
                 className={classes.slot}
               >
+                <input
+                  className={classes.input}
+                />
               </DraggableCardSlot>
             ))}
           </Group>

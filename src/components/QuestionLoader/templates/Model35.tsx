@@ -3,7 +3,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW, lousaHeight } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Group, Textarea, createStyles } from "@mantine/core";
+import { Grid, Group, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 
 const useStyles = createStyles((theme) => ({
@@ -14,8 +14,8 @@ const useStyles = createStyles((theme) => ({
     height: 212,
   },
   input: {
-    width: boardW(120),
-    height: boardW(120),
+    width: boardW(115),
+    height: boardW(115),
 
     color: "#495057",
     fontSize: boardW(50),
@@ -43,6 +43,7 @@ export function Model35({
 
   useEffect(() => {
     setAnswer("");
+    cleanUpInputValues();
   }, [question]);
 
   useEffect(() => {
@@ -67,15 +68,18 @@ export function Model35({
 
   // In case of rule fill:
   const slots = question.titles.find(
-    (title) => title.placeholder === "Texto da caixa. Exp: M O R A N _ _"
+    (title) => title.placeholder.includes("Exp:") || title.placeholder.includes("Exemplo")
   )?.description.trim().split(" ");
   const expectedAnswer = question.rules.find(
     (rule) => rule.name === "answer"
   )?.value
 
-  function getInputValues() {
+  function getInputValues(inx: number) {
     // GET VALUES OF EACH INPUT:
     let inputs = document.getElementsByClassName(classes.input);
+    let nextField = inputs[inx + 1];
+
+    if (nextField) nextField.focus();
 
     // GET ITS VALUES:
     let answer = '';
@@ -89,6 +93,13 @@ export function Model35({
   }
 
   function setFinalAnswer(data) { setAnswer(data) }
+
+  function cleanUpInputValues() {
+    let inputs = document.getElementsByClassName(classes.input);
+    for (let index = 0; index < inputs.length; index++) {
+      inputs[index].value = null;
+    }
+  };
 
   return (
     <>
@@ -104,9 +115,9 @@ export function Model35({
         </Group>
       )}
 
-      <Group my="auto" spacing={10} align="center">
+      <Group my="auto" spacing={10} grow noWrap={true}>
         {imageTitles[0] && (
-          <>
+          <Group style={{ justifyContent: 'center', alignSelf: 'center' }}>
             <img
               src={imageTitles[0].file_url!}
               width="auto"
@@ -116,21 +127,23 @@ export function Model35({
             {imageTitles[0].file_url?.length
               ? ""
               : "Ooops! Imagem não disponível :("}
-          </>
+          </Group>
         )}
-
+        
         {isFill ?
           // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
-          <>
+          <Grid style={{ justifyContent: 'center', alignSelf: 'center' }}>
             {slots && slots.map((slot, inx) => (
-              <input
-                key={inx + 1}
-                maxLength={1}
-                className={classes.input}
-                onChange={getInputValues}
-              />
+              <Grid.Col key={inx} span={slots.length !== 3 ? 4 : 5}>
+                <input
+                  key={inx + 1}
+                  maxLength={1}
+                  className={classes.input}
+                  onChange={(_) => getInputValues(inx)}
+                />
+              </Grid.Col>
             ))}
-          </>
+          </Grid>
           :
           // se for falso, a regra diz que é uma questão de ditado
           <Textarea

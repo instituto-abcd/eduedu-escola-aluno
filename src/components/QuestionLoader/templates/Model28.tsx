@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Stack,
   Group,
@@ -91,7 +91,7 @@ const useStyles = createStyles({
   },
 });
 
-export function Model28({ question, setContinueDisabled }: ModelProps) {
+export function Model28({ question, onConditionsChange }: ModelProps) {
   const { hasAudioTitle, audioTitles, audioTitleAutoplay } =
     useQuestionHelper(question);
 
@@ -154,12 +154,17 @@ export function Model28({ question, setContinueDisabled }: ModelProps) {
   }, [flipped]);
 
   useEffect(() => {
-    setContinueDisabled(answers.length !== question.options.length);
-  }, [answers]);
-
-  useEffect(() => {
     setAnswers([]);
   }, [question]);
+
+  const conditions = useMemo(
+    () => [Boolean(answers.length === question.options.length)],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>

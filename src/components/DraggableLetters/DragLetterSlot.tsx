@@ -55,7 +55,7 @@ export function DragLetterSlot({
         option={option}
         disabled
         style={{ ...props.style }}
-        skipDebug
+        debug={{ skipDebug: true }}
       />
     );
 

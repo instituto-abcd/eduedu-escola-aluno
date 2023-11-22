@@ -7,6 +7,7 @@ import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
+import { DebugProps } from "../Debug";
 
 const isImageSmall = (
   imgElement: HTMLImageElement | null,
@@ -68,12 +69,14 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   image?: string | null;
   disabled?: boolean;
   onClear?: () => void;
+  debug?: DebugProps;
 };
 
 export function DraggableCard<T>({
   item,
   text,
   sound: _sound,
+  debug,
   image,
   hidden,
   onClear,
@@ -122,7 +125,7 @@ export function DraggableCard<T>({
   }, [imageRef.current]);
 
   /* debug */
-  const debug = useDebugInfo((s) => s.answer);
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <div
@@ -155,8 +158,13 @@ export function DraggableCard<T>({
         </button>
       )}
 
-      {debug && item && (
-        <DebugDiv position={+(item as unknown as QuestionOption).position} />
+      {canDebug && !debug?.skipDebug && item && (
+        <DebugDiv
+          position={+(item as unknown as QuestionOption).position}
+          debug={debug}
+        >
+          {(item as unknown as QuestionOption).isCorrect}
+        </DebugDiv>
       )}
     </div>
   );

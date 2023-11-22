@@ -156,7 +156,7 @@ export function Card({
         </ActionIcon>
       )}
 
-      {canDebug && (
+      {canDebug && !debug.skipDebug && (
         <DebugDiv debug={debug}>
           {debugProperty === "isCorrect" && (option.isCorrect ? "✅" : "❌")}
           {debugProperty === "position" && debug_getNumberIcon(option.position)}

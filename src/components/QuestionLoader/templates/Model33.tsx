@@ -9,7 +9,7 @@ import { ModelProps } from ".";
 import { useEffect } from "react";
 import { useTimeout } from "@mantine/hooks";
 
-export function Model33({ question, setContinueDisabled }: ModelProps) {
+export function Model33({ question, onConditionsChange }: ModelProps) {
   const {
     audioTitles,
     hasAudioTitle,
@@ -31,7 +31,7 @@ export function Model33({ question, setContinueDisabled }: ModelProps) {
     return rule.value === "false";
   };
 
-  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+  const { start } = useTimeout(() => onConditionsChange([]), 1000);
 
   useEffect(() => {
     start();
@@ -52,10 +52,8 @@ export function Model33({ question, setContinueDisabled }: ModelProps) {
               <AudioButton
                 key={inx}
                 src={title.file_url ?? ""}
-                buttonProps={{
-                  variant: "yellow",
-                  icon: <IconMessageCircle2 size={30} />,
-                }}
+                variant="yellow"
+                icon={<IconMessageCircle2 size={30} />}
                 autoPlay={autoplayLaterAudio()}
               />
             )

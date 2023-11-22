@@ -1,6 +1,6 @@
 import { Group, SimpleGrid, Stack, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
@@ -8,7 +8,6 @@ import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { TextOptionButton } from "~/components/OptionButton";
 import { lousaPaddingTop } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 const useStyles = createStyles({
@@ -23,7 +22,7 @@ type Slot = string | null | QuestionOption;
 export function QORD3x2({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
@@ -38,9 +37,6 @@ export function QORD3x2({
   const [selected, setSelected] = useState<QuestionOption[]>([]);
 
   const [slots, setSlots] = useState<Slot[]>(startingSlots);
-  const disabled =
-    selected.filter(Boolean).length <
-    slots.filter((slot) => typeof slot !== "string").length;
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
@@ -75,11 +71,17 @@ export function QORD3x2({
     onAnswerChange(selected);
   }, [selected]);
 
-  useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
+  const conditions = useMemo(
+    () => [
+      selected.filter(Boolean).length ===
+        slots.filter((slot) => typeof slot !== "string").length,
+    ],
+    [selected]
+  );
 
-  const mediaTrack = useMediaTrackStore();
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -96,7 +98,6 @@ export function QORD3x2({
       )}
 
       <Stack pt={lousaPaddingTop} m="auto">
-        {/* Slots */}
         <Group mx="auto" mb={20}>
           {slots.map((slot, inx) => {
             if (typeof slot === "string")
@@ -114,7 +115,6 @@ export function QORD3x2({
           })}
         </Group>
 
-        {/* Anwsers options  */}
         <SimpleGrid
           mx="auto"
           cols={3}
@@ -125,13 +125,14 @@ export function QORD3x2({
             <DraggableLetters
               key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
               option={option}
+              debug={{ size: 10 }}
               hidden={
                 !!slots.find(
                   (item) =>
                     item &&
                     typeof item !== "string" &&
                     item.position === option.position
-                ) || mediaTrack.isPlaying
+                )
               }
               className={classes.letters}
             />

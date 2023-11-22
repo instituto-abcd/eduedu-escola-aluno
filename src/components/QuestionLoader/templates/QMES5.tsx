@@ -1,17 +1,16 @@
 import { Box, Group, ScrollArea, SimpleGrid } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 export function QMES5({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
 
@@ -24,13 +23,12 @@ export function QMES5({
         {
           ...answer,
           positionAnswer: answer.position,
-        },
+        } as QuestionOption,
       ]);
     }
   }
 
   const { videoTitles, optionArrKey } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setSelected([]);
@@ -38,8 +36,13 @@ export function QMES5({
 
   useEffect(() => {
     onAnswerChange(selected);
-    setContinueDisabled(selected.length === 0);
   }, [selected]);
+
+  const conditions = useMemo(() => [selected.length > 0], [selected]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -51,12 +54,7 @@ export function QMES5({
           style={{ display: "flex", justifyContent: "center" }}
         >
           <Box m="auto">
-            <VideoPlayer
-              src={videoTitles[0]?.file_url ?? ""}
-              onPlayStatusChange={mediaTrack.setPlayStatus}
-              canPlay={mediaTrack.canPlay()}
-              autoPlay
-            />
+            <VideoPlayer src={videoTitles[0]?.file_url ?? ""} autoPlay />
           </Box>
         </Box>
 
@@ -69,7 +67,7 @@ export function QMES5({
                 data-selected={
                   !!selected.find((item) => item.position === option.position)
                 }
-                isCorrect={option.isCorrect}
+                option={option}
               >
                 {option.description}
               </OptionButton>

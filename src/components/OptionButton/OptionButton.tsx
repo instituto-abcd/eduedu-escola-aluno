@@ -4,6 +4,7 @@ import { useDebugInfo } from "~/stores/debug-info";
 import { QuestionOption } from "~/api/exam";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { DebugDiv } from "../Debug/DebugDiv";
+import { DebugProps } from "../Debug";
 
 const useStyles = createStyles({
   button: {
@@ -54,18 +55,19 @@ const useStyles = createStyles({
 export type OptionButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     option?: QuestionOption;
-    skipDebug?: boolean;
+    debug?: DebugProps;
   };
 
 export function OptionButton({
   option,
-  skipDebug,
+  debug,
   children,
   ...props
 }: OptionButtonProps) {
   const { classes, cx } = useStyles();
   const { sound, isPlaying } = useCreateSound({
     src: option?.sound_url ?? "",
+    skipPlayStatus: true,
   });
 
   function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -75,7 +77,7 @@ export function OptionButton({
     props?.onClick?.(e);
   }
 
-  const debug = useDebugInfo((s) => s.answer);
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <button
@@ -84,8 +86,8 @@ export function OptionButton({
       onClick={onClick}
       disabled={props.disabled || isPlaying}
     >
-      {debug && !skipDebug && option && (
-        <DebugDiv size={12}>{option.isCorrect}</DebugDiv>
+      {canDebug && !debug?.skipDebug && option && (
+        <DebugDiv debug={debug}>{option.isCorrect}</DebugDiv>
       )}
       {children}
     </button>

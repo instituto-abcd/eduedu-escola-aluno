@@ -16,7 +16,7 @@ export const DebugDiv: React.FC<{
     fontSize: debug?.size,
   };
 
-  if (position !== undefined)
+  if (position !== undefined && debug?.debugProperty === "position")
     return <div style={styles}>{debug_getNumberIcon(position)}</div>;
 
   return (

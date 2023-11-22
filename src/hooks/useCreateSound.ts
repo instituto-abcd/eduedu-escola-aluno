@@ -37,6 +37,9 @@ export function useCreateSound(metadata: AudioMetadata) {
     sound.onStop(() => {
       !metadata.skipPlayStatus && setPlaying(false);
     });
+    sound.onPause(() => {
+      !metadata.skipPlayStatus && setPlaying(false);
+    });
     sound.onEnd(() => {
       !metadata.skipPlayStatus && setPlaying(false);
     });

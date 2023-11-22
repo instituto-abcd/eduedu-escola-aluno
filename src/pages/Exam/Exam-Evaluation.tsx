@@ -12,8 +12,6 @@ import bg from "~/assets/bgs/bg-exam-evaluation.jpg";
 import { PATH } from "~/constants/path";
 import Lottie from "react-lottie";
 import loadingLottie from "~/assets/lotties/lottie_loading_anim.json";
-import { useMediaTrackStore } from "~/stores/media-track.store";
-import { useEffect } from "react";
 
 export function ExamEvaluationPage() {
   const navigate = useNavigate();
@@ -30,11 +28,6 @@ export function ExamEvaluationPage() {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-
-  const mediaTrack = useMediaTrackStore();
-  useEffect(() => {
-    mediaTrack.clearQueue();
-  }, []);
 
   return (
     <BackgroundImage src={bg} h="100vh">

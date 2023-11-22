@@ -2,14 +2,14 @@ import { Group, Box, Image, Text, Stack, ScrollArea } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useEffect, useState } from "react";
-import { MediaType } from "~/stores/media-track.store";
+import { useEffect, useMemo, useState } from "react";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { boardW } from "~/constants/dimensions";
 import { useAudioStatus } from "~/stores/audio";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
-export function Model27({ question, setContinueDisabled }: ModelProps) {
+export function Model27({ question, onConditionsChange }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
 
@@ -28,23 +28,28 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
     setSlideIndex(slideIndex - 1);
   }
 
-  const disabled = slideIndex + 1 < totalSlides || audioStatus.isPlaying;
-  useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
-
   useEffect(() => {
     setSlideIndex(0);
   }, [question]);
 
+  const { sound } = useCreateSound({
+    src: currentSlide.sound_url ?? "",
+    autoPlay: false,
+  });
+
   useEffect(() => {
     if (audioStatus.isPlaying) return;
-    // mediaTrack.play({
-    //   mediaType: MediaType.AUDIO,
-    //   trackId: currentSlide.sound_url ?? "",
-    //   trackUrl: currentSlide.sound_url ?? "",
-    // });
+    sound.play();
   }, [slideIndex]);
+
+  const conditions = useMemo(
+    () => [slideIndex + 1 === totalSlides],
+    [slideIndex]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>

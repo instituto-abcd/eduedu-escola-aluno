@@ -6,7 +6,6 @@ import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 export function Model2Video({
@@ -31,7 +30,6 @@ export function Model2Video({
   []);
 
   const { videoTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setSlots(question.options.map(() => null));
@@ -106,8 +104,7 @@ export function Model2Video({
                 sound={item.sound_url}
                 key={inx}
                 hidden={
-                  !!slots.find((slot) => slot?.position === item.position) ||
-                  mediaTrack.isPlaying
+                  !!slots.find((slot) => slot?.position === item.position)
                 }
               />
             ))}

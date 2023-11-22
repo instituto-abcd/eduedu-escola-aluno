@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 
@@ -32,7 +31,6 @@ export function Model2({
 
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));
@@ -97,8 +95,7 @@ export function Model2({
               text={item.description}
               sound={item.sound_url}
               hidden={
-                !!answers.find((slot) => slot?.position === item.position) ||
-                mediaTrack.isPlaying
+                !!answers.find((slot) => slot?.position === item.position)
               }
             />
           ))}

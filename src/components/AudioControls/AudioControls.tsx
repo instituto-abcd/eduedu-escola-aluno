@@ -6,9 +6,10 @@ import {
   IconPlayerPauseFilled,
 } from "@tabler/icons-react";
 import { IconButton } from "../EduButton";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 import { intervalToDuration, formatDuration } from "date-fns";
 import { boardW, lousaWidth } from "~/constants/dimensions";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 const useStyles = createStyles({
   bar: {
@@ -16,57 +17,63 @@ const useStyles = createStyles({
   },
 });
 
-type Props = React.AudioHTMLAttributes<HTMLAudioElement>;
-type Ref = HTMLDivElement & { play: () => void };
+export type AudioControlRef = HTMLDivElement & {
+  sound: ReturnType<typeof useCreateSound>["sound"];
+};
 
-export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
+type AudioControlProps = React.AudioHTMLAttributes<HTMLAudioElement> & {
+  ref?: React.Ref<{ playPause: () => void }>;
+};
+
+export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
   const [currentTime, setCurrentTime] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const { sound } = useCreateSound({
+    src: props.src ?? "",
+    autoPlay: props.autoPlay ?? false,
+  });
 
   function rewind() {
-    if (audioRef.current) {
-      audioRef.current.currentTime -= 15;
-    }
+    const duration = sound.duration();
+    const seek = sound.seek();
+    const newSeek = seek - 15 >= duration ? duration : seek + 15;
+    sound.seek(newSeek);
   }
 
   function forward() {
-    if (audioRef.current) {
-      audioRef.current.currentTime += 15;
+    const duration = sound.duration();
+    const seek = sound.seek();
+    const newSeek = seek + 15 >= duration ? duration : seek + 15;
+    sound.seek(newSeek);
+  }
+
+  sound.onPlay(() => requestAnimationFrame(handleProgress));
+  sound.onSeek(() => requestAnimationFrame(handleProgress));
+
+  function handleProgress() {
+    const seek = sound.seek();
+    setCurrentTime(seek);
+
+    if (sound.playing()) {
+      requestAnimationFrame(handleProgress);
     }
   }
 
-  function onTimeUpdate() {
-    if (audioRef.current) {
-      setCurrentTime(
-        Math.round(
-          (audioRef.current.currentTime / audioRef.current.duration) * 100
-        )
-      );
-    }
-  }
-
-  function onChangeSlider(value: number) {
-    if (audioRef.current) {
-      audioRef.current.currentTime = (value / 100) * audioRef.current.duration;
-    }
-  }
-
-  function playPause() {
-    if (audioRef.current?.paused) {
-      void audioRef.current?.play();
+  const playPause = useCallback(() => {
+    if (sound.playing()) {
+      sound.pause();
     } else {
-      audioRef.current?.pause();
+      sound.play();
     }
-  }
+  }, [sound]);
 
   const { classes } = useStyles();
-
-  const play = () => void audioRef.current?.play();
-  useImperativeHandle(ref, () => ({ play, ...ref } as Ref), [ref]);
+  useImperativeHandle(ref, () => ({
+    sound,
+  }));
 
   return (
-    <Stack align="center" spacing="xl" ref={ref}>
+    <Stack align="center" spacing="xl">
       <Group>
         <IconButton
           icon={
@@ -80,7 +87,7 @@ export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
         />
         <IconButton
           icon={
-            isPlaying ? (
+            sound.playing() ? (
               <IconPlayerPauseFilled
                 width={lousaWidth * 0.04}
                 height={lousaWidth * 0.029}
@@ -112,9 +119,10 @@ export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
         radius="xs"
         classNames={{ bar: classes.bar }}
         thumbSize={30}
-        onChange={onChangeSlider}
+        step={0.1}
+        max={sound.duration()}
         label={(value) => {
-          const seconds = (value / 100) * (audioRef.current?.duration ?? 0);
+          const seconds = (value / 100) * sound.duration();
 
           const duration = intervalToDuration({
             start: 0,
@@ -133,25 +141,6 @@ export const AudioControls = forwardRef<Ref, Props>((props, ref) => {
           });
 
           return formatted;
-        }}
-      />
-      <audio
-        controls
-        {...props}
-        ref={audioRef}
-        onTimeUpdate={onTimeUpdate}
-        style={{ display: "none" }}
-        onPlay={(e) => {
-          props.onPlay?.(e);
-          setIsPlaying(true);
-        }}
-        onPause={(e) => {
-          props.onPause?.(e);
-          setIsPlaying(false);
-        }}
-        onEnded={(e) => {
-          props.onEnded?.(e);
-          setIsPlaying(false);
         }}
       />
     </Stack>

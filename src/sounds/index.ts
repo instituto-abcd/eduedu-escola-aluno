@@ -37,11 +37,18 @@ class Sound {
   pause: () => void;
   stop: () => void;
   destroy: () => void;
+  rewind: () => void;
+  forward: () => void;
+  duration: () => number;
+  seek: (time?: number) => number;
+  playing: () => boolean;
   onLoad: (callback: () => void) => void;
   onLoadError: (callback: (err: unknown) => void) => void;
   onEnd: (callback: () => void) => void;
   onPlay: (callback: () => void) => void;
   onStop: (callback: () => void) => void;
+  onPause: (callback: () => void) => void;
+  onSeek: (callback: () => void) => void;
 
   constructor(howl: Howl) {
     this.play = () => {
@@ -52,6 +59,24 @@ class Sound {
     };
     this.stop = () => {
       howl.stop();
+    };
+    this.destroy = () => {
+      howl.unload();
+    };
+    this.rewind = (time = 15) => {
+      howl.seek(howl.duration() - time);
+    };
+    this.forward = (time = 15) => {
+      howl.seek(howl.duration() + time);
+    };
+    this.duration = () => {
+      return howl.duration();
+    };
+    this.seek = (time?: number): number => {
+      return howl.seek(time);
+    };
+    this.playing = () => {
+      return howl.playing();
     };
     this.onLoad = (callback: () => void) => {
       howl.on("load", callback);
@@ -68,8 +93,11 @@ class Sound {
     this.onStop = (callback: () => void) => {
       howl.on("stop", callback);
     };
-    this.destroy = () => {
-      howl.unload();
+    this.onPause = (callback: () => void) => {
+      howl.on("pause", callback);
+    };
+    this.onSeek = (callback: () => void) => {
+      howl.on("seek", callback);
     };
   }
 }

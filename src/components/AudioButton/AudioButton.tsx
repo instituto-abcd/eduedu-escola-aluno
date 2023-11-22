@@ -6,66 +6,77 @@ import { useCreateSound } from "~/hooks/useCreateSound";
 import { Button, HoverCard, Table } from "@mantine/core";
 import { useDebugInfo } from "~/stores/debug-info";
 import { IconPlayerStopFilled } from "@tabler/icons-react";
+import { forwardRef, useImperativeHandle } from "react";
+
+export type AudioButtonRef = HTMLDivElement & {
+  sound: ReturnType<typeof useCreateSound>["sound"];
+};
 
 type Props = {
   autoPlay?: boolean;
   src: string;
 } & Partial<IconButtonProps>;
 
-export function AudioButton({ src, autoPlay, ...props }: Props) {
-  const { sound, isPlaying } = useCreateSound({
-    src,
-    autoPlay,
-  });
+export const AudioButton = forwardRef(
+  ({ src, autoPlay, ...props }: Props, ref) => {
+    const { sound, isPlaying } = useCreateSound({
+      src,
+      autoPlay,
+    });
 
-  const debug = useDebugInfo((s) => s.AudioButton);
+    useImperativeHandle(ref, () => ({
+      sound,
+    }));
 
-  const button = (
-    <IconButton
-      variant="gray"
-      icon={
-        props?.icon ?? (
-          <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
-        )
-      }
-      {...props}
-      onClick={sound.play}
-      disabled={isPlaying}
-    />
-  );
+    const debug = useDebugInfo((s) => s.AudioButton);
 
-  const debugbutton = (
-    <HoverCard width={200} shadow="md" position="top-end">
-      <HoverCard.Target>
-        <div>{button}</div>
-      </HoverCard.Target>
-      <HoverCard.Dropdown>
-        <Table withBorder fontSize={12}>
-          <tbody>
-            <tr>
-              <td>Playing?</td>
-              <td>{isPlaying ? "✅" : "❌"}</td>
-            </tr>
-            <tr>
-              <td>Autoplay?</td>
-              <td>{autoPlay ? "✅" : "❌"}</td>
-            </tr>
-          </tbody>
-        </Table>
-        <Button
-          onClick={() => sound.stop()}
-          compact
-          fullWidth
-          color="red"
-          mt="sm"
-          disabled={!isPlaying}
-          leftIcon={<IconPlayerStopFilled size={16} />}
-        >
-          Stop
-        </Button>
-      </HoverCard.Dropdown>
-    </HoverCard>
-  );
+    const button = (
+      <IconButton
+        variant="gray"
+        icon={
+          props?.icon ?? (
+            <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
+          )
+        }
+        {...props}
+        onClick={sound.play}
+        disabled={isPlaying}
+      />
+    );
 
-  return debug ? debugbutton : button;
-}
+    const debugbutton = (
+      <HoverCard width={200} shadow="md" position="top-end">
+        <HoverCard.Target>
+          <div>{button}</div>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Table withBorder fontSize={12}>
+            <tbody>
+              <tr>
+                <td>Playing?</td>
+                <td>{isPlaying ? "✅" : "❌"}</td>
+              </tr>
+              <tr>
+                <td>Autoplay?</td>
+                <td>{autoPlay ? "✅" : "❌"}</td>
+              </tr>
+            </tbody>
+          </Table>
+          <Button
+            onClick={() => sound.stop()}
+            compact
+            fullWidth
+            color="red"
+            mt="sm"
+            disabled={!isPlaying}
+            leftIcon={<IconPlayerStopFilled size={16} />}
+          >
+            Stop
+          </Button>
+        </HoverCard.Dropdown>
+      </HoverCard>
+    );
+
+    return debug ? debugbutton : button;
+  }
+);

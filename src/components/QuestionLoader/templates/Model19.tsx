@@ -44,6 +44,13 @@ export function Model19({
     descRule === undefined ? true : descRule.value === "false" ? false : true
   );
 
+  const targetLettersRule = question.rules.find(
+    (rule) => rule.name === "show_targets_letters"
+  );
+  const showTargetLetters = Boolean(
+    targetLettersRule === undefined ? true : targetLettersRule.value === "false" ? false : true
+  );
+
   function handleDrop(item: QuestionOption, index: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
@@ -101,7 +108,9 @@ export function Model19({
               key={inx}
               className={classes.slot}
             >
-              {slot}
+              {showTargetLetters &&
+                <>{slot}</>
+              }
             </DraggableCardSlot>
           ))}
         </Group>

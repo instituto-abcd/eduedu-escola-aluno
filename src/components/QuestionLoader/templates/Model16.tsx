@@ -1,5 +1,5 @@
 import { Group } from "@mantine/core";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
@@ -7,16 +7,35 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-export function Model16({ question, setContinueDisabled }: ModelProps) {
+export function Model16({ question }: ModelProps) {
   const { audioTitles, lottieTitles, audioTitleAutoplay, hasAudioTitle } =
     useQuestionHelper(question);
 
-  const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
-    enabled: !!lottieTitles[0]?.file_id,
-  });
+  const { data }: { data: any } = useDownloadLottieFile(
+    lottieTitles[0]?.file_id || "",
+    {
+      enabled: !!lottieTitles[0]?.file_id,
+    }
+  );
+  const [modifiedData, setModifiedData] = useState<any | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
+  const skipLottie = question.rules.find((rule) => rule.name === "skipLottie");
+
+  useEffect(() => {
+    if (data && skipLottie) {
+      const outlineLayer = data.layers.find((layer: any) =>
+        layer.nm.includes("outline")
+      );
+      const updatedData = outlineLayer
+        ? { ...data, layers: [outlineLayer] }
+        : data;
+      setModifiedData(updatedData);
+    } else {
+      setModifiedData(data);
+    }
+  }, [data, skipLottie]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -72,10 +91,6 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
     }
   }, [question]);
 
-  useEffect(() => {
-    setContinueDisabled(false);
-  }, [question]);
-
   return (
     <>
       {hasAudioTitle && (
@@ -98,12 +113,12 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
       >
         <canvas ref={canvasRef} />
 
-        {data && (
+        {modifiedData && (
           <Lottie
             options={{
               loop: false,
               autoplay: true,
-              animationData: data,
+              animationData: modifiedData,
               rendererSettings: {
                 preserveAspectRatio: "xMidYMid slice",
               },

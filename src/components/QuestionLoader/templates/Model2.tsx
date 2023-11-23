@@ -1,4 +1,4 @@
-import { Group, SimpleGrid, Stack } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -66,7 +66,18 @@ export function Model2({
       )}
 
       <Stack my="auto">
-        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
+        {textTitles.map((title) => (
+          <Text
+            size={boardW(24)}
+            color="dark.3"
+            weight={500}
+            key={title.description}
+          >
+            {title.description}
+          </Text>
+        ))}
+
+        <SimpleGrid cols={question.options.length} spacing={boardW(20)}>
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}

@@ -32,10 +32,6 @@ export function useQuestionHelper(question: Question) {
 
   const textTitles = getTitlesOfType("TEXT");
 
-  const imageTitles = getTitlesOfType("IMAGE").filter(
-    (title) => title.file_url
-  );
-
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
   const supportText = getSupportText("ID da historinha");
@@ -47,6 +43,18 @@ export function useQuestionHelper(question: Question) {
       option.image_url ?? option.sound_url ?? "_"
     })`;
   }
+
+  /*
+   * Image helpers
+   */
+  const imageTitles = getTitlesOfType("IMAGE").filter(
+    (title) => title.file_url
+  );
+
+  const hasImageTitle = useMemo(
+    () => imageTitles.some((title) => title.file_url),
+    [imageTitles]
+  );
 
   /*
    * Audio helpers
@@ -82,6 +90,7 @@ export function useQuestionHelper(question: Question) {
     getTitlesOfType,
     textTitles,
     imageTitles,
+    hasImageTitle,
     audioTitles,
     videoTitles,
     lottieTitles,

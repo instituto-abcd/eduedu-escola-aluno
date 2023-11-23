@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { boardW } from "~/constants/dimensions";
-
-// Components:
-import { Group, Box, SimpleGrid, Image, createStyles } from "@mantine/core";
+import { Group, Box, SimpleGrid, createStyles } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { QuestionOption } from "~/api/exam";
@@ -16,31 +14,28 @@ const useStyles = createStyles({
   },
 });
 
-export function Model3({ question, onAnswerChange }: ModelProps) {
+export function Model3({
+  question,
+  onAnswerChange,
+  onConditionsChange,
+}: ModelProps) {
   const { classes } = useStyles();
-
   const { videoTitles } = useQuestionHelper(question);
-  const [answer, setAnswer] = useState({});
-  const [options, setOptions] = useState<QuestionOption[]>(question.options);
-  const [answers, setAnswers] = useState<QuestionOption[]>([]);
-
-  function onDrop(item: QuestionOption | null) {
-    setAnswer({
-      position: item?.position,
-      positionAnswer: item?.position,
-    });
-    setAnswers([{ ...item, positionAnswer: item?.position } as QuestionOption]);
-  }
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   useEffect(() => {
-    setAnswer({});
-    setAnswers([]);
-    setOptions(question?.options);
+    setAnswer(null);
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answers);
-  }, [answers]);
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -54,22 +49,35 @@ export function Model3({ question, onAnswerChange }: ModelProps) {
         </Box>
         <Box maw={boardW(550)}>
           <SimpleGrid cols={2}>
-            {options &&
-              options.map((item: QuestionOption, index: number) => (
-                <OptionButton
-                  key={index}
-                  onClick={() => onDrop(item)}
-                  data-selected={answer?.position === item?.position}
-                  className={classes.option}
-                >
-                  <Image
-                    height={boardW(120)}
+            {question.options.map((option, inx) => (
+              <OptionButton
+                key={inx}
+                onClick={() => setAnswer(option)}
+                data-selected={
+                  JSON.stringify(answer) === JSON.stringify(option)
+                }
+                className={classes.option}
+                option={option}
+              >
+                {option.image_url && (
+                  <img
+                    src={option.image_url}
+                    alt={option.description}
+                    height={105}
                     width="auto"
-                    src={item?.image_url}
+                    style={{
+                      maxHeight: 120,
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      marginInline: "auto",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
                   />
-                  {item?.description}
-                </OptionButton>
-              ))}
+                )}
+                {option.description}
+              </OptionButton>
+            ))}
           </SimpleGrid>
         </Box>
       </Group>

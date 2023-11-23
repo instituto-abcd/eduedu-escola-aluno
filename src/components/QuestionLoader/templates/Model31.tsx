@@ -71,8 +71,8 @@ export function Model31({
   }, [answers]);
 
   const conditions = useMemo(
-    () => [answers.length === options.length],
-    [answers]
+    () => [answers.length === question.options.length],
+    [answers, question]
   );
 
   useEffect(() => {

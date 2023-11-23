@@ -75,7 +75,7 @@ export function Model14({
                 style={{
                   width: "100%",
                 }}
-                skipDebug
+                debug={{ skipDebug: true }}
               >
                 {inx + 1}
               </TextOptionButton>

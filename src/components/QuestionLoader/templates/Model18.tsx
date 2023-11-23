@@ -102,7 +102,7 @@ export function Model18({
           {slots.map((slot, inx) => {
             if (typeof slot === "string")
               return (
-                <TextOptionButton key={inx} skipDebug>
+                <TextOptionButton key={inx} debug={{ skipDebug: true }}>
                   {slot}
                 </TextOptionButton>
               );

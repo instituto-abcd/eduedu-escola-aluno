@@ -145,6 +145,7 @@ export function Model25({
                 image={option.image_url}
                 hidden={hideOption(option)}
                 sound={option.sound_url}
+                debug={{ debugProperty: "position" }}
               />
             )
           )}

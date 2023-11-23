@@ -183,6 +183,8 @@ export function Model5({
                 onClick={() => handleOptionClick(option)}
                 data-selected={getSelectedState(option)}
                 className={classes.textOption}
+                option={option}
+                debug={{ size: 8 }}
               >
                 {option.description}
               </TextOptionButton>

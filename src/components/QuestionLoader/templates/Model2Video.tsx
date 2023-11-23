@@ -106,6 +106,7 @@ export function Model2Video({
                 hidden={
                   !!slots.find((slot) => slot?.position === item.position)
                 }
+                debug={{ debugProperty: "position" }}
               />
             ))}
           </SimpleGrid>

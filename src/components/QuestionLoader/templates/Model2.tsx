@@ -97,6 +97,7 @@ export function Model2({
               hidden={
                 !!answers.find((slot) => slot?.position === item.position)
               }
+              debug={{ debugProperty: "position" }}
             />
           ))}
         </SimpleGrid>

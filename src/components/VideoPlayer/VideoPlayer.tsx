@@ -11,7 +11,7 @@ import {
   IconPlayerStopFilled,
   IconRotateClockwise,
 } from "@tabler/icons-react";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { boardW } from "~/constants/dimensions";
 import { useAudioStatus } from "~/stores/audio";
 import { useDebugInfo } from "~/stores/debug-info";
@@ -43,7 +43,6 @@ export function VideoPlayer({ className, ...props }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const { classes, cx } = useStyles();
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
   const audioStatus = useAudioStatus();
 
   function play() {
@@ -63,9 +62,17 @@ export function VideoPlayer({ className, ...props }: Props) {
     ref.current?.pause();
   }
 
+  useEffect(() => {
+    return () => {
+      if (audioStatus.isPlaying) {
+        audioStatus.setPlaying(false);
+      }
+    };
+  }, []);
+
   return (
     <Debug
-      isPlaying={isPlaying}
+      isPlaying={audioStatus.isPlaying}
       stop={stop}
       pause={pause}
       canPlay={!audioStatus.isPlaying}
@@ -80,23 +87,20 @@ export function VideoPlayer({ className, ...props }: Props) {
           onPlay={(e) => {
             props.onPlay?.(e);
             audioStatus.setPlaying(true);
-            setIsPlaying(true);
           }}
           onPause={(e) => {
             props.onPause?.(e);
             audioStatus.setPlaying(false);
-            setIsPlaying(false);
           }}
           onEnded={(e) => {
             props.onEnded?.(e);
             audioStatus.setPlaying(false);
-            setIsPlaying(false);
           }}
         ></video>
 
         <div className={classes.controls}>
           {isLoadingData && <Loader />}
-          {!isPlaying && (
+          {!audioStatus.isPlaying && (
             <IconRotateClockwise
               size={100}
               className={classes.icon}

@@ -29,7 +29,7 @@ export function Model2({
   },
   []);
 
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
     useQuestionHelper(question);
 
   useEffect(() => {

@@ -26,7 +26,7 @@ export function Model14({
     onAnswerChange(answer ? [answer] : []);
   }, [answer]);
 
-  const conditions = useMemo(() => [!answer], [answer]);
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
   useEffect(() => {
     onConditionsChange(conditions);

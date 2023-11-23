@@ -1,5 +1,5 @@
 import { Loader, Stack } from "@mantine/core";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Question } from "~/api/exam";
 import { usePlanetGetFirstQuestion } from "~/api/planet";
@@ -7,10 +7,9 @@ import { SimplifiedPlanet } from "~/api/student";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
-import feedbackNegative from "~/assets/audio/feedback_error.mp3";
-import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 import { lousaWidth } from "~/constants/dimensions";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
+import { AudioInterface } from "~/sounds";
 
 export function PlanetPage() {
   const location = useLocation();
@@ -30,9 +29,6 @@ export function PlanetPage() {
       }
     },
   });
-
-  const negativeSound = useRef<HTMLAudioElement>(null);
-  const positiveSound = useRef<HTMLAudioElement>(null);
 
   function handleAnswer(
     answer:
@@ -54,11 +50,11 @@ export function PlanetPage() {
 
       if ("previousQuestionIsCorrect" in answer) {
         if (answer.previousQuestionIsCorrect === true) {
-          void positiveSound.current?.play();
+          AudioInterface.feedback.positive.play();
         }
 
         if (answer.previousQuestionIsCorrect === false) {
-          void negativeSound.current?.play();
+          AudioInterface.feedback.negative.play();
         }
       }
     }
@@ -85,19 +81,11 @@ export function PlanetPage() {
         )}
       </Stack>
 
-      <audio
-        src={feedbackNegative}
-        ref={negativeSound}
-        style={{ display: "none" }}
-      />
-      <audio
-        src={feedbackPositive}
-        ref={positiveSound}
-        style={{ display: "none" }}
-      />
-
       {currentQuestion && showStagingInfo && (
-        <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
+        <Stack
+          style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}
+          id="debugger"
+        >
           <StagingQuestionInfo
             question={{ ...currentQuestion, planetTitle: planet.planetName }}
           />

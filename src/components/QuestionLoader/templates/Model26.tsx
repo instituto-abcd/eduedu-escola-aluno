@@ -184,6 +184,7 @@ export function Model26({
                   )
                 }
                 className={classes.letters}
+                debug={{ debugProperty: "position", outside: true }}
               />
             ))}
           </Group>

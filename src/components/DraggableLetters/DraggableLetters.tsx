@@ -4,6 +4,10 @@ import { CSSProperties } from "react";
 import { useDrag } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
+import { useAudioStatus } from "~/stores/audio";
+import { useDebugInfo } from "~/stores/debug-info";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { DebugProps } from "../Debug";
 
 const useStyles = createStyles((theme) => ({
   option: {
@@ -21,6 +25,19 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 600,
     userSelect: "none",
     position: "relative",
+    isolation: "isolate",
+    "&[data-disabled=true]": {
+      backgroundColor: "#E9E9E9",
+      color: "#C4C4C4",
+      boxShadow: "0px 5px 0px 0px #c4c4c4",
+      borderColor: "#c4c4c4",
+      img: {
+        opacity: 0.5,
+      },
+      "*": {
+        color: "#C4C4C4",
+      },
+    },
   },
   close: {
     position: "absolute",
@@ -36,6 +53,14 @@ const useStyles = createStyles((theme) => ({
     transform: "translate(50%, -50%)",
     cursor: "pointer",
   },
+  debugDiv: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    transform: "translate(-50%, -50%) scale(0.75)",
+    zIndex: 5,
+    pointerEvents: "none",
+  },
 }));
 
 type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -43,6 +68,7 @@ type DraggableLettersProps = React.HTMLAttributes<HTMLDivElement> & {
   option: QuestionOption;
   type?: string;
   disabled?: boolean;
+  debug?: DebugProps;
 };
 
 export function DraggableLetters({
@@ -51,9 +77,11 @@ export function DraggableLetters({
   type = "ANSWER_LETTERS",
   hidden,
   disabled,
+  debug,
   ...props
 }: DraggableLettersProps) {
   const { classes, cx } = useStyles();
+  const isPlaying = useAudioStatus((s) => s.isPlaying);
 
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -70,8 +98,10 @@ export function DraggableLetters({
   const styles: CSSProperties = {
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
-    pointerEvents: hidden ? "none" : "all",
+    pointerEvents: hidden || isPlaying ? "none" : "all",
   };
+
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <div
@@ -79,6 +109,7 @@ export function DraggableLetters({
       style={{ ...props.style, ...styles }}
       className={cx(classes.option, props.className)}
       ref={drag}
+      data-disabled={isPlaying}
     >
       {option.image_url && (
         <Image
@@ -96,6 +127,16 @@ export function DraggableLetters({
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />
         </button>
+      )}
+      {canDebug && !debug?.skipDebug && (
+        <DebugDiv
+          position={
+            debug?.debugProperty === "position" ? option.position : undefined
+          }
+          debug={debug}
+        >
+          {debug?.overwriteIsCorrect || option.isCorrect}
+        </DebugDiv>
       )}
     </div>
   );

@@ -1,7 +1,10 @@
 import { createStyles } from "@mantine/core";
-import { forwardRef, useRef } from "react";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
 import { boardW } from "~/constants/dimensions";
+import { useDebugInfo } from "~/stores/debug-info";
+import { QuestionOption } from "~/api/exam";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { DebugProps } from "../Debug";
 
 const useStyles = createStyles({
   button: {
@@ -17,6 +20,7 @@ const useStyles = createStyles({
     fontSize: boardW(20),
     fontWeight: 600,
     color: "#228BE6",
+    position: "relative",
     userSelect: "none",
     "*": {
       color: "#228BE6",
@@ -46,64 +50,46 @@ const useStyles = createStyles({
   audio: {
     display: "none",
   },
-  debugDiv: {
-    position: "relative",
-    isolation: "isolate",
-    p: {
-      position: "absolute",
-      top: 0,
-      marginInline: "auto",
-      zIndex: 999,
-    },
-  },
 });
 
 export type OptionButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    sound?: string;
-    isCorrect?: boolean;
+    option?: QuestionOption;
+    debug?: DebugProps;
   };
 
-export const OptionButton = forwardRef<HTMLButtonElement, OptionButtonProps>(
-  ({ isCorrect, ...props }, ref) => {
-    const { classes, cx } = useStyles();
-    const soundRef = useRef<HTMLAudioElement>(null);
-    const mediaTrack = useMediaTrackStore();
+export function OptionButton({
+  option,
+  debug,
+  children,
+  ...props
+}: OptionButtonProps) {
+  const { classes, cx } = useStyles();
+  const { sound, isPlaying } = useCreateSound({
+    src: option?.sound_url ?? "",
+    skipPlayStatus: true,
+  });
 
-    function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-      if (props.sound && mediaTrack.canPlay()) {
-        mediaTrack.play({
-          trackId: `[SOUND]-${props.sound}`,
-          trackUrl: props.sound,
-          mediaType: MediaType.AUDIO,
-        });
-      }
-      props?.onClick?.(e);
+  function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    if (!props.disabled && !isPlaying) {
+      sound.play();
     }
-
-    return (
-      <div className={classes.debugDiv}>
-        <button
-          {...props}
-          className={cx(classes.button, props.className)}
-          onClick={onClick}
-          disabled={props.disabled || mediaTrack.isPlaying}
-          ref={ref}
-        />
-        {import.meta.env.DEV && typeof isCorrect === "boolean" && (
-          <p>{isCorrect ? "✅" : "❌"}</p>
-        )}
-        {props.sound && (
-          <audio
-            src={props.sound}
-            ref={soundRef}
-            className={classes.audio}
-            onPlay={() => mediaTrack.setPlayStatus(true)}
-            onPause={() => mediaTrack.setPlayStatus(false)}
-            onEnded={() => mediaTrack.setPlayStatus(false)}
-          ></audio>
-        )}
-      </div>
-    );
+    props?.onClick?.(e);
   }
-);
+
+  const canDebug = useDebugInfo((s) => s.answer);
+
+  return (
+    <button
+      {...props}
+      className={cx(classes.button, props.className)}
+      onClick={onClick}
+      disabled={props.disabled || isPlaying}
+    >
+      {canDebug && !debug?.skipDebug && option && (
+        <DebugDiv debug={debug}>{option.isCorrect}</DebugDiv>
+      )}
+      {children}
+    </button>
+  );
+}

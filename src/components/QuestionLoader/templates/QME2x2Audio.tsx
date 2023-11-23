@@ -1,59 +1,80 @@
 import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { AudioControls } from "~/components/AudioControls/AudioControls";
+import {
+  AudioControlRef,
+  AudioControls,
+} from "~/components/AudioControls/AudioControls";
 import { OptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function QME2x2Audio({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
-
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  const cols = question.options.length < 6 ? question.options.length / 2 : 3;
+  function getAudioTitle(classification: QuestionTitleClassification) {
+    return audioTitles.find((t) => t.classification === classification);
+  }
 
-  const [currentAudio, setCurrentAudio] =
-    useState<QuestionTitleClassification | null>(
-      QuestionTitleClassification.INTRO
-    );
+  /* Audio do enunciado */
+  const enunciadoTitle = useMemo(
+    () => getAudioTitle(QuestionTitleClassification.ENUNCIADO),
+    [question]
+  );
+  const enunciado = useRef<AudioButtonRef>(null);
 
-  const introRef = useRef<HTMLAudioElement>(null);
-  const historyRef = useRef<HTMLDivElement & { play: () => void }>(null);
-  const questionRef = useRef<HTMLDivElement & { play: () => void }>(null);
+  /* Audio da estória */
+  const storyTitle = useMemo(
+    () => getAudioTitle(QuestionTitleClassification.HISTORIA),
+    [question]
+  );
 
-  useEffect(() => {
-    switch (currentAudio) {
-      case QuestionTitleClassification.INTRO:
-        void introRef.current?.play();
-        break;
-      case QuestionTitleClassification.HISTORIA:
-        historyRef.current?.play();
-        break;
-      case QuestionTitleClassification.ENUNCIADO:
-        questionRef.current?.play();
-        break;
+  const story = useRef<AudioControlRef>(null);
+  story.current?.sound.onEnd(() => {
+    if (
+      enunciadoTitle?.autoplay &&
+      enunciado.current?.sound.playing() === false
+    ) {
+      enunciado.current?.sound.play();
     }
-  }, [currentAudio]);
+  });
 
-  const mediaTrack = useMediaTrackStore();
+  /* Audio de introdução */
+  const introTitle = useMemo(
+    () => getAudioTitle(QuestionTitleClassification.INTRO),
+    [question]
+  );
+  const intro = useCreateSound({
+    src: introTitle?.file_url ?? "",
+    autoPlay: introTitle?.autoplay ?? false,
+  });
+
+  intro.sound.onEnd(() => {
+    if (storyTitle?.autoplay === true) {
+      story.current?.sound.play();
+    } else if (
+      storyTitle?.autoplay === false &&
+      enunciadoTitle?.autoplay === true &&
+      enunciado.current?.sound.playing() === false
+    ) {
+      enunciado.current?.sound.play();
+    }
+  });
 
   useEffect(() => {
     setAnswer(null);
-    const introTitle = audioTitles.find(
-      (title) => title.classification === QuestionTitleClassification.INTRO
-    );
-
-    if (introTitle && introTitle.autoplay) {
-      void introRef.current?.play();
+    if (introTitle?.autoplay) {
+      intro.sound.play();
     }
   }, [question]);
 
@@ -61,13 +82,13 @@ export function QME2x2Audio({
     onAnswerChange(answer ? [answer] : []);
   }, [answer]);
 
-  useEffect(() => {
-    setContinueDisabled(answer === null);
-  }, [answer, question]);
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
   useEffect(() => {
-    setAnswer(null);
-  }, [question]);
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
   return (
     <>
@@ -80,15 +101,7 @@ export function QME2x2Audio({
           <AudioControls
             src={title.file_url ?? ""}
             key={title.file_url}
-            ref={historyRef}
-            onEnded={() => {
-              if (title.autoplay) {
-                setCurrentAudio(QuestionTitleClassification.ENUNCIADO);
-              }
-              mediaTrack.setPlayStatus(false);
-            }}
-            onPlay={() => mediaTrack.setPlayStatus(true)}
-            onPause={() => mediaTrack.setPlayStatus(false)}
+            ref={story}
           />
         ))}
 
@@ -102,35 +115,7 @@ export function QME2x2Audio({
             <AudioButton
               src={title.file_url ?? ""}
               key={title.file_url}
-              ref={questionRef}
-            />
-          ))}
-
-        {audioTitles
-          .filter(
-            (title) =>
-              title.classification === QuestionTitleClassification.INTRO
-          )
-          .map((title) => (
-            <audio
-              src={title.file_url ?? ""}
-              key={title.file_url}
-              style={{ display: "none" }}
-              ref={introRef}
-              onEnded={() => {
-                const nextTitle = audioTitles.find(
-                  (t) =>
-                    t.classification === QuestionTitleClassification.HISTORIA
-                );
-
-                if (nextTitle && nextTitle.autoplay) {
-                  setCurrentAudio(QuestionTitleClassification.HISTORIA);
-                }
-
-                mediaTrack.setPlayStatus(false);
-              }}
-              onPlay={() => mediaTrack.setPlayStatus(true)}
-              onPause={() => mediaTrack.setPlayStatus(false)}
+              ref={enunciado}
             />
           ))}
       </Group>
@@ -142,10 +127,9 @@ export function QME2x2Audio({
           return (
             <OptionButton
               key={inx}
-              sound={option.sound_url ?? ""}
+              option={option}
               onClick={() => setAnswer(option)}
               data-selected={answer?.position === option.position}
-              isCorrect={option.isCorrect}
             >
               <Stack justify="space-evenly">
                 {!hasLabel && <IconVolume size={boardW(70)} />}

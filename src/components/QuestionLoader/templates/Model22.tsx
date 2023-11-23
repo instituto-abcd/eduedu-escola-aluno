@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { QuestionOption } from "~/api/exam";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { boardW } from "~/constants/dimensions";
 
 const useStyles = createStyles((theme) => ({
@@ -26,7 +26,7 @@ const useStyles = createStyles((theme) => ({
 export function Model22({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, audioTitleAutoplay, textTitles, imageTitles } =
     useQuestionHelper(question);
@@ -50,8 +50,13 @@ export function Model22({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -97,8 +102,10 @@ export function Model22({
               onClick={() => handleAnswer(option)}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               style={{
-                fontSize: boardW(24)
+                fontSize: boardW(24),
               }}
+              option={option}
+              debug={{ size: 10 }}
             >
               {option.description}
             </TextOptionButton>

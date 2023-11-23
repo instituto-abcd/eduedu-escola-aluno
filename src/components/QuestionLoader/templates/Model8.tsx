@@ -6,7 +6,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -27,10 +27,15 @@ const useStyles = createStyles({
 export function Model8({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { imageTitles, videoTitles, textTitles, audioTitles, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const {
+    imageTitles,
+    videoTitles,
+    textTitles,
+    audioTitles,
+    audioTitleAutoplay,
+  } = useQuestionHelper(question);
 
   const { classes } = useStyles();
 
@@ -38,12 +43,17 @@ export function Model8({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -103,9 +113,9 @@ export function Model8({
               key={inx}
               onClick={() => setAnswer(option)}
               data-selected={JSON.stringify(answer) === JSON.stringify(option)}
-              sound={option.sound_url ?? undefined}
-              isCorrect={option.isCorrect}
+              option={option}
               className={classes.button}
+              debug={{ size: 12 }}
             >
               {option.description}
             </TextOptionButton>

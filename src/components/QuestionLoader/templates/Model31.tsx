@@ -1,6 +1,6 @@
 import { Group, Stack, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { CardStack } from "~/components/CardStack";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
@@ -30,7 +30,7 @@ const useStyles = createStyles({
 export function Model31({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { imageTitles, textTitles } = useQuestionHelper(question);
   const statement = textTitles[0]?.description ?? "MISSING_TITLE";
@@ -38,7 +38,6 @@ export function Model31({
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
-  const disabled = answers.length < options.length;
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setAnswers((state) =>
@@ -71,9 +70,14 @@ export function Model31({
     onAnswerChange(answers);
   }, [answers]);
 
+  const conditions = useMemo(
+    () => [answers.length === question.options.length],
+    [answers, question]
+  );
+
   useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -115,7 +119,10 @@ export function Model31({
         <CardStack
           options={options}
           className={classes.stackOptions}
-          cardProps={{ textProps: { size: boardW(20) } }}
+          cardProps={{
+            textProps: { size: boardW(20) },
+            debug: { skipDebug: true },
+          }}
         />
       </Stack>
     </>

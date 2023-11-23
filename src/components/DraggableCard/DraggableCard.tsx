@@ -3,6 +3,21 @@ import { IconTrash } from "@tabler/icons-react";
 import { CSSProperties, useCallback, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { boardW, lousaWidth } from "~/constants/dimensions";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { useDebugInfo } from "~/stores/debug-info";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { QuestionOption } from "~/api/exam";
+import { DebugProps } from "../Debug";
+
+const isImageSmall = (
+  imgElement: HTMLImageElement | null,
+  minimumHeight: number
+) => {
+  if (imgElement) {
+    return imgElement.height <= minimumHeight;
+  }
+  return false;
+};
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -54,12 +69,14 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   image?: string | null;
   disabled?: boolean;
   onClear?: () => void;
+  debug?: DebugProps;
 };
 
 export function DraggableCard<T>({
   item,
   text,
-  sound,
+  sound: _sound,
+  debug,
   image,
   hidden,
   onClear,
@@ -81,20 +98,22 @@ export function DraggableCard<T>({
     [item]
   );
 
+  const { sound, isPlaying } = useCreateSound({
+    src: _sound ?? "",
+    skipPlayStatus: true,
+  });
+
   const styles: CSSProperties = {
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
-    pointerEvents: hidden ? "none" : "all",
+    pointerEvents: hidden || isPlaying ? "none" : "all",
   };
 
   const [hasSmallHeight, setHasSmallHeight] = useState(false);
-  const soundRef = useRef<HTMLAudioElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (sound) {
-      void soundRef.current?.play();
-    }
+    if (sound) sound.play();
     props?.onClick?.(e);
   }
 
@@ -105,12 +124,8 @@ export function DraggableCard<T>({
     }
   }, [imageRef.current]);
 
-  const isImageSmall = (imgElement: HTMLImageElement | null, minimumHeight: number) => {
-    if (imgElement) {
-      return imgElement.height <= minimumHeight;
-    }
-    return false;
-  };
+  /* debug */
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <div
@@ -142,8 +157,14 @@ export function DraggableCard<T>({
           <IconTrash size={16} />
         </button>
       )}
-      {sound && (
-        <audio src={sound} ref={soundRef} className={classes.audio}></audio>
+
+      {canDebug && !debug?.skipDebug && item && (
+        <DebugDiv
+          position={+(item as unknown as QuestionOption).position}
+          debug={debug}
+        >
+          {(item as unknown as QuestionOption).isCorrect}
+        </DebugDiv>
       )}
     </div>
   );

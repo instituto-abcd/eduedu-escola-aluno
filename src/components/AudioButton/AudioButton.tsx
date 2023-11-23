@@ -1,57 +1,82 @@
 import { OuvirIcon } from "~/assets/icons/Ouvir";
 import { IconButton } from "../EduButton";
 import { IconButtonProps } from "../EduButton/IconButton";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { lousaWidth } from "~/constants/dimensions";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { Button, HoverCard, Table } from "@mantine/core";
+import { useDebugInfo } from "~/stores/debug-info";
+import { IconPlayerStopFilled } from "@tabler/icons-react";
+import { forwardRef, useImperativeHandle } from "react";
+
+export type AudioButtonRef = HTMLDivElement & {
+  sound: ReturnType<typeof useCreateSound>["sound"];
+};
 
 type Props = {
-  buttonProps?: IconButtonProps;
   autoPlay?: boolean;
-  src?: string;
-} & React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->;
+  src: string;
+} & Partial<IconButtonProps>;
 
-type Ref = { play: () => void };
-
-export const AudioButton = forwardRef<Ref, Props>(
-  ({ autoPlay, src, buttonProps, ...props }, ref) => {
-    const mediaTrack = useMediaTrackStore();
-
-    const play = () => {
-      if (src) {
-        mediaTrack.play({
-          mediaType: MediaType.AUDIO,
-          trackId: `[AUDIO]-${src}`,
-          trackUrl: src,
-        });
-      }
-    };
-
-    useEffect(() => {
-      if (autoPlay) {
-        play();
-      }
-    }, [src]);
+export const AudioButton = forwardRef(
+  ({ src, autoPlay, ...props }: Props, ref) => {
+    const { sound, isPlaying } = useCreateSound({
+      src,
+      autoPlay,
+    });
 
     useImperativeHandle(ref, () => ({
-      play,
+      sound,
     }));
 
-    return (
+    const debug = useDebugInfo((s) => s.AudioButton);
+
+    const button = (
       <IconButton
         variant="gray"
-        onClick={play}
-        disabled={mediaTrack.isPlaying}
-        {...props}
         icon={
-          buttonProps?.icon ?? (
+          props?.icon ?? (
             <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
           )
         }
+        {...props}
+        onClick={sound.play}
+        disabled={isPlaying}
       />
     );
+
+    const debugbutton = (
+      <HoverCard width={200} shadow="md" position="top-end">
+        <HoverCard.Target>
+          <div>{button}</div>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Table withBorder fontSize={12}>
+            <tbody>
+              <tr>
+                <td>Playing?</td>
+                <td>{isPlaying ? "✅" : "❌"}</td>
+              </tr>
+              <tr>
+                <td>Autoplay?</td>
+                <td>{autoPlay ? "✅" : "❌"}</td>
+              </tr>
+            </tbody>
+          </Table>
+          <Button
+            onClick={() => sound.stop()}
+            compact
+            fullWidth
+            color="red"
+            mt="sm"
+            disabled={!isPlaying}
+            leftIcon={<IconPlayerStopFilled size={16} />}
+          >
+            Stop
+          </Button>
+        </HoverCard.Dropdown>
+      </HoverCard>
+    );
+
+    return debug ? debugbutton : button;
   }
 );

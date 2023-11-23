@@ -6,11 +6,11 @@ import { lousaHeight } from "~/constants/dimensions";
 import { useTimeout } from "@mantine/hooks";
 import { useEffect } from "react";
 
-export function Model30({ question, setContinueDisabled }: ModelProps) {
+export function Model30({ question, onConditionsChange }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
     useQuestionHelper(question);
 
-  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+  const { start } = useTimeout(() => onConditionsChange([]), 1000);
 
   useEffect(() => {
     start();

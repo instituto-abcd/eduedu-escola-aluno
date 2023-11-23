@@ -1,5 +1,5 @@
 import { Group, Image } from "@mantine/core";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import arrowLeft from "~/assets/planets/arrow-left-red.png";
@@ -9,8 +9,7 @@ import { CardStack } from "~/components/CardStack";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import feedbackNegative from "~/assets/audio/feedback_error.mp3";
-import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
+import { AudioInterface } from "~/sounds";
 
 export function Model12({
   question,
@@ -44,16 +43,13 @@ export function Model12({
     },
   });
 
-  const negativeSound = useRef<HTMLAudioElement>(null);
-  const positiveSound = useRef<HTMLAudioElement>(null);
-
   function handleFeedback(position: "left" | "right", option: QuestionOption) {
     if (position === "left" && option.isCorrect === false) {
-      void positiveSound.current?.play();
+      AudioInterface.feedback.positive.play();
     } else if (position === "right" && option.isCorrect === true) {
-      void positiveSound.current?.play();
+      AudioInterface.feedback.positive.play();
     } else {
-      void negativeSound.current?.play();
+      AudioInterface.feedback.negative.play();
     }
   }
 
@@ -74,15 +70,13 @@ export function Model12({
     <>
       {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={inx}
-                src={title.file_url!}
-                autoPlay={audioTitleAutoplay(inx)}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
         </Group>
       )}
 
@@ -98,21 +92,13 @@ export function Model12({
         <DropYesOrNo direction="left" ref={dropLeft} />
         <CardStack
           options={stack}
-          cardProps={{ variant: "wide", imageOnly: true }}
+          cardProps={{
+            variant: "wide",
+            imageOnly: true,
+          }}
         />
         <DropYesOrNo direction="right" ref={dropRight} />
       </Group>
-
-      <audio
-        src={feedbackNegative}
-        ref={negativeSound}
-        style={{ display: "none" }}
-      />
-      <audio
-        src={feedbackPositive}
-        ref={positiveSound}
-        style={{ display: "none" }}
-      />
     </>
   );
 }

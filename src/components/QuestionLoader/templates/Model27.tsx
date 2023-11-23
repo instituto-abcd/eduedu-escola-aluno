@@ -2,18 +2,18 @@ import { Group, Box, Image, Text, Stack, ScrollArea } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useEffect, useState } from "react";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { useEffect, useMemo, useState } from "react";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { boardW } from "~/constants/dimensions";
+import { useAudioStatus } from "~/stores/audio";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
-// TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
+export function Model27({ question, onConditionsChange }: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
 
-export function Model27({ question, setContinueDisabled }: ModelProps) {
-  const { audioTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
-
+  const audioStatus = useAudioStatus();
   const totalSlides = question.options.length;
   const [slideIndex, setSlideIndex] = useState(0);
   const currentSlide = question.options[slideIndex];
@@ -28,36 +28,42 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
     setSlideIndex(slideIndex - 1);
   }
 
-  const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
-  useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
-
   useEffect(() => {
     setSlideIndex(0);
   }, [question]);
 
+  const { sound } = useCreateSound({
+    src: currentSlide.sound_url ?? "",
+    autoPlay: false,
+  });
+
   useEffect(() => {
-    if (mediaTrack.isPlaying) return;
-    mediaTrack.play({
-      mediaType: MediaType.AUDIO,
-      trackId: currentSlide.sound_url ?? "",
-      trackUrl: currentSlide.sound_url ?? "",
-    });
+    if (audioStatus.isPlaying) return;
+    sound.play();
   }, [slideIndex]);
+
+  const conditions = useMemo(
+    () => [slideIndex + 1 === totalSlides],
+    [slideIndex]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {/* TODO: bug no áudio tocar várias vezes é referente ao componente AudioButton e a chave autoplay */}
-      {audioTitles
-        .filter((title) => !!title.file_url)
-        .map((title) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            key={title.file_url}
-            autoPlay={currentSlide.position != 1}
-          />
-        ))}
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
+        </Group>
+      )}
 
       <Stack spacing={boardW(20)} align="center" my="auto">
         {currentSlide.image_url && (

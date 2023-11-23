@@ -7,6 +7,7 @@ import { DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
 import { useEffect, useState } from "react";
 import { produce } from "immer";
+import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles({
   slot: {
@@ -24,13 +25,17 @@ export function Model19({
   question,
   onAnswerChange,
   setContinueDisabled,
+  auxQuestion,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } = useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+    useQuestionHelper(question);
   const { classes } = useStyles();
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
-  const slots = textTitles[0] ? textTitles[0].description.trim().split(" ") : [];
+  const slots = textTitles[0]
+    ? textTitles[0].description.trim().split(" ")
+    : [];
 
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"
@@ -79,13 +84,20 @@ export function Model19({
               autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
+          {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
       )}
 
       <Stack align="center" spacing={50} my="auto">
         <CardStack
           options={options}
-          cardProps={{ variant: "square", imageOnly: !showOptionsDesc }}
+          cardProps={{
+            variant: "square",
+            imageOnly: !showOptionsDesc,
+            debug: {
+              debugProperty: "position",
+            },
+          }}
         />
 
         <Group>

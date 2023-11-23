@@ -1,5 +1,5 @@
 import { Group, Image, Stack, Text, Title, createStyles } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -19,7 +19,7 @@ const useStyles = createStyles({
 export function Model4({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -41,8 +41,13 @@ export function Model4({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -89,8 +94,7 @@ export function Model4({
               key={inx}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               onClick={() => setAnswer(option)}
-              sound={option.sound_url ?? undefined}
-              isCorrect={option.isCorrect}
+              option={option}
             >
               {option.image_url && (
                 <>

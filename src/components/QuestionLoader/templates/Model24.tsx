@@ -1,6 +1,6 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -11,9 +11,9 @@ import { ModelProps } from ".";
 export function Model24({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, textTitles, imageTitles, optionArrKey } =
+  const { audioTitles, hasAudioTitle, textTitles, imageTitles } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<number>(-1);
@@ -28,8 +28,6 @@ export function Model24({
   const isTypeSelect = !isTypeComplete;
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
 
-  const disabled = isTypeSelect ? !singleAnswer : answer === -1;
-
   useEffect(() => {
     setAnswer(-1);
     setSingleAnswer(null);
@@ -39,9 +37,14 @@ export function Model24({
     onAnswerChange(isTypeSelect ? [singleAnswer as QuestionOption] : []);
   }, [answer, singleAnswer]);
 
+  const conditions = useMemo(
+    () => [isTypeSelect ? !!singleAnswer : answer !== -1],
+    [answer, singleAnswer]
+  );
+
   useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -58,14 +61,12 @@ export function Model24({
               <AudioButton
                 key={title.position}
                 src={title.file_url ?? ""}
-                buttonProps={{
-                  icon: (
-                    <IconRotateClockwise
-                      style={{ transform: "rotateX(180deg)" }}
-                      size={30}
-                    />
-                  ),
-                }}
+                icon={
+                  <IconRotateClockwise
+                    style={{ transform: "rotateX(180deg)" }}
+                    size={30}
+                  />
+                }
               />
             )
           )}
@@ -105,8 +106,8 @@ export function Model24({
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
-                  key={optionArrKey(option, inx)}
-                  isCorrect={option.isCorrect}
+                  key={inx}
+                  option={option}
                   onClick={() => setAnswer(inx)}
                   data-selected={answer === inx}
                   style={{
@@ -152,8 +153,8 @@ export function Model24({
             <Group>
               {question.options.map((option, inx) => (
                 <OptionButton
-                  key={optionArrKey(option, inx)}
-                  isCorrect={option.isCorrect}
+                  key={inx}
+                  option={option}
                   onClick={() => setSingleAnswer(option)}
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
@@ -162,7 +163,6 @@ export function Model24({
                     width: boardW(190),
                     height: boardW(120),
                   }}
-                  sound={option.sound_url ?? undefined}
                 >
                   {option.description}
                   {option.image_url && (

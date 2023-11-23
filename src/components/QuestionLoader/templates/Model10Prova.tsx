@@ -1,5 +1,5 @@
 import { Box, Group, Image, SimpleGrid, Stack, Title } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -16,7 +16,7 @@ export function Model10Prova({
   question,
   onAnswerChange,
   auxQuestion,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
@@ -25,9 +25,14 @@ export function Model10Prova({
     setAnswer(null);
   }, [question]);
 
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
 
   return (
@@ -37,7 +42,7 @@ export function Model10Prova({
           <AudioButton
             src={title.file_url ?? ""}
             key={title.file_url}
-            autoPlay
+            autoPlay={title.autoplay}
           />
         ))}
 
@@ -75,7 +80,7 @@ export function Model10Prova({
                   key={option.description}
                   onClick={() => setAnswer(option)}
                   data-selected={answer?.position === option.position}
-                  isCorrect={option.isCorrect}
+                  option={option}
                 >
                   {option.description}
                 </OptionButton>

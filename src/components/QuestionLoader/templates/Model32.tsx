@@ -9,7 +9,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -28,15 +28,15 @@ const useStyles = createStyles((theme) => ({
     },
   },
   centralizedText: {
-    textAlign: 'center'
-  }
+    textAlign: "center",
+  },
 }));
 
 export function Model32({
   question,
   auxQuestion,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes, cx } = useStyles();
 
@@ -57,8 +57,13 @@ export function Model32({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -160,17 +165,15 @@ export function Model32({
                     data-selected={
                       JSON.stringify(answer) === JSON.stringify(option)
                     }
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
+                    option={option}
                     style={{
-                      // maxWidth: lousaWidth * 40 / 100,
-                      // minWidth: "auto",
                       width: "100%",
                       wordWrap: "break-word",
                       wordBreak: "break-word",
                       textAlign: "center",
                       fontSize: boardW(20),
                     }}
+                    debug={{ size: 10 }}
                   >
                     {option.description}
                   </TextOptionButton>

@@ -1,5 +1,5 @@
 import { Group, Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DropArea, TextDropItem } from "~/components/TextDrop";
@@ -10,7 +10,7 @@ import { ModelProps } from ".";
 export function Model20({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
     useQuestionHelper(question);
@@ -48,9 +48,14 @@ export function Model20({
     onAnswerChange(answers.filter((item) => item !== null) as QuestionOption[]);
   }, [answers]);
 
+  const conditions = useMemo(
+    () => [answers.every((item) => item !== null)],
+    [answers]
+  );
+
   useEffect(() => {
-    setContinueDisabled(answers.some((item) => item === null));
-  }, [answers]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>

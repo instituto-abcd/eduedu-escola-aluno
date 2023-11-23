@@ -3,16 +3,14 @@ import { useEffect } from "react";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
-export function Model15({ question, setContinueDisabled }: ModelProps) {
+export function Model15({ question, onConditionsChange }: ModelProps) {
   const { videoTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
-    setContinueDisabled(mediaTrack.isPlaying);
-  }, [question, mediaTrack.isPlaying]);
+    onConditionsChange([]);
+  }, []);
 
   return (
     <Group my="auto">
@@ -21,7 +19,6 @@ export function Model15({ question, setContinueDisabled }: ModelProps) {
           src={title.file_url ?? ""}
           key={title.file_url}
           autoPlay
-          onPlayStatusChange={mediaTrack.setPlayStatus}
           style={{ height: boardW(500) }}
         />
       ))}

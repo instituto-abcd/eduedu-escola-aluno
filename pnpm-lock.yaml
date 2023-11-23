@@ -44,6 +44,9 @@ dependencies:
   embla-carousel-react:
     specifier: 8.0.0-rc11
     version: 8.0.0-rc11(react@18.2.0)
+  howler:
+    specifier: ^2.2.4
+    version: 2.2.4
   immer:
     specifier: ^10.0.2
     version: 10.0.2
@@ -76,6 +79,9 @@ dependencies:
     version: 4.3.9(immer@10.0.2)(react@18.2.0)
 
 devDependencies:
+  '@types/howler':
+    specifier: ^2.2.11
+    version: 2.2.11
   '@types/react':
     specifier: ^18.2.14
     version: 18.2.14
@@ -2371,6 +2377,10 @@ packages:
       '@types/node': 12.20.55
     dev: true
 
+  /@types/howler@2.2.11:
+    resolution: {integrity: sha512-7aBoUL6RbSIrqKnpEgfa1wSNUBK06mn08siP2QI0zYk7MXfEJAaORc4tohamQYqCqVESoDyRWSdQn2BOKWj2Qw==}
+    dev: true
+
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
     dev: true
@@ -3750,6 +3760,10 @@ packages:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
     dependencies:
       react-is: 16.13.1
+    dev: false
+
+  /howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
     dev: false
 
   /http-cache-semantics@4.1.1:

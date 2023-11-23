@@ -1,6 +1,6 @@
 import { Group, ScrollArea, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { boardW } from "~/constants/dimensions";
@@ -31,7 +31,7 @@ const useStyles = createStyles({
 export function Model29({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { textTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
@@ -39,8 +39,6 @@ export function Model29({
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
   );
-
-  const disabled = answers.some((ans) => ans === null);
 
   function handleDrop(item: QuestionOption | null, index: number) {
     if (item === null) return;
@@ -64,9 +62,14 @@ export function Model29({
     onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
 
+  const conditions = useMemo(
+    () => [answers.every((ans) => ans !== null)],
+    [answers]
+  );
+
   useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>

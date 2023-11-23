@@ -13,41 +13,11 @@ export function ModelView() {
   const searchIndex = query.get("index");
 
   const [currentQuestion, setCurrentQuestion] = useState(-1);
-  //   function logRule(questions: Question[]) {
-  //     const currentRule = "fill";
-  // 
-  //     const allRules = questions
-  //       .map((question, inx) =>
-  //         question.rules?.length > 0
-  //           ? {
-  //             questionId: question.id,
-  //             planetTitle: question.planetTitle,
-  //             planetId: question.planet_id,
-  //             rules: question.rules,
-  //             // questionIndex: inx
-  //           }
-  //           : undefined
-  //       )
-  //       .filter(Boolean) as {
-  //         rules: Question["rules"];
-  //         questionIndex: number;
-  //       }[];
-  // 
-  //     const rulesWithAuxAutoPlay = allRules.filter((rule) =>
-  //       rule.rules.some(
-  //         (rule) => rule.name === currentRule && rule.value === "true"
-  //       )
-  //     );
-  // 
-  //     console.log(`RULES: ${currentRule}`, rulesWithAuxAutoPlay);
-  //   }
   const { data, isFetching } = useDebugModelQuestions(modelId ?? "", {
     enabled: !!modelId,
     initialData: [],
     onSuccess: (data) => {
       if (data.length > 0) {
-        // logRule(data)
-
         if (
           searchIndex === null ||
           !Number.isInteger(+searchIndex) ||
@@ -83,7 +53,6 @@ export function ModelView() {
       return prev;
     });
   }, [currentQuestion]);
-
 
   return (
     <>

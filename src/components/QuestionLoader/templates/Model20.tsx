@@ -45,7 +45,14 @@ export function Model20({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answers.filter((item) => item !== null) as QuestionOption[]);
+    onAnswerChange(
+      answers
+        .filter((item) => item !== null)
+        .map((item, index) => ({
+          ...item,
+          positionAnswer: index,
+        })) as QuestionOption[]
+    );
   }, [answers]);
 
   const conditions = useMemo(

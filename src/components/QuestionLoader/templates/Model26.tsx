@@ -1,6 +1,6 @@
 import { Group, Image, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { CSSProperties, Fragment, useEffect, useState } from "react";
+import { CSSProperties, Fragment, useEffect, useState, useCallback, useMemo } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
@@ -24,7 +24,7 @@ const useStyles = createStyles({
 export function Model26({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const {
@@ -49,13 +49,13 @@ export function Model26({
   const [slots, setSlots] =
     useState<Array<QuestionOption | null>>(initialSlots);
 
-  function handleDrop(item: QuestionOption | null, index: number) {
+  const handleDrop = useCallback(function (item: QuestionOption | null, index: number) {
     setSlots((state) =>
       produce(state, (draft) => {
         draft[index] = item;
       })
     );
-  }
+  }, []);
 
   function handleClear(index: number) {
     handleDrop(null, index);
@@ -66,11 +66,17 @@ export function Model26({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(slots.filter((slot) => slot !== null) as QuestionOption[]);
+    onAnswerChange(slots.filter((slot) => slot !== null).map((item, index) => ({
+      ...item, positionAnswer: index
+    })) as QuestionOption[]);
   }, [slots]);
 
+  const conditions = useMemo(
+    () => [slots.length === question.options.length && !slots.includes(null)], [slots]
+  );
+
   useEffect(() => {
-    setContinueDisabled(slots.includes(null));
+    onConditionsChange(conditions);
   }, [slots]);
 
   return (

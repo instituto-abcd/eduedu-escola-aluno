@@ -1,14 +1,14 @@
 import { Loader, Progress, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Question } from "~/api/exam";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
-import feedbackPositive from "~/assets/audio/feedback_button_next.mp3";
 import { lousaWidth } from "~/constants/dimensions";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
+import { AudioInterface } from "~/sounds";
 
 export function ExamPage() {
   const navigate = useNavigate();
@@ -23,8 +23,6 @@ export function ExamPage() {
       }
     },
   });
-
-  const positiveSound = useRef<HTMLAudioElement>(null);
 
   function handleAnswer(
     answer:
@@ -41,7 +39,7 @@ export function ExamPage() {
         updateProgress((answer as Question).progress!);
 
       /* Handle Feedback Sound */
-      void positiveSound.current?.play();
+      AudioInterface.feedback.positive.play();
     }
   }
 
@@ -69,12 +67,6 @@ export function ExamPage() {
           />
         )}
       </Stack>
-
-      <audio
-        src={feedbackPositive}
-        ref={positiveSound}
-        style={{ display: "none" }}
-      />
 
       {currentQuestion && showStagingInfo && (
         <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>

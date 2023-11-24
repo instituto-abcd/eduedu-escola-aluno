@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
-import { boardW, lousaHeight } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { ModelProps } from ".";
 import { Grid, Group, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
@@ -21,24 +21,28 @@ const useStyles = createStyles((theme) => ({
     fontSize: boardW(50),
     fontWeight: 600,
 
-    border: '#868E96 solid 1px',
-    borderRadius: '16px',
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    border: "#868E96 solid 1px",
+    borderRadius: "16px",
+    textAlign: "center",
+    textTransform: "uppercase",
 
-    backgroundColor: '#F1F3F5',
-  }
+    backgroundColor: "#F1F3F5",
+  },
 }));
 
 export function Model35({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, imageTitles, hasAudioTitle, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const {
+    audioTitles,
+    imageTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    getRule,
+  } = useQuestionHelper(question);
   const { classes } = useStyles();
-
   const [answer, setAnswer] = useState<string>("");
 
   useEffect(() => {
@@ -54,52 +58,54 @@ export function Model35({
         position: 0,
       } as QuestionOption,
     ]);
-
-    setContinueDisabled(!answer || answer === "");
   }, [answer]);
 
-  // RULES:
-  const fillRule = question.rules.find(
-    (rule) => rule.name === "fill"
-  );
-  const isFill = Boolean(
-    fillRule === undefined ? true : fillRule.value === "false" ? false : true
-  );
+  const fillRule = getRule("fill")?.value === "true";
 
   // In case of rule fill:
-  const slots = question.titles.find(
-    (title) => title.placeholder.includes("Exp:") || title.placeholder.includes("Exemplo")
-  )?.description.trim().split(" ");
-  const expectedAnswer = question.rules.find(
-    (rule) => rule.name === "answer"
-  )?.value
+  const slots = question.titles
+    .find(
+      (title) =>
+        title.placeholder.includes("Exp:") ||
+        title.placeholder.includes("Exemplo")
+    )
+    ?.description.trim()
+    .split(" ");
 
   function getInputValues(inx: number) {
     // GET VALUES OF EACH INPUT:
-    let inputs = document.getElementsByClassName(classes.input);
-    let nextField = inputs[inx + 1];
+    const inputs = document.getElementsByClassName(classes.input);
+    const nextField = inputs[inx + 1];
 
     if (nextField) nextField.focus();
 
     // GET ITS VALUES:
-    let answer = '';
+    let answer = "";
     for (let index = 0; index < inputs.length; index++) {
       const element = inputs[index];
-      answer += element.value.toUpperCase()
+      answer += element.value.toUpperCase();
     }
 
     // SET FINAL ANSWER:
-    setFinalAnswer(answer)
+    setFinalAnswer(answer);
   }
 
-  function setFinalAnswer(data) { setAnswer(data) }
+  function setFinalAnswer(data) {
+    setAnswer(data);
+  }
 
   function cleanUpInputValues() {
-    let inputs = document.getElementsByClassName(classes.input);
+    const inputs = document.getElementsByClassName(classes.input);
     for (let index = 0; index < inputs.length; index++) {
       inputs[index].value = null;
     }
-  };
+  }
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -115,44 +121,45 @@ export function Model35({
         </Group>
       )}
 
-      <Group my="auto" spacing={10} grow noWrap={true}>
+      <Group
+        my="auto"
+        spacing={10}
+        style={{ justifyContent: "space-evenly" }}
+        grow
+        noWrap={true}
+      >
         {imageTitles[0] && (
-          <Group style={{ justifyContent: 'center', alignSelf: 'center' }}>
-            <img
-              src={imageTitles[0].file_url!}
-              width="auto"
-              height={(lousaHeight * 40) / 100}
-            />
-
-            {imageTitles[0].file_url?.length
-              ? ""
-              : "Ooops! Imagem não disponível :("}
-          </Group>
+          <img
+            src={imageTitles[0].file_url!}
+            width="auto"
+            height={boardW(200)}
+            style={{ maxWidth: boardW(180) }}
+          />
         )}
-        
-        {isFill ?
-          // se for verdadeiro, a regra diz que é uma questão de preencher lacunas
-          <Grid style={{ justifyContent: 'center', alignSelf: 'center' }}>
-            {slots && slots.map((slot, inx) => (
-              <Grid.Col key={inx} span={slots.length !== 3 ? 4 : 5}>
-                <input
-                  key={inx + 1}
-                  maxLength={1}
-                  className={classes.input}
-                  onChange={(_) => getInputValues(inx)}
-                />
-              </Grid.Col>
-            ))}
+
+        {fillRule && (
+          <Grid style={{ justifyContent: "center", alignSelf: "center" }}>
+            {slots &&
+              slots.map((_, inx) => (
+                <Grid.Col key={inx} span={slots.length !== 3 ? 4 : 5}>
+                  <input
+                    key={inx + 1}
+                    maxLength={1}
+                    className={classes.input}
+                    onChange={(_) => getInputValues(inx)}
+                  />
+                </Grid.Col>
+              ))}
           </Grid>
-          :
-          // se for falso, a regra diz que é uma questão de ditado
+        )}
+        {!fillRule && (
           <Textarea
             value={answer}
             maxLength={100} // não tem no doc regra maxLength, bloqueei pro aluno não subir lorem ipsum gigante
             onChange={(e) => setAnswer(e.target.value)}
             classNames={{ input: classes.textArea }}
           />
-        }
+        )}
       </Group>
     </>
   );

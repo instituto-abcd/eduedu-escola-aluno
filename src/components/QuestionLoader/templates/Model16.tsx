@@ -1,31 +1,34 @@
 import { Group } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
-import { useDownloadLottieFile } from "~/api/lottie";
+import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
 export function Model16({ question }: ModelProps) {
-  const { audioTitles, lottieTitles, audioTitleAutoplay, hasAudioTitle } =
-    useQuestionHelper(question);
+  const {
+    audioTitles,
+    lottieTitles,
+    audioTitleAutoplay,
+    hasAudioTitle,
+    getRule,
+  } = useQuestionHelper(question);
 
-  const { data }: { data: any } = useDownloadLottieFile(
-    lottieTitles[0]?.file_id || "",
-    {
-      enabled: !!lottieTitles[0]?.file_id,
-    }
-  );
-  const [modifiedData, setModifiedData] = useState<any | null>(null);
+  const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
+    enabled: !!lottieTitles[0]?.file_id,
+  });
+  const [modifiedData, setModifiedData] = useState<LottieLayers>();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
-  const skipLottie = question.rules.find((rule) => rule.name === "skipLottie");
+  const skipLottie = getRule("skipLottie")?.value === "true";
 
   useEffect(() => {
+    console.log(data);
     if (data && skipLottie) {
-      const outlineLayer = data.layers.find((layer: any) =>
+      const outlineLayer = data.layers.find((layer) =>
         layer.nm.includes("outline")
       );
       const updatedData = outlineLayer

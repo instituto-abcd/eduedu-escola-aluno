@@ -1,6 +1,6 @@
 import { Group, ScrollArea, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { boardW } from "~/constants/dimensions";
@@ -19,7 +19,7 @@ const useStyles = createStyles({
     height: boardW(120),
     img: {
       marginBottom: "2px",
-      width: boardW(100),
+      width: boardW(70),
     },
   },
   text: {
@@ -40,15 +40,14 @@ export function Model29({
     question.options.map(() => null)
   );
 
-  function handleDrop(item: QuestionOption | null, index: number) {
+  const handleDrop = useCallback(function (item: QuestionOption | null, index: number) {
     if (item === null) return;
-
     setAnswers((state) =>
       produce(state, (draft) => {
         draft[index] = item;
       })
     );
-  }
+  }, []);
 
   function handleClear(index: number) {
     setAnswers((state) =>
@@ -59,7 +58,9 @@ export function Model29({
   }
 
   useEffect(() => {
-    onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
+    onAnswerChange(answers.filter((ans) => ans !== null).map((item, index) => ({
+      ...item, positionAnswer: index
+    })) as QuestionOption[]);
   }, [answers]);
 
   const conditions = useMemo(

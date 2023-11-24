@@ -30,7 +30,7 @@ export function Model19({
 }: ModelProps) {
   const { classes } = useStyles();
 
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
@@ -67,8 +67,13 @@ export function Model19({
       })
     );
 
-    setOptions(() =>
-      question.options.filter((opt) => JSON.stringify(opt) == JSON.stringify(item))
+    setOptions((state) =>
+      produce(state, (draft) => {
+        // Add the cleared item back to the options array
+        if (item) {
+          draft.push(item);
+        }
+      })
     );
   }
 

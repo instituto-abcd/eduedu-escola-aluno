@@ -19,7 +19,7 @@ const useStyles = createStyles({
     height: boardW(120),
     img: {
       marginBottom: "2px",
-      width: boardW(100),
+      width: boardW(70),
     },
   },
   text: {

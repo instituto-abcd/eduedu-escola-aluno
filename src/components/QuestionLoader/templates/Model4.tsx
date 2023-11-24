@@ -29,11 +29,14 @@ export function Model4({
     imageTitles,
     hasAudioTitle,
     audioTitleAutoplay,
-    getRule
+    getRule,
+    isExam,
   } = useQuestionHelper(question);
   const hideOptionsTextRule = getRule("options_hide_text");
-  const showOptionsText = hideOptionsTextRule && hideOptionsTextRule.value === 'false' ? false : true;
-  const hasDescription = (description: string) => description !== null && description !== "";
+  const showOptionsText =
+    hideOptionsTextRule && hideOptionsTextRule.value === "false" ? false : true;
+  const hasDescription = (description: string) =>
+    description !== null && description !== "";
 
   useEffect(() => {
     setAnswer(null);
@@ -112,11 +115,13 @@ export function Model4({
                       userSelect: "none",
                     }}
                   />
-                  {showOptionsText && hasDescription(option.description) && (
-                    <Text size={14} color="gray.7" weight={600}>
-                      {option.description}
-                    </Text>
-                  )}
+                  {!isExam &&
+                    showOptionsText &&
+                    hasDescription(option.description) && (
+                      <Text size={14} color="gray.7" weight={600}>
+                        {option.description}
+                      </Text>
+                    )}
                 </>
               )}
               {!option.image_url && (

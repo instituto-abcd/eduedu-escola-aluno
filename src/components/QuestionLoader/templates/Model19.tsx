@@ -3,9 +3,9 @@ import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
-import { DraggableCardSlot } from "~/components/DraggableCard";
+import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
 import { ReadButton } from "~/components/ReadButton";
 
@@ -24,54 +24,68 @@ const useStyles = createStyles({
 export function Model19({
   question,
   onAnswerChange,
+  onConditionsChange,
   setContinueDisabled,
   auxQuestion,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
-    useQuestionHelper(question);
   const { classes } = useStyles();
 
-  const [options, setOptions] = useState<QuestionOption[]>(question.options);
-  const [answers, setAnswers] = useState<QuestionOption[]>([]);
-  const slots = textTitles[0]
-    ? textTitles[0].description.trim().split(" ")
-    : [];
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+    useQuestionHelper(question);
 
-  const descRule = question.rules.find(
-    (rule) => rule.name === "show_option_desc"
-  );
+  const [options, setOptions] = useState<QuestionOption[]>(question.options);
+
+  const descRule = question.rules.find((rule) => rule.name === "show_option_desc");
   const showOptionsDesc = Boolean(
     descRule === undefined ? true : descRule.value === "false" ? false : true
   );
 
-  const targetLettersRule = question.rules.find(
-    (rule) => rule.name === "show_targets_letters"
-  );
+  const targetLettersRule = question.rules.find((rule) => rule.name === "show_targets_letters");
   const showTargetLetters = Boolean(
     targetLettersRule === undefined ? true : targetLettersRule.value === "false" ? false : true
   );
 
-  function handleDrop(item: QuestionOption, index: number) {
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
+    question.options.map(() => null)
+  );
+
+  function handleDrop(item: QuestionOption | null, index: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft.push({ ...item, positionAnswer: index } as QuestionOption);
+        draft[index] = item;
       })
     );
-
     setOptions((state) =>
       state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
     );
   }
 
-  useEffect(() => {
-    setAnswers([]);
-    setOptions(question.options);
-  }, [question]);
+  function handleClear(item: QuestionOption | null, index: number) {
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft[index] = null;
+      })
+    );
+
+    setOptions(() =>
+      question.options.filter((opt) => JSON.stringify(opt) == JSON.stringify(item))
+    );
+  }
 
   useEffect(() => {
-    onAnswerChange(answers);
-    setContinueDisabled(answers.length !== slots.length);
+    onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
+
+  const conditions = useMemo(
+    () => [answers.every((ans) => ans !== null)],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+    setContinueDisabled(answers.length);
+  }, [conditions]);
+
 
   return (
     <>
@@ -101,16 +115,23 @@ export function Model19({
         />
 
         <Group>
-          {slots.map((slot, inx) => (
-            <DraggableCardSlot<QuestionOption>
-              onDrop={(item) => item && handleDrop(item, inx)}
-              item={null}
+          {answers.map((answer, inx) => (
+            <DraggableCardSlot
+              item={answer}
               key={inx}
+              onDrop={(item) => handleDrop(item, inx)}
               className={classes.slot}
-            >
-              {showTargetLetters &&
-                <>{slot}</>
+              replaceWith={
+                <DraggableCard
+                  item={null}
+                  key={inx}
+                  image={answers[inx]?.image_url}
+                  text={showTargetLetters ?? answers[inx]?.description}
+                  disabled
+                  onClear={() => handleClear(answer, inx)}
+                />
               }
+            >
             </DraggableCardSlot>
           ))}
         </Group>

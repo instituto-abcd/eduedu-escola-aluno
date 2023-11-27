@@ -109,7 +109,9 @@ export function Model10({
               }
               option={option}
             >
-              {!hideTextRule && <>{option.description}</>}
+              {(!option.image_url || !hideTextRule) && (
+                <>{option.description}</>
+              )}
 
               {option.image_url && (
                 <img

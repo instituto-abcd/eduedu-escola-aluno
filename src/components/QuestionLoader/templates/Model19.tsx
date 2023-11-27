@@ -25,7 +25,6 @@ export function Model19({
   question,
   onAnswerChange,
   onConditionsChange,
-  setContinueDisabled,
   auxQuestion,
 }: ModelProps) {
   const { classes } = useStyles();
@@ -35,14 +34,22 @@ export function Model19({
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
 
-  const descRule = question.rules.find((rule) => rule.name === "show_option_desc");
+  const descRule = question.rules.find(
+    (rule) => rule.name === "show_option_desc"
+  );
   const showOptionsDesc = Boolean(
     descRule === undefined ? true : descRule.value === "false" ? false : true
   );
 
-  const targetLettersRule = question.rules.find((rule) => rule.name === "show_targets_letters");
+  const targetLettersRule = question.rules.find(
+    (rule) => rule.name === "show_targets_letters"
+  );
   const showTargetLetters = Boolean(
-    targetLettersRule === undefined ? true : targetLettersRule.value === "false" ? false : true
+    targetLettersRule === undefined
+      ? true
+      : targetLettersRule.value === "false"
+      ? false
+      : true
   );
 
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
@@ -78,6 +85,11 @@ export function Model19({
   }
 
   useEffect(() => {
+    setOptions(question.options);
+    setAnswers(question.options.map(() => null));
+  }, [question]);
+
+  useEffect(() => {
     onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
 
@@ -88,9 +100,7 @@ export function Model19({
 
   useEffect(() => {
     onConditionsChange(conditions);
-    setContinueDisabled(answers.length);
   }, [conditions]);
-
 
   return (
     <>
@@ -131,13 +141,12 @@ export function Model19({
                   item={null}
                   key={inx}
                   image={answers[inx]?.image_url}
-                  text={showTargetLetters ?? answers[inx]?.description}
+                  text={showTargetLetters ? answers[inx]?.description : null}
                   disabled
                   onClear={() => handleClear(answer, inx)}
                 />
               }
-            >
-            </DraggableCardSlot>
+            ></DraggableCardSlot>
           ))}
         </Group>
       </Stack>

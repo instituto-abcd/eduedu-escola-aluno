@@ -22,6 +22,7 @@ export function Model10({
     audioTitles,
     audioTitleAutoplay,
     hasAudioTitle,
+    getRule,
   } = useQuestionHelper(question);
 
   const conditions = useMemo(() => [Boolean(answer)], [answer]);
@@ -38,12 +39,7 @@ export function Model10({
     setAnswer(null);
   }, [question]);
 
-  const hideTextRule = question.rules.find(
-    (rule) => rule.name === "options_hide_text"
-  );
-  const showOptionsHideText = Boolean(
-    hideTextRule === undefined ? true : hideTextRule.value === "false" ? false : true
-  );
+  const hideTextRule = getRule("options_hide_text")?.value === "true" ?? false;
 
   return (
     <>
@@ -113,9 +109,7 @@ export function Model10({
               }
               option={option}
             >
-              {showOptionsHideText &&
-                <>{option.description}</>
-              }
+              {!hideTextRule && <>{option.description}</>}
 
               {option.image_url && (
                 <img

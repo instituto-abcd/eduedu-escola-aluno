@@ -73,35 +73,40 @@ export function Model35({
     .split(" ");
 
   function getInputValues(inx: number) {
-    // GET VALUES OF EACH INPUT:
-    const inputs = document.getElementsByClassName(classes.input);
+    const inputs = document.getElementsByClassName(
+      classes.input
+    ) as HTMLCollectionOf<HTMLInputElement>;
     const nextField = inputs[inx + 1];
 
     if (nextField) nextField.focus();
 
-    // GET ITS VALUES:
     let answer = "";
     for (let index = 0; index < inputs.length; index++) {
       const element = inputs[index];
       answer += element.value.toUpperCase();
     }
 
-    // SET FINAL ANSWER:
     setFinalAnswer(answer);
   }
 
-  function setFinalAnswer(data) {
+  function setFinalAnswer(data: string) {
     setAnswer(data);
   }
 
   function cleanUpInputValues() {
-    const inputs = document.getElementsByClassName(classes.input);
+    const inputs = document.getElementsByClassName(
+      classes.input
+    ) as HTMLCollectionOf<HTMLInputElement>;
     for (let index = 0; index < inputs.length; index++) {
+      // @ts-expect-error assign null to string
       inputs[index].value = null;
     }
   }
 
-  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+  const conditions = useMemo(
+    () => [Boolean(answer), answer.length === slots?.length],
+    [answer]
+  );
 
   useEffect(() => {
     onConditionsChange(conditions);
@@ -155,7 +160,7 @@ export function Model35({
         {!fillRule && (
           <Textarea
             value={answer}
-            maxLength={100} // não tem no doc regra maxLength, bloqueei pro aluno não subir lorem ipsum gigante
+            maxLength={100}
             onChange={(e) => setAnswer(e.target.value)}
             classNames={{ input: classes.textArea }}
           />

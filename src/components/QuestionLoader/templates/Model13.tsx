@@ -45,13 +45,18 @@ export function Model13({
   function onDrop(item: QuestionOption | null, index: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        // Nesse model o indice do 'position' sempre começa com 1, não com 0 
         draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
       })
     );
 
     setOptions((state) =>
-      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
+      produce(state, (draft) => {
+        const index = draft.findIndex(
+          (opt) => JSON.stringify(opt) === JSON.stringify(item)
+        );
+
+        draft.splice(index, 1);
+      })
     );
   }
 

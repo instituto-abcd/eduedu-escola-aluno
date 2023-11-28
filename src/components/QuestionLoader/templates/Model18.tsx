@@ -18,9 +18,14 @@ export function Model18({
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
-  const text = textTitles.filter(
-    (title) => title.description && title.description.length > 0
-  )[0].description;
+  const text = useMemo(
+    () =>
+      textTitles.filter(
+        (title) => title.description && title.description.length > 0
+      )[0].description,
+    [question]
+  );
+
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
     () =>
       text
@@ -53,16 +58,13 @@ export function Model18({
 
   useEffect(() => {
     setSelected([]);
-  }, [question]);
-
-  useEffect(() => {
     setSlots(
       text
         .replace(/\s/g, "")
         .split("")
         .map((char) => (char === "_" ? null : char))
     );
-  }, [text]);
+  }, [question]);
 
   useEffect(() => {
     onAnswerChange(selected);

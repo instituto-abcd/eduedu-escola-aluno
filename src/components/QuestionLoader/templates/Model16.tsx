@@ -6,8 +6,9 @@ import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model16({ question }: ModelProps) {
+export function Model16({ question, onConditionsChange }: ModelProps) {
   const {
     audioTitles,
     lottieTitles,
@@ -85,12 +86,17 @@ export function Model16({ question }: ModelProps) {
     }
   }, [canvasRef]);
 
+  const { start } = useTimeout(() => {
+    onConditionsChange([]);
+  }, 4000);
+
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d")!;
       ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     }
+    start();
   }, [question]);
 
   return (

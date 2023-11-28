@@ -26,7 +26,6 @@ export function Model16({ question }: ModelProps) {
   const skipLottie = getRule("skipLottie")?.value === "true";
 
   useEffect(() => {
-    console.log(data);
     if (data && skipLottie) {
       const outlineLayer = data.layers.find((layer) =>
         layer.nm.includes("outline")

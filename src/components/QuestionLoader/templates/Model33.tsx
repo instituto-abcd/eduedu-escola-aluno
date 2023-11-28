@@ -16,6 +16,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
     audioTitleAutoplay,
     imageTitles,
     textTitles,
+    getRule,
   } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
 
@@ -23,9 +24,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
     !!illustration || textTitles.some((title) => title.file_url);
 
   const autoplayLaterAudio = () => {
-    const rule =
-      Array.isArray(question.rules) &&
-      question.rules.find((rule) => rule.name === "autoplay");
+    const rule = getRule("autoplay");
 
     if (!rule) return true;
     return rule.value === "false";
@@ -46,7 +45,9 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
               <AudioButton
                 key={inx}
                 src={title.file_url ?? ""}
-                autoPlay={audioTitleAutoplay(inx)}
+                autoPlay={
+                  question.rules.length > 0 ? audioTitleAutoplay(inx) : false
+                }
               />
             ) : (
               <AudioButton

@@ -1,12 +1,13 @@
 import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model2({
   question,
@@ -29,8 +30,31 @@ export function Model2({
   },
   []);
 
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
-    useQuestionHelper(question);
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    textTitles,
+    getRule,
+  } = useQuestionHelper(question);
+
+  /* Autoplay Aux Audio Logic */
+  const auxAutoPlayRule = getRule("auxAutoPlay");
+  const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxRef = useRef<AudioButtonRef>(null);
+
+  useEffect(() => {
+    if (mainAudioRef.current && auxRef.current) {
+      if (shouldPlayAux) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxRef.current?.sound.play();
+        });
+      }
+    }
+  }, [mainAudioRef, auxRef]);
+  /* End Aux Logic */
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));
@@ -60,6 +84,7 @@ export function Model2({
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url!}
+              ref={inx === 1 ? auxRef : mainAudioRef}
             />
           ))}
         </Group>

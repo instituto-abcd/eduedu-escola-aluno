@@ -17,8 +17,15 @@ type Props = {
   src: string;
 } & Partial<IconButtonProps>;
 
+const defaultIcon = (
+  <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
+);
+
 export const AudioButton = forwardRef(
-  ({ src, autoPlay, ...props }: Props, ref) => {
+  (
+    { src, autoPlay, variant = "gray", icon = defaultIcon, ...props }: Props,
+    ref
+  ) => {
     const { sound, isPlaying } = useCreateSound({
       src,
       autoPlay,
@@ -32,12 +39,8 @@ export const AudioButton = forwardRef(
 
     const button = (
       <IconButton
-        variant="gray"
-        icon={
-          props?.icon ?? (
-            <OuvirIcon width={lousaWidth * 0.04} height={lousaWidth * 0.029} />
-          )
-        }
+        variant={variant}
+        icon={icon}
         {...props}
         onClick={sound.play}
         disabled={isPlaying}

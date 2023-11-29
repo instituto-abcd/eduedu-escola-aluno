@@ -32,11 +32,11 @@ export function Model13({
   onConditionsChange,
 }: ModelProps) {
   const {
-    imageTitles,
     audioTitles,
     getRule,
     audioTitleAutoplay,
     hasAudioTitle,
+    getTitlesOfType,
   } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
@@ -96,7 +96,7 @@ export function Model13({
       )}
 
       <Group my="auto">
-        {imageTitles
+        {getTitlesOfType("IMAGE")
           .filter((title) => title.file_url || title.description?.length > 0)
           .map((slot, inx) => (
             <SlotCard

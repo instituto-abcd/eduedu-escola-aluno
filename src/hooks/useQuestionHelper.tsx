@@ -73,6 +73,8 @@ export function useQuestionHelper(question: Question) {
       question.rules.find((rule) => rule.name === "autoplay");
 
     if (!rule) return true;
+    if (typeof rule.value === "boolean") return rule.value;
+
     return rule.value === "true";
   };
 

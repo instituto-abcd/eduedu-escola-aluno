@@ -26,10 +26,8 @@ const useStyles = createStyles((theme) => ({
       fontSize: boardW(24),
       fontWeight: 600,
     },
-  },
-  centralizedText: {
     textAlign: "center",
-  },
+  }
 }));
 
 export function Model32({
@@ -38,7 +36,7 @@ export function Model32({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
 
   const {
     textTitles,
@@ -98,11 +96,11 @@ export function Model32({
                 {question?.planet_id && (
                   <Text
                     dangerouslySetInnerHTML={{
-                      __html: textTitles.filter(
-                        (item) => item.placeholder != "ID da historinha"
-                      )?.[0]?.description,
+                      __html: textTitles.find(
+                        (title) => title.placeholder?.includes("Campo") || !title.placeholder && title.description
+                      )?.description ?? ""
                     }}
-                    className={cx(classes.typography, classes.centralizedText)}
+                    className={classes.typography}
                   />
                 )}
                 {!question?.planet_id && (
@@ -130,7 +128,18 @@ export function Model32({
                       width={boardW(300)}
                       m="auto"
                     />
-                  ))}
+                ))}
+
+                {question?.planet_id && (
+                  <Text dangerouslySetInnerHTML={{
+                    __html: textTitles.find(
+                      (title) => 
+                        title.placeholder?.includes("Enunciado") || title.placeholder?.includes("Quem disse")
+                      )?.description ?? ""
+                    }}
+                    className={classes.typography}
+                  />
+                )}
               </Stack>
             </ScrollArea>
           </Box>

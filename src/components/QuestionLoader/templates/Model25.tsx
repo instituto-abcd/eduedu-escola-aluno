@@ -1,4 +1,4 @@
-import { Group, Stack, createStyles } from "@mantine/core";
+import { Group, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
@@ -49,7 +49,12 @@ export function Model25({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, getTitlesOfType } = useQuestionHelper(question);
+  const targetTitles = getTitlesOfType("IMAGE");
+  const targets = targetTitles.some((t) => !!t.file_url)
+    ? targetTitles
+    : targetTitles.slice(-3);
+
   const { classes } = useStyles();
 
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
@@ -107,7 +112,7 @@ export function Model25({
 
       <Stack my="auto">
         <Group>
-          {imageTitles.map((title, inx) => (
+          {targets.map((title, inx) => (
             <SlotCard
               key={inx}
               title={title}
@@ -204,16 +209,29 @@ function SlotCard({
 
   return (
     <div className={classes.slot} ref={drop}>
-      <img
-        src={title.file_url ?? ""}
-        alt={title.description}
-        width={100}
-        style={{
-          maxHeight: 130,
-          objectFit: "contain",
-          marginInline: "auto",
-        }}
-      />
+      {title.file_url && (
+        <img
+          src={title.file_url}
+          alt={title.description}
+          width={100}
+          style={{
+            maxHeight: 130,
+            objectFit: "contain",
+            marginInline: "auto",
+          }}
+        />
+      )}
+      {!title.file_url && title.description && (
+        <Text
+          size={boardW(16)}
+          weight={600}
+          color="blue.6"
+          align="center"
+          p={4}
+        >
+          {title.description}
+        </Text>
+      )}
     </div>
   );
 }

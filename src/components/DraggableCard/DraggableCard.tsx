@@ -151,8 +151,10 @@ export function DraggableCard<T>({
           onLoad={handleImageLoad}
         />
       )}
-      {text && <Text className={cx(classes.text, textClasses)}>{text}</Text>}
-      {onClear && (
+      {text && !image && (
+        <Text className={cx(classes.text, textClasses)}>{text}</Text>
+      )}
+      {image && onClear && (
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />
         </button>

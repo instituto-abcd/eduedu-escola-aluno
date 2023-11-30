@@ -5,8 +5,8 @@ import { lousaWidth } from "~/constants/dimensions";
 
 const useStyles = createStyles({
   card: {
-    width: lousaWidth * 14 / 100,
-    height: lousaWidth * 16 / 100,
+    width: (lousaWidth * 14) / 100,
+    height: (lousaWidth * 16) / 100,
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "solid",
@@ -20,6 +20,7 @@ type Props<T> = {
   accept?: string | string[];
   item: T | null;
   replaceWith?: React.ReactNode;
+  showTargetLetters?: boolean | false;
 } & Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
   "onDrop"
@@ -31,6 +32,7 @@ export function DraggableCardSlot<T = QuestionOption>({
   className,
   replaceWith,
   accept = "ANSWER_CARD",
+  showTargetLetters,
   ...props
 }: Props<T>) {
   const { classes, cx } = useStyles();
@@ -46,7 +48,20 @@ export function DraggableCardSlot<T = QuestionOption>({
     []
   );
 
+  if (showTargetLetters)
+    return (
+      <div
+        {...props}
+        className={cx(classes.card, className)}
+        style={{}}
+        ref={drop}
+      >
+        {replaceWith}
+      </div>
+    );
+
   if (item !== null && replaceWith) return replaceWith;
+  
   return (
     <div
       {...props}

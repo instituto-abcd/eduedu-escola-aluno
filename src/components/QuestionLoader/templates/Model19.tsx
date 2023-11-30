@@ -33,6 +33,7 @@ export function Model19({
     useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
+  const [targetLettersTitles, setTargetLettersTitles] = useState<string[]>([]);
 
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"
@@ -51,6 +52,14 @@ export function Model19({
       ? false
       : true
   );
+
+  const lettersTitle = question.titles.find((title) => title.type === "TEXT");
+
+  useEffect(() => {
+    if (lettersTitle) {
+      setTargetLettersTitles(lettersTitle.description.split(" "));
+    }
+  }, [lettersTitle]);
 
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
@@ -136,12 +145,19 @@ export function Model19({
               key={inx}
               onDrop={(item) => handleDrop(item, inx)}
               className={classes.slot}
+              showTargetLetters={showTargetLetters}
               replaceWith={
                 <DraggableCard
                   item={null}
                   key={inx}
                   image={answers[inx]?.image_url}
-                  text={showTargetLetters ? answers[inx]?.description : null}
+                  text={
+                    showTargetLetters
+                      ? targetLettersTitles[inx]
+                      : answers[inx]
+                      ? answers[inx]?.description
+                      : null
+                  }
                   disabled
                   onClear={() => handleClear(answer, inx)}
                 />

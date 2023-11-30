@@ -90,7 +90,10 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
           </ScrollArea>
         )}
         <Group position="center">
-          <TextOptionButton onClick={previousSlide}>
+          <TextOptionButton 
+            disabled={slideIndex === 0}
+            onClick={previousSlide}
+          >
             <IconChevronLeft size={40} />
           </TextOptionButton>
           <TextOptionButton

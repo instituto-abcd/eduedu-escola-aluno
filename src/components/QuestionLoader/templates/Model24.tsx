@@ -1,19 +1,20 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model24({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, textTitles, imageTitles } =
+  const { audioTitles, textTitles, imageTitles, getRule } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<number>(-1);
@@ -27,6 +28,28 @@ export function Model24({
   // Variação de selecionar alternativa
   const isTypeSelect = !isTypeComplete;
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
+
+  /* Autoplay logic */
+  const autoplayRule = getRule("autoplay");
+  const shouldPlay = autoplayRule?.value === "false" ? false : true;
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxAudioRef = useRef<AudioButtonRef>(null);
+
+  useLayoutEffect(() => {
+    if (mainAudioRef.current && auxAudioRef.current) {
+      if (shouldPlay) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxAudioRef.current!.sound.play();
+        });
+      }
+    }
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
+  /* End autoplay logic */
 
   useEffect(() => {
     setAnswer(-1);
@@ -49,27 +72,24 @@ export function Model24({
   return (
     <>
       <Group mx="auto" h="50px">
-        {hasAudioTitle &&
-          audioTitles.map((title, inx) =>
-            inx === 0 ? (
-              <AudioButton
-                key={title.position}
-                src={title.file_url ?? ""}
-                autoPlay
-              />
-            ) : (
-              <AudioButton
-                key={title.position}
-                src={title.file_url ?? ""}
-                icon={
-                  <IconRotateClockwise
-                    style={{ transform: "rotateX(180deg)" }}
-                    size={30}
-                  />
-                }
-              />
-            )
-          )}
+        {audioTitles.map((title, inx) => {
+          const props = {
+            ref: inx === 0 ? mainAudioRef : auxAudioRef,
+            autoPlay:
+              inx === 0 ? shouldPlay : shouldPlay === false ? true : false,
+            icon:
+              inx > 0 ? (
+                <IconRotateClockwise
+                  style={{ transform: "rotateX(180deg)" }}
+                  size={30}
+                />
+              ) : undefined,
+          } as const;
+
+          return (
+            <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
+          );
+        })}
       </Group>
 
       <Stack my="auto" spacing={boardW(40)}>

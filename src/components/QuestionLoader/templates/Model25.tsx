@@ -66,7 +66,7 @@ export function Model25({
   function onDrop(option: QuestionOption | null, inx: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[inx] = option;
+        draft[inx] = option?.position ? option : null;
       })
     );
   }
@@ -147,10 +147,17 @@ export function Model25({
                 key={inx}
                 className={classes.wideButton}
                 item={option}
-                image={option.image_url}
+                image={
+                  answers.some((answer) => answer?.position === option.position)
+                    ? null
+                    : option.image_url
+                }
                 hidden={hideOption(option)}
                 sound={option.sound_url}
                 debug={{ debugProperty: "position" }}
+                disabled={answers.some(
+                  (answer) => answer?.position === option.position
+                )}
               />
             )
           )}

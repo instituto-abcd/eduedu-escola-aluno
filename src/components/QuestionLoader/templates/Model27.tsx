@@ -85,6 +85,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
                 align="center"
                 dangerouslySetInnerHTML={{ __html: currentSlide.description }}
                 maw={800}
+                mah={300}
               />
             </Box>
           </ScrollArea>

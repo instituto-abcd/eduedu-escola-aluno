@@ -62,7 +62,7 @@ export function Model10({
           (title) => title.description && !title.placeholder.includes("ID")
         )
         .map((title, inx) => (
-          <ScrollArea mah={boardW(100)} type="always" key={inx} px="xs">
+          <ScrollArea mah={boardW(100)} type="auto" key={inx} px="xs">
             <Title
               color="dark.3"
               size={boardW(22)}

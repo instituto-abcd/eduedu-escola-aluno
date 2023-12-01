@@ -11,8 +11,6 @@ import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles({
   slot: {
-    width: 95,
-    height: 95,
     color: "#495057",
     fontSize: 50,
     fontWeight: 600,

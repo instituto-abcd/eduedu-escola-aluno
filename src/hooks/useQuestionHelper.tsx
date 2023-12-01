@@ -59,9 +59,11 @@ export function useQuestionHelper(question: Question) {
   /*
    * Audio helpers
    */
-  const audioTitles = getTitlesOfType("AUDIO").filter(
-    (title) => title.file_url
-  );
+
+  const audioTitles = getTitlesOfType("AUDIO")
+    .filter((title) => title.file_url)
+    .sort((a, b) => a.position - b.position);
+
   const hasAudioTitle = useMemo(
     () => audioTitles.some((title) => title.file_url),
     [audioTitles]

@@ -1,7 +1,14 @@
 import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -41,9 +48,16 @@ export function Model2({
   /* Autoplay Aux Audio Logic */
   const auxAutoPlayRule = getRule("auxAutoPlay");
   const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
+  const noPaddingRule = getRule("noPadding")?.value === "true" ?? false;
 
   const mainAudioRef = useRef<AudioButtonRef>(null);
   const auxRef = useRef<AudioButtonRef>(null);
+
+  const styles: CSSProperties = {
+    gap: noPaddingRule ? 0 : 'inherit',
+    display: noPaddingRule ? 'flex' : 'grid',
+    justifyContent: noPaddingRule ? 'center' : 'auto',
+  };
 
   useEffect(() => {
     if (mainAudioRef.current && auxRef.current) {
@@ -102,7 +116,11 @@ export function Model2({
           </Text>
         ))}
 
-        <SimpleGrid cols={question.options.length} spacing={boardW(20)}>
+        <SimpleGrid
+          cols={question.options.length}
+          spacing={boardW(20)}
+          style={styles}
+        >
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
@@ -116,6 +134,7 @@ export function Model2({
                   sound={slot?.sound_url}
                   disabled
                   onClear={() => handleDrop(null, inx)}
+                  noPaddingRule={noPaddingRule}
                 />
               }
             />

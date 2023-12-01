@@ -29,7 +29,6 @@ const useStyles = createStyles((theme) => ({
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#228BE6",
-    padding: 16,
     display: "grid",
     placeItems: "center",
     position: "relative",
@@ -70,6 +69,7 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   onClear?: () => void;
   debug?: DebugProps;
+  noPaddingRule?: boolean | false;
 };
 
 export function DraggableCard<T>({
@@ -83,6 +83,7 @@ export function DraggableCard<T>({
   disabled,
   textClasses,
   itemType = "ANSWER_CARD",
+  noPaddingRule,
   ...props
 }: Props<T>) {
   const { classes, cx } = useStyles();
@@ -107,6 +108,8 @@ export function DraggableCard<T>({
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
     pointerEvents: hidden || isPlaying ? "none" : "all",
+    width: noPaddingRule ? "auto" : undefined,
+    padding: noPaddingRule ? 0 : 16,
   };
 
   const [hasSmallHeight, setHasSmallHeight] = useState(false);

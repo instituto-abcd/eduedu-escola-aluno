@@ -23,6 +23,7 @@ export function PlanetCompletedFeedback() {
   const { data, refetch, error, isLoading, isSuccess, isError } =
     usePlanetFeedback(planetCompleted ?? "", {
       enabled: !!planetCompleted,
+      cacheTime: 0,
     });
 
   function closeModal() {
@@ -32,7 +33,7 @@ export function PlanetCompletedFeedback() {
     });
   }
 
-  if (!planetCompleted) return null;
+  if (!planetCompleted || !data) return null;
 
   return (
     <Modal

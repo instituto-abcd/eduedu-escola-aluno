@@ -46,6 +46,7 @@ export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
         <Rating
           readOnly
           defaultValue={planet.stars ?? 0}
+          value={planet.stars ?? 0}
           fractions={2}
           size="md"
         />

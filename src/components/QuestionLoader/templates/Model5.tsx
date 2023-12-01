@@ -125,7 +125,14 @@ export function Model5({
         </Group>
       )}
 
-      <Group spacing={boardW(80)} my="auto" w="100%">
+      <Group
+        spacing={boardW(80)}
+        my="auto"
+        w="100%"
+        position="center"
+        noWrap
+        px={8}
+      >
         <Stack w="45%" align="center">
           {!hasVideo && hasText && (
             <Title

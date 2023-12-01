@@ -116,6 +116,7 @@ export function Model2({
                   sound={slot?.sound_url}
                   disabled
                   onClear={() => handleDrop(null, inx)}
+                  debug={{ skipDebug: true }}
                 />
               }
             />

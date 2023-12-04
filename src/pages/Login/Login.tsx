@@ -1,41 +1,44 @@
+import {
+  BackgroundImage,
+  Box,
+  Button,
+  Card,
+  Center,
+  Divider,
+  Group,
+  Image,
+  Modal,
+  Notification,
+  PasswordInput,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { IconHourglass } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useUserSchoolClasses } from "~/api/user";
+import { useNavigate } from "react-router-dom";
+import { ApiError } from "~/api/api-types";
+import { useAuthLogin } from "~/api/auth";
 import {
   useReserveStudent,
   useStudentsBySchoolclass,
   useUnreserveStudent,
 } from "~/api/school-class";
-import { errorNotification } from "~/utils/errorNotification";
-import {
-  BackgroundImage,
-  Image,
-  Box,
-  Center,
-  Select,
-  Card,
-  Button,
-  Stack,
-  Text,
-  Group,
-  PasswordInput,
-  SimpleGrid,
-  Divider,
-  Modal,
-  TextInput,
-} from "@mantine/core";
-import logo from "~/assets/logos/eduedu-branca.svg";
+import { useSyncStatus } from "~/api/sync";
+import { useUserSchoolClasses } from "~/api/user";
 import bg from "~/assets/bgs/bg-aluno.svg";
-import { useDisclosure } from "@mantine/hooks";
-import { useNavigate } from "react-router-dom";
+import logo from "~/assets/logos/eduedu-branca.svg";
 import { Pagination } from "~/components/Pagination";
-import { usePagination } from "~/hooks/usePagination";
-import { useForm } from "@mantine/form";
-import { ApiError } from "~/api/api-types";
-import { useAuthLogin } from "~/api/auth";
 import { StudentGridCard } from "~/components/StudentGridCard/StudentGridCard";
-import { successNotification } from "~/utils/successNotification";
 import { PATH } from "~/constants/path";
+import { usePagination } from "~/hooks/usePagination";
 import { useStudent } from "~/stores/student";
+import { errorNotification } from "~/utils/errorNotification";
+import { successNotification } from "~/utils/successNotification";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -47,6 +50,11 @@ export function LoginPage() {
       "Erro durante a operação",
       `${error.message} (cod: ${error.code})`
     );
+
+  const { isFetching: fetchingStatus, data: syncStatus } = useSyncStatus({
+    cacheTime: 0,
+  });
+  const disableAccess = fetchingStatus || !!syncStatus?.running;
 
   /* 1. Logar professor */
   const {
@@ -79,42 +87,38 @@ export function LoginPage() {
   const [studentSearch, setStudentSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState("");
   const studentPagination = usePagination();
-  const {
-    data: studentsList,
-    refetch: refetchStudents,
-    isLoading: loadingStudents,
-  } = useStudentsBySchoolclass(selectedClass, {
-    enabled: !!selectedClass,
-    onError,
-    search: { name: studentSearch },
-    page: studentPagination.page,
-    pageSize: studentPagination.pageSize,
-  });
+  const { data: studentsList, refetch: refetchStudents } =
+    useStudentsBySchoolclass(selectedClass, {
+      enabled: !!selectedClass,
+      onError,
+      search: { name: studentSearch },
+      page: studentPagination.page,
+      pageSize: studentPagination.pageSize,
+    });
 
   /* 4. Reservar aluno */
-  const { mutate: reserveStudent, isSuccess: reserveSuccess } =
-    useReserveStudent({
-      onError,
-      onSuccess: (_, vars) => {
-        const student = studentsList?.items.find(
-          (student) => student.id === vars.studentId
-        );
-        if (!student) return;
+  const { mutate: reserveStudent } = useReserveStudent({
+    onError,
+    onSuccess: (_, vars) => {
+      const student = studentsList?.items.find(
+        (student) => student.id === vars.studentId
+      );
+      if (!student) return;
 
-        useStudent.setState({ ...student });
+      useStudent.setState({ ...student });
 
-        if (student.firstAccess == true) {
-          navigate(PATH.INTRO);
-        } else if (
-          student.firstAccess == false &&
-          student.examPerformed == false
-        ) {
-          navigate(PATH.EXAM);
-        } else {
-          navigate(PATH.DASHBOARD);
-        }
-      },
-    });
+      if (student.firstAccess == true) {
+        navigate(PATH.INTRO);
+      } else if (
+        student.firstAccess == false &&
+        student.examPerformed == false
+      ) {
+        navigate(PATH.EXAM);
+      } else {
+        navigate(PATH.DASHBOARD);
+      }
+    },
+  });
 
   /* 5. Liberar aluno */
   const { mutate: logoutStudent } = useUnreserveStudent({
@@ -145,6 +149,17 @@ export function LoginPage() {
               })}
             >
               <Stack w={400} m="auto">
+                {disableAccess && (
+                  <Notification
+                    title="Aviso"
+                    color="yellow"
+                    icon={<IconHourglass size={18} />}
+                    withCloseButton={false}
+                  >
+                    Os planetas estão sendo sincronizados. Aguarde finalizar
+                    para acessar o sistema.
+                  </Notification>
+                )}
                 <PasswordInput
                   {...authForm.getInputProps("accessKey")}
                   label="Código de acesso"
@@ -152,10 +167,11 @@ export function LoginPage() {
                   styles={{
                     label: { color: "#fff", marginBottom: 6 },
                   }}
+                  disabled={disableAccess}
                 />
                 <Button
                   type="submit"
-                  disabled={!authForm.values.accessKey}
+                  disabled={disableAccess || !authForm.values.accessKey}
                   fullWidth
                   loading={isAuthenticating}
                 >

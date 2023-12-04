@@ -14,6 +14,7 @@ export const useStudent = create<Student>()(
       status: "",
       schoolGrade: "" as SchoolGrade,
       schoolPeriod: "" as SchoolPeriod,
+      reserved: false,
     }),
     {
       name: "student_state",

@@ -21,6 +21,7 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    position: 'relative',
   },
   wideButton: {
     width: boardW(240),
@@ -42,6 +43,13 @@ const useStyles = createStyles((theme) => ({
     color: theme.colors.gray[7],
     textAlign: "center",
   },
+  floatingSlot: {
+    position: 'absolute',
+    bottom: -50,
+    width: boardW(100),
+    height: boardW(100),
+    zIndex: 99
+  }
 }));
 
 export function Model25({
@@ -66,15 +74,13 @@ export function Model25({
   function onDrop(option: QuestionOption | null, inx: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[inx] = option?.position ? option : null;
+        draft[inx] = option ? option : null;
       })
     );
   }
 
   function hideOption(option: QuestionOption) {
-    return !!answers.find(
-      (op) => JSON.stringify(op) === JSON.stringify(option)
-    );
+    return !!answers.find((op) => op?.position === option.position);
   }
 
   useEffect(() => {
@@ -138,7 +144,7 @@ export function Model25({
                 className={classes.wideButton}
                 item={option}
                 hidden={hideOption(option)}
-                text={option.description}
+                text={answers.some((answer) => answer?.position === option.position) ? null : option.description}
                 textClasses={classes.text}
                 sound={option.sound_url}
               />
@@ -196,23 +202,7 @@ function SlotCard({
     setDroppedOption(null);
   }, [title]);
 
-  const { classes } = useStyles();
-
-  if (droppedOption) {
-    return (
-      <DraggableCard
-        disabled
-        className={classes.wideButton}
-        textClasses={classes.text}
-        item={droppedOption}
-        image={droppedOption.image_url}
-        text={droppedOption.description}
-        onClear={() => {
-          setDroppedOption(null), onDrop(null);
-        }}
-      />
-    );
-  }
+  const { classes, cx } = useStyles();
 
   return (
     <div className={classes.slot} ref={drop}>
@@ -225,6 +215,19 @@ function SlotCard({
             maxHeight: 130,
             objectFit: "contain",
             marginInline: "auto",
+          }}
+        />
+      )}
+      {droppedOption && (
+        <DraggableCard
+          disabled
+          className={cx(classes.wideButton, classes.floatingSlot)}
+          textClasses={classes.text}
+          item={droppedOption}
+          image={droppedOption.image_url}
+          text={droppedOption.description}
+          onClear={() => {
+            setDroppedOption(null), onDrop(null);
           }}
         />
       )}

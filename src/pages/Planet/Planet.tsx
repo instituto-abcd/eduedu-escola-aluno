@@ -26,6 +26,7 @@ export function PlanetPage() {
     onSuccess: (question) => {
       if (!currentQuestion) {
         setCurrentQuestion(question);
+        updateProgress(0);
       }
     },
   });

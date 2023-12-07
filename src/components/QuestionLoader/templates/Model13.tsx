@@ -81,6 +81,8 @@ export function Model13({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  const statement = question.description ?? '';
+
   return (
     <>
       {hasAudioTitle && (
@@ -95,6 +97,7 @@ export function Model13({
         </Group>
       )}
 
+      <p>{statement}</p>
       <Group my="auto">
         {getTitlesOfType("IMAGE")
           .filter((title) => title.file_url || title.description?.length > 0)

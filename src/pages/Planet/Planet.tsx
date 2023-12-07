@@ -45,18 +45,18 @@ export function PlanetPage() {
       setCurrentQuestion(answer as Question);
       (answer as Question).progress &&
         updateProgress((answer as Question).progress as number);
+    }
 
-      /* Handle Feedback Sound */
-      if (skipFeedback) return;
+    /* Handle Feedback Sound */
+    if (skipFeedback) return;
 
-      if ("previousQuestionIsCorrect" in answer) {
-        if (answer.previousQuestionIsCorrect === true) {
-          AudioInterface.feedback.positive.play();
-        }
+    if ("previousQuestionIsCorrect" in answer) {
+      if (answer.previousQuestionIsCorrect === true) {
+        AudioInterface.feedback.positive.play();
+      }
 
-        if (answer.previousQuestionIsCorrect === false) {
-          AudioInterface.feedback.negative.play();
-        }
+      if (answer.previousQuestionIsCorrect === false) {
+        AudioInterface.feedback.negative.play();
       }
     }
   }

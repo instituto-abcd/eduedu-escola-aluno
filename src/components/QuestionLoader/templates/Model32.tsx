@@ -1,4 +1,5 @@
 import {
+  Flex,
   Group,
   Image,
   ScrollArea,
@@ -86,8 +87,8 @@ export function Model32({
             )?.description
           }
         </Title>
-        <Group w="100%" noWrap align="center">
-          <ScrollArea mah={boardW(400)} type="always" w="50%">
+        <Flex w="100%" justify="space-between">
+          <ScrollArea mah={boardW(400)} w="48%" pr={20}>
             <Stack pb={5}>
               {question?.planet_id && (
                 <Text
@@ -144,8 +145,8 @@ export function Model32({
               )}
             </Stack>
           </ScrollArea>
-          <ScrollArea mah={boardW(420)} w="50%">
-            <Stack my={12}>
+          <ScrollArea mah={boardW(420)} w="48%" pr={20}>
+            <Stack pb={5}>
               <Text
                 size={boardW(20)}
                 weight={600}
@@ -189,7 +190,7 @@ export function Model32({
               ))}
             </Stack>
           </ScrollArea>
-        </Group>
+        </Flex>
       </Stack>
     </>
   );

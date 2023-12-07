@@ -33,6 +33,7 @@ export function Model13({
 }: ModelProps) {
   const {
     audioTitles,
+    textTitles,
     getRule,
     audioTitleAutoplay,
     hasAudioTitle,
@@ -59,7 +60,6 @@ export function Model13({
       })
     );
   }
-
   const showOptionsText = getRule("showOptionsText");
   const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
 
@@ -81,7 +81,6 @@ export function Model13({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const statement = question.description ?? '';
 
   return (
     <>
@@ -97,7 +96,18 @@ export function Model13({
         </Group>
       )}
 
-      <p>{statement}</p>
+      {textTitles.map((title) => (
+        <Text
+          key={title.description}
+          w="80%"
+          size={boardW(24)}
+          weight={500}
+          color="dark.3"
+        >
+          {title.description}
+        </Text>
+      ))}
+
       <Group my="auto">
         {getTitlesOfType("IMAGE")
           .filter((title) => title.file_url || title.description?.length > 0)

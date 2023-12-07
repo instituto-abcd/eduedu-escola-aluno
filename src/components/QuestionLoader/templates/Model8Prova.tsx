@@ -59,13 +59,13 @@ export function Model8Prova({
           </Title>
         ))}
 
-        <Group noWrap w="100%" spacing={boardW(80)} position="center">
+        <Group noWrap w="100%" spacing={boardW(40)} position="center">
           {imageTitles.map((title, inx) => (
             <Image
               src={title.file_url}
               alt={title.description}
               key={inx}
-              width={boardW(250)}
+              width={boardW(500)}
             />
           ))}
 

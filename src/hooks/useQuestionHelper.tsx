@@ -87,7 +87,7 @@ export function useQuestionHelper(question: Question) {
   const getRule = (rule: string) =>
     question.rules?.find((r) => r.name === rule);
 
-  const skipFeedback = getRule("skipFeedback")?.value === "true";
+  const skipFeedback = getRule("skipFeedback")?.value === "true" || question.model_id === "MODEL27";
 
   return {
     hasTitleOfType,

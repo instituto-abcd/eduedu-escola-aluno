@@ -125,7 +125,7 @@ export function Model18({
             <DraggableLetters
               key={inx}
               debug={{ skipDebug: true }}
-              option={option}
+              option={{...option, description: option.description.toUpperCase()}}
               hidden={
                 !!slots.find(
                   (item) =>

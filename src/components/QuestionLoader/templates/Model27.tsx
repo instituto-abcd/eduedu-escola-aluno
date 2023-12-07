@@ -6,14 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { boardW } from "~/constants/dimensions";
-import { useAudioStatus } from "~/stores/audio";
-import { useCreateSound } from "~/hooks/useCreateSound";
 
 export function Model27({ question, onConditionsChange }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
 
-  const audioStatus = useAudioStatus();
   const totalSlides = question.options.length;
   const [slideIndex, setSlideIndex] = useState(0);
   const currentSlide = question.options[slideIndex];
@@ -31,16 +28,6 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
   useEffect(() => {
     setSlideIndex(0);
   }, [question]);
-
-  const { sound } = useCreateSound({
-    src: currentSlide.sound_url ?? "",
-    autoPlay: false,
-  });
-
-  useEffect(() => {
-    if (audioStatus.isPlaying) return;
-    sound.play();
-  }, [slideIndex]);
 
   const conditions = useMemo(
     () => [slideIndex + 1 === totalSlides],
@@ -66,7 +53,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
       )}
 
       <Stack spacing={boardW(20)} align="center" my="auto">
-        {currentSlide.image_url && (
+        {currentSlide?.image_url && (
           <Image
             src={currentSlide.image_url}
             alt={currentSlide.description}
@@ -75,7 +62,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
           />
         )}
 
-        {currentSlide.description && (
+        {currentSlide?.description && (
           <ScrollArea w={boardW(900)} mah={boardW(300)}>
             <Box>
               <Text

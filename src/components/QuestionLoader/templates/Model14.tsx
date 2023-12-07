@@ -71,7 +71,11 @@ export function Model14({
                   } as QuestionOption)
                 }
                 key={inx}
-                data-selected={answer?.position === inx}
+                data-selected={
+                  typeof answer?.position === "number"
+                    ? +answer.position >= inx
+                    : false
+                }
                 style={{
                   width: "100%",
                 }}

@@ -2,12 +2,13 @@ import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
-import { QuestionOption } from "~/api/exam";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
 import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioInterface } from "~/sounds";
 
 const useStyles = createStyles((theme) => ({
   slot: {
@@ -43,7 +44,11 @@ export function Model13({
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function onDrop(item: QuestionOption | null, index: number) {
+  function onDrop(
+    item: QuestionOption | null,
+    index: number,
+    title: QuestionTitle
+  ) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
@@ -59,9 +64,19 @@ export function Model13({
         draft.splice(index, 1);
       })
     );
+
+    handleFeedback(title, item!);
   }
   const showOptionsText = getRule("showOptionsText");
   const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
+
+  function handleFeedback(title: QuestionTitle, option: QuestionOption) {
+    if (+title.position === +option.position) {
+      AudioInterface.feedback.positive.play();
+    } else {
+      AudioInterface.feedback.negative.play();
+    }
+  }
 
   useEffect(() => {
     setAnswers([]);
@@ -80,7 +95,6 @@ export function Model13({
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
-
 
   return (
     <>
@@ -115,7 +129,7 @@ export function Model13({
             <SlotCard
               image={slot.file_url}
               description={slot.description}
-              onDrop={(option) => onDrop(option, inx)}
+              onDrop={(option) => onDrop(option, inx, slot)}
               key={inx}
             />
           ))}

@@ -10,12 +10,12 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioInterface } from "~/sounds";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((theme, isOver: boolean) => ({
   slot: {
     width: lousaWidth * 0.17,
     height: lousaWidth * 0.2,
-    borderColor: theme.colors.gray[6],
-    borderWidth: 1,
+    borderColor: isOver ? theme.colors.green[4] : theme.colors.gray[6],
+    borderWidth: isOver ? 3 : 1,
     borderStyle: "solid",
     backgroundColor: "#F4F4F4",
     display: "flex",
@@ -155,8 +155,7 @@ function SlotCard({
   image?: string | null;
   onDrop: (item: QuestionOption | null) => void;
 }) {
-  const { classes } = useStyles();
-  const [, drop] = useDrop(
+  const [collectedProps, drop] = useDrop(
     () => ({
       accept: "ANSWER_CARD",
       drop: onDrop,
@@ -166,6 +165,8 @@ function SlotCard({
     }),
     []
   );
+
+  const { classes } = useStyles(collectedProps.isOver);
 
   return (
     <div className={classes.slot} ref={drop}>

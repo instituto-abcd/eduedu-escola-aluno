@@ -43,11 +43,21 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
       {hasAudioTitle && (
         <Group>
           {audioTitles.map((title, inx) => (
-            <AudioButton
-              key={inx}
-              autoPlay={audioTitleAutoplay(inx)}
-              src={title.file_url!}
-            />
+            <>
+              {slideIndex === 0 ?
+                <AudioButton
+                  key={inx}
+                  autoPlay={audioTitleAutoplay(inx)}
+                  src={title.file_url!}
+                />
+                :
+                <AudioButton
+                  key={inx}
+                  autoPlay={false}
+                  src={currentSlide.sound_url!}
+                />
+              }
+            </>
           ))}
         </Group>
       )}

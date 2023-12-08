@@ -6,6 +6,7 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 export function Model14({
   question,
@@ -31,6 +32,19 @@ export function Model14({
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  const { sound } = useCreateSound({
+    src: question.options[0].sound_url ?? "",
+    autoPlay: false,
+  });
+
+  const handleOnClick = (index: number) => {
+    sound.play();
+    setAnswer({
+      position: index,
+      positionAnswer: index,
+    } as QuestionOption);
+  }
 
   return (
     <>
@@ -64,12 +78,7 @@ export function Model14({
             .fill(null)
             .map((_, inx) => (
               <TextOptionButton
-                onClick={() =>
-                  setAnswer({
-                    position: inx,
-                    positionAnswer: inx,
-                  } as QuestionOption)
-                }
+                onClick={() => handleOnClick(inx)}
                 key={inx}
                 data-selected={
                   typeof answer?.position === "number"

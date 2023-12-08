@@ -31,7 +31,9 @@ export function Model24({
 
   /* Autoplay logic */
   const autoplayRule = getRule("autoplay");
+  const autoplayAuxRule = getRule("autoplayAux");
   const shouldPlay = autoplayRule?.value === "false" ? false : true;
+  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
 
   const mainAudioRef = useRef<AudioButtonRef>(null);
   const auxAudioRef = useRef<AudioButtonRef>(null);
@@ -73,10 +75,11 @@ export function Model24({
     <>
       <Group mx="auto" h="50px">
         {audioTitles.map((title, inx) => {
+          const isEnunciationTitle = title.placeholder.includes('Enunciado');
+          const shouldPlayCheck = isEnunciationTitle ? shouldPlay : shouldPlay === false;
           const props = {
-            ref: inx === 0 ? mainAudioRef : auxAudioRef,
-            autoPlay:
-              inx === 0 ? shouldPlay : shouldPlay === false ? true : false,
+            ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
+            autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
             icon:
               inx > 0 ? (
                 <IconRotateClockwise

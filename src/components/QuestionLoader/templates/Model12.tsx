@@ -1,5 +1,5 @@
 import { Group, Image } from "@mantine/core";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
 import arrowLeft from "~/assets/planets/arrow-left-red.png";
@@ -14,7 +14,7 @@ import { AudioInterface } from "~/sounds";
 export function Model12({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, imageTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
@@ -62,9 +62,11 @@ export function Model12({
     onAnswerChange(answers);
   }, [answers]);
 
+  const conditions = useMemo(() => [stack.length === 0], [stack]);
+
   useEffect(() => {
-    setContinueDisabled(answers.length < question.options.length);
-  }, [question, answers]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>

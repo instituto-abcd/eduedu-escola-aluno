@@ -5,7 +5,7 @@ import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
 import { ReadButton } from "~/components/ReadButton";
 
@@ -30,26 +30,12 @@ export function Model19({
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
 
-  const [options, setOptions] = useState<QuestionOption[]>(question.options);
+  const [options, setOptions] = useState<QuestionOption[]>([]);
   const [targetLettersTitles, setTargetLettersTitles] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([]);
 
-  const descRule = question.rules.find(
-    (rule) => rule.name === "show_option_desc"
-  );
-  const showOptionsDesc = Boolean(
-    descRule === undefined ? true : descRule.value === "false" ? false : true
-  );
-
-  const targetLettersRule = question.rules.find(
-    (rule) => rule.name === "show_targets_letters"
-  );
-  const showTargetLetters = Boolean(
-    targetLettersRule === undefined
-      ? true
-      : targetLettersRule.value === "false"
-      ? false
-      : true
-  );
+  const showOptionsDesc = !question.rules.find((rule) => rule.name === "show_option_desc")?.value === "false";
+  const showTargetLetters = !question.rules.find((rule) => rule.name === "show_targets_letters")?.value === "false";
 
   const lettersTitle = question.titles.find((title) => title.type === "TEXT");
 
@@ -58,38 +44,6 @@ export function Model19({
       setTargetLettersTitles(lettersTitle.description.split(" "));
     }
   }, [lettersTitle]);
-
-  const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
-    question.options.map(() => null)
-  );
-
-  function handleDrop(item: QuestionOption | null, index: number) {
-    setAnswers((state) =>
-      produce(state, (draft) => {
-        draft[index] = item;
-      })
-    );
-    setOptions((state) =>
-      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
-    );
-  }
-
-  function handleClear(item: QuestionOption | null, index: number) {
-    setAnswers((state) =>
-      produce(state, (draft) => {
-        draft[index] = null;
-      })
-    );
-
-    setOptions((state) =>
-      produce(state, (draft) => {
-        // Add the cleared item back to the options array
-        if (item) {
-          draft.push(item);
-        }
-      })
-    );
-  }
 
   useEffect(() => {
     setOptions(question.options);
@@ -100,14 +54,50 @@ export function Model19({
     onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
 
-  const conditions = useMemo(
-    () => [answers.every((ans) => ans !== null)],
-    [answers]
-  );
+  const conditions = useMemo(() => [answers.every((ans) => ans !== null)], [answers]);
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  const handleDrop = useCallback((item: QuestionOption | null, index: number) => {
+    setAnswers((prevAnswers) =>
+      produce(prevAnswers, (draft) => {
+        if (draft[index] === null && !draft.some((ans) => ans?.image_id === item?.image_id)) {
+          draft[index] = item;
+        }
+      })
+    );
+
+    setOptions((prevOptions) =>
+      produce(prevOptions, (draft) => {
+        if (item) {
+          const itemIndex = draft.findIndex((opt) => opt.image_id === item.image_id);
+          if (itemIndex !== -1) {
+            draft.splice(itemIndex, 1);
+          }
+        }
+      })
+    );
+  }, []);
+
+  const handleClear = useCallback((item: QuestionOption | null, index: number) => {
+    setAnswers((prevAnswers) =>
+      produce(prevAnswers, (draft) => {
+        draft[index] = null;
+      })
+    );
+
+    setOptions((prevOptions) =>
+      produce(prevOptions, (draft) => {
+        if (item && !draft.some((opt) => opt.image_id === item.image_id)) {
+          draft.push(item);
+        }
+      })
+    );
+  }, []);
+
+
 
   return (
     <>
@@ -153,8 +143,8 @@ export function Model19({
                     showTargetLetters
                       ? targetLettersTitles[inx]
                       : answers[inx]
-                      ? answers[inx]?.description
-                      : null
+                        ? answers[inx]?.description
+                        : null
                   }
                   disabled
                   onClear={() => handleClear(answer, inx)}

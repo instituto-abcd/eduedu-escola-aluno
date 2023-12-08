@@ -1,22 +1,44 @@
 import { Group } from "@mantine/core";
-import { useTimeout } from "@mantine/hooks";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
-import { useDownloadLottieFile } from "~/api/lottie";
+import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useTimeout } from "@mantine/hooks";
 
-export function Model16({ question, setContinueDisabled }: ModelProps) {
-  const { audioTitles, lottieTitles } = useQuestionHelper(question);
+export function Model16({ question, onConditionsChange }: ModelProps) {
+  const {
+    audioTitles,
+    lottieTitles,
+    audioTitleAutoplay,
+    hasAudioTitle,
+    getRule,
+  } = useQuestionHelper(question);
 
   const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
     enabled: !!lottieTitles[0]?.file_id,
   });
+  const [modifiedData, setModifiedData] = useState<LottieLayers>();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
+  const skipLottie = getRule("skipLottie")?.value === "true";
+
+  useEffect(() => {
+    if (data && skipLottie) {
+      const outlineLayer = data.layers.find((layer) =>
+        layer.nm.includes("outline")
+      );
+      const updatedData = outlineLayer
+        ? { ...data, layers: [outlineLayer] }
+        : data;
+      setModifiedData(updatedData);
+    } else {
+      setModifiedData(data);
+    }
+  }, [data, skipLottie]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -64,38 +86,30 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
     }
   }, [canvasRef]);
 
+  const { start } = useTimeout(() => {
+    onConditionsChange([]);
+  }, 4000);
+
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d")!;
       ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     }
-  }, [question]);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const { start } = useTimeout(() => {
-    void audioRef.current?.play();
-  }, 4000);
-
-  useEffect(() => {
     start();
-    setContinueDisabled(false);
   }, [question]);
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={inx}
-                src={title.file_url!}
-                autoPlay={false}
-                ref={audioRef}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              src={title.file_url!}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
+          ))}
         </Group>
       )}
 
@@ -107,12 +121,12 @@ export function Model16({ question, setContinueDisabled }: ModelProps) {
       >
         <canvas ref={canvasRef} />
 
-        {data && (
+        {modifiedData && (
           <Lottie
             options={{
               loop: false,
               autoplay: true,
-              animationData: data,
+              animationData: modifiedData,
               rendererSettings: {
                 preserveAspectRatio: "xMidYMid slice",
               },

@@ -5,8 +5,8 @@ import { Modal, Stack } from "@mantine/core";
 import { IconBook } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
 import { ModelMapper } from "../QuestionLoader/ModelMapper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { lousaWidth } from "~/constants/dimensions";
+import { useAudioStatus } from "~/stores/audio";
 
 type Props = {
   question: Question;
@@ -14,10 +14,10 @@ type Props = {
 
 export function ReadButton({ question }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
-  const mediaTrack = useMediaTrackStore();
+  const isPlaying = useAudioStatus((state) => state.isPlaying);
 
   const onClose = () => {
-    if (mediaTrack.isPlaying) return;
+    if (isPlaying) return;
     close();
   };
 
@@ -46,7 +46,7 @@ export function ReadButton({ question }: Props) {
             commonProps={{
               question,
               onAnswerChange: () => {},
-              setContinueDisabled: () => {},
+              onConditionsChange: () => {},
             }}
           />
         </Stack>

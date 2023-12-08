@@ -2,17 +2,14 @@ import { Group, Box, Image, Text, Stack, ScrollArea } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useEffect, useState } from "react";
-import { MediaType, useMediaTrackStore } from "~/stores/media-track.store";
+import { useEffect, useMemo, useState } from "react";
 import { TextOptionButton } from "~/components/OptionButton";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { boardW } from "~/constants/dimensions";
 
-// TODO: variação em que não há áudio, o slide é de imagem e texto (como visto em questão 0 do planeta Rato Miguel)
-
-export function Model27({ question, setContinueDisabled }: ModelProps) {
-  const { audioTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
+export function Model27({ question, onConditionsChange }: ModelProps) {
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
 
   const totalSlides = question.options.length;
   const [slideIndex, setSlideIndex] = useState(0);
@@ -28,39 +25,45 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
     setSlideIndex(slideIndex - 1);
   }
 
-  const disabled = slideIndex + 1 < totalSlides || mediaTrack.isPlaying;
-  useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
-
   useEffect(() => {
     setSlideIndex(0);
   }, [question]);
 
+  const conditions = useMemo(
+    () => [slideIndex + 1 === totalSlides],
+    [slideIndex]
+  );
+
   useEffect(() => {
-    if (mediaTrack.isPlaying) return;
-    mediaTrack.play({
-      mediaType: MediaType.AUDIO,
-      trackId: currentSlide.sound_url ?? "",
-      trackUrl: currentSlide.sound_url ?? "",
-    });
-  }, [slideIndex]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {/* TODO: bug no áudio tocar várias vezes é referente ao componente AudioButton e a chave autoplay */}
-      {audioTitles
-        .filter((title) => !!title.file_url)
-        .map((title) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            key={title.file_url}
-            autoPlay={currentSlide.position != 1}
-          />
-        ))}
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <>
+              {slideIndex === 0 ?
+                <AudioButton
+                  key={inx}
+                  autoPlay={audioTitleAutoplay(inx)}
+                  src={title.file_url!}
+                />
+                :
+                <AudioButton
+                  key={inx}
+                  autoPlay={false}
+                  src={currentSlide.sound_url!}
+                />
+              }
+            </>
+          ))}
+        </Group>
+      )}
 
       <Stack spacing={boardW(20)} align="center" my="auto">
-        {currentSlide.image_url && (
+        {currentSlide?.image_url && (
           <Image
             src={currentSlide.image_url}
             alt={currentSlide.description}
@@ -69,7 +72,7 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
           />
         )}
 
-        {currentSlide.description && (
+        {currentSlide?.description && (
           <ScrollArea w={boardW(900)} mah={boardW(300)}>
             <Box>
               <Text
@@ -79,12 +82,16 @@ export function Model27({ question, setContinueDisabled }: ModelProps) {
                 align="center"
                 dangerouslySetInnerHTML={{ __html: currentSlide.description }}
                 maw={800}
+                mah={300}
               />
             </Box>
           </ScrollArea>
         )}
         <Group position="center">
-          <TextOptionButton onClick={previousSlide}>
+          <TextOptionButton 
+            disabled={slideIndex === 0}
+            onClick={previousSlide}
+          >
             <IconChevronLeft size={40} />
           </TextOptionButton>
           <TextOptionButton

@@ -1,19 +1,20 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model24({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, textTitles, imageTitles, optionArrKey } =
+  const { audioTitles, textTitles, imageTitles, getRule } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<number>(-1);
@@ -28,7 +29,29 @@ export function Model24({
   const isTypeSelect = !isTypeComplete;
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
 
-  const disabled = isTypeSelect ? !singleAnswer : answer === -1;
+  /* Autoplay logic */
+  const autoplayRule = getRule("autoplay");
+  const autoplayAuxRule = getRule("autoplayAux");
+  const shouldPlay = autoplayRule?.value === "false" ? false : true;
+  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxAudioRef = useRef<AudioButtonRef>(null);
+
+  useLayoutEffect(() => {
+    if (mainAudioRef.current && auxAudioRef.current) {
+      if (shouldPlay) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxAudioRef.current!.sound.play();
+        });
+      }
+    }
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
+  /* End autoplay logic */
 
   useEffect(() => {
     setAnswer(-1);
@@ -39,36 +62,37 @@ export function Model24({
     onAnswerChange(isTypeSelect ? [singleAnswer as QuestionOption] : []);
   }, [answer, singleAnswer]);
 
+  const conditions = useMemo(
+    () => [isTypeSelect ? !!singleAnswer : answer !== -1],
+    [answer, singleAnswer]
+  );
+
   useEffect(() => {
-    setContinueDisabled(disabled);
-  }, [disabled]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
       <Group mx="auto" h="50px">
-        {hasAudioTitle &&
-          audioTitles.map((title, inx) =>
-            inx === 0 ? (
-              <AudioButton
-                key={title.position}
-                src={title.file_url ?? ""}
-                autoPlay
-              />
-            ) : (
-              <AudioButton
-                key={title.position}
-                src={title.file_url ?? ""}
-                buttonProps={{
-                  icon: (
-                    <IconRotateClockwise
-                      style={{ transform: "rotateX(180deg)" }}
-                      size={30}
-                    />
-                  ),
-                }}
-              />
-            )
-          )}
+        {audioTitles.map((title, inx) => {
+          const isEnunciationTitle = title.placeholder.includes('Enunciado');
+          const shouldPlayCheck = isEnunciationTitle ? shouldPlay : shouldPlay === false;
+          const props = {
+            ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
+            autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
+            icon:
+              inx > 0 ? (
+                <IconRotateClockwise
+                  style={{ transform: "rotateX(180deg)" }}
+                  size={30}
+                />
+              ) : undefined,
+          } as const;
+
+          return (
+            <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
+          );
+        })}
       </Group>
 
       <Stack my="auto" spacing={boardW(40)}>
@@ -105,8 +129,8 @@ export function Model24({
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
-                  key={optionArrKey(option, inx)}
-                  isCorrect={option.isCorrect}
+                  key={inx}
+                  option={option}
                   onClick={() => setAnswer(inx)}
                   data-selected={answer === inx}
                   style={{
@@ -152,8 +176,8 @@ export function Model24({
             <Group>
               {question.options.map((option, inx) => (
                 <OptionButton
-                  key={optionArrKey(option, inx)}
-                  isCorrect={option.isCorrect}
+                  key={inx}
+                  option={option}
                   onClick={() => setSingleAnswer(option)}
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
@@ -162,7 +186,6 @@ export function Model24({
                     width: boardW(190),
                     height: boardW(120),
                   }}
-                  sound={option.sound_url ?? undefined}
                 >
                   {option.description}
                   {option.image_url && (

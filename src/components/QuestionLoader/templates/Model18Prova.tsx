@@ -1,6 +1,6 @@
 import { Group, Image, Stack } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
@@ -13,7 +13,7 @@ import { ModelProps } from ".";
 export function Model18Prova({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
@@ -59,10 +59,24 @@ export function Model18Prova({
 
   useEffect(() => {
     onAnswerChange(selected);
-    const _slots = text.split("").map((char) => (char === "_" ? null : char));
-    const emptySlots = _slots.filter((slot) => slot === null);
-    setContinueDisabled(selected.length !== emptySlots.length);
   }, [selected, text]);
+
+  const conditions = useMemo(
+    () => [
+      (() => {
+        const _slots = text
+          .split("")
+          .map((char) => (char === "_" ? null : char));
+        const emptySlots = _slots.filter((slot) => slot === null);
+        return selected.length === emptySlots.length;
+      })(),
+    ],
+    [selected, text]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -72,16 +86,6 @@ export function Model18Prova({
             src={title.file_url ?? ""}
             key={title.file_name}
             autoPlay
-            onEnded={() => {
-              const _slots = text
-                .split("")
-                .map((char) => (char === "_" ? null : char));
-              const emptySlots = _slots.filter((slot) => slot === null);
-
-              console.log("ended");
-
-              setContinueDisabled(selected.length !== emptySlots.length);
-            }}
           />
         ))}
       </Group>

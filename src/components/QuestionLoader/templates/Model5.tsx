@@ -1,11 +1,10 @@
 import { Group, SimpleGrid, Stack, Title, createStyles } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
 import { ReadButton } from "~/components/ReadButton";
@@ -38,7 +37,7 @@ const useStyles = createStyles({
 export function Model5({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
   auxQuestion,
 }: ModelProps) {
   const {
@@ -52,7 +51,6 @@ export function Model5({
   } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const [multipleAnswer, setMultipleAnswer] = useState<QuestionOption[]>([]);
-  const mediaTrack = useMediaTrackStore();
   const { classes } = useStyles();
 
   function handleOptionClick(option: QuestionOption) {
@@ -93,20 +91,24 @@ export function Model5({
     }
   }, [answer, multipleAnswer]);
 
-  /* Handle continue disable */
-  useEffect(() => {
-    if (question.multiplesAnswer) {
-      setContinueDisabled(multipleAnswer.length === 0);
-    } else {
-      setContinueDisabled(!answer);
-    }
-  }, [answer, multipleAnswer]);
-
   /* handle clear answers */
   useEffect(() => {
     setAnswer(null);
     setMultipleAnswer([]);
   }, [question]);
+
+  /* Conditions */
+  const conditions = useMemo(
+    () =>
+      question.multiplesAnswer
+        ? [multipleAnswer.length > 0]
+        : [Boolean(answer)],
+    [answer, multipleAnswer]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -123,7 +125,14 @@ export function Model5({
         </Group>
       )}
 
-      <Group spacing={boardW(80)} my="auto" w="100%">
+      <Group
+        spacing={boardW(80)}
+        my="auto"
+        w="100%"
+        position="center"
+        noWrap
+        px={8}
+      >
         <Stack w="45%" align="center">
           {!hasVideo && hasText && (
             <Title
@@ -156,19 +165,13 @@ export function Model5({
           {videoTitles
             .filter((title) => title.file_url)
             .map((title, inx) => (
-              <VideoPlayer
-                src={title.file_url!}
-                key={inx}
-                autoPlay
-                onPlayStatusChange={mediaTrack.setPlayStatus}
-                canPlay={mediaTrack.canPlay()}
-              />
+              <VideoPlayer src={title.file_url!} key={inx} autoPlay />
             ))}
         </Stack>
 
         <SimpleGrid
           cols={question.options.some((op) => !!op.image_url) ? 2 : 1}
-          w="45%"
+          w="fit-content"
         >
           {question.options.map((option, inx) =>
             option.image_url ? (
@@ -176,7 +179,7 @@ export function Model5({
                 key={inx}
                 onClick={() => handleOptionClick(option)}
                 data-selected={getSelectedState(option)}
-                sound={option.sound_url ?? undefined}
+                option={option}
                 className={classes.option}
               >
                 <img src={option.image_url} alt={option.description} />
@@ -187,6 +190,8 @@ export function Model5({
                 onClick={() => handleOptionClick(option)}
                 data-selected={getSelectedState(option)}
                 className={classes.textOption}
+                option={option}
+                debug={{ size: 8 }}
               >
                 {option.description}
               </TextOptionButton>

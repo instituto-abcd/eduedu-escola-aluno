@@ -8,14 +8,13 @@ import {
   Title,
 } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { ModelProps } from ".";
 
 const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
@@ -23,13 +22,11 @@ const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
 export function Model8Prova({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, textTitles, imageTitles, videoTitles, hasAudioTitle } =
     useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-
-  const mediaTrack = useMediaTrackStore();
 
   useEffect(() => {
     setAnswer(null);
@@ -37,8 +34,13 @@ export function Model8Prova({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -57,13 +59,13 @@ export function Model8Prova({
           </Title>
         ))}
 
-        <Group noWrap w="100%" spacing={boardW(80)} position="center">
+        <Group noWrap w="100%" spacing={boardW(40)} position="center">
           {imageTitles.map((title, inx) => (
             <Image
               src={title.file_url}
               alt={title.description}
               key={inx}
-              width={boardW(250)}
+              width={boardW(500)}
             />
           ))}
 
@@ -71,12 +73,7 @@ export function Model8Prova({
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <Box key={inx}>
-                <VideoPlayer
-                  src={title.file_url ?? ""}
-                  onPlayStatusChange={mediaTrack.setPlayStatus}
-                  canPlay={mediaTrack.canPlay()}
-                  autoPlay
-                />
+                <VideoPlayer src={title.file_url ?? ""} autoPlay />
               </Box>
             ))}
 
@@ -88,9 +85,9 @@ export function Model8Prova({
                     key={inx}
                     onClick={() => setAnswer(option)}
                     data-selected={answer?.position === option.position}
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
                     style={{ width: "100%" }}
+                    option={option}
+                    debug={{ size: 12 }}
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
@@ -111,8 +108,8 @@ export function Model8Prova({
                     key={inx}
                     onClick={() => setAnswer(option)}
                     data-selected={answer?.position === option.position}
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
+                    option={option}
+                    debug={{ size: 12 }}
                   >
                     <Stack justify="space-evenly">
                       <IconVolume size={boardW(62)} />
@@ -133,8 +130,8 @@ export function Model8Prova({
                     key={inx}
                     onClick={() => setAnswer(option)}
                     data-selected={answer?.position === option.position}
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
+                    option={option}
+                    debug={{ size: 12 }}
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
@@ -155,8 +152,8 @@ export function Model8Prova({
                     key={inx}
                     onClick={() => setAnswer(option)}
                     data-selected={answer?.position === option.position}
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
+                    option={option}
+                    debug={{ size: 12 }}
                   >
                     <Stack justify="space-evenly">
                       <IconVolume size={boardW(62)} />

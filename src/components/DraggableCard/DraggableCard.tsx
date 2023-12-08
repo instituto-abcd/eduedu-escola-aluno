@@ -1,8 +1,23 @@
 import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CSSProperties, useRef } from "react";
+import { CSSProperties, useCallback, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { boardW, lousaWidth } from "~/constants/dimensions";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { useDebugInfo } from "~/stores/debug-info";
+import { DebugDiv } from "../Debug/DebugDiv";
+import { QuestionOption } from "~/api/exam";
+import { DebugProps } from "../Debug";
+
+const isImageSmall = (
+  imgElement: HTMLImageElement | null,
+  minimumHeight: number
+) => {
+  if (imgElement) {
+    return imgElement.height <= minimumHeight;
+  }
+  return false;
+};
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -14,7 +29,6 @@ const useStyles = createStyles((theme) => ({
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#228BE6",
-    padding: 16,
     display: "grid",
     placeItems: "center",
     position: "relative",
@@ -54,18 +68,22 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   image?: string | null;
   disabled?: boolean;
   onClear?: () => void;
+  debug?: DebugProps;
+  noPaddingRule?: boolean | false;
 };
 
 export function DraggableCard<T>({
   item,
   text,
-  sound,
+  sound: _sound,
+  debug,
   image,
   hidden,
   onClear,
   disabled,
   textClasses,
   itemType = "ANSWER_CARD",
+  noPaddingRule,
   ...props
 }: Props<T>) {
   const { classes, cx } = useStyles();
@@ -81,20 +99,36 @@ export function DraggableCard<T>({
     [item]
   );
 
+  const { sound, isPlaying } = useCreateSound({
+    src: _sound ?? "",
+    skipPlayStatus: true,
+  });
+
   const styles: CSSProperties = {
     opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
     cursor: isDragging ? "move" : "grab",
-    pointerEvents: hidden ? "none" : "all",
+    pointerEvents: hidden || isPlaying ? "none" : "all",
+    width: noPaddingRule ? "auto" : undefined,
+    padding: noPaddingRule ? 0 : 16,
   };
 
-  const soundRef = useRef<HTMLAudioElement>(null);
+  const [hasSmallHeight, setHasSmallHeight] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (sound) {
-      void soundRef.current?.play();
-    }
+    if (sound) sound.play();
     props?.onClick?.(e);
   }
+
+  const handleImageLoad = useCallback(() => {
+    const minimumHeight = 55;
+    if (isImageSmall(imageRef.current, minimumHeight)) {
+      setHasSmallHeight(true);
+    }
+  }, [imageRef.current]);
+
+  /* debug */
+  const canDebug = useDebugInfo((s) => s.answer);
 
   return (
     <div
@@ -112,20 +146,30 @@ export function DraggableCard<T>({
             pointerEvents: "none",
             userSelect: "none",
             maxWidth: boardW(100),
-            maxHeight: boardW(60),
+            maxHeight: hasSmallHeight ? boardW(90) : boardW(60),
             marginInline: "auto",
             objectFit: "contain",
           }}
+          ref={imageRef}
+          onLoad={handleImageLoad}
         />
       )}
-      {text && <Text className={cx(classes.text, textClasses)}>{text}</Text>}
-      {onClear && (
+      {text && !image && (
+        <Text className={cx(classes.text, textClasses)}>{text}</Text>
+      )}
+      {image && onClear && (
         <button className={classes.close} onClick={onClear}>
           <IconTrash size={16} />
         </button>
       )}
-      {sound && (
-        <audio src={sound} ref={soundRef} className={classes.audio}></audio>
+
+      {canDebug && !debug?.skipDebug && item && (
+        <DebugDiv
+          position={+(item as unknown as QuestionOption).position}
+          debug={debug}
+        >
+          {(item as unknown as QuestionOption).isCorrect}
+        </DebugDiv>
       )}
     </div>
   );

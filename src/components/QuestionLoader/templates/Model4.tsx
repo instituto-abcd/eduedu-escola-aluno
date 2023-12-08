@@ -1,5 +1,5 @@
 import { Group, Image, Stack, Text, Title, createStyles } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -19,7 +19,7 @@ const useStyles = createStyles({
 export function Model4({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -29,7 +29,14 @@ export function Model4({
     imageTitles,
     hasAudioTitle,
     audioTitleAutoplay,
+    getRule,
+    isExam,
   } = useQuestionHelper(question);
+  const hideOptionsTextRule = getRule("options_hide_text");
+  const showOptionsText =
+    hideOptionsTextRule && hideOptionsTextRule.value === "false" ? false : true;
+  const hasDescription = (description: string) =>
+    description !== null && description !== "";
 
   useEffect(() => {
     setAnswer(null);
@@ -37,8 +44,13 @@ export function Model4({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -85,8 +97,7 @@ export function Model4({
               key={inx}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               onClick={() => setAnswer(option)}
-              sound={option.sound_url ?? undefined}
-              isCorrect={option.isCorrect}
+              option={option}
             >
               {option.image_url && (
                 <>
@@ -104,11 +115,13 @@ export function Model4({
                       userSelect: "none",
                     }}
                   />
-                  {!question.axis_code && question.axis_code === null && (
-                    <Text size={14} color="gray.7" weight={600}>
-                      {option.description}
-                    </Text>
-                  )}
+                  {!isExam &&
+                    showOptionsText &&
+                    hasDescription(option.description) && (
+                      <Text size={14} color="gray.7" weight={600}>
+                        {option.description}
+                      </Text>
+                    )}
                 </>
               )}
               {!option.image_url && (

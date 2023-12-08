@@ -1,6 +1,6 @@
 import { Group, Image, Stack } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
@@ -13,14 +13,19 @@ import { ModelProps } from ".";
 export function Model18({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
   const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
-  const text = textTitles.filter(
-    (title) => title.description && title.description.length > 0
-  )[0].description;
+  const text = useMemo(
+    () =>
+      textTitles.filter(
+        (title) => title.description && title.description.length > 0
+      )[0].description,
+    [question]
+  );
+
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
     () =>
       text
@@ -37,14 +42,10 @@ export function Model18({
     );
 
     if (item) {
-      const indexOffset = index - text.replace(/_/gi, "").length;
-
-      setSelected((state) =>
-        produce(state, (draft) => {
-          draft[indexOffset] = {
-            ...item,
-            positionAnswer: indexOffset,
-          };
+      setSelected((prevSelected) =>
+        prevSelected.concat({
+          ...item,
+          positionAnswer: index,
         })
       );
     }
@@ -52,29 +53,31 @@ export function Model18({
 
   function handleClear(index: number) {
     handleDrop(null, index);
-    setSelected(selected.filter((_, inx) => inx !== index));
+    setSelected(selected.filter((_) => _.positionAnswer !== index));
   }
 
   useEffect(() => {
     setSelected([]);
-  }, [question]);
-
-  useEffect(() => {
     setSlots(
       text
         .replace(/\s/g, "")
         .split("")
         .map((char) => (char === "_" ? null : char))
     );
-  }, [text]);
+  }, [question]);
 
   useEffect(() => {
     onAnswerChange(selected);
-    setContinueDisabled(
-      selected.length !== slots.filter((slot) => slot === null).length
-    );
   }, [selected]);
 
+  const conditions = useMemo(
+    () => [slots.every((slot) => slot !== null)],
+    [slots]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
   return (
     <>
       {audioTitles.some((title) => title.file_url) && (
@@ -100,7 +103,11 @@ export function Model18({
         <Group spacing={boardW(14)}>
           {slots.map((slot, inx) => {
             if (typeof slot === "string")
-              return <TextOptionButton key={inx}>{slot}</TextOptionButton>;
+              return (
+                <TextOptionButton key={inx} debug={{ skipDebug: true }}>
+                  {slot}
+                </TextOptionButton>
+              );
 
             return (
               <DragLetterSlot
@@ -117,7 +124,8 @@ export function Model18({
           {question.options.map((option, inx) => (
             <DraggableLetters
               key={inx}
-              option={option}
+              debug={{ skipDebug: true }}
+              option={{...option, description: option.description.toUpperCase()}}
               hidden={
                 !!slots.find(
                   (item) =>

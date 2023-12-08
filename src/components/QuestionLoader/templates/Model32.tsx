@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Group,
   Image,
@@ -9,7 +8,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -26,6 +25,7 @@ const useStyles = createStyles((theme) => ({
       fontSize: boardW(24),
       fontWeight: 600,
     },
+    textAlign: "center",
   },
 }));
 
@@ -33,7 +33,7 @@ export function Model32({
   question,
   auxQuestion,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
 
@@ -54,8 +54,13 @@ export function Model32({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -73,7 +78,7 @@ export function Model32({
         </Group>
       )}
 
-      <Stack my="auto" w={boardW(800)}>
+      <Stack my="auto" w={boardW(800)} justify="center">
         <Title color="dark.3" size={boardW(24)} align="center">
           {
             textTitles.find(
@@ -82,99 +87,109 @@ export function Model32({
             )?.description
           }
         </Title>
-
-        <Flex w="100%" gap={boardW(50)} m="auto">
-          <Box w="100%" maw={boardW(400)}>
-            <ScrollArea h={boardW(400)} type="always">
-              <Stack pb={5}>
-                {question?.planet_id && (
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html: textTitles.filter(
-                        (item) => item.placeholder != "ID da historinha"
-                      )?.[0]?.description,
-                    }}
-                    className={classes.typography}
-                  />
-                )}
-                {!question?.planet_id && (
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find(
-                          (title) =>
-                            title.classification ===
-                            QuestionTitleClassification.HISTORIA
-                        )?.description ??
-                        textTitles[0]?.description ??
-                        "",
-                    }}
-                    className={classes.typography}
-                  />
-                )}
-
-                {imageTitles
-                  .filter((title) => !!title.file_url)
-                  .map((title) => (
-                    <Image
-                      src={title.file_url}
-                      key={title.file_url}
-                      width={boardW(300)}
-                      m="auto"
-                    />
-                  ))}
-              </Stack>
-            </ScrollArea>
-          </Box>
-          <Box w="100%" maw={boardW(420)}>
-            <ScrollArea h={boardW(420)}>
-              <Stack my="auto">
+        <Flex w="100%" justify="space-between">
+          <ScrollArea mah={boardW(400)} w="48%" pr={20}>
+            <Stack pb={5}>
+              {question?.planet_id && (
                 <Text
-                  size={boardW(20)}
-                  weight={600}
-                  color="dark.3"
-                  align="center"
-                >
-                  {
-                    textTitles.find(
-                      (title) =>
-                        title.classification ===
-                        QuestionTitleClassification.ENUNCIADO
-                    )?.description
-                  }
-                </Text>
-                {question.options.map((option, inx) => (
-                  <TextOptionButton
-                    key={optionArrKey(option, inx)}
-                    onClick={() =>
-                      setAnswer({
-                        ...option,
-                        positionAnswer: question.orderedAnswer
-                          ? option.position
-                          : undefined,
-                      } as QuestionOption)
-                    }
-                    data-selected={
-                      JSON.stringify(answer) === JSON.stringify(option)
-                    }
-                    sound={option.sound_url ?? undefined}
-                    isCorrect={option.isCorrect}
-                    style={{
-                      // maxWidth: lousaWidth * 40 / 100,
-                      // minWidth: "auto",
-                      width: "100%",
-                      wordWrap: "break-word",
-                      wordBreak: "break-word",
-                      textAlign: "center",
-                      fontSize: boardW(20),
-                    }}
-                  >
-                    {option.description}
-                  </TextOptionButton>
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find(
+                        (title) =>
+                          title.placeholder?.includes("Campo") ||
+                          (!title.placeholder && title.description)
+                      )?.description ?? "",
+                  }}
+                  className={classes.typography}
+                />
+              )}
+              {!question?.planet_id && (
+                <Text
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find(
+                        (title) =>
+                          title.classification ===
+                          QuestionTitleClassification.HISTORIA
+                      )?.description ??
+                      textTitles[0]?.description ??
+                      "",
+                  }}
+                  className={classes.typography}
+                />
+              )}
+
+              {imageTitles
+                .filter((title) => !!title.file_url)
+                .map((title) => (
+                  <Image
+                    src={title.file_url}
+                    key={title.file_url}
+                    width={boardW(300)}
+                    m="auto"
+                  />
                 ))}
-              </Stack>
-            </ScrollArea>
-          </Box>
+
+              {question?.planet_id && (
+                <Text
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find(
+                        (title) =>
+                          title.placeholder?.includes("Enunciado") ||
+                          title.placeholder?.includes("Quem disse")
+                      )?.description ?? "",
+                  }}
+                  className={classes.typography}
+                />
+              )}
+            </Stack>
+          </ScrollArea>
+          <ScrollArea mah={boardW(420)} w="48%" pr={20}>
+            <Stack pb={5}>
+              <Text
+                size={boardW(20)}
+                weight={600}
+                color="dark.3"
+                align="center"
+              >
+                {
+                  textTitles.find(
+                    (title) =>
+                      title.classification ===
+                      QuestionTitleClassification.ENUNCIADO
+                  )?.description
+                }
+              </Text>
+              {question.options.map((option, inx) => (
+                <TextOptionButton
+                  key={optionArrKey(option, inx)}
+                  onClick={() =>
+                    setAnswer({
+                      ...option,
+                      positionAnswer: question.orderedAnswer
+                        ? option.position
+                        : undefined,
+                    } as QuestionOption)
+                  }
+                  data-selected={
+                    JSON.stringify(answer) === JSON.stringify(option)
+                  }
+                  option={option}
+                  style={{
+                    width: "100%",
+                    wordWrap: "break-word",
+                    wordBreak: "break-word",
+                    textAlign: "center",
+                    fontSize: boardW(20),
+                  }}
+                  debug={{ size: 10 }}
+                >
+                  {option.description}
+                </TextOptionButton>
+              ))}
+            </Stack>
+          </ScrollArea>
         </Flex>
       </Stack>
     </>

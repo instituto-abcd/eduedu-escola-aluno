@@ -1,16 +1,17 @@
 import { Group, Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 export function Model14({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
@@ -24,8 +25,26 @@ export function Model14({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  const { sound } = useCreateSound({
+    src: question.options[0].sound_url ?? "",
+    autoPlay: false,
+  });
+
+  const handleOnClick = (index: number) => {
+    sound.play();
+    setAnswer({
+      position: index,
+      positionAnswer: index,
+    } as QuestionOption);
+  }
 
   return (
     <>
@@ -59,17 +78,17 @@ export function Model14({
             .fill(null)
             .map((_, inx) => (
               <TextOptionButton
-                onClick={() =>
-                  setAnswer({
-                    position: inx,
-                    positionAnswer: inx,
-                  } as QuestionOption)
-                }
+                onClick={() => handleOnClick(inx)}
                 key={inx}
-                data-selected={answer?.position === inx}
+                data-selected={
+                  typeof answer?.position === "number"
+                    ? +answer.position >= inx
+                    : false
+                }
                 style={{
                   width: "100%",
                 }}
+                debug={{ skipDebug: true }}
               >
                 {inx + 1}
               </TextOptionButton>

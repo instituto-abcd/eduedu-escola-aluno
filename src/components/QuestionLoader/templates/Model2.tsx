@@ -1,18 +1,25 @@
-import { Group, SimpleGrid, Stack } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
-import { useCallback, useEffect, useState } from "react";
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model2({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
     question.options.map(() => null)
@@ -30,8 +37,38 @@ export function Model2({
   },
   []);
 
-  const { audioTitles } = useQuestionHelper(question);
-  const mediaTrack = useMediaTrackStore();
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    textTitles,
+    getRule,
+  } = useQuestionHelper(question);
+
+  /* Autoplay Aux Audio Logic */
+  const auxAutoPlayRule = getRule("auxAutoPlay");
+  const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
+  const noPaddingRule = getRule("noPadding")?.value === "true" ?? false;
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxRef = useRef<AudioButtonRef>(null);
+
+  const styles: CSSProperties = {
+    gap: noPaddingRule ? 0 : 'inherit',
+    display: noPaddingRule ? 'flex' : 'grid',
+    justifyContent: noPaddingRule ? 'center' : 'auto',
+  };
+
+  useEffect(() => {
+    if (mainAudioRef.current && auxRef.current) {
+      if (shouldPlayAux) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxRef.current?.sound.play();
+        });
+      }
+    }
+  }, [mainAudioRef, auxRef]);
+  /* End Aux Logic */
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));
@@ -41,30 +78,49 @@ export function Model2({
     onAnswerChange(
       answers.filter((answer) => answer !== null) as QuestionOption[]
     );
-
-    setContinueDisabled(!answers.every((answer) => answer !== null));
   }, [answers]);
+
+  const conditions = useMemo(
+    () => [answers.every((answer) => answer !== null)],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {/* Action buttons */}
-      {audioTitles.some((title) => title.file_url) && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title) => (
-              <AudioButton
-                key={title.file_url}
-                src={title.file_url ?? ""}
-                autoPlay
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+              ref={inx === 1 ? auxRef : mainAudioRef}
+            />
+          ))}
         </Group>
       )}
 
-      {/* Board content */}
       <Stack my="auto">
-        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
+        {textTitles.map((title) => (
+          <Text
+            size={boardW(24)}
+            color="dark.3"
+            weight={500}
+            key={title.description}
+          >
+            {title.description}
+          </Text>
+        ))}
+
+        <SimpleGrid
+          cols={question.options.length}
+          spacing={boardW(20)}
+          style={styles}
+        >
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
@@ -78,6 +134,8 @@ export function Model2({
                   sound={slot?.sound_url}
                   disabled
                   onClear={() => handleDrop(null, inx)}
+                  debug={{ skipDebug: true }}
+                  noPaddingRule={noPaddingRule}
                 />
               }
             />
@@ -93,9 +151,9 @@ export function Model2({
               text={item.description}
               sound={item.sound_url}
               hidden={
-                !!answers.find((slot) => slot?.position === item.position) ||
-                mediaTrack.isPlaying
+                !!answers.find((slot) => slot?.position === item.position)
               }
+              debug={{ debugProperty: "position" }}
             />
           ))}
         </SimpleGrid>

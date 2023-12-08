@@ -5,7 +5,7 @@ import {
   SimpleGrid,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
@@ -34,7 +34,7 @@ const useStyles = createStyles({
 export function Model34({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { audioTitles, hasAudioTitle, audioTitleAutoplay, imageTitles } =
     useQuestionHelper(question);
@@ -48,8 +48,13 @@ export function Model34({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(!answer);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -105,6 +110,7 @@ export function Model34({
                 sound={item.sound_url}
                 hidden={!!answer}
                 className={classes.cardWide}
+                debug={{ debugProperty: "isCorrect" }}
               />
             ))}
           </SimpleGrid>

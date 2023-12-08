@@ -1,6 +1,6 @@
-import { Group, Stack, createStyles } from "@mantine/core";
+import { Group, Stack, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -21,6 +21,7 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    position: 'relative',
   },
   wideButton: {
     width: boardW(240),
@@ -42,14 +43,26 @@ const useStyles = createStyles((theme) => ({
     color: theme.colors.gray[7],
     textAlign: "center",
   },
+  floatingSlot: {
+    position: 'absolute',
+    bottom: -50,
+    width: boardW(100),
+    height: boardW(100),
+    zIndex: 99
+  }
 }));
 
 export function Model25({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, imageTitles } = useQuestionHelper(question);
+  const { audioTitles, getTitlesOfType } = useQuestionHelper(question);
+  const targetTitles = getTitlesOfType("IMAGE");
+  const targets = targetTitles.some((t) => !!t.file_url)
+    ? targetTitles
+    : targetTitles.slice(-3);
+
   const { classes } = useStyles();
 
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
@@ -61,13 +74,13 @@ export function Model25({
   function onDrop(option: QuestionOption | null, inx: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[inx] = option;
+        draft[inx] = option ? option : null;
       })
     );
   }
 
   function hideOption(option: QuestionOption) {
-    return !!answers.find((op) => op?.positionAnswer === option.position);
+    return !!answers.find((op) => op?.position === option.position);
   }
 
   useEffect(() => {
@@ -80,9 +93,14 @@ export function Model25({
     );
   }, [answers]);
 
+  const conditions = useMemo(
+    () => [answers.every((ans) => ans !== null)],
+    [answers]
+  );
+
   useEffect(() => {
-    setContinueDisabled(answers.includes(null));
-  }, [answers]);
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
@@ -100,7 +118,7 @@ export function Model25({
 
       <Stack my="auto">
         <Group>
-          {imageTitles.map((title, inx) => (
+          {targets.map((title, inx) => (
             <SlotCard
               key={inx}
               title={title}
@@ -109,7 +127,7 @@ export function Model25({
                   ? onDrop(
                       {
                         ...(option as QuestionOption),
-                        positionAnswer: option?.position,
+                        positionAnswer: inx,
                       },
                       inx
                     )
@@ -126,16 +144,26 @@ export function Model25({
                 className={classes.wideButton}
                 item={option}
                 hidden={hideOption(option)}
-                text={option.description}
+                text={answers.some((answer) => answer?.position === option.position) ? null : option.description}
                 textClasses={classes.text}
+                sound={option.sound_url}
               />
             ) : (
               <DraggableCard<QuestionOption>
                 key={inx}
                 className={classes.wideButton}
                 item={option}
-                image={option.image_url}
+                image={
+                  answers.some((answer) => answer?.position === option.position)
+                    ? null
+                    : option.image_url
+                }
                 hidden={hideOption(option)}
+                sound={option.sound_url}
+                debug={{ debugProperty: "position" }}
+                disabled={answers.some(
+                  (answer) => answer?.position === option.position
+                )}
               />
             )
           )}
@@ -174,36 +202,46 @@ function SlotCard({
     setDroppedOption(null);
   }, [title]);
 
-  const { classes } = useStyles();
-
-  if (droppedOption) {
-    return (
-      <DraggableCard
-        disabled
-        className={classes.wideButton}
-        textClasses={classes.text}
-        item={droppedOption}
-        image={droppedOption.image_url}
-        text={droppedOption.description}
-        onClear={() => {
-          setDroppedOption(null), onDrop(null);
-        }}
-      />
-    );
-  }
+  const { classes, cx } = useStyles();
 
   return (
     <div className={classes.slot} ref={drop}>
-      <img
-        src={title.file_url ?? ""}
-        alt={title.description}
-        width={100}
-        style={{
-          maxHeight: 130,
-          objectFit: "contain",
-          marginInline: "auto",
-        }}
-      />
+      {title.file_url && (
+        <img
+          src={title.file_url}
+          alt={title.description}
+          width={100}
+          style={{
+            maxHeight: 130,
+            objectFit: "contain",
+            marginInline: "auto",
+          }}
+        />
+      )}
+      {droppedOption && (
+        <DraggableCard
+          disabled
+          className={cx(classes.wideButton, classes.floatingSlot)}
+          textClasses={classes.text}
+          item={droppedOption}
+          image={droppedOption.image_url}
+          text={droppedOption.description}
+          onClear={() => {
+            setDroppedOption(null), onDrop(null);
+          }}
+        />
+      )}
+      {!title.file_url && title.description && (
+        <Text
+          size={boardW(16)}
+          weight={600}
+          color="blue.6"
+          align="center"
+          p={4}
+        >
+          {title.description}
+        </Text>
+      )}
     </div>
   );
 }

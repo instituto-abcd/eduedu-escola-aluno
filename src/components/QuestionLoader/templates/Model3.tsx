@@ -1,75 +1,86 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { boardW } from "~/constants/dimensions";
-
-// Components:
-import { Group, Box, SimpleGrid, Image, createStyles } from "@mantine/core";
+import { Group, Box, SimpleGrid, createStyles } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
+import { QuestionOption } from "~/api/exam";
+import { ModelProps } from ".";
 
 const useStyles = createStyles({
-    option: {
-        width: boardW(130),
-        height: boardW(130)
-    },
-})
+  option: {
+    width: boardW(130),
+    height: boardW(130),
+  },
+});
 
-export function Model3({ question }: ModelProps) {
-    const { classes } = useStyles();
+export function Model3({
+  question,
+  onAnswerChange,
+  onConditionsChange,
+}: ModelProps) {
+  const { classes } = useStyles();
+  const { videoTitles } = useQuestionHelper(question);
+  const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-    const { videoTitles } = useQuestionHelper(question);
-    const mediaTrack = useMediaTrackStore();
-    const [answer, setAnswer] = useState<Answer | null>(null);
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
-    const [options, setOptions] = useState(null);
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
 
-    useEffect(() => {
-        setAnswer(null);
-        setOptions(null)
-        setOptions(question?.options)
-    }, [question]);
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
-    return (
-        <>
-            <Group
-                m="auto"
-                spacing={boardW(50)}
-            >
-                <Box maw={boardW(400)}>
-                    <VideoPlayer
-                        src={videoTitles[0]?.file_url ?? ""}
-                        onPlayStatusChange={mediaTrack.setPlayStatus}
-                        canPlay={mediaTrack.canPlay()}
-                        autoPlay
-                        style={{ height: boardW(240) }}
-                    />
-                </Box>
-                <Box maw={boardW(550)}>
-                    <SimpleGrid cols={2}>
-                        {options && options.map((option: Array<{}>) => (
-                            <OptionButton
-                                key={option?.image_id ?? option?.description}
-                                onClick={() =>
-                                    setAnswer({
-                                        position: option?.position,
-                                        positionAnswer: option?.position,
-                                    })
-                                }
-                                data-selected={answer?.position === option?.position}
-                                isCorrect={option?.isCorrect}
-                                className={classes.option}
-                            >
-                                <Image
-                                    height={boardW(120)}
-                                    width="auto"
-                                    src={option?.image_url} />
-                                {option?.description}
-                            </OptionButton>
-                        ))}
-                    </SimpleGrid>
-                </Box>
-            </Group>
-        </>
-    )
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  return (
+    <>
+      <Group m="auto" spacing={boardW(50)}>
+        <Box maw={boardW(400)}>
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            autoPlay
+            style={{ height: boardW(240) }}
+          />
+        </Box>
+        <Box maw={boardW(550)}>
+          <SimpleGrid cols={2}>
+            {question.options.map((option, inx) => (
+              <OptionButton
+                key={inx}
+                onClick={() => setAnswer(option)}
+                data-selected={
+                  JSON.stringify(answer) === JSON.stringify(option)
+                }
+                className={classes.option}
+                option={option}
+              >
+                {option.image_url && (
+                  <img
+                    src={option.image_url}
+                    alt={option.description}
+                    height={105}
+                    width="auto"
+                    style={{
+                      maxHeight: 120,
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      marginInline: "auto",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                  />
+                )}
+                {option.description}
+              </OptionButton>
+            ))}
+          </SimpleGrid>
+        </Box>
+      </Group>
+    </>
+  );
 }

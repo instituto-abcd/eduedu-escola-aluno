@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
@@ -13,34 +13,45 @@ export function Model10({
   question,
   auxQuestion,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const {
+    imageTitles,
+    textTitles,
+    audioTitles,
+    audioTitleAutoplay,
+    hasAudioTitle,
+    getRule,
+  } = useQuestionHelper(question);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(answer === null);
   }, [answer]);
 
   useEffect(() => {
     setAnswer(null);
   }, [question]);
 
+  const hideTextRule = getRule("options_hide_text")?.value === "true" ?? false;
+
   return (
     <>
-      {audioTitles.some((title) => title.file_url) && (
+      {hasAudioTitle && (
         <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((item, inx) => (
-              <AudioButton
-                src={item.file_url ?? ""}
-                key={inx}
-                autoPlay={audioTitleAutoplay(inx)}
-              />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
 
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
@@ -51,7 +62,7 @@ export function Model10({
           (title) => title.description && !title.placeholder.includes("ID")
         )
         .map((title, inx) => (
-          <ScrollArea mah={boardW(100)} type="always" key={inx} px="xs">
+          <ScrollArea mah={boardW(100)} type="auto" key={inx} px="xs">
             <Title
               color="dark.3"
               size={boardW(22)}
@@ -83,7 +94,7 @@ export function Model10({
                 setAnswer({
                   ...option,
                   positionAnswer: question.orderedAnswer
-                    ? option.position
+                    ? +option.position
                     : undefined,
                 })
               }
@@ -96,10 +107,12 @@ export function Model10({
                     : undefined,
                 })
               }
-              isCorrect={option.isCorrect}
-              sound={option.sound_url ?? undefined}
+              option={option}
             >
-              {option.description}
+              {(!option.image_url || !hideTextRule) && (
+                <>{option.description}</>
+              )}
+
               {option.image_url && (
                 <img
                   src={option.image_url}

@@ -1,6 +1,6 @@
 import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
@@ -26,7 +26,7 @@ const useStyles = createStyles({
 export function Model11({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const {
@@ -106,8 +106,19 @@ export function Model11({
 
   useEffect(() => {
     onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
-    setContinueDisabled(answer.includes(null));
   }, [answer]);
+
+  const conditions = useMemo(() => [!answer.includes(null)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  /* debug */
+  const overwrite = (option: QuestionOption) =>
+    question.options.map((q) => q.isCorrect).every((bool) => !bool)
+      ? getRule("answers")?.value === option.description
+      : undefined;
 
   return (
     <>
@@ -221,41 +232,43 @@ export function Model11({
           </Group>
 
           <Group align="center" position="center">
-            {question.options
-              .sort((a, b) => a.position - b.position)
-              .map((option, inx) =>
-                question.axis_code === "LC" ? (
-                  /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
-                   *  contempla alternativas em texto longo,
-                   *  já as demais apenas 1 palavra ou poucas letas
-                   */
-                  <TextOptionButton key={inx}>
-                    {option.description}
-                  </TextOptionButton>
-                ) : (
-                  <DraggableLetters
-                    option={option}
-                    key={inx}
-                    className={classes.option}
-                    hidden={
-                      !shouldRepeatAnswer &&
-                      answer.some(
-                        (item) =>
-                          JSON.stringify({
-                            ...item,
-                            positionAnswer: undefined,
-                          }) ===
-                          JSON.stringify({
-                            ...option,
-                            positionAnswer: undefined,
-                          })
-                      )
-                    }
-                  >
-                    {option.description}
-                  </DraggableLetters>
-                )
-              )}
+            {question.options.map((option, inx) =>
+              question.axis_code === "LC" ? (
+                /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
+                 *  contempla alternativas em texto longo,
+                 *  já as demais apenas 1 palavra ou poucas letas
+                 */
+                <TextOptionButton key={inx} option={option}>
+                  {option.description}
+                </TextOptionButton>
+              ) : (
+                <DraggableLetters
+                  option={option}
+                  key={inx}
+                  className={classes.option}
+                  debug={{
+                    overwriteIsCorrect: overwrite(option),
+                    outside: true,
+                  }}
+                  hidden={
+                    !shouldRepeatAnswer &&
+                    answer.some(
+                      (item) =>
+                        JSON.stringify({
+                          ...item,
+                          positionAnswer: undefined,
+                        }) ===
+                        JSON.stringify({
+                          ...option,
+                          positionAnswer: undefined,
+                        })
+                    )
+                  }
+                >
+                  {option.description}
+                </DraggableLetters>
+              )
+            )}
           </Group>
         </Stack>
       </Group>

@@ -3,15 +3,14 @@ import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
-import { DraggableCardSlot } from "~/components/DraggableCard";
+import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
+import { ReadButton } from "~/components/ReadButton";
 
 const useStyles = createStyles({
   slot: {
-    width: 95,
-    height: 95,
     color: "#495057",
     fontSize: 50,
     fontWeight: 600,
@@ -23,43 +22,82 @@ const useStyles = createStyles({
 export function Model19({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
+  auxQuestion,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } = useQuestionHelper(question);
   const { classes } = useStyles();
 
-  const [options, setOptions] = useState<QuestionOption[]>(question.options);
-  const [answers, setAnswers] = useState<QuestionOption[]>([]);
-  const slots = textTitles[0] ? textTitles[0].description.trim().split(" ") : [];
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
+    useQuestionHelper(question);
 
-  const descRule = question.rules.find(
-    (rule) => rule.name === "show_option_desc"
-  );
-  const showOptionsDesc = Boolean(
-    descRule === undefined ? true : descRule.value === "false" ? false : true
-  );
+  const [options, setOptions] = useState<QuestionOption[]>([]);
+  const [targetLettersTitles, setTargetLettersTitles] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([]);
 
-  function handleDrop(item: QuestionOption, index: number) {
-    setAnswers((state) =>
-      produce(state, (draft) => {
-        draft.push({ ...item, positionAnswer: index } as QuestionOption);
-      })
-    );
+  const showOptionsDesc = !question.rules.find((rule) => rule.name === "show_option_desc")?.value === "false";
+  const showTargetLetters = !question.rules.find((rule) => rule.name === "show_targets_letters")?.value === "false";
 
-    setOptions((state) =>
-      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
-    );
-  }
+  const lettersTitle = question.titles.find((title) => title.type === "TEXT");
 
   useEffect(() => {
-    setAnswers([]);
+    if (lettersTitle) {
+      setTargetLettersTitles(lettersTitle.description.split(" "));
+    }
+  }, [lettersTitle]);
+
+  useEffect(() => {
     setOptions(question.options);
+    setAnswers(question.options.map(() => null));
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answers);
-    setContinueDisabled(answers.length !== slots.length);
+    onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
+
+  const conditions = useMemo(() => [answers.every((ans) => ans !== null)], [answers]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  const handleDrop = useCallback((item: QuestionOption | null, index: number) => {
+    setAnswers((prevAnswers) =>
+      produce(prevAnswers, (draft) => {
+        if (draft[index] === null && !draft.some((ans) => ans?.image_id === item?.image_id)) {
+          draft[index] = item;
+        }
+      })
+    );
+
+    setOptions((prevOptions) =>
+      produce(prevOptions, (draft) => {
+        if (item) {
+          const itemIndex = draft.findIndex((opt) => opt.image_id === item.image_id);
+          if (itemIndex !== -1) {
+            draft.splice(itemIndex, 1);
+          }
+        }
+      })
+    );
+  }, []);
+
+  const handleClear = useCallback((item: QuestionOption | null, index: number) => {
+    setAnswers((prevAnswers) =>
+      produce(prevAnswers, (draft) => {
+        draft[index] = null;
+      })
+    );
+
+    setOptions((prevOptions) =>
+      produce(prevOptions, (draft) => {
+        if (item && !draft.some((opt) => opt.image_id === item.image_id)) {
+          draft.push(item);
+        }
+      })
+    );
+  }, []);
+
+
 
   return (
     <>
@@ -72,25 +110,47 @@ export function Model19({
               autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
+          {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
       )}
 
       <Stack align="center" spacing={50} my="auto">
         <CardStack
           options={options}
-          cardProps={{ variant: "square", imageOnly: !showOptionsDesc }}
+          cardProps={{
+            variant: "square",
+            imageOnly: !showOptionsDesc,
+            debug: {
+              debugProperty: "position",
+            },
+          }}
         />
 
         <Group>
-          {slots.map((slot, inx) => (
-            <DraggableCardSlot<QuestionOption>
-              onDrop={(item) => item && handleDrop(item, inx)}
-              item={null}
+          {answers.map((answer, inx) => (
+            <DraggableCardSlot
+              item={answer}
               key={inx}
+              onDrop={(item) => handleDrop(item, inx)}
               className={classes.slot}
-            >
-              {slot}
-            </DraggableCardSlot>
+              showTargetLetters={showTargetLetters}
+              replaceWith={
+                <DraggableCard
+                  item={null}
+                  key={inx}
+                  image={answers[inx]?.image_url}
+                  text={
+                    showTargetLetters
+                      ? targetLettersTitles[inx]
+                      : answers[inx]
+                        ? answers[inx]?.description
+                        : null
+                  }
+                  disabled
+                  onClear={() => handleClear(answer, inx)}
+                />
+              }
+            ></DraggableCardSlot>
           ))}
         </Group>
       </Stack>

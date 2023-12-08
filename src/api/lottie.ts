@@ -3,9 +3,12 @@ import { API } from "./base";
 import { useQuery } from "@tanstack/react-query";
 import { QueryOptions } from "./api-types";
 
+export type LottieLayers = { layers: Record<string, string>[] };
+export type LottieType = Record<string, unknown> & LottieLayers;
+
 class LottieAPI extends API {
   static async downloadLottieFile(lottieId: string) {
-    const { data } = await this.api.get(`lottie/${lottieId}`);
+    const { data } = await this.api.get<LottieType>(`lottie/${lottieId}`);
 
     return data;
   }
@@ -13,7 +16,7 @@ class LottieAPI extends API {
 
 export function useDownloadLottieFile(
   lottieId: string,
-  options: QueryOptions<string, ["lottie", string]>
+  options: QueryOptions<LottieType, ["lottie", string]>
 ) {
   const handler = useCallback(
     function () {

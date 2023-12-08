@@ -23,6 +23,7 @@ export function PlanetCompletedFeedback() {
   const { data, refetch, error, isLoading, isSuccess, isError } =
     usePlanetFeedback(planetCompleted ?? "", {
       enabled: !!planetCompleted,
+      cacheTime: 0,
     });
 
   function closeModal() {
@@ -32,7 +33,7 @@ export function PlanetCompletedFeedback() {
     });
   }
 
-  if (!planetCompleted) return null;
+  if (!planetCompleted || !data) return null;
 
   return (
     <Modal
@@ -75,7 +76,7 @@ export function PlanetCompletedFeedback() {
               width={200}
               style={{ zIndex: 10 }}
             />
-            <Rating value={data?.stars ?? 0} readOnly size="xl" fractions={2} />
+            <Rating value={data?.stars ?? 0} readOnly size="xl" fractions={4} />
             <Text color="dark.3" size="xl">
               Muito bem! Você terminou o {data?.planetName}.
             </Text>

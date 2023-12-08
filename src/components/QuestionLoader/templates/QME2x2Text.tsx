@@ -9,7 +9,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
@@ -36,7 +36,7 @@ const useStyles = createStyles((theme) => ({
 export function QME2x2Text({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
   const { textTitles, imageTitles } = useQuestionHelper(question);
@@ -48,8 +48,13 @@ export function QME2x2Text({
 
   useEffect(() => {
     onAnswerChange(answer ? [answer] : []);
-    setContinueDisabled(answer === null);
   }, [answer]);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   const title = "Leia o texto e responda à pergunta.";
   return (
@@ -117,6 +122,8 @@ export function QME2x2Text({
                         onClick={() => setAnswer(option)}
                         data-selected={answer?.position === option.position}
                         className={classes.button}
+                        option={option}
+                        debug={{ size: 10 }}
                       >
                         {option.description}
                       </TextOptionButton>

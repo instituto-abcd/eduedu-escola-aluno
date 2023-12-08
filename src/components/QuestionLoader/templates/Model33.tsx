@@ -6,32 +6,41 @@ import { AudioButton } from "~/components/AudioButton";
 import { lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useTimeout } from "@mantine/hooks";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
-export function Model33({ question, setContinueDisabled }: ModelProps) {
-  const {
-    audioTitles,
-    hasAudioTitle,
-    audioTitleAutoplay,
-    imageTitles,
-    textTitles,
-  } = useQuestionHelper(question);
+export function Model33({ question, onConditionsChange }: ModelProps) {
+  const { audioTitles, hasAudioTitle, imageTitles, textTitles, getRule } =
+    useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
 
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
 
-  const autoplayLaterAudio = () => {
-    const rule =
-      Array.isArray(question.rules) &&
-      question.rules.find((rule) => rule.name === "autoplay");
+  /* Autoplay logic */
+  const autoplayRule = getRule("autoplay");
+  const shouldPlay = autoplayRule?.value === "false" ? false : true;
 
-    if (!rule) return true;
-    return rule.value === "false";
-  };
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxAudioRef = useRef<AudioButtonRef>(null);
 
-  const { start } = useTimeout(() => setContinueDisabled(false), 1000);
+  useLayoutEffect(() => {
+    if (mainAudioRef.current && auxAudioRef.current) {
+      if (shouldPlay) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxAudioRef.current!.sound.play();
+        });
+      }
+    }
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
+  /* End autoplay logic */
+
+  const { start } = useTimeout(() => onConditionsChange([]), 1000);
 
   useEffect(() => {
     start();
@@ -41,25 +50,19 @@ export function Model33({ question, setContinueDisabled }: ModelProps) {
     <>
       {hasAudioTitle && (
         <Group>
-          {audioTitles.map((title, inx) =>
-            inx === 0 ? (
-              <AudioButton
-                key={inx}
-                src={title.file_url ?? ""}
-                autoPlay={audioTitleAutoplay(inx)}
-              />
-            ) : (
-              <AudioButton
-                key={inx}
-                src={title.file_url ?? ""}
-                buttonProps={{
-                  variant: "yellow",
-                  icon: <IconMessageCircle2 size={30} />,
-                }}
-                autoPlay={autoplayLaterAudio()}
-              />
-            )
-          )}
+          {audioTitles.map((title, inx) => {
+            const props = {
+              ref: inx === 0 ? mainAudioRef : auxAudioRef,
+              autoPlay:
+                inx === 0 ? shouldPlay : shouldPlay === false ? true : false,
+              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
+              variant: inx > 0 ? "yellow" : "gray",
+            } as const;
+
+            return (
+              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
+            );
+          })}
         </Group>
       )}
 

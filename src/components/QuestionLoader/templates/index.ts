@@ -4,5 +4,5 @@ export type ModelProps = {
   question: Question;
   auxQuestion?: Question;
   onAnswerChange: (answer: QuestionOption[]) => void;
-  setContinueDisabled: (disabled: boolean) => void;
+  onConditionsChange: (conditions: boolean[]) => void;
 };

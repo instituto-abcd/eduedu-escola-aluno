@@ -5,10 +5,10 @@ import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useGetExamQuestion } from "~/api/student";
 import { lousaHeight } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { useMediaTrackStore } from "~/stores/media-track.store";
 import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
+import { useAudioStatus } from "~/stores/audio";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -24,6 +24,7 @@ export function QuestionLoader({
 }: QuestionLoaderProps) {
   const [answer, setAnswer] = useState<QuestionOption[]>([]);
   const [continueDisabled, setContinueDisabled] = useState(true);
+  const [conditions, setConditions] = useState<boolean[]>([]);
 
   const { hasAuxQuestion, auxQuestionId, skipFeedback } =
     useQuestionHelper(question);
@@ -41,6 +42,7 @@ export function QuestionLoader({
     auxQuestion,
     setContinueDisabled,
     onAnswerChange: setAnswer,
+    onConditionsChange: setConditions,
   };
 
   const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
@@ -70,17 +72,20 @@ export function QuestionLoader({
     }
   }
 
-  const mediaTrack = useMediaTrackStore();
-
   useEffect(() => {
-    mediaTrack.clearQueue();
     setAnswer([]);
     setContinueDisabled(true);
   }, [question]);
 
+  const { isPlaying } = useAudioStatus();
+
   useEffect(() => {
-    setContinueDisabled(mediaTrack.isPlaying);
-  }, [mediaTrack.isPlaying]);
+    const shouldEnableContinue = [...conditions, !isPlaying].every(
+      (bool) => bool === true
+    );
+
+    setContinueDisabled(!shouldEnableContinue);
+  }, [conditions, isPlaying]);
 
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>

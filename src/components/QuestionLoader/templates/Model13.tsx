@@ -1,20 +1,21 @@
 import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
-import { QuestionOption } from "~/api/exam";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
 import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioInterface } from "~/sounds";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((theme, isOver: boolean) => ({
   slot: {
     width: lousaWidth * 0.17,
     height: lousaWidth * 0.2,
-    borderColor: theme.colors.gray[6],
-    borderWidth: 1,
+    borderColor: isOver ? theme.colors.green[4] : theme.colors.gray[6],
+    borderWidth: isOver ? 3 : 1,
     borderStyle: "solid",
     backgroundColor: "#F4F4F4",
     display: "flex",
@@ -29,23 +30,52 @@ const useStyles = createStyles((theme) => ({
 export function Model13({
   question,
   onAnswerChange,
-  setContinueDisabled,
+  onConditionsChange,
 }: ModelProps) {
-  const { imageTitles, audioTitles } = useQuestionHelper(question);
+  const {
+    audioTitles,
+    textTitles,
+    getRule,
+    audioTitleAutoplay,
+    hasAudioTitle,
+    getTitlesOfType,
+  } = useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function onDrop(item: QuestionOption | null, index: number) {
+  function onDrop(
+    item: QuestionOption | null,
+    index: number,
+    title: QuestionTitle
+  ) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft.push({ ...item, positionAnswer: index } as QuestionOption);
+        draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
       })
     );
 
     setOptions((state) =>
-      state.filter((opt) => JSON.stringify(opt) !== JSON.stringify(item))
+      produce(state, (draft) => {
+        const index = draft.findIndex(
+          (opt) => JSON.stringify(opt) === JSON.stringify(item)
+        );
+
+        draft.splice(index, 1);
+      })
     );
+
+    handleFeedback(title, item!);
+  }
+  const showOptionsText = getRule("showOptionsText");
+  const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
+
+  function handleFeedback(title: QuestionTitle, option: QuestionOption) {
+    if (+title.position === +option.position) {
+      AudioInterface.feedback.positive.play();
+    } else {
+      AudioInterface.feedback.negative.play();
+    }
   }
 
   useEffect(() => {
@@ -55,39 +85,63 @@ export function Model13({
 
   useEffect(() => {
     onAnswerChange(answers);
-    setContinueDisabled(answers.length !== question.options.length);
   }, [answers]);
+
+  const conditions = useMemo(
+    () => [answers.length === question.options.length],
+    [answers]
+  );
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
 
   return (
     <>
-      {audioTitles.filter((title) => title.file_url).length > 0 && (
-        <Group mx="auto">
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                key={title.file_url}
-                src={title.file_url!}
-                autoPlay={inx === 0}
-              />
-            ))}
+      {hasAudioTitle && (
+        <Group>
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
         </Group>
       )}
 
+      {textTitles.map((title) => (
+        <Text
+          key={title.description}
+          w="80%"
+          size={boardW(24)}
+          weight={500}
+          color="dark.3"
+        >
+          {title.description}
+        </Text>
+      ))}
+
       <Group my="auto">
-        {imageTitles
+        {getTitlesOfType("IMAGE")
           .filter((title) => title.file_url || title.description?.length > 0)
           .map((slot, inx) => (
             <SlotCard
               image={slot.file_url}
               description={slot.description}
-              onDrop={(option) => onDrop(option, inx)}
+              onDrop={(option) => onDrop(option, inx, slot)}
               key={inx}
             />
           ))}
       </Group>
 
-      <CardStack options={options} />
+      <CardStack
+        options={options}
+        cardProps={{
+          imageOnly: !imageOnly,
+          debug: { debugProperty: "position" },
+        }}
+      />
     </>
   );
 }
@@ -101,8 +155,7 @@ function SlotCard({
   image?: string | null;
   onDrop: (item: QuestionOption | null) => void;
 }) {
-  const { classes } = useStyles();
-  const [, drop] = useDrop(
+  const [collectedProps, drop] = useDrop(
     () => ({
       accept: "ANSWER_CARD",
       drop: onDrop,
@@ -112,6 +165,8 @@ function SlotCard({
     }),
     []
   );
+
+  const { classes } = useStyles(collectedProps.isOver);
 
   return (
     <div className={classes.slot} ref={drop}>

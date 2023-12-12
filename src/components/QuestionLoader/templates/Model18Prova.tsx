@@ -62,15 +62,7 @@ export function Model18Prova({
   }, [selected, text]);
 
   const conditions = useMemo(
-    () => [
-      (() => {
-        const _slots = text
-          .split("")
-          .map((char) => (char === "_" ? null : char));
-        const emptySlots = _slots.filter((slot) => slot === null);
-        return selected.length === emptySlots.length;
-      })(),
-    ],
+    () => [slots.every((ans) => ans !== null)],
     [selected, text]
   );
 

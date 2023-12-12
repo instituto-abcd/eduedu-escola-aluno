@@ -72,10 +72,7 @@ export function QORD3x2({
   }, [selected]);
 
   const conditions = useMemo(
-    () => [
-      selected.filter(Boolean).length ===
-        slots.filter((slot) => typeof slot !== "string").length,
-    ],
+    () => [slots.filter((item) => item).length === startingSlots.length],
     [selected]
   );
 

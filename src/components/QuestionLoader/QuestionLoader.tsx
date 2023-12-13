@@ -9,6 +9,7 @@ import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
+import { modelsAltoAdvance } from "~/constants";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -88,7 +89,7 @@ export function QuestionLoader({
   }, [conditions, isPlaying]);
 
   useEffect(() => {
-    if (question.model_id == "MODEL12") {
+    if (modelsAltoAdvance.find((model) => question.model_id == model)) {
       if (question.options.length === answer.length) {
         submitAnswer();
       }

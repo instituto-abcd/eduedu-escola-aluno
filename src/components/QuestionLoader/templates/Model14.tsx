@@ -86,7 +86,10 @@ export function Model14({
                     : false
                 }
                 style={{
-                  width: "100%",
+                  width: 100,
+                  height: 100,
+                  borderRadius: "50%",
+                  alignSelf: 'center'
                 }}
                 debug={{ skipDebug: true }}
               >

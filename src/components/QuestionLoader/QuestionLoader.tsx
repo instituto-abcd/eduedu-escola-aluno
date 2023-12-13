@@ -87,6 +87,14 @@ export function QuestionLoader({
     setContinueDisabled(!shouldEnableContinue);
   }, [conditions, isPlaying]);
 
+  useEffect(() => {
+    if (question.model_id == "MODEL12") {
+      if (question.options.length === answer.length) {
+        submitAnswer();
+      }
+    }
+  }, [question, answer]);
+
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>
       <ModelMapper commonProps={commonProps} />

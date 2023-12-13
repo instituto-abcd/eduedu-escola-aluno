@@ -34,7 +34,7 @@ export function Model14({
   }, [conditions]);
 
   const { sound } = useCreateSound({
-    src: question.options[0].sound_url ?? "",
+    src: question.options[0]?.sound_url ?? "",
     autoPlay: false,
   });
 

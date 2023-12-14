@@ -29,24 +29,11 @@ export function Model18Prova({
         draft[index] = item;
       })
     );
-
-    if (item) {
-      const indexOffset = index - text.replace(/_/gi, "").length;
-
-      setSelected((state) =>
-        produce(state, (draft) => {
-          draft[indexOffset] = {
-            ...item,
-            positionAnswer: indexOffset,
-          };
-        })
-      );
-    }
   }
 
-  function handleClear(index: number) {
+  function handleClear(index: number, item: QuestionOption | null) {
     handleDrop(null, index);
-    setSelected(selected.filter((_, inx) => inx !== index));
+    setSelected(selected.filter((x) => x.description !== item?.description));
   }
 
   useEffect(() => {
@@ -69,6 +56,19 @@ export function Model18Prova({
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  useEffect(() => {
+    setSelected((prevSelected) =>
+      produce(prevSelected, (draft) => {
+        draft.length = 0;
+        slots.forEach((x) => {
+          if (x && x.description) {
+            draft.push(x);
+          }
+        });
+      })
+    );
+  }, [slots]);
 
   return (
     <>
@@ -101,7 +101,7 @@ export function Model18Prova({
               <DragLetterSlot
                 onDrop={(item) => handleDrop(item, inx)}
                 option={slot}
-                onClear={() => handleClear(inx)}
+                onClear={() => handleClear(inx, slot)}
                 key={inx}
                 style={{
                   width: (lousaWidth * 8) / 100,

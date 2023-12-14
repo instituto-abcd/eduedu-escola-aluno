@@ -33,7 +33,7 @@ export function PlanetCompletedFeedback() {
     });
   }
 
-  if (!planetCompleted || !data) return null;
+  if (!planetCompleted) return null;
 
   return (
     <Modal
@@ -48,6 +48,11 @@ export function PlanetCompletedFeedback() {
       <Stack align="center" spacing="xl">
         {error && (
           <>
+            <Image
+              src={feedbackLow}
+              width={200}
+              style={{ zIndex: 10 }}
+            />
             <Notification
               color="red"
               icon={<IconX />}

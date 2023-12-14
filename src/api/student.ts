@@ -128,8 +128,9 @@ export class StudentAPI extends API {
   static async planetFeedback(studentId: string, planetId: string) {
     const { data } = await this.api.get<PlanetFeedback>(
       URL.PLANET_FEEDBACK(studentId, planetId)
-    );
-
+    ).then(result => result).catch((error) => {
+      throw new Error(error.message);
+    });
     return data;
   }
 }

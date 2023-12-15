@@ -58,13 +58,12 @@ export function Model18Prova({
   }, [conditions]);
 
   useEffect(() => {
+    const slotsFilter = slots.filter(x => x?.description)
     setSelected((prevSelected) =>
       produce(prevSelected, (draft) => {
         draft.length = 0;
-        slots.forEach((x) => {
-          if (x && x.description) {
-            draft.push(x);
-          }
+        slotsFilter.forEach((x, index) => {
+            draft.push({...x, positionAnswer: index});
         });
       })
     );

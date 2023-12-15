@@ -6,17 +6,47 @@ import arrowRight from "~/assets/planets/arrowRight.png";
 import { errorNotification } from "~/utils/errorNotification";
 import { useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
+import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
+import fimProvaLottie from "~/assets/lotties/FIM_PROVA.json";
+import Lottie from "react-lottie";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 export function PlanetTrack() {
   const [embla, setEmbla] = useState<Embla>();
 
-  const { data: planetTrack, isLoading } = useGetPlanetTrack({
+  const { data, isLoading } = useGetPlanetTrack({
     onError: (error) =>
       errorNotification(
         "Erro durante a operação",
         `${error.message} (cod: ${error.code})`
       ),
   });
+
+  const { sound } = useCreateSound({ src: fimProvaAudio, autoPlay: false });
+
+  if (!isLoading && data?.planetTrack.length === 0)
+    return (
+      <Stack h="100%" w="100%" align="center" justify="center">
+        <Lottie
+          options={{
+            loop: false,
+            autoplay: true,
+            animationData: fimProvaLottie,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+          height={400}
+          width={400}
+          eventListeners={[
+            {
+              eventName: "DOMLoaded",
+              callback: sound.play,
+            },
+          ]}
+        />
+      </Stack>
+    );
 
   return (
     <Stack spacing={40}>
@@ -51,7 +81,7 @@ export function PlanetTrack() {
         </Button>
 
         <Carousel align="start" getEmblaApi={setEmbla} withControls={false}>
-          {planetTrack?.planetTrack.map((planet) => (
+          {data?.planetTrack.map((planet) => (
             <Carousel.Slide gap="sm" size="10%" key={planet.planetId}>
               <PlanetCard planet={planet} />
             </Carousel.Slide>

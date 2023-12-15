@@ -74,7 +74,7 @@ export function Model25({
   function onDrop(option: QuestionOption | null, inx: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[inx] = option?.position ? option : null;
+        draft[inx] = option?.position != null ? option : null;
       })
     );
   }

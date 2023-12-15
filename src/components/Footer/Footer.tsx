@@ -1,5 +1,6 @@
 import { Box, Container, Flex } from "@mantine/core";
-import packageJson from "~/../package.json";
+
+const VERSION = import.meta.env.VITE_APP_VERSION;
 
 export function Footer() {
   return (
@@ -10,7 +11,7 @@ export function Footer() {
         <Flex justify="space-between">
           <b>E.E de São Paulo</b>
           <span>Desenvolvido por EduEdu</span>
-          <span>v{packageJson.version}</span>
+          <span>{VERSION ? `Versão ${VERSION}` : 'v1.0.0'}</span>
         </Flex>
       </Container>
     </Box>

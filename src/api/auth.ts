@@ -21,6 +21,7 @@ export type LoginResponse = {
   email: string;
   document: string;
   accessToken: string;
+  schoolName: string;
 };
 
 class AuthAPI extends API {

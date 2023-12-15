@@ -1,79 +1,125 @@
-import { Title, BackgroundImage, Grid, Tooltip, Box } from "@mantine/core";
-import { AWARDS_IMAGES } from '~/constants/awards'
+import {
+  Title,
+  BackgroundImage,
+  Tooltip,
+  Box,
+  SimpleGrid,
+  Text,
+  Skeleton,
+} from "@mantine/core";
+import { AWARDS_IMAGES } from "~/constants/awards";
 import { ModalAwards } from "./Awards/Modal";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { errorNotification } from "~/utils/errorNotification";
+import { useGetPlanetTrack, useGetStudentAwards } from "~/api/student";
 
-type componentProps = {
-    awards: Array[]
-}
+export function Awards() {
+  const { data, isFetching } = useGetStudentAwards({
+    initialData: { awards: [] },
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
+    },
+  });
 
-export function Awards({ awards }: componentProps) {
+  const [modal, modalHandler] = useDisclosure(false);
+  const [awardImage, setAwardImage] = useState("");
 
-    // Modal to show award image && its award image:
-    const [modal, modalHandler] = useDisclosure(false);
-    const [awardImage, setAwardImage] = useState('');
+  useEffect(() => {
+    if (!data) return;
 
-    // Loop to set title, description and image(CONST):
     AWARDS_IMAGES.map((item) => {
-        awards.map((subitem) => {
-            item.name == subitem.name ?
-                (
-                    item.active = true,
-                    item.title = subitem.title,
-                    item.description = subitem.description
-                )
-                : {}
-        })
-    })
-    return (
-        <>
-            <Title mb={40} color="white">Minhas Conquistas</Title>
+      data.awards.map((subitem) => {
+        item.name === subitem.name
+          ? ((item.active = true),
+            (item.title = subitem.title),
+            (item.description = subitem.description),
+            (item.id = subitem.id))
+          : {};
+      });
+    });
+  }, [data]);
 
-            <Grid columns={8}>
-                {AWARDS_IMAGES.map((item) => (
-                    <Grid.Col
-                        key={item.name}
-                        md={2}
-                        lg={1}
-                    >
-                        <Tooltip
-                            disabled={!!!item.active}
-                            label={item.title + "\n" + item.description}
-                            transitionProps={{ transition: 'scale', duration: 300 }}
-                            style={{ whiteSpace: 'pre-line', textAlign: 'center' }}
-                            color="dark.3"
-                            position="bottom"
-                            withArrow
-                            multiline
-                            width={200}
-                        >
-                            <Box>
-                                <BackgroundImage
-                                    src={item.image}
-                                    w={88}
-                                    h={114}
-                                    style={{
-                                        filter: item.active ? '' : 'grayScale(100%)'
-                                    }}
-                                    onClick={() => {
-                                        if (item.active) {
-                                            setAwardImage(item.name)
-                                            modalHandler.open()
-                                        }
-                                    }}
-                                />
-                            </Box>
-                        </Tooltip>
-                    </Grid.Col>
-                ))}
-            </Grid>
+  const { data: track } = useGetPlanetTrack({
+    enabled: false,
+  });
 
-            <ModalAwards
-                opened={modal}
-                onClose={modalHandler.close}
-                image={awardImage}
-            />
-        </>
-    )
+  const hasPlanetTrack = track ? track.planetTrack.length > 0 : false;
+
+  if (!hasPlanetTrack) return null;
+
+  return (
+    <>
+      <Title mb={40} color="white" size={26}>
+        Minhas Conquistas
+      </Title>
+
+      <SimpleGrid cols={8}>
+        {!isFetching &&
+          AWARDS_IMAGES.map((item, inx) => (
+            <Tooltip
+              key={inx}
+              disabled={!item.active}
+              label={
+                <>
+                  <Text size="sm" weight={700}>
+                    {item.title}
+                  </Text>
+                  <Text size="sm">{item.description}</Text>
+                </>
+              }
+              transitionProps={{ transition: "scale", duration: 300 }}
+              style={{ whiteSpace: "pre-line", textAlign: "center" }}
+              color="dark.3"
+              position="bottom"
+              withArrow
+              multiline
+              width={200}
+            >
+              <Box>
+                <BackgroundImage
+                  src={item.image}
+                  w={88}
+                  h={114}
+                  mx="auto"
+                  style={{
+                    filter: item.active ? "" : "grayScale(100%)",
+                    cursor: item.active ? "pointer" : "default",
+                  }}
+                  onClick={() => {
+                    if (item.active) {
+                      setAwardImage(item.name);
+                      modalHandler.open();
+                    }
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          ))}
+
+        {isFetching &&
+          Array(AWARDS_IMAGES.length)
+            .fill(null)
+            .map((_) => (
+              <Skeleton
+                py={40}
+                visible={true}
+                width={90}
+                height={100}
+                radius={10}
+                opacity={0.3}
+              />
+            ))}
+      </SimpleGrid>
+
+      <ModalAwards
+        opened={modal}
+        onClose={modalHandler.close}
+        image={awardImage}
+      />
+    </>
+  );
 }

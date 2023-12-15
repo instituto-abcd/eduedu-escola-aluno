@@ -25,7 +25,7 @@ export function useCreateSound(metadata: AudioMetadata) {
    * ex: questão anterior era MODELX, e a atual é MODELY
    */
   const { start } = useTimeout(() => {
-    if (sound && metadata.autoPlay && !isPlaying) {
+    if (sound && metadata.autoPlay && !isPlaying && !sound.playing()) {
       sound.play();
     }
   }, 500);

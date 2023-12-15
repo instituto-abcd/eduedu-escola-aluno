@@ -1,6 +1,13 @@
 import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
@@ -9,6 +16,8 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { IconRotateClockwise } from "@tabler/icons-react";
 
 const useStyles = createStyles({
   slot: {
@@ -37,7 +46,6 @@ export function Model11({
 
     audioTitles,
     hasAudioTitle,
-    audioTitleAutoplay,
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Array<QuestionOption | null>>([null]);
@@ -60,8 +68,17 @@ export function Model11({
    *    Helpers para o título da questão
    *    Referente ao texto que apresenta a questão (enunciado)
    */
-  const hasTitle = false;
-  const questionTitle = "";
+  const questionTitle = textTitles.filter((title) => {
+    const conditions = [
+      !title.placeholder?.startsWith("Texto a ser preenchido") ||
+        !title.placeholder?.includes("preenchido") ||
+        !title.placeholder?.includes("preencher"),
+      title.description !== "",
+    ];
+
+    return conditions.every((condition) => condition === true);
+  })[0];
+  const hasTitle = !!questionTitle;
 
   /*
    *    Helpers para o texto de completar
@@ -120,24 +137,67 @@ export function Model11({
       ? getRule("answers")?.value === option.description
       : undefined;
 
+  const autoplayRule = getRule("autoplay");
+  const autoplayAuxRule = getRule("autoplayAux");
+  const shouldPlay = autoplayRule?.value === "false" ? false : true;
+  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxAudioRef = useRef<AudioButtonRef>(null);
+
+  useLayoutEffect(() => {
+    if (mainAudioRef.current && auxAudioRef.current) {
+      if (shouldPlay) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxAudioRef.current!.sound.play();
+        });
+      }
+    }
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
+
   return (
     <>
       {hasAudioTitle && (
         <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              src={title.file_url ?? ""}
-              autoPlay={audioTitleAutoplay(inx)}
-              key={inx}
-            />
-          ))}
+          {audioTitles.map((title, inx) => {
+            const isEnunciationTitle = title.position === 0;
+            const shouldPlayCheck = isEnunciationTitle
+              ? shouldPlay
+              : shouldPlay === false;
+            const props = {
+              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
+              autoPlay: shouldPlayCheck
+                ? shouldPlayAuxiliar
+                  ? true
+                  : false
+                : false,
+              icon:
+                inx > 0 ? (
+                  <IconRotateClockwise
+                    style={{ transform: "rotateX(180deg)" }}
+                    size={30}
+                  />
+                ) : undefined,
+            } as const;
+
+            return (
+              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
+            );
+          })}
         </Group>
       )}
 
       {hasTitle && (
-        <Title color="dark.3" size={boardW(24)}>
-          {questionTitle}
-        </Title>
+        <Title
+          color="dark.3"
+          size={boardW(22)}
+          my={12}
+          dangerouslySetInnerHTML={{ __html: questionTitle.description }}
+        />
       )}
 
       <Group w="100%" noWrap position="center" spacing={boardW(100)} my="auto">

@@ -36,7 +36,7 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
   function rewind() {
     const duration = sound.duration();
     const seek = sound.seek();
-    const newSeek = seek - 15 >= duration ? duration : seek + 15;
+    const newSeek = seek - 15 >= duration ? duration : seek - 15;
     sound.seek(newSeek);
   }
 
@@ -115,6 +115,9 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
       </Group>
       <Slider
         value={currentTime}
+        onChange={(e) => {
+          sound.seek(e);
+        }}
         w={boardW(650)}
         radius="xs"
         classNames={{ bar: classes.bar }}

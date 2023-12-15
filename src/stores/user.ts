@@ -18,6 +18,7 @@ export const useUserStore = create<UserStore>()(
       id: "",
       name: "",
       profile: "" as UserProfile,
+      schoolName: "",
       isUserAuthenticated: () => Boolean(get().accessToken),
       signOut: () =>
         set({
@@ -27,6 +28,7 @@ export const useUserStore = create<UserStore>()(
           id: "",
           name: "",
           profile: "" as UserProfile,
+          schoolName: "",
         }),
     }),
     {

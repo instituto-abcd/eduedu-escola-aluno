@@ -60,7 +60,8 @@ export function QME2x2Audio({
   });
 
   intro.sound.onEnd(() => {
-    if (storyTitle?.autoplay === true) {
+    const isPlayingStory = story.current?.sound.playing();
+    if (storyTitle?.autoplay === true && isPlayingStory === false) {
       story.current?.sound.play();
     } else if (
       storyTitle?.autoplay === false &&
@@ -71,11 +72,17 @@ export function QME2x2Audio({
     }
   });
 
-  useEffect(() => {
-    setAnswer(null);
-    if (introTitle?.autoplay) {
+  function init() {
+    if (introTitle?.autoplay && intro) {
+      if (intro.sound.playing()) return;
+
       intro.sound.play();
     }
+  }
+
+  useEffect(() => {
+    setAnswer(null);
+    init();
   }, [question]);
 
   useEffect(() => {

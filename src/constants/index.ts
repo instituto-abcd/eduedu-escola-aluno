@@ -69,3 +69,15 @@ export const AXIS_ENUM = {
   ALPHABETIC_WRITING_SYSTEM: 'Sistema de escrita alfabética',
   READING_AND_TEXT_COMPREHENSION: 'Leitura e compreensão de texto',
 } as const;
+
+export const modelsAltoAdvance = [
+  "MODEL12",
+  "MODEL13",
+];
+
+export const planetsBigImage = [
+  "Gralha",
+  "Sanhaço",
+  "Lavadeira",
+  "Chupim",
+];

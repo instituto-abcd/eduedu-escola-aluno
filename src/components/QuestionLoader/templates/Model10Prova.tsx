@@ -42,7 +42,7 @@ export function Model10Prova({
           <AudioButton
             src={title.file_url ?? ""}
             key={title.file_url}
-            autoPlay={title.autoplay}
+            autoPlay={true}
           />
         ))}
 

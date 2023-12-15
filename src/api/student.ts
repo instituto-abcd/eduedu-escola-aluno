@@ -52,6 +52,13 @@ export type PlanetTrack = {
   examPerformed: boolean;
 };
 
+export type Award = {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+};
+
 type GetQuestionInput = {
   questionId: string | number;
   optionsAnswered: QuestionOption[];
@@ -66,6 +73,7 @@ const KEY = {
   FIRST_QUESTION: "FIRST_QUESTION",
   EXAM_EVALUATION: "EXAM_EVALUATION",
   PLANET_FEEDBACK: "PLANET_FEEDBACK",
+  AWARDS: "STUDENT_AWARDS",
 };
 
 const URL = {
@@ -95,9 +103,10 @@ export class StudentAPI extends API {
     return data;
   }
 
-  // TODO: tipar retorno
   static async getStudentAwards(studentId: string) {
-    const { data } = await this.api.get(URL.GET_STUDENT_AWARDS(studentId));
+    const { data } = await this.api.get<{ awards: Award[] }>(
+      URL.GET_STUDENT_AWARDS(studentId)
+    );
     return data;
   }
 
@@ -126,10 +135,12 @@ export class StudentAPI extends API {
   }
 
   static async planetFeedback(studentId: string, planetId: string) {
-    const { data } = await this.api.get<PlanetFeedback>(
-      URL.PLANET_FEEDBACK(studentId, planetId)
-    );
-
+    const { data } = await this.api
+      .get<PlanetFeedback>(URL.PLANET_FEEDBACK(studentId, planetId))
+      .then((result) => result)
+      .catch((error: Error) => {
+        throw new Error(error.message);
+      });
     return data;
   }
 }
@@ -146,15 +157,16 @@ export function useGetPlanetTrack(
   return useQuery([KEY.PLANET_TRACK], handler, options);
 }
 
-// TODO: tipar queryoptions
-export function useGetStudentAwardsQuery(options?: QueryOptions) {
+export function useGetStudentAwards(
+  options?: QueryOptions<{ awards: Award[] }, [typeof KEY.AWARDS]>
+) {
   const studentId = useStudent((state) => state.id);
 
   const handler = useCallback(function () {
     return StudentAPI.getStudentAwards(studentId);
   }, []);
 
-  return useQuery([KEY.GET_STUDENT_AWARDS, options?.search], handler, options);
+  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
 }
 
 export function useGetFirstExamQuestion(
@@ -210,6 +222,8 @@ export function usePlanetFeedback(
     onSuccess: (data, vars, ctx) => {
       options?.onSuccess?.(data, vars, ctx);
       queryClient.setQueryData([KEY.PLANET_TRACK], (oldData: PlanetTrack) => {
+        if (!oldData || !oldData.planetTrack) return oldData;
+
         const toUpdate = oldData.planetTrack.find(
           (planet) => planet.planetName === data.name
         );

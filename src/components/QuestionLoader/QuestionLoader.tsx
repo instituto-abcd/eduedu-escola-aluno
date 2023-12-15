@@ -9,6 +9,7 @@ import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
+import { modelsAltoAdvance } from "~/constants";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -86,6 +87,14 @@ export function QuestionLoader({
 
     setContinueDisabled(!shouldEnableContinue);
   }, [conditions, isPlaying]);
+
+  useEffect(() => {
+    if (modelsAltoAdvance.find((model) => question.model_id == model)) {
+      if (question.options.length === answer.length) {
+        submitAnswer();
+      }
+    }
+  }, [question, answer]);
 
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>

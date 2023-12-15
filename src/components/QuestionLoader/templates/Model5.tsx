@@ -183,6 +183,7 @@ export function Model5({
                 className={classes.option}
               >
                 <img src={option.image_url} alt={option.description} />
+                {option.description}
               </OptionButton>
             ) : (
               <TextOptionButton

@@ -33,9 +33,23 @@ export function Model19({
   const [options, setOptions] = useState<QuestionOption[]>([]);
   const [targetLettersTitles, setTargetLettersTitles] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>([]);
+  const descRule = question.rules.find(
+    (rule) => rule.name === "show_option_desc"
+  );
+  const showOptionsDesc = Boolean(
+    descRule === undefined ? true : descRule.value === "false" ? false : true
+  );
 
-  const showOptionsDesc = !question.rules.find((rule) => rule.name === "show_option_desc")?.value === "false";
-  const showTargetLetters = !question.rules.find((rule) => rule.name === "show_targets_letters")?.value === "false";
+  const targetLettersRule = question.rules.find(
+    (rule) => rule.name === "show_targets_letters"
+  );
+  const showTargetLetters = Boolean(
+    targetLettersRule === undefined
+      ? true
+      : targetLettersRule.value === "false"
+      ? false
+      : true
+  );
 
   const lettersTitle = question.titles.find((title) => title.type === "TEXT");
 

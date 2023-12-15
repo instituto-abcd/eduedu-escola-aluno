@@ -136,9 +136,8 @@ export function Card({
           color="blue.6"
           align="center"
           {...textProps}
-        >
-          {option.description}
-        </Text>
+          dangerouslySetInnerHTML={{ __html: option.description }}
+        />
       )}
 
       {option.image_url && (

@@ -74,3 +74,10 @@ export const modelsAltoAdvance = [
   "MODEL12",
   "MODEL13",
 ];
+
+export const planetsBigImage = [
+  "Gralha",
+  "Sanhaço",
+  "Lavadeira",
+  "Chupim",
+];

@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { SimplifiedPlanet } from "~/api/student";
+import { planetsBigImage } from "~/constants";
 
 const useStyles = createStyles({
   wrapper: {
@@ -36,7 +37,7 @@ export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
       <Stack className={classes.wrapper} align="center" justify="end">
         <Image
           src={planet.planetAvatar}
-          height={120}
+          height={planetsBigImage.find(p => p == planet.planetName) ? 70 : 120}
           width="auto"
           className={classes.avatar}
         />

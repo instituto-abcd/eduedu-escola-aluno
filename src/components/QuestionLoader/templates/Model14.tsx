@@ -1,12 +1,13 @@
 import { Group, Stack } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { useCreateSound } from "~/hooks/useCreateSound";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 
 export function Model14({
   question,
@@ -33,30 +34,44 @@ export function Model14({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const { sound } = useCreateSound({
-    src: question.options[0]?.sound_url ?? "",
-    autoPlay: false,
+  const hasAux = !!question.options[0]?.sound_url;
+  const auxAudioRef = useRef<AudioButtonRef>(null);
+
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  mainAudioRef.current?.sound.onEnd(() => {
+    const auxSound = auxAudioRef.current?.sound;
+    if (hasAux && auxSound && !auxSound.playing()) {
+      auxSound.play();
+    }
   });
 
   const handleOnClick = (index: number) => {
-    sound.play();
     setAnswer({
       position: index,
       positionAnswer: index,
     } as QuestionOption);
-  }
+  };
 
   return (
     <>
       {hasAudioTitle && (
-        <Group mx="auto" h="50px">
+        <Group mx="auto">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              ref={mainAudioRef}
               src={title.file_url!}
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
             />
           ))}
+          {hasAux && (
+            <AudioButton
+              ref={auxAudioRef}
+              src={question.options[0].sound_url!}
+              variant="yellow"
+              icon={<IconMessageCircle2 size={30} />}
+            />
+          )}
         </Group>
       )}
 
@@ -89,7 +104,7 @@ export function Model14({
                   width: 100,
                   height: 100,
                   borderRadius: "50%",
-                  alignSelf: 'center'
+                  alignSelf: "center",
                 }}
                 debug={{ skipDebug: true }}
               >

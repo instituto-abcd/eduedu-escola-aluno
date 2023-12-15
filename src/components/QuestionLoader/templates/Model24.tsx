@@ -16,7 +16,6 @@ export function Model24({
 }: ModelProps) {
   const { audioTitles, textTitles, imageTitles, getRule } =
     useQuestionHelper(question);
-
   const [answer, setAnswer] = useState<number>(-1);
 
   // Variação de completar o texto
@@ -75,11 +74,17 @@ export function Model24({
     <>
       <Group mx="auto" h="50px">
         {audioTitles.map((title, inx) => {
-          const isEnunciationTitle = title.placeholder.includes('Enunciado');
-          const shouldPlayCheck = isEnunciationTitle ? shouldPlay : shouldPlay === false;
+          const isEnunciationTitle = title.placeholder.includes("Enunciado");
+          const shouldPlayCheck = isEnunciationTitle
+            ? shouldPlay
+            : shouldPlay === false;
           const props = {
             ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-            autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
+            autoPlay: shouldPlayCheck
+              ? shouldPlayAuxiliar
+                ? true
+                : false
+              : false,
             icon:
               inx > 0 ? (
                 <IconRotateClockwise
@@ -124,6 +129,7 @@ export function Model24({
                 size={boardW(24)}
                 weight={500}
                 color="dark.3"
+                align="center"
               />
             )}
             <Group mb={20}>
@@ -171,6 +177,7 @@ export function Model24({
                   size={boardW(24)}
                   weight={500}
                   color="dark.3"
+                  align="center"
                 />
               ))}
             <Group>

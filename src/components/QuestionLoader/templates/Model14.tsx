@@ -14,8 +14,7 @@ export function Model14({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const { audioTitleAutoplay } = useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -38,12 +37,16 @@ export function Model14({
   const auxAudioRef = useRef<AudioButtonRef>(null);
 
   const mainAudioRef = useRef<AudioButtonRef>(null);
-  mainAudioRef.current?.sound.onEnd(() => {
-    const auxSound = auxAudioRef.current?.sound;
-    if (hasAux && auxSound && !auxSound.playing()) {
-      auxSound.play();
+  useEffect(() => {
+    if (auxAudioRef.current) {
+      mainAudioRef.current?.sound.onEnd(() => {
+        const auxSound = auxAudioRef.current?.sound;
+        if (hasAux && auxSound && !auxSound.playing()) {
+          auxSound.play();
+        }
+      });
     }
-  });
+  }, [mainAudioRef, auxAudioRef]);
 
   const handleOnClick = (index: number) => {
     setAnswer({
@@ -51,6 +54,12 @@ export function Model14({
       positionAnswer: index,
     } as QuestionOption);
   };
+
+  const audioTitles = question.titles.filter((title) => title.type === "AUDIO")
+    .filter((title) => title.file_id)
+    .sort((a, b) => a.position - b.position);
+
+  const hasAudioTitle = useMemo(() => audioTitles.some((title) => title.file_id), [audioTitles]);
 
   return (
     <>
@@ -69,6 +78,7 @@ export function Model14({
               ref={auxAudioRef}
               src={question.options[0].sound_url!}
               variant="yellow"
+              autoPlay={!!mainAudioRef}
               icon={<IconMessageCircle2 size={30} />}
             />
           )}

@@ -46,8 +46,7 @@ export function Model13({
 
   function onDrop(
     item: QuestionOption | null,
-    index: number,
-    title: QuestionTitle
+    index: number
   ) {
     setAnswers((state) =>
       produce(state, (draft) => {
@@ -121,7 +120,7 @@ export function Model13({
             <SlotCard
               image={slot.file_url}
               description={slot.description}
-              onDrop={(option) => onDrop(option, inx, slot)}
+              onDrop={(option) => onDrop(option, inx)}
               key={inx}
             />
           ))}

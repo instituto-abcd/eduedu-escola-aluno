@@ -20,7 +20,7 @@ export function PlanetCompletedFeedback() {
   const [params, setParams] = useSearchParams();
   const planetCompleted = params.get("planet-completed");
 
-  const { data, refetch, error, isLoading, isSuccess, isError } =
+  const { data: planetData, refetch, error, isLoading, isSuccess, isError } =
     usePlanetFeedback(planetCompleted ?? "", {
       enabled: !!planetCompleted,
       cacheTime: 0,
@@ -77,13 +77,13 @@ export function PlanetCompletedFeedback() {
         {isSuccess && (
           <>
             <Image
-              src={(data?.stars ?? 0) > 0 ? feedbackHigh : feedbackLow}
+              src={(planetData?.stars ?? 0) > 0 ? feedbackHigh : feedbackLow}
               width={200}
               style={{ zIndex: 10 }}
             />
-            <Rating value={data?.stars ?? 0} readOnly size="xl" fractions={4} />
+            <Rating value={planetData?.stars ?? 0} readOnly size="xl" fractions={4} />
             <Text color="dark.3" size="xl">
-              Muito bem! Você terminou o {data?.planetName}.
+              Muito bem! Você terminou o {planetData?.planetName}.
             </Text>
             <Button fullWidth color="blue.4" onClick={closeModal} size="md">
               Continuar

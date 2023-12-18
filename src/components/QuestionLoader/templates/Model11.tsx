@@ -191,7 +191,7 @@ export function Model11({
         </Group>
       )}
 
-      {hasTitle && (
+      {hasTitle && !questionTitle.description?.includes('_') && (
         <Title
           color="dark.3"
           size={boardW(22)}

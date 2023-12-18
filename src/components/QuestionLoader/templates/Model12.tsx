@@ -28,7 +28,7 @@ export function Model12({
       setStack(
         stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
       );
-      handleFeedback("left", option);
+      handleFeedback();
     },
   });
 
@@ -39,18 +39,12 @@ export function Model12({
       setStack(
         stack.filter((item) => JSON.stringify(item) !== JSON.stringify(option))
       );
-      handleFeedback("right", option);
+      handleFeedback();
     },
   });
 
-  function handleFeedback(position: "left" | "right", option: QuestionOption) {
-    if (position === "left" && option.isCorrect === false) {
-      AudioInterface.feedback.positive.play();
-    } else if (position === "right" && option.isCorrect === true) {
-      AudioInterface.feedback.positive.play();
-    } else {
-      AudioInterface.feedback.negative.play();
-    }
+  function handleFeedback() {
+    AudioInterface.feedback.positive.play();
   }
 
   useEffect(() => {

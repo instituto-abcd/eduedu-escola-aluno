@@ -65,18 +65,10 @@ export function Model13({
       })
     );
 
-    handleFeedback(title, item!);
+    AudioInterface.feedback.positive.play();
   }
   const showOptionsText = getRule("showOptionsText");
   const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
-
-  function handleFeedback(title: QuestionTitle, option: QuestionOption) {
-    if (+title.position === +option.position) {
-      AudioInterface.feedback.positive.play();
-    } else {
-      AudioInterface.feedback.negative.play();
-    }
-  }
 
   useEffect(() => {
     setAnswers([]);

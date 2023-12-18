@@ -101,8 +101,8 @@ export function Model14({
                     : false
                 }
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: boardW(100),
+                  height: boardW(100),
                   borderRadius: "50%",
                   alignSelf: "center",
                 }}

@@ -87,64 +87,66 @@ export function Model32({
             )?.description
           }
         </Title>
-        <Flex w="100%" justify="space-between">
-          <ScrollArea mah={boardW(400)} w="48%" pr={20}>
-            <Stack pb={5}>
-              {question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.placeholder?.includes("Campo") ||
-                          (!title.placeholder && title.description)
-                      )?.description ?? "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
-              {!question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.classification ===
-                          QuestionTitleClassification.HISTORIA
-                      )?.description ??
-                      textTitles[0]?.description ??
-                      "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
-
-              {imageTitles
-                .filter((title) => !!title.file_url)
-                .map((title) => (
-                  <Image
-                    src={title.file_url}
-                    key={title.file_url}
-                    width={boardW(300)}
-                    m="auto"
+        <Flex w="100%" justify={textTitles.length > 0 ? "space-between" : "center"}>
+          {textTitles.length > 0 && (
+            <ScrollArea mah={boardW(400)} w="48%" pr={20}>
+              <Stack pb={5}>
+                {question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.placeholder?.includes("Campo") ||
+                            (!title.placeholder && title.description)
+                        )?.description ?? "",
+                    }}
+                    className={classes.typography}
                   />
-                ))}
+                )}
+                {!question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.classification ===
+                            QuestionTitleClassification.HISTORIA
+                        )?.description ??
+                        textTitles[0]?.description ??
+                        "",
+                    }}
+                    className={classes.typography}
+                  />
+                )}
 
-              {question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.placeholder?.includes("Enunciado") ||
-                          title.placeholder?.includes("Quem disse")
-                      )?.description ?? "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
-            </Stack>
-          </ScrollArea>
+                {imageTitles
+                  .filter((title) => !!title.file_url)
+                  .map((title) => (
+                    <Image
+                      src={title.file_url}
+                      key={title.file_url}
+                      width={boardW(300)}
+                      m="auto"
+                    />
+                  ))}
+
+                {question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.placeholder?.includes("Enunciado") ||
+                            title.placeholder?.includes("Quem disse")
+                        )?.description ?? "",
+                    }}
+                    className={classes.typography}
+                  />
+                )}
+              </Stack>
+            </ScrollArea>
+          )}
           <ScrollArea mah={boardW(420)} w="48%" pr={20}>
             <Stack pb={5}>
               <Text

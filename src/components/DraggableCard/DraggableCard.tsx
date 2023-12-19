@@ -1,23 +1,13 @@
 import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CSSProperties, useCallback, useRef, useState } from "react";
+import { CSSProperties } from "react";
 import { useDrag } from "react-dnd";
-import { boardW, lousaWidth } from "~/constants/dimensions";
+import { lousaWidth } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
 import { DebugProps } from "../Debug";
-
-const isImageSmall = (
-  imgElement: HTMLImageElement | null,
-  minimumHeight: number
-) => {
-  if (imgElement) {
-    return imgElement.height <= minimumHeight;
-  }
-  return false;
-};
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -112,20 +102,10 @@ export function DraggableCard<T>({
     padding: noPaddingRule ? 0 : 16,
   };
 
-  const [hasSmallHeight, setHasSmallHeight] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
-
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     if (sound) sound.play();
     props?.onClick?.(e);
   }
-
-  const handleImageLoad = useCallback(() => {
-    const minimumHeight = 55;
-    if (isImageSmall(imageRef.current, minimumHeight)) {
-      setHasSmallHeight(true);
-    }
-  }, [imageRef.current]);
 
   /* debug */
   const canDebug = useDebugInfo((s) => s.answer);
@@ -145,13 +125,14 @@ export function DraggableCard<T>({
           style={{
             pointerEvents: "none",
             userSelect: "none",
-            maxWidth: boardW(100),
-            maxHeight: hasSmallHeight ? boardW(90) : boardW(60),
+            maxWidth: "100%",
+            maxHeight: "100%",
             marginInline: "auto",
-            objectFit: "contain",
+            objectFit: "cover",
+            position: "absolute",
+            inset: 0,
+            marginBlock: "auto",
           }}
-          ref={imageRef}
-          onLoad={handleImageLoad}
         />
       )}
       {text && !image && (

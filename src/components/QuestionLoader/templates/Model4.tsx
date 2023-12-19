@@ -9,7 +9,7 @@ import { ModelProps } from ".";
 
 const useStyles = createStyles({
   title: {
-    fontSize: boardW(20),
+    fontSize: boardW(30),
     "*": {
       fontSize: boardW(20),
     },

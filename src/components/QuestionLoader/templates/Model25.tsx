@@ -117,7 +117,7 @@ export function Model25({
       )}
 
       <Stack my="auto">
-        <Group>
+        <Group mb={35}>
           {targets.map((title, inx) => (
             <SlotCard
               key={inx}

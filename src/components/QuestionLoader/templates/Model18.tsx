@@ -16,7 +16,7 @@ export function Model18({
   onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+  const { audioTitles, imageTitles, textTitles, audioTitleAutoplay } = useQuestionHelper(question);
 
   const text = useMemo(
     () =>
@@ -80,13 +80,15 @@ export function Model18({
   }, [conditions]);
   return (
     <>
-      {audioTitles.some((title) => title.file_url) && (
+      {audioTitles.filter((title) => title.file_url) && (
         <Group mx="auto">
-          {audioTitles
-            .filter((title) => !!title.file_url)
-            .map((title, inx) => (
-              <AudioButton src={title.file_url ?? ""} key={inx} autoPlay />
-            ))}
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              src={title.file_url!}
+              key={title.file_url}
+              autoPlay={audioTitleAutoplay(inx)}
+            />
+          ))}
         </Group>
       )}
 

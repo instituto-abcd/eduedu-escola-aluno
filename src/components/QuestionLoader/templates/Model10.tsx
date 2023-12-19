@@ -125,7 +125,7 @@ export function Model10({
                   }}
                 />
               )}
-              {!option.image_url && option.sound_url && (
+              {!option.image_url && option.sound_url && !option.description && (
                 <IconVolume size={boardW(80)} />
               )}
             </OptionButton>

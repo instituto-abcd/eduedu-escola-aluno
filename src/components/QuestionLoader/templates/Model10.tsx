@@ -85,10 +85,8 @@ export function Model10({
         </Group>
       )}
 
-      {textTitles
-        .filter(
-          (title) => title.description && !title.placeholder.includes("ID")
-        )
+      {imageTitles.length !== 0 && textTitles
+        .filter((title) => title.description && !title.placeholder.includes("ID"))
         .map((title, inx) => (
           <ScrollArea mah={boardW(100)} type="auto" key={inx} px="xs">
             <Title
@@ -102,6 +100,20 @@ export function Model10({
         ))}
 
       <Group spacing={20} my="auto">
+        {imageTitles.length === 0 && textTitles
+          .filter((title) => title.description && !title.placeholder.includes("ID"))
+          .map((title, inx) => (
+            <ScrollArea mah={boardW(400)} w={boardW(350)} type="auto" key={inx} px="xs">
+              <Title
+                color="dark.3"
+                size={title.description.split(' ').length > 1 ? boardW(22) : boardW(70)}
+                align="center"
+                dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+              />
+            </ScrollArea>
+          ))
+        }
+
         {imageTitles
           .filter((title) => title.file_url)
           .map((title) => (

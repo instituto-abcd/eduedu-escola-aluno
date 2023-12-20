@@ -14,7 +14,7 @@ export function Model14({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitleAutoplay } = useQuestionHelper(question);
+  const { audioTitleAutoplay, getRule } = useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -35,18 +35,22 @@ export function Model14({
 
   const hasAux = !!question.options[0]?.sound_url;
   const auxAudioRef = useRef<AudioButtonRef>(null);
-
   const mainAudioRef = useRef<AudioButtonRef>(null);
+
   useEffect(() => {
     if (auxAudioRef.current) {
+      const auxSound = auxAudioRef.current!.sound;
       mainAudioRef.current?.sound.onEnd(() => {
-        const auxSound = auxAudioRef.current?.sound;
         if (hasAux && auxSound && !auxSound.playing()) {
           auxSound.play();
         }
       });
     }
-  }, [mainAudioRef, auxAudioRef]);
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
 
   const handleOnClick = (index: number) => {
     setAnswer({
@@ -60,6 +64,9 @@ export function Model14({
     .sort((a, b) => a.position - b.position);
 
   const hasAudioTitle = useMemo(() => audioTitles.some((title) => title.file_id), [audioTitles]);
+
+  const shouldAuxAutoPlay = !!mainAudioRef && !audioTitleAutoplay(0) || 
+      !getRule('autoplay') && !mainAudioRef.current?.sound.playing;
 
   return (
     <>
@@ -78,7 +85,7 @@ export function Model14({
               ref={auxAudioRef}
               src={question.options[0].sound_url!}
               variant="yellow"
-              autoPlay={!!mainAudioRef}
+              autoPlay={shouldAuxAutoPlay}
               icon={<IconMessageCircle2 size={30} />}
             />
           )}

@@ -67,12 +67,15 @@ export function Model3({
                     height={105}
                     width="auto"
                     style={{
-                      maxHeight: 120,
+                      maxHeight: "100%",
                       maxWidth: "100%",
-                      objectFit: "contain",
+                      objectFit: "cover",
                       marginInline: "auto",
                       pointerEvents: "none",
                       userSelect: "none",
+                      position: "absolute",
+                      inset: 0,
+                      marginBlock: "auto",
                     }}
                   />
                 )}

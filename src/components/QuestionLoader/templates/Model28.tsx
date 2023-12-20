@@ -15,6 +15,8 @@ import whiteLogo from "~/assets/logos/eduedu-branca.svg";
 import { produce } from "immer";
 import { useTimeout } from "@mantine/hooks";
 import { ModelProps } from ".";
+import { AudioInterface } from "~/sounds";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 const useStyles = createStyles({
   card: {
@@ -115,6 +117,9 @@ export function Model28({ question, onConditionsChange }: ModelProps) {
     setFlipDisabled(true);
     setFeedback(status);
     clearFeedback();
+
+    if (status === "correct") AudioInterface.feedback.positive.play();
+    if (status === "wrong") AudioInterface.feedback.negative.play();
   }
 
   function handleCardFlipped(option: QuestionOption) {
@@ -215,10 +220,19 @@ function FlippableCard({
   feedback,
 }: FlippableCardProps) {
   const { classes } = useStyles();
+
+  const { sound } = useCreateSound({
+    src: option.sound_url ?? "",
+    autoPlay: false,
+  });
+
   return (
     <div
       className={classes.card}
-      onClick={() => onFlipCard(option)}
+      onClick={() => {
+        onFlipCard(option);
+        sound?.play();
+      }}
       data-flipped={isFlipped}
       data-feedback={feedback === null ? undefined : feedback}
     >

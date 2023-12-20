@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Title, Button, Image, Stack, Skeleton } from "@mantine/core";
 import arrowLeft from "~/assets/planets/arrowLeft.png";
 import arrowRight from "~/assets/planets/arrowRight.png";
 import { errorNotification } from "~/utils/errorNotification";
-import { useGetPlanetTrack } from "~/api/student";
+import { SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
 import fimProvaLottie from "~/assets/lotties/FIM_PROVA.json";
 import Lottie from "react-lottie";
 import { useCreateSound } from "~/hooks/useCreateSound";
 
-export function PlanetTrack() {
+export type PlanetTrackRef = {
+  embla?: Embla;
+  track?: SimplifiedPlanet[];
+};
+
+export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
   const [embla, setEmbla] = useState<Embla>();
 
   const { data, isLoading } = useGetPlanetTrack({
@@ -23,6 +28,11 @@ export function PlanetTrack() {
   });
 
   const { sound } = useCreateSound({ src: fimProvaAudio, autoPlay: false });
+
+  useImperativeHandle(ref, () => ({
+    embla,
+    track: data?.planetTrack,
+  }));
 
   if (!isLoading && data?.planetTrack.length === 0)
     return (
@@ -61,7 +71,8 @@ export function PlanetTrack() {
             position: "absolute",
             insetBlock: 0,
             marginBlock: "auto",
-            left: -100,
+            left: -50,
+            zIndex: 10,
           }}
           onClick={() => embla?.scrollPrev()}
         >
@@ -73,7 +84,8 @@ export function PlanetTrack() {
             position: "absolute",
             insetBlock: 0,
             marginBlock: "auto",
-            right: -100,
+            right: -50,
+            zIndex: 10,
           }}
           onClick={() => embla?.scrollNext()}
         >
@@ -105,4 +117,4 @@ export function PlanetTrack() {
       </Box>
     </Stack>
   );
-}
+});

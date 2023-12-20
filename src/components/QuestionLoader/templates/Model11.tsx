@@ -17,7 +17,7 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconRotateClockwise } from "@tabler/icons-react";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 
 const useStyles = createStyles({
   slot: {
@@ -175,13 +175,8 @@ export function Model11({
                   ? true
                   : false
                 : false,
-              icon:
-                inx > 0 ? (
-                  <IconRotateClockwise
-                    style={{ transform: "rotateX(180deg)" }}
-                    size={30}
-                  />
-                ) : undefined,
+              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
+              variant: inx > 0 ? "yellow" : "gray",
             } as const;
 
             return (
@@ -191,7 +186,7 @@ export function Model11({
         </Group>
       )}
 
-      {hasTitle && !questionTitle.description?.includes('_') && (
+      {hasTitle && !questionTitle.description?.includes("_") && (
         <Title
           color="dark.3"
           size={boardW(22)}

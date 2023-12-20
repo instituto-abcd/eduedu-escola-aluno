@@ -45,6 +45,7 @@ export function Model3({
             src={videoTitles[0]?.file_url ?? ""}
             autoPlay
             style={{ height: boardW(240) }}
+            key={question.id}
           />
         </Box>
         <Box maw={boardW(550)}>

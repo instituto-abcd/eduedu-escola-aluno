@@ -20,7 +20,6 @@ type StyleProps = {
   width?: number;
   height?: number;
   isDragging?: boolean;
-  hidden?: boolean;
   order?: number;
 };
 
@@ -37,10 +36,8 @@ const useStyles = createStyles((theme, props: StyleProps) => ({
     position: props.stacked ? "absolute" : "initial",
     width: props.stacked ? "100%" : props.width ?? boardW(170),
     height: props.stacked ? "100%" : props.height ?? boardW(153),
-    opacity: props.isDragging ? 1 : props.hidden ? 0.1 : 1,
     display: "grid",
     cursor: props.isDragging ? "move" : "grab",
-    pointerEvents: props.hidden ? "none" : "all",
     transform: `
       ${props.order ? (props.order === 2 ? "scale(0.948)" : "") : ""}
       ${props.order ? (props.order === 3 ? "scale(0.889)" : "") : ""}
@@ -91,7 +88,6 @@ export function Card({
     () => ({
       type: "ANSWER_CARD",
       item: () => option,
-
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
@@ -126,7 +122,7 @@ export function Card({
         onDragStart?.(option);
       }}
       style={{
-        pointerEvents: isPlaying ? "none" : "all",
+        pointerEvents: isPlaying ? "none" : order !== 1 ? "none" : "all",
       }}
     >
       {!imageOnly && (

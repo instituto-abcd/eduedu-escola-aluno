@@ -71,7 +71,8 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
             position: "absolute",
             insetBlock: 0,
             marginBlock: "auto",
-            left: -100,
+            left: -50,
+            zIndex: 10,
           }}
           onClick={() => embla?.scrollPrev()}
         >
@@ -83,7 +84,8 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
             position: "absolute",
             insetBlock: 0,
             marginBlock: "auto",
-            right: -100,
+            right: -50,
+            zIndex: 10,
           }}
           onClick={() => embla?.scrollNext()}
         >

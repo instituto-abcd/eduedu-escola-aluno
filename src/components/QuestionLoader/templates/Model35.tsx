@@ -3,7 +3,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Grid, Group, Textarea, createStyles } from "@mantine/core";
+import { Group, Stack, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 
 const useStyles = createStyles((theme) => ({
@@ -14,11 +14,11 @@ const useStyles = createStyles((theme) => ({
     height: 212,
   },
   input: {
-    width: boardW(115),
-    height: boardW(115),
+    width: boardW(70),
+    height: boardW(95),
 
     color: "#495057",
-    fontSize: boardW(50),
+    fontSize: boardW(30),
     fontWeight: 600,
 
     border: "#868E96 solid 1px",
@@ -126,13 +126,7 @@ export function Model35({
         </Group>
       )}
 
-      <Group
-        my="auto"
-        spacing={10}
-        style={{ justifyContent: "space-evenly" }}
-        grow
-        noWrap={true}
-      >
+      <Stack my="auto" spacing={10} justify="center" align="center">
         {imageTitles[0] && (
           <img
             src={imageTitles[0].file_url!}
@@ -143,19 +137,17 @@ export function Model35({
         )}
 
         {fillRule && (
-          <Grid style={{ justifyContent: "center", alignSelf: "center" }}>
+          <Group noWrap spacing={10}>
             {slots &&
               slots.map((_, inx) => (
-                <Grid.Col key={inx} span={slots.length !== 3 ? 4 : 5}>
-                  <input
-                    key={inx + 1}
-                    maxLength={1}
-                    className={classes.input}
-                    onChange={(_) => getInputValues(inx)}
-                  />
-                </Grid.Col>
+                <input
+                  key={inx + 1}
+                  maxLength={1}
+                  className={classes.input}
+                  onChange={(_) => getInputValues(inx)}
+                />
               ))}
-          </Grid>
+          </Group>
         )}
         {!fillRule && (
           <Textarea
@@ -165,7 +157,7 @@ export function Model35({
             classNames={{ input: classes.textArea }}
           />
         )}
-      </Group>
+      </Stack>
     </>
   );
 }

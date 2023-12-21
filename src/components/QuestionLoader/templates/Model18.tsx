@@ -1,4 +1,4 @@
-import { Group, Image, Stack } from "@mantine/core";
+import { Group, Image, Stack, Text } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
@@ -9,6 +9,7 @@ import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 
 export function Model18({
   question,
@@ -87,9 +88,22 @@ export function Model18({
               src={title.file_url!}
               key={title.file_url}
               autoPlay={audioTitleAutoplay(inx)}
+              icon={inx > 0 ? <IconMessageCircle2 size={30} /> : undefined}
+              variant={inx > 0 ? "yellow" : "gray"}
             />
           ))}
         </Group>
+      )}
+
+      {textTitles[1] && (
+        <Text
+          size={boardW(24)}
+          color="dark.3"
+          weight={500}
+          key={textTitles[1].description}
+        >
+          {textTitles[1].description}
+        </Text>
       )}
 
       {imageTitles.map((title) => (

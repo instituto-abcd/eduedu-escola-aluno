@@ -1,4 +1,4 @@
-import { Group, Stack, Text, createStyles } from "@mantine/core";
+import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
@@ -57,7 +57,7 @@ export function Model25({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, getTitlesOfType } = useQuestionHelper(question);
+  const { audioTitles, textTitles, getTitlesOfType } = useQuestionHelper(question);
   const targetTitles = getTitlesOfType("IMAGE");
   const targets = targetTitles.some((t) => !!t.file_url)
     ? targetTitles
@@ -116,6 +116,15 @@ export function Model25({
         </Group>
       )}
 
+      {textTitles.map((text) => (
+        <Title
+          color="dark.3"
+          size={boardW(22)}
+          my={12}
+          dangerouslySetInnerHTML={{ __html: text.description }}
+        />
+      ))}
+
       <Stack my="auto">
         <Group mb={35}>
           {targets.map((title, inx) => (
@@ -138,7 +147,7 @@ export function Model25({
         </Group>
         <Group>
           {question.options.map((option, inx) =>
-            !option.image_name && option.description ? (
+            !option.image_url && option.description ? (
               <DraggableCard<QuestionOption>
                 key={inx}
                 className={classes.wideButton}

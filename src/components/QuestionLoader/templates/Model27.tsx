@@ -62,18 +62,18 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         </Group>
       )}
 
-      <Stack spacing={boardW(20)} align="center" my="auto">
+      <Stack spacing={boardW(20)} align="center" my="auto" mih={boardW(150)}>
         {currentSlide?.image_url && (
           <Image
             src={currentSlide.image_url}
             alt={currentSlide.description}
             width="auto"
-            height={currentSlide.description ? boardW(200) : boardW(280)}
+            height={currentSlide.description ? boardW(275) : boardW(300)}
           />
         )}
 
         {currentSlide?.description && (
-          <ScrollArea w={boardW(900)} mah={boardW(400)}>
+          <ScrollArea w={boardW(900)} mah={boardW(400)} type="always" style={{ overflow: 'auto' }}>
             <Box>
               <Text
                 m="auto"

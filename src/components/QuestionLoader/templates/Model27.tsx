@@ -48,13 +48,13 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
                 <AudioButton
                   key={inx}
                   autoPlay={audioTitleAutoplay(inx)}
-                  src={title?.file_url!}
+                  src={title?.file_url ?? ""}
                 />
               ) : currentSlide?.sound_url ? (
                 <AudioButton
                   key={inx}
                   autoPlay={false}
-                  src={currentSlide?.sound_url!}
+                  src={currentSlide?.sound_url ?? ""}
                 />
               ) : null}
             </Box>
@@ -73,7 +73,12 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         )}
 
         {currentSlide?.description && (
-          <ScrollArea w={boardW(900)} mah={boardW(400)} type="always" style={{ overflow: 'auto' }}>
+          <ScrollArea
+            w={boardW(900)}
+            mah={boardW(400)}
+            type="always"
+            style={{ overflow: "auto" }}
+          >
             <Box>
               <Text
                 m="auto"
@@ -87,20 +92,22 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
             </Box>
           </ScrollArea>
         )}
-        <Group position="center">
-          <TextOptionButton 
-            disabled={slideIndex === 0}
-            onClick={previousSlide}
-          >
-            <IconChevronLeft size={40} />
-          </TextOptionButton>
-          <TextOptionButton
-            onClick={nextSlide}
-            disabled={slideIndex + 1 == totalSlides ? true : false}
-          >
-            <IconChevronRight size={40} />
-          </TextOptionButton>
-        </Group>
+        {question.options.length > 1 && (
+          <Group position="center">
+            <TextOptionButton
+              disabled={slideIndex === 0}
+              onClick={previousSlide}
+            >
+              <IconChevronLeft size={40} />
+            </TextOptionButton>
+            <TextOptionButton
+              onClick={nextSlide}
+              disabled={slideIndex + 1 == totalSlides ? true : false}
+            >
+              <IconChevronRight size={40} />
+            </TextOptionButton>
+          </Group>
+        )}
       </Stack>
     </>
   );

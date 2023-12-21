@@ -25,6 +25,12 @@ const useStyles = createStyles((theme, isOver: boolean) => ({
     paddingBlock: "1rem",
     borderRadius: 16,
   },
+  optionImage: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    inset: 0,
+    marginBlock: "auto"
+  }
 }));
 
 export function Model13({
@@ -161,8 +167,8 @@ function SlotCard({
 
   return (
     <div className={classes.slot} ref={drop}>
-      {image && <img src={image} height={boardW(96)} />}
-      <Text size={boardW(20)} weight={600} color="gray.7" align="center">
+      {image && <img src={image} height={boardW(150)} className={classes.optionImage} />}
+      <Text size={image ? boardW(20) : boardW(30)} weight={600} color="gray.7" align="center">
         {description}
       </Text>
     </div>

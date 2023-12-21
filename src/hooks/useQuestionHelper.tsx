@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { Question, QuestionOption } from "~/api/exam";
+import { validate as validateUUID } from "uuid";
 
 export function useQuestionHelper(question: Question) {
   const isExam = !question.planet_id;
@@ -20,12 +21,22 @@ export function useQuestionHelper(question: Question) {
   );
 
   const getSupportText = useCallback(
-    function getSupportText(text: string) {
+    function getSupportText(text: string, options?: { uuid?: boolean }) {
       const supportText = question.titles.filter(
         (title) => title?.placeholder?.includes(text) && !!title?.description
       );
 
-      return supportText;
+      if (supportText.length > 0) return supportText;
+
+      if (options?.uuid) {
+        const supportTextWithUuid = question.titles.filter(
+          (title) => validateUUID(title.description) === true
+        );
+
+        return supportTextWithUuid;
+      }
+
+      return [];
     },
     [question]
   );
@@ -34,7 +45,7 @@ export function useQuestionHelper(question: Question) {
 
   const videoTitles = getTitlesOfType("VIDEO");
   const lottieTitles = getTitlesOfType("LOTTIE");
-  const supportText = getSupportText("ID da historinha");
+  const supportText = getSupportText("ID da historinha", { uuid: true });
   const hasAuxQuestion = !!supportText[0]?.["description"];
   const auxQuestionId = hasAuxQuestion ? supportText[0].description : null;
 
@@ -87,7 +98,9 @@ export function useQuestionHelper(question: Question) {
   const getRule = (rule: string) =>
     question.rules?.find((r) => r.name === rule);
 
-  const skipFeedback = getRule("skipFeedback")?.value === "true" || question.model_id === "MODEL27";
+  const skipFeedback =
+    getRule("skipFeedback")?.value === "true" ||
+    question.model_id === "MODEL27";
 
   return {
     hasTitleOfType,

@@ -3,7 +3,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Group, Stack, Textarea, createStyles } from "@mantine/core";
+import { Group, Stack, Text, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 
 const useStyles = createStyles((theme) => ({
@@ -126,6 +126,11 @@ export function Model35({
         </Group>
       )}
 
+      {question.description && (
+        <Text color="dark.3" size={boardW(22)} mt={20}>
+          {question.description.split(/[-(]/)[0]}
+        </Text>
+      )}
       <Stack my="auto" spacing={10} justify="center" align="center">
         {imageTitles[0] && (
           <img

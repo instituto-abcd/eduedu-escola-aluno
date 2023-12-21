@@ -2,7 +2,7 @@ import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { useDrop } from "react-dnd";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { CardStack } from "~/components/CardStack";
 import { boardW, lousaWidth } from "~/constants/dimensions";
@@ -29,8 +29,8 @@ const useStyles = createStyles((theme, isOver: boolean) => ({
     maxWidth: "100%",
     maxHeight: "100%",
     inset: 0,
-    marginBlock: "auto"
-  }
+    marginBlock: "auto",
+  },
 }));
 
 export function Model13({
@@ -50,10 +50,7 @@ export function Model13({
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function onDrop(
-    item: QuestionOption | null,
-    index: number
-  ) {
+  function onDrop(item: QuestionOption | null, index: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
@@ -167,8 +164,15 @@ function SlotCard({
 
   return (
     <div className={classes.slot} ref={drop}>
-      {image && <img src={image} height={boardW(150)} className={classes.optionImage} />}
-      <Text size={image ? boardW(20) : boardW(30)} weight={600} color="gray.7" align="center">
+      {image && (
+        <img src={image} height={boardW(150)} className={classes.optionImage} />
+      )}
+      <Text
+        size={image ? boardW(20) : boardW(30)}
+        weight={600}
+        color="gray.7"
+        align="center"
+      >
         {description}
       </Text>
     </div>

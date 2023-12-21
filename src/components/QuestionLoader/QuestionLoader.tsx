@@ -9,7 +9,7 @@ import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
-import { modelsAltoAdvance } from "~/constants";
+import { modelIsAutoAdvance } from "~/constants";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -41,7 +41,6 @@ export function QuestionLoader({
   const commonProps: ModelProps = {
     question,
     auxQuestion,
-    setContinueDisabled,
     onAnswerChange: setAnswer,
     onConditionsChange: setConditions,
   };
@@ -88,13 +87,14 @@ export function QuestionLoader({
     setContinueDisabled(!shouldEnableContinue);
   }, [conditions, isPlaying]);
 
+  /* Auto-advance logic */
   useEffect(() => {
-    if (modelsAltoAdvance.find((model) => question.model_id == model)) {
-      if (question.options.length === answer.length) {
-        submitAnswer();
-      }
-    }
-  }, [question, answer]);
+    if (continueDisabled === true) return;
+    if (!modelIsAutoAdvance(question.model_id)) return;
+    if (answer.length === 0) return;
+
+    submitAnswer();
+  }, [continueDisabled]);
 
   return (
     <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>

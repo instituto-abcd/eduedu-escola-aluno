@@ -29,6 +29,9 @@ const useStyles = createStyles((theme) => ({
     },
     textAlign: "center",
   },
+  scroll: {
+    overflow: 'auto',
+  }
 }));
 
 export function Model32({
@@ -116,9 +119,9 @@ export function Model32({
           justify={textTitles.length > 0 ? "space-between" : "center"}
           align="center"
         >
-          {hasImageTitle &&
-            textTitles.length === 0 &&
-            imageTitles.map((title) => (
+
+          <ScrollArea mah={boardW(400)} w="48%" pr={20} className={classes.scroll} type="always">
+            {hasImageTitle && imageTitles.map((title) => (
               <Image
                 src={title.file_url}
                 key={title.file_url}
@@ -127,8 +130,7 @@ export function Model32({
               />
             ))}
 
-          {textTitles.length > 0 && (
-            <ScrollArea mah={boardW(400)} w="48%" pr={20}>
+            {textTitles.length > 0 && (
               <Stack pb={5}>
                 {question?.planet_id && (
                   <Text
@@ -173,10 +175,10 @@ export function Model32({
                   />
                 )}
               </Stack>
-            </ScrollArea>
-          )}
+            )}
+          </ScrollArea>
 
-          <ScrollArea mah={boardW(420)} w="48%" pr={20}>
+          <ScrollArea mah={boardW(420)} w="48%" pr={20} className={classes.scroll} type="always">
             <Stack pb={5}>
               <Text
                 size={boardW(20)}

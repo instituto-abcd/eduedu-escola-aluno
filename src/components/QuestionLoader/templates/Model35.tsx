@@ -5,6 +5,7 @@ import { boardW } from "~/constants/dimensions";
 import { ModelProps } from ".";
 import { Group, Stack, Text, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
+import { produce } from "immer";
 
 const useStyles = createStyles((theme) => ({
   textArea: {
@@ -46,11 +47,6 @@ export function Model35({
   const [answer, setAnswer] = useState<string>("");
 
   useEffect(() => {
-    setAnswer("");
-    cleanUpInputValues();
-  }, [question]);
-
-  useEffect(() => {
     onAnswerChange([
       {
         description: answer,
@@ -60,57 +56,73 @@ export function Model35({
     ]);
   }, [answer]);
 
+  /* VARIAÇÃO 1: Preencher */
   const fillRule = getRule("fill")?.value === "true";
+  const initialSlots =
+    question.titles
+      .find(
+        (title) =>
+          title.placeholder.includes("Exp:") ||
+          title.placeholder.includes("Exemplo")
+      )
+      ?.description.trim()
+      .split(" ") ?? [];
 
-  // In case of rule fill:
-  const slots = question.titles
-    .find(
-      (title) =>
-        title.placeholder.includes("Exp:") ||
-        title.placeholder.includes("Exemplo")
-    )
-    ?.description.trim()
-    .split(" ");
+  const slotMap = initialSlots.map((slot) => ({
+    letter: slot === "_" ? "" : slot,
+    fixed: slot !== "_",
+  }));
 
-  function getInputValues(inx: number) {
-    const inputs = document.getElementsByClassName(
-      classes.input
-    ) as HTMLCollectionOf<HTMLInputElement>;
-    const nextField = inputs[inx + 1];
+  /* 1. Pré-popular inputs */
+  const [slots, setSlots] =
+    useState<{ letter: string; fixed: boolean }[]>(slotMap);
 
-    if (nextField) nextField.focus();
+  /* 2. onChange */
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const { value } = e.target;
 
-    let answer = "";
-    for (let index = 0; index < inputs.length; index++) {
-      const element = inputs[index];
-      answer += element.value.toUpperCase();
-    }
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index].letter = value;
+      })
+    );
 
-    setFinalAnswer(answer);
-  }
-
-  function setFinalAnswer(data: string) {
-    setAnswer(data);
-  }
-
-  function cleanUpInputValues() {
-    const inputs = document.getElementsByClassName(
-      classes.input
-    ) as HTMLCollectionOf<HTMLInputElement>;
-    for (let index = 0; index < inputs.length; index++) {
-      // @ts-expect-error assign null to string
-      inputs[index].value = null;
+    if (e.target.nextSibling && e.target.value !== "") {
+      (e.target.nextSibling as HTMLInputElement).focus();
     }
   }
+
+  function handleBackspace(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (
+      e.key === "Backspace" &&
+      e.currentTarget.value === "" &&
+      e.currentTarget.previousSibling
+    ) {
+      (e.currentTarget.previousSibling as HTMLInputElement).focus();
+    }
+  }
+
+  /* 3. Ouvir atualizações nos slots para fabricar a resposta */
+  useEffect(() => {
+    setAnswer(slots.map((slot) => slot.letter.toUpperCase()).join(""));
+  }, [slots]);
 
   const conditions = useMemo(
-    () => [Boolean(answer), answer.length === slots?.length],
+    () => [
+      Boolean(answer),
+      fillRule ? slots.every((slot) => slot.letter !== "") : true,
+    ],
     [answer]
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  useEffect(() => {
+    setAnswer("");
+    setSlots(slotMap);
+  }, [question]);
 
   return (
     <>
@@ -144,12 +156,15 @@ export function Model35({
         {fillRule && (
           <Group noWrap spacing={10}>
             {slots &&
-              slots.map((_, inx) => (
+              slots.map((slot, inx) => (
                 <input
                   key={inx + 1}
                   maxLength={1}
                   className={classes.input}
-                  onChange={(_) => getInputValues(inx)}
+                  onChange={(e) => handleInput(e, inx)}
+                  onKeyDown={handleBackspace}
+                  value={slot.letter}
+                  disabled={slot.fixed}
                 />
               ))}
           </Group>

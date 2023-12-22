@@ -79,6 +79,7 @@ export function QuestionLoader({
 
   const { isPlaying } = useAudioStatus();
 
+  /* Conditions - bloqueio de continuar */
   useEffect(() => {
     const shouldEnableContinue = [...conditions, !isPlaying].every(
       (bool) => bool === true

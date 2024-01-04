@@ -2,6 +2,7 @@ import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import {
   Fragment,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -17,11 +18,11 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconRotateClockwise } from "@tabler/icons-react";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 
 const useStyles = createStyles({
   slot: {
-    width: boardW(60),
+    width: boardW(50),
     height: boardW(50),
   },
 
@@ -29,6 +30,9 @@ const useStyles = createStyles({
     width: "auto",
     paddingBlock: boardW(10),
     fontSize: boardW(18),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -159,6 +163,24 @@ export function Model11({
     };
   }, [question]);
 
+  const getCustomWidth = useCallback(() => {
+    const answerValue = getRule("answers")?.value;
+    if (!answerValue) return 'auto';
+
+    if (answerValue.length < 3 || (answerValue.length === 3 && answerValue.includes(','))) return boardW(50);
+
+    return boardW(88);
+  }, [question]);
+
+  const getCustomFontSize = useCallback(() => {
+    const answerValue = getRule("answers")?.value;
+    if (!answerValue) return boardW(18);
+
+    if (answerValue.length < 4) return boardW(18);
+
+    return boardW(14);
+  }, [question]);
+
   return (
     <>
       {hasAudioTitle && (
@@ -175,13 +197,8 @@ export function Model11({
                   ? true
                   : false
                 : false,
-              icon:
-                inx > 0 ? (
-                  <IconRotateClockwise
-                    style={{ transform: "rotateX(180deg)" }}
-                    size={30}
-                  />
-                ) : undefined,
+              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
+              variant: inx > 0 ? "yellow" : "gray",
             } as const;
 
             return (
@@ -191,7 +208,7 @@ export function Model11({
         </Group>
       )}
 
-      {hasTitle && (
+      {hasTitle && !questionTitle.description?.includes("_") && (
         <Title
           color="dark.3"
           size={boardW(22)}
@@ -220,7 +237,7 @@ export function Model11({
           <Group spacing={0}>
             {textToComplete &&
               textToComplete.description
-                .replaceAll("\\n", "")
+                .replaceAll(/\\n/g, " ")
                 .split(/_+/g) // separa os segmentos de texto dos underlines
                 .map((w, inx, arr) => {
                   const notLastFragment = arr.length !== inx + 1;
@@ -253,9 +270,9 @@ export function Model11({
                           onClear={handleClear}
                           className={classes.slot}
                           style={{
-                            width: "auto",
+                            width: getCustomWidth(),
                             height: boardW(50),
-                            fontSize: boardW(18),
+                            fontSize: getCustomFontSize(),
                           }}
                         />
                       )}
@@ -280,9 +297,15 @@ export function Model11({
                           onClear={handleClear}
                           className={classes.slot}
                           style={{
-                            width: "auto",
+                            width: getCustomWidth(),
                             height: boardW(50),
-                            fontSize: boardW(18),
+                            fontSize: getCustomFontSize(),
+                            fontWeight: '700',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 10,
+                            top: -5
                           }}
                         />
                       )}

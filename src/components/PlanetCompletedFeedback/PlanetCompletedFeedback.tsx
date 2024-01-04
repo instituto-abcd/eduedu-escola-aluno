@@ -16,21 +16,32 @@ import { usePlanetFeedback } from "~/api/student";
 import feedbackLow from "~/assets/planets/feedback_low.svg";
 import feedbackHigh from "~/assets/planets/feedback_high.svg";
 
-export function PlanetCompletedFeedback() {
+type Props = {
+  onClose: (lastPlanetId: string | null) => void;
+};
+
+export function PlanetCompletedFeedback({ onClose }: Props) {
   const [params, setParams] = useSearchParams();
   const planetCompleted = params.get("planet-completed");
 
-  const { data, refetch, error, isLoading, isSuccess, isError } =
-    usePlanetFeedback(planetCompleted ?? "", {
-      enabled: !!planetCompleted,
-      cacheTime: 0,
-    });
+  const {
+    data: planetData,
+    refetch,
+    error,
+    isLoading,
+    isSuccess,
+    isError,
+  } = usePlanetFeedback(planetCompleted ?? "", {
+    enabled: !!planetCompleted,
+    cacheTime: 0,
+  });
 
   function closeModal() {
     setParams((prev) => {
       prev.delete("planet-completed");
       return prev;
     });
+    onClose(planetCompleted);
   }
 
   if (!planetCompleted) return null;
@@ -48,11 +59,7 @@ export function PlanetCompletedFeedback() {
       <Stack align="center" spacing="xl">
         {error && (
           <>
-            <Image
-              src={feedbackLow}
-              width={200}
-              style={{ zIndex: 10 }}
-            />
+            <Image src={feedbackLow} width={200} style={{ zIndex: 10 }} />
             <Notification
               color="red"
               icon={<IconX />}
@@ -77,13 +84,18 @@ export function PlanetCompletedFeedback() {
         {isSuccess && (
           <>
             <Image
-              src={(data?.stars ?? 0) > 0 ? feedbackHigh : feedbackLow}
+              src={(planetData?.stars ?? 0) > 0 ? feedbackHigh : feedbackLow}
               width={200}
               style={{ zIndex: 10 }}
             />
-            <Rating value={data?.stars ?? 0} readOnly size="xl" fractions={4} />
+            <Rating
+              value={planetData?.stars ?? 0}
+              readOnly
+              size="xl"
+              fractions={4}
+            />
             <Text color="dark.3" size="xl">
-              Muito bem! Você terminou o {data?.planetName}.
+              Muito bem! Você terminou o {planetData?.planetName}.
             </Text>
             <Button fullWidth color="blue.4" onClick={closeModal} size="md">
               Continuar

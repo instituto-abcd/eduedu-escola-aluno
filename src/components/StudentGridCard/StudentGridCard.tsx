@@ -65,13 +65,14 @@ export function StudentGridCard({
         onClick={handleClick}
         className={classes.button}
         classNames={{ root: classes.buttonRoot }}
+        styles={{ inner: { maxWidth: "100%" } }}
       >
-        <Stack>
+        <Stack w="100%">
           <Text
             size="lg"
             color={student.reserved ? "gray.5" : "blue.6"}
             style={{ lineHeight: 1 }}
-            truncate
+            truncate="end"
           >
             {student.name}
           </Text>

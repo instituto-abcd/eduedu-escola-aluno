@@ -20,7 +20,6 @@ type Props<T> = {
   accept?: string | string[];
   item: T | null;
   replaceWith?: React.ReactNode;
-  showTargetLetters?: boolean | false;
 } & Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
   "onDrop"
@@ -32,7 +31,6 @@ export function DraggableCardSlot<T = QuestionOption>({
   className,
   replaceWith,
   accept = "ANSWER_CARD",
-  showTargetLetters,
   ...props
 }: Props<T>) {
   const { classes, cx } = useStyles();
@@ -48,20 +46,8 @@ export function DraggableCardSlot<T = QuestionOption>({
     []
   );
 
-  if (showTargetLetters)
-    return (
-      <div
-        {...props}
-        className={cx(classes.card, className)}
-        style={{}}
-        ref={drop}
-      >
-        {replaceWith}
-      </div>
-    );
-
   if (item !== null && replaceWith) return replaceWith;
-  
+
   return (
     <div
       {...props}

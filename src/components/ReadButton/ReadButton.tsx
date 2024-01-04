@@ -6,7 +6,6 @@ import { IconBook } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
 import { ModelMapper } from "../QuestionLoader/ModelMapper";
 import { lousaWidth } from "~/constants/dimensions";
-import { useAudioStatus } from "~/stores/audio";
 
 type Props = {
   question: Question;
@@ -14,10 +13,8 @@ type Props = {
 
 export function ReadButton({ question }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
-  const isPlaying = useAudioStatus((state) => state.isPlaying);
 
   const onClose = () => {
-    if (isPlaying) return;
     close();
   };
 

@@ -1,10 +1,10 @@
 export type QuestionOption = {
   description: string;
-  image_name: string | null;
+  image_id: string | null;
   image_url: string | null;
   isCorrect: boolean;
   position: string | number;
-  sound_name: string | null;
+  sound_id: string | null;
   sound_url: string | null;
   positionAnswer?: number;
 };

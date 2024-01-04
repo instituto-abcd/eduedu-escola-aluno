@@ -31,7 +31,6 @@ export function Model19({
     useQuestionHelper(question);
 
   const [options, setOptions] = useState<QuestionOption[]>([]);
-  const [targetLettersTitles, setTargetLettersTitles] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>([]);
   const descRule = question.rules.find(
     (rule) => rule.name === "show_option_desc"
@@ -52,12 +51,7 @@ export function Model19({
   );
 
   const lettersTitle = question.titles.find((title) => title.type === "TEXT");
-
-  useEffect(() => {
-    if (lettersTitle) {
-      setTargetLettersTitles(lettersTitle.description.split(" "));
-    }
-  }, [lettersTitle]);
+  const targetLetters = lettersTitle?.description.split(" ") ?? [];
 
   useEffect(() => {
     setOptions(question.options);
@@ -68,50 +62,62 @@ export function Model19({
     onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
   }, [answers]);
 
-  const conditions = useMemo(() => [answers.every((ans) => ans !== null)], [answers]);
+  const conditions = useMemo(
+    () => [answers.every((ans) => ans !== null)],
+    [answers]
+  );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const handleDrop = useCallback((item: QuestionOption | null, index: number) => {
-    setAnswers((prevAnswers) =>
-      produce(prevAnswers, (draft) => {
-        if (draft[index] === null && !draft.some((ans) => ans?.image_id === item?.image_id)) {
-          draft[index] = item;
-        }
-      })
-    );
-
-    setOptions((prevOptions) =>
-      produce(prevOptions, (draft) => {
-        if (item) {
-          const itemIndex = draft.findIndex((opt) => opt.image_id === item.image_id);
-          if (itemIndex !== -1) {
-            draft.splice(itemIndex, 1);
+  const handleDrop = useCallback(
+    (item: QuestionOption | null, index: number) => {
+      setAnswers((prevAnswers) =>
+        produce(prevAnswers, (draft) => {
+          if (
+            draft[index] === null &&
+            !draft.some((ans) => ans?.image_id === item?.image_id)
+          ) {
+            draft[index] = item;
           }
-        }
-      })
-    );
-  }, []);
+        })
+      );
 
-  const handleClear = useCallback((item: QuestionOption | null, index: number) => {
-    setAnswers((prevAnswers) =>
-      produce(prevAnswers, (draft) => {
-        draft[index] = null;
-      })
-    );
+      setOptions((prevOptions) =>
+        produce(prevOptions, (draft) => {
+          if (item) {
+            const itemIndex = draft.findIndex(
+              (opt) => opt.image_id === item.image_id
+            );
+            if (itemIndex !== -1) {
+              draft.splice(itemIndex, 1);
+            }
+          }
+        })
+      );
+    },
+    []
+  );
 
-    setOptions((prevOptions) =>
-      produce(prevOptions, (draft) => {
-        if (item && !draft.some((opt) => opt.image_id === item.image_id)) {
-          draft.push(item);
-        }
-      })
-    );
-  }, []);
+  const handleClear = useCallback(
+    (item: QuestionOption | null, index: number) => {
+      setAnswers((prevAnswers) =>
+        produce(prevAnswers, (draft) => {
+          draft[index] = null;
+        })
+      );
 
-
+      setOptions((prevOptions) =>
+        produce(prevOptions, (draft) => {
+          if (item && !draft.some((opt) => opt.image_id === item.image_id)) {
+            draft.push(item);
+          }
+        })
+      );
+    },
+    []
+  );
 
   return (
     <>
@@ -147,24 +153,19 @@ export function Model19({
               key={inx}
               onDrop={(item) => handleDrop(item, inx)}
               className={classes.slot}
-              showTargetLetters={showTargetLetters}
               replaceWith={
                 <DraggableCard
                   item={null}
                   key={inx}
                   image={answers[inx]?.image_url}
-                  text={
-                    showTargetLetters
-                      ? targetLettersTitles[inx]
-                      : answers[inx]
-                        ? answers[inx]?.description
-                        : null
-                  }
+                  text={answers[inx] ? answers[inx]?.description : null}
                   disabled
                   onClear={() => handleClear(answer, inx)}
                 />
               }
-            ></DraggableCardSlot>
+            >
+              {showTargetLetters ? targetLetters[inx] : undefined}
+            </DraggableCardSlot>
           ))}
         </Group>
       </Stack>

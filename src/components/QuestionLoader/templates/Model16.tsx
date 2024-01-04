@@ -1,5 +1,5 @@
 import { Group } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
@@ -28,13 +28,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
 
   useEffect(() => {
     if (data && skipLottie) {
-      const outlineLayer = data.layers.find((layer) =>
-        layer.nm.includes("outline")
-      );
-      const updatedData = outlineLayer
-        ? { ...data, layers: [outlineLayer] }
-        : data;
-      setModifiedData(updatedData);
+      updateDataWithoutFillLayer();
     } else {
       setModifiedData(data);
     }
@@ -99,6 +93,12 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     start();
   }, [question]);
 
+  const updateDataWithoutFillLayer = useCallback(() => {
+    const outlineLayer = data?.layers.filter((layer) => !layer.nm.includes("fill"));
+    const updatedData = outlineLayer ? { ...data, layers: outlineLayer } : data;
+    setModifiedData(updatedData);
+  }, [data]);
+
   return (
     <>
       {hasAudioTitle && (
@@ -139,6 +139,12 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
               pointerEvents: "none",
               zIndex: -1,
             }}
+            eventListeners={[
+              {
+                eventName: 'complete',
+                callback: () => updateDataWithoutFillLayer(),
+              }
+            ]}
           />
         )}
       </Group>

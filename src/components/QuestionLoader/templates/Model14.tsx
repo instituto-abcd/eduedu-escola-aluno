@@ -14,8 +14,7 @@ export function Model14({
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const { audioTitleAutoplay, getRule } = useQuestionHelper(question);
   const circleRule = question.rules.find((rule) => rule.name === "circle_size");
   const circleSize = circleRule ? +circleRule.value : 4;
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -36,14 +35,22 @@ export function Model14({
 
   const hasAux = !!question.options[0]?.sound_url;
   const auxAudioRef = useRef<AudioButtonRef>(null);
-
   const mainAudioRef = useRef<AudioButtonRef>(null);
-  mainAudioRef.current?.sound.onEnd(() => {
-    const auxSound = auxAudioRef.current?.sound;
-    if (hasAux && auxSound && !auxSound.playing()) {
-      auxSound.play();
+
+  useEffect(() => {
+    if (auxAudioRef.current) {
+      const auxSound = auxAudioRef.current!.sound;
+      mainAudioRef.current?.sound.onEnd(() => {
+        if (hasAux && auxSound && !auxSound.playing()) {
+          auxSound.play();
+        }
+      });
     }
-  });
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
 
   const handleOnClick = (index: number) => {
     setAnswer({
@@ -51,6 +58,15 @@ export function Model14({
       positionAnswer: index,
     } as QuestionOption);
   };
+
+  const audioTitles = question.titles.filter((title) => title.type === "AUDIO")
+    .filter((title) => title.file_id)
+    .sort((a, b) => a.position - b.position);
+
+  const hasAudioTitle = useMemo(() => audioTitles.some((title) => title.file_id), [audioTitles]);
+
+  const shouldAuxAutoPlay = !!mainAudioRef && !audioTitleAutoplay(0) || 
+      !getRule('autoplay') && !mainAudioRef.current?.sound.playing;
 
   return (
     <>
@@ -69,6 +85,7 @@ export function Model14({
               ref={auxAudioRef}
               src={question.options[0].sound_url!}
               variant="yellow"
+              autoPlay={shouldAuxAutoPlay}
               icon={<IconMessageCircle2 size={30} />}
             />
           )}
@@ -101,8 +118,8 @@ export function Model14({
                     : false
                 }
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: boardW(100),
+                  height: boardW(100),
                   borderRadius: "50%",
                   alignSelf: "center",
                 }}

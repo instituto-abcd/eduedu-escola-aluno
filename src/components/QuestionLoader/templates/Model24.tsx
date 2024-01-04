@@ -1,6 +1,6 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -70,6 +70,18 @@ export function Model24({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  const getDashesAccordingAnswer = useCallback(() => {
+    const length = question.options.find((option) => option.isCorrect)?.description?.length;
+    return Array.prototype.join.call({length: (length || -1) + 1}, '_');
+  }, [question]);
+
+  const singleAnswerWithUnderlineDashes = useMemo(
+    () => singleAnswer?.description 
+      ? `<span style="text-decoration: underline;">${singleAnswer?.description}</span>` 
+      : getDashesAccordingAnswer(),
+    [question, singleAnswer]
+  );
+
   return (
     <>
       <Group mx="auto" h="50px">
@@ -101,20 +113,6 @@ export function Model24({
       </Group>
 
       <Stack my="auto" spacing={boardW(40)}>
-        {imageTitles.map(
-          (title) =>
-            title.file_url && (
-              <Image
-                key={title.file_url}
-                src={title.file_url}
-                alt={title.placeholder}
-                styles={{ image: { marginInline: "auto" } }}
-                width="auto"
-                height={boardW(170)}
-              />
-            )
-        )}
-
         {isTypeComplete && (
           <Stack align="center" spacing={boardW(25)}>
             {textTitles.find((title) => title.placeholder.includes("completar"))
@@ -132,6 +130,18 @@ export function Model24({
                 align="center"
               />
             )}
+
+            {imageTitles.map((title) => title.file_url && (
+              <Image
+                key={title.file_url}
+                src={title.file_url}
+                alt={title.placeholder}
+                styles={{ image: { marginInline: "auto" } }}
+                width="auto"
+                height={boardW(170)}
+              />
+            ))}
+
             <Group mb={20}>
               {question.options.map((option, inx) => (
                 <OptionButton
@@ -170,7 +180,7 @@ export function Model24({
                   dangerouslySetInnerHTML={{
                     __html: title.description.replace(
                       /_+/g,
-                      singleAnswer?.description ?? "_____"
+                      singleAnswerWithUnderlineDashes ?? getDashesAccordingAnswer()
                     ),
                   }}
                   key={title.description}
@@ -180,6 +190,18 @@ export function Model24({
                   align="center"
                 />
               ))}
+
+            {imageTitles.map((title) => title.file_url && (
+              <Image
+                key={title.file_url}
+                src={title.file_url}
+                alt={title.placeholder}
+                styles={{ image: { marginInline: "auto" } }}
+                width="auto"
+                height={boardW(170)}
+              />
+            ))}
+
             <Group>
               {question.options.map((option, inx) => (
                 <OptionButton

@@ -217,7 +217,7 @@ export function usePlanetFeedback(
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
-  return useQuery([KEY.GET_STUDENT_AWARDS], handler, {
+  return useQuery([KEY.PLANET_FEEDBACK], handler, {
     ...options,
     onSuccess: (data, vars, ctx) => {
       options?.onSuccess?.(data, vars, ctx);

@@ -9,7 +9,7 @@ import { ModelProps } from ".";
 
 const useStyles = createStyles({
   title: {
-    fontSize: boardW(20),
+    fontSize: boardW(30),
     "*": {
       fontSize: boardW(20),
     },
@@ -104,7 +104,7 @@ export function Model4({
                   <img
                     src={option.image_url}
                     alt={option.description}
-                    height={105}
+                    height={boardW(130)}
                     width="auto"
                     style={{
                       maxHeight: 120,

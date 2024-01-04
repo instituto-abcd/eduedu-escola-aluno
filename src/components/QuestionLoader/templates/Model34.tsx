@@ -1,10 +1,4 @@
-import {
-  BackgroundImage,
-  Box,
-  Group,
-  SimpleGrid,
-  createStyles,
-} from "@mantine/core";
+import { Box, Group, SimpleGrid, Stack, createStyles } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -76,12 +70,8 @@ export function Model34({
         spacing={boardW(4)}
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <Box w="100%" maw={boardW(400)}>
-          <BackgroundImage
-            h={boardW(350)}
-            mb={10}
-            src={imageTitles[0].file_url!}
-          />
+        <Stack w="100%" maw={boardW(400)} spacing={10}>
+          <img style={{ height: boardW(350) }} src={imageTitles[0].file_url!} />
           <DraggableCardSlot
             item={answer}
             onDrop={(item) => setAnswer(item)}
@@ -97,8 +87,8 @@ export function Model34({
                 className={classes.card}
               />
             }
-          ></DraggableCardSlot>
-        </Box>
+          />
+        </Stack>
         <Box maw={boardW(400)} w="100%">
           <SimpleGrid cols={2}>
             {question.options.map((item, inx) => (

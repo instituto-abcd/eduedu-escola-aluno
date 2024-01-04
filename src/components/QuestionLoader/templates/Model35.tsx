@@ -3,8 +3,9 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
 import { ModelProps } from ".";
-import { Grid, Group, Textarea, createStyles } from "@mantine/core";
+import { Group, Stack, Text, Textarea, createStyles } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
+import { produce } from "immer";
 
 const useStyles = createStyles((theme) => ({
   textArea: {
@@ -14,11 +15,11 @@ const useStyles = createStyles((theme) => ({
     height: 212,
   },
   input: {
-    width: boardW(115),
-    height: boardW(115),
+    width: boardW(70),
+    height: boardW(95),
 
     color: "#495057",
-    fontSize: boardW(50),
+    fontSize: boardW(30),
     fontWeight: 600,
 
     border: "#868E96 solid 1px",
@@ -46,11 +47,6 @@ export function Model35({
   const [answer, setAnswer] = useState<string>("");
 
   useEffect(() => {
-    setAnswer("");
-    cleanUpInputValues();
-  }, [question]);
-
-  useEffect(() => {
     onAnswerChange([
       {
         description: answer,
@@ -60,57 +56,73 @@ export function Model35({
     ]);
   }, [answer]);
 
+  /* VARIAÇÃO 1: Preencher */
   const fillRule = getRule("fill")?.value === "true";
+  const initialSlots =
+    question.titles
+      .find(
+        (title) =>
+          title.placeholder.includes("Exp:") ||
+          title.placeholder.includes("Exemplo")
+      )
+      ?.description.trim()
+      .split(" ") ?? [];
 
-  // In case of rule fill:
-  const slots = question.titles
-    .find(
-      (title) =>
-        title.placeholder.includes("Exp:") ||
-        title.placeholder.includes("Exemplo")
-    )
-    ?.description.trim()
-    .split(" ");
+  const slotMap = initialSlots.map((slot) => ({
+    letter: slot === "_" ? "" : slot,
+    fixed: slot !== "_",
+  }));
 
-  function getInputValues(inx: number) {
-    const inputs = document.getElementsByClassName(
-      classes.input
-    ) as HTMLCollectionOf<HTMLInputElement>;
-    const nextField = inputs[inx + 1];
+  /* 1. Pré-popular inputs */
+  const [slots, setSlots] =
+    useState<{ letter: string; fixed: boolean }[]>(slotMap);
 
-    if (nextField) nextField.focus();
+  /* 2. onChange */
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const { value } = e.target;
 
-    let answer = "";
-    for (let index = 0; index < inputs.length; index++) {
-      const element = inputs[index];
-      answer += element.value.toUpperCase();
-    }
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index].letter = value;
+      })
+    );
 
-    setFinalAnswer(answer);
-  }
-
-  function setFinalAnswer(data: string) {
-    setAnswer(data);
-  }
-
-  function cleanUpInputValues() {
-    const inputs = document.getElementsByClassName(
-      classes.input
-    ) as HTMLCollectionOf<HTMLInputElement>;
-    for (let index = 0; index < inputs.length; index++) {
-      // @ts-expect-error assign null to string
-      inputs[index].value = null;
+    if (e.target.nextSibling && e.target.value !== "") {
+      (e.target.nextSibling as HTMLInputElement).focus();
     }
   }
+
+  function handleBackspace(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (
+      e.key === "Backspace" &&
+      e.currentTarget.value === "" &&
+      e.currentTarget.previousSibling
+    ) {
+      (e.currentTarget.previousSibling as HTMLInputElement).focus();
+    }
+  }
+
+  /* 3. Ouvir atualizações nos slots para fabricar a resposta */
+  useEffect(() => {
+    setAnswer(slots.map((slot) => slot.letter.toUpperCase()).join(""));
+  }, [slots]);
 
   const conditions = useMemo(
-    () => [Boolean(answer), answer.length === slots?.length],
+    () => [
+      Boolean(answer),
+      fillRule ? slots.every((slot) => slot.letter !== "") : true,
+    ],
     [answer]
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  useEffect(() => {
+    setAnswer("");
+    setSlots(slotMap);
+  }, [question]);
 
   return (
     <>
@@ -126,13 +138,12 @@ export function Model35({
         </Group>
       )}
 
-      <Group
-        my="auto"
-        spacing={10}
-        style={{ justifyContent: "space-evenly" }}
-        grow
-        noWrap={true}
-      >
+      {question.description && (
+        <Text color="dark.3" size={boardW(22)} mt={20}>
+          {question.description.split(/[-(]/)[0]}
+        </Text>
+      )}
+      <Stack my="auto" spacing={10} justify="center" align="center">
         {imageTitles[0] && (
           <img
             src={imageTitles[0].file_url!}
@@ -143,19 +154,20 @@ export function Model35({
         )}
 
         {fillRule && (
-          <Grid style={{ justifyContent: "center", alignSelf: "center" }}>
+          <Group noWrap spacing={10}>
             {slots &&
-              slots.map((_, inx) => (
-                <Grid.Col key={inx} span={slots.length !== 3 ? 4 : 5}>
-                  <input
-                    key={inx + 1}
-                    maxLength={1}
-                    className={classes.input}
-                    onChange={(_) => getInputValues(inx)}
-                  />
-                </Grid.Col>
+              slots.map((slot, inx) => (
+                <input
+                  key={inx + 1}
+                  maxLength={1}
+                  className={classes.input}
+                  onChange={(e) => handleInput(e, inx)}
+                  onKeyDown={handleBackspace}
+                  value={slot.letter}
+                  disabled={slot.fixed}
+                />
               ))}
-          </Grid>
+          </Group>
         )}
         {!fillRule && (
           <Textarea
@@ -165,7 +177,7 @@ export function Model35({
             classNames={{ input: classes.textArea }}
           />
         )}
-      </Group>
+      </Stack>
     </>
   );
 }

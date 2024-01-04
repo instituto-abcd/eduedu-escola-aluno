@@ -8,7 +8,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -16,6 +16,8 @@ import { ReadButton } from "~/components/ReadButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { IconMessageCircle2 } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -27,6 +29,9 @@ const useStyles = createStyles((theme) => ({
     },
     textAlign: "center",
   },
+  scroll: {
+    overflow: 'auto',
+  }
 }));
 
 export function Model32({
@@ -42,8 +47,8 @@ export function Model32({
     imageTitles,
     audioTitles,
     hasAudioTitle,
-    audioTitleAutoplay,
-    optionArrKey,
+    hasImageTitle,
+    getRule,
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -62,17 +67,38 @@ export function Model32({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxAudioRef = useRef<AudioButtonRef>(null);
+  const autoplay = getRule("autoplay")?.value === "false" ? false : true;
+
+  useLayoutEffect(() => {
+    if (mainAudioRef.current && auxAudioRef.current) {
+      mainAudioRef.current.sound.onEnd(() => {
+        auxAudioRef.current!.sound.play();
+      });
+    }
+
+    return () => {
+      auxAudioRef.current?.sound.destroy();
+    };
+  }, [question]);
+
   return (
     <>
       {(hasAudioTitle || auxQuestion) && (
         <Group mx="auto" h="50px">
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              key={title.position}
-              src={title.file_url ?? ""}
-              autoPlay={audioTitleAutoplay(inx)}
-            />
-          ))}
+          {audioTitles.map((title, inx) => {
+            const props = {
+              ref: inx === 0 ? mainAudioRef : auxAudioRef,
+              autoPlay: inx === 0 ? autoplay : false,
+              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
+              variant: inx > 0 ? "yellow" : "gray",
+            } as const;
+
+            return (
+              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
+            );
+          })}
 
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </Group>
@@ -87,65 +113,72 @@ export function Model32({
             )?.description
           }
         </Title>
-        <Flex w="100%" justify="space-between">
-          <ScrollArea mah={boardW(400)} w="48%" pr={20}>
-            <Stack pb={5}>
-              {question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.placeholder?.includes("Campo") ||
-                          (!title.placeholder && title.description)
-                      )?.description ?? "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
-              {!question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.classification ===
-                          QuestionTitleClassification.HISTORIA
-                      )?.description ??
-                      textTitles[0]?.description ??
-                      "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
 
-              {imageTitles
-                .filter((title) => !!title.file_url)
-                .map((title) => (
-                  <Image
-                    src={title.file_url}
-                    key={title.file_url}
-                    width={boardW(300)}
-                    m="auto"
+        <Flex
+          w="100%"
+          justify={textTitles.length > 0 ? "space-between" : "center"}
+          align="center"
+        >
+
+          <ScrollArea mah={boardW(400)} w="48%" pr={20} className={classes.scroll} type="always">
+            {hasImageTitle && imageTitles.map((title) => (
+              <Image
+                src={title.file_url}
+                key={title.file_url}
+                width={boardW(300)}
+                m="auto"
+              />
+            ))}
+
+            {textTitles.length > 0 && (
+              <Stack pb={5}>
+                {question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.placeholder?.includes("Campo") ||
+                            (!title.placeholder && title.description)
+                        )?.description ?? "",
+                    }}
+                    className={classes.typography}
                   />
-                ))}
+                )}
+                {!question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.classification ===
+                            QuestionTitleClassification.HISTORIA
+                        )?.description ??
+                        textTitles[0]?.description ??
+                        "",
+                    }}
+                    className={classes.typography}
+                  />
+                )}
 
-              {question?.planet_id && (
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.placeholder?.includes("Enunciado") ||
-                          title.placeholder?.includes("Quem disse")
-                      )?.description ?? "",
-                  }}
-                  className={classes.typography}
-                />
-              )}
-            </Stack>
+                {question?.planet_id && (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        textTitles.find(
+                          (title) =>
+                            title.placeholder?.includes("Enunciado") ||
+                            title.placeholder?.includes("Quem disse")
+                        )?.description ?? "",
+                    }}
+                    className={classes.typography}
+                  />
+                )}
+              </Stack>
+            )}
           </ScrollArea>
-          <ScrollArea mah={boardW(420)} w="48%" pr={20}>
+
+          <ScrollArea mah={boardW(420)} w="48%" pr={20} className={classes.scroll} type="always">
             <Stack pb={5}>
               <Text
                 size={boardW(20)}
@@ -163,7 +196,7 @@ export function Model32({
               </Text>
               {question.options.map((option, inx) => (
                 <TextOptionButton
-                  key={optionArrKey(option, inx)}
+                  key={inx}
                   onClick={() =>
                     setAnswer({
                       ...option,

@@ -118,8 +118,10 @@ export function Model28({ question, onConditionsChange }: ModelProps) {
     setFeedback(status);
     clearFeedback();
 
-    if (status === "correct") AudioInterface.feedback.positive.play();
-    if (status === "wrong") AudioInterface.feedback.negative.play();
+    setTimeout(() => {
+      if (status === "correct") AudioInterface.feedback.positive.play();
+      if (status === "wrong") AudioInterface.feedback.negative.play();
+    }, 1000);
   }
 
   function handleCardFlipped(option: QuestionOption) {

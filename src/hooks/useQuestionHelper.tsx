@@ -100,7 +100,9 @@ export function useQuestionHelper(question: Question) {
 
   const skipFeedback =
     getRule("skipFeedback")?.value === "true" ||
-    question.model_id === "MODEL27";
+    question.model_id === "MODEL27" ||
+    question.model_id === "MODEL12" ||
+    question.model_id === "MODEL13" ;
 
   return {
     hasTitleOfType,

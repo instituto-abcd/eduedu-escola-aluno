@@ -70,6 +70,8 @@ export function Model32({
   const mainAudioRef = useRef<AudioButtonRef>(null);
   const auxAudioRef = useRef<AudioButtonRef>(null);
   const autoplay = getRule("autoplay")?.value === "false" ? false : true;
+  const autoplayAuxRule = getRule("autoplayAux");
+  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
 
   useLayoutEffect(() => {
     if (mainAudioRef.current && auxAudioRef.current) {
@@ -88,9 +90,11 @@ export function Model32({
       {(hasAudioTitle || auxQuestion) && (
         <Group mx="auto" h="50px">
           {audioTitles.map((title, inx) => {
+            const isEnunciationTitle = title.position === 0;
+            const shouldPlayCheck = isEnunciationTitle ? autoplay : autoplay === false;
             const props = {
-              ref: inx === 0 ? mainAudioRef : auxAudioRef,
-              autoPlay: inx === 0 ? autoplay : false,
+              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
+              autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
               icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
               variant: inx > 0 ? "yellow" : "gray",
             } as const;

@@ -37,6 +37,7 @@ export function Model35({
   onConditionsChange,
 }: ModelProps) {
   const {
+    textTitles,
     audioTitles,
     imageTitles,
     hasAudioTitle,
@@ -138,11 +139,12 @@ export function Model35({
         </Group>
       )}
 
-      {question.description && (
+      {textTitles && (
         <Text color="dark.3" size={boardW(22)} mt={20}>
-          {question.description.split(/[-(]/)[0]}
+          {textTitles.find((text) => text.placeholder.includes("Enunciado"))?.description}
         </Text>
       )}
+
       <Stack my="auto" spacing={10} justify="center" align="center">
         {imageTitles[0] && (
           <img

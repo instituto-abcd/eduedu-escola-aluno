@@ -167,7 +167,19 @@ export function Model11({
     const answerValue = getRule("answers")?.value;
     if (!answerValue) return 'auto';
 
-    if (answerValue.length < 3 || (answerValue.length === 3 && answerValue.includes(','))) return boardW(50);
+    const isLengthEqualsThreeAndIncludesComma = answerValue.length === 3 && answerValue.includes(',');
+    const isLengthEqualsOneAndIncludesComma = answerValue.split(',')[0].length === 1;
+    const isLengthBigger = answerValue.split(',')[0].length > 7;
+
+    if (answerValue.length < 3 || 
+        isLengthEqualsOneAndIncludesComma || 
+        isLengthEqualsThreeAndIncludesComma ||
+        !isLengthBigger
+    ) {
+      return boardW(50);
+    }
+
+    if (isLengthBigger) return boardW(100);
 
     return boardW(88);
   }, [question]);
@@ -176,7 +188,7 @@ export function Model11({
     const answerValue = getRule("answers")?.value;
     if (!answerValue) return boardW(18);
 
-    if (answerValue.length < 4) return boardW(18);
+    if (answerValue.length < 4 || answerValue[0].length === 1) return boardW(18);
 
     return boardW(14);
   }, [question]);

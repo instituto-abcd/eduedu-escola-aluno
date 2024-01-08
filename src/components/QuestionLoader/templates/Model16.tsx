@@ -3,10 +3,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
-import { boardW } from "~/constants/dimensions";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { useTimeout } from "@mantine/hooks";
+import { IconButton } from "~/components/EduButton";
+import { RubberIcon } from "~/assets/icons/Rubber";
 
 export function Model16({ question, onConditionsChange }: ModelProps) {
   const {
@@ -21,6 +23,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     enabled: !!lottieTitles[0]?.file_id,
   });
   const [modifiedData, setModifiedData] = useState<LottieLayers>();
+  const [isCompletedLottie, setIsCompletedLottie] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
@@ -46,20 +49,23 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
       let prevY = 0;
 
       canvas.addEventListener("mousedown", (e) => {
+        if (!isCompletedLottie) return;
         isDrawing = true;
         prevX = e.offsetX;
         prevY = e.offsetY;
       });
 
       canvas.addEventListener("mousemove", (e) => {
+        if (!isCompletedLottie) return;
         if (!isDrawing) return;
 
         const x = e.offsetX;
         const y = e.offsetY;
 
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 15;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
+        ctx.strokeStyle = "#4CB9E7";
 
         ctx.beginPath();
         ctx.moveTo(prevX, prevY);
@@ -78,26 +84,33 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         isDrawing = false;
       });
     }
-  }, [canvasRef]);
+  }, [canvasRef, isCompletedLottie]);
 
   const { start } = useTimeout(() => {
     onConditionsChange([]);
   }, 4000);
 
   useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d")!;
-      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-    }
-    start();
+    cleanUp();
+    if (isCompletedLottie) start();
   }, [question]);
 
   const updateDataWithoutFillLayer = useCallback(() => {
     const outlineLayer = data?.layers.filter((layer) => !layer.nm.includes("fill"));
     const updatedData = outlineLayer ? { ...data, layers: outlineLayer } : data;
     setModifiedData(updatedData);
+    setIsCompletedLottie(true);
   }, [data]);
+
+  const cleanUp = () => {
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d")!;
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    }
+  }
+
+  const rubberIcon = <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />;
 
   return (
     <>
@@ -107,9 +120,15 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
             <AudioButton
               key={inx}
               src={title.file_url!}
-              autoPlay={audioTitleAutoplay(inx)}
+              autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
             />
           ))}
+          <IconButton
+            variant="gray"
+            icon={rubberIcon}
+            onClick={cleanUp}
+            disabled={false}
+          />
         </Group>
       )}
 

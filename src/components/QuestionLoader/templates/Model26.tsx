@@ -122,8 +122,7 @@ export function Model26({
           {letterSlots && !isSlotsOnly(letterSlots.description) && (
             <Group spacing={0}>
               {letterSlots.description
-                .replaceAll("\\n ", "")
-                .replaceAll("\\n", "")
+                .replaceAll(/\\n/g, " ")
                 .split(/_+/g) // separa os segmentos de texto dos underlines
                 .map((w, inx, arr) => {
                   const notLastFragment = arr.length !== inx + 1;

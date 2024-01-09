@@ -8,9 +8,7 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { boardW } from "~/constants/dimensions";
 
 export function Model27({ question, onConditionsChange }: ModelProps) {
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
-    useQuestionHelper(question);
-
+  const { audioTitles, audioTitleAutoplay } = useQuestionHelper(question);
   const totalSlides = question.options.length;
   const [slideIndex, setSlideIndex] = useState(0);
   const currentSlide = question.options[slideIndex];
@@ -40,27 +38,24 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
 
   return (
     <>
-      {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <Box key={inx}>
-              {slideIndex === 0 ? (
-                <AudioButton
-                  key={inx}
-                  autoPlay={audioTitleAutoplay(inx)}
-                  src={title?.file_url ?? ""}
-                />
-              ) : currentSlide?.sound_url ? (
-                <AudioButton
-                  key={inx}
-                  autoPlay={false}
-                  src={currentSlide?.sound_url ?? ""}
-                />
-              ) : null}
-            </Box>
-          ))}
-        </Group>
-      )}
+      <Group>
+        {audioTitles.map((title, inx) => (
+          <Box key={inx} hidden>
+            <AudioButton
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title?.file_url ?? ""}
+            />
+          </Box>
+        ))}
+        {currentSlide?.sound_url && (
+          <AudioButton
+            key={currentSlide?.sound_id}
+            autoPlay={false}
+            src={currentSlide?.sound_url ?? ""}
+          />
+        )}
+      </Group>
 
       <Stack spacing={boardW(20)} align="center" my="auto" mih={boardW(150)}>
         {currentSlide?.image_url && (

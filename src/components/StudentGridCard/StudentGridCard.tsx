@@ -71,8 +71,7 @@ export function StudentGridCard({
           <Text
             size="lg"
             color={student.reserved ? "gray.5" : "blue.6"}
-            style={{ lineHeight: 1 }}
-            truncate="end"
+            style={{ lineHeight: 1, whiteSpace: 'pre-wrap' }}
           >
             {student.name}
           </Text>

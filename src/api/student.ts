@@ -97,7 +97,7 @@ export class StudentAPI extends API {
 
   static async getPlanetTrack(studentId: string) {
     const { data } = await this.api.get<PlanetTrack>(
-      URL.GET_STUDENT_PLANET_TRACK(studentId)
+      URL.GET_STUDENT_PLANET_TRACK(studentId),
     );
 
     return data;
@@ -105,14 +105,14 @@ export class StudentAPI extends API {
 
   static async getStudentAwards(studentId: string) {
     const { data } = await this.api.get<{ awards: Award[] }>(
-      URL.GET_STUDENT_AWARDS(studentId)
+      URL.GET_STUDENT_AWARDS(studentId),
     );
     return data;
   }
 
   static async getFirstExamQuestion(studentId: string) {
     const { data } = await this.api.get<Question>(
-      URL.GET_STUDENT_EXAM_QUESTIONS_1(studentId)
+      URL.GET_STUDENT_EXAM_QUESTIONS_1(studentId),
     );
     return data;
   }
@@ -121,9 +121,9 @@ export class StudentAPI extends API {
     const { data } = await this.api.post<Question | { examCompleted: true }>(
       URL.GET_STUDENT_EXAM_QUESTIONS(
         studentId,
-        "fa387b6c-7ecf-4752-aeb3-c810a912c421" // TODO: pegar id do exam
+        "fa387b6c-7ecf-4752-aeb3-c810a912c421", // TODO: pegar id do exam
       ),
-      input
+      input,
     );
 
     return data;
@@ -146,7 +146,7 @@ export class StudentAPI extends API {
 }
 
 export function useGetPlanetTrack(
-  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
+  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>,
 ) {
   const studentId = useStudent((state) => state.id);
 
@@ -158,7 +158,7 @@ export function useGetPlanetTrack(
 }
 
 export function useGetStudentAwards(
-  options?: QueryOptions<{ awards: Award[] }, [typeof KEY.AWARDS]>
+  options?: QueryOptions<{ awards: Award[] }, [typeof KEY.AWARDS]>,
 ) {
   const studentId = useStudent((state) => state.id);
 
@@ -170,7 +170,7 @@ export function useGetStudentAwards(
 }
 
 export function useGetFirstExamQuestion(
-  options?: QueryOptions<Question, typeof KEY.FIRST_QUESTION>
+  options?: QueryOptions<Question, [typeof KEY.FIRST_QUESTION]>,
 ) {
   const studentId = useStudent((state) => state.id);
 
@@ -185,7 +185,7 @@ export function useGetExamQuestion(
   options?: MutationOptions<
     GetQuestionInput,
     Question | { examCompleted: true }
-  >
+  >,
 ) {
   const studentId = useStudent((state) => state.id);
   const handler = useCallback(function (input: GetQuestionInput) {
@@ -196,7 +196,7 @@ export function useGetExamQuestion(
 }
 
 export function useSubmitExamEvaluation(
-  options?: QueryOptions<Question, typeof KEY.EXAM_EVALUATION>
+  options?: QueryOptions<Question, [typeof KEY.EXAM_EVALUATION]>,
 ) {
   const studentId = useStudent((state) => state.id);
   const handler = useCallback(function () {
@@ -208,7 +208,7 @@ export function useSubmitExamEvaluation(
 
 export function usePlanetFeedback(
   planetId: string,
-  options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>
+  options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>,
 ) {
   const studentId = useStudent((state) => state.id);
   const queryClient = useQueryClient();
@@ -225,14 +225,14 @@ export function usePlanetFeedback(
         if (!oldData || !oldData.planetTrack) return oldData;
 
         const toUpdate = oldData.planetTrack.find(
-          (planet) => planet.planetName === data.name
+          (planet) => planet.planetName === data.name,
         );
 
         if (!toUpdate) return oldData;
 
         toUpdate.stars = data.stars;
         const newTrack = oldData.planetTrack.filter(
-          (p) => p.planetName !== data.name
+          (p) => p.planetName !== data.name,
         );
         newTrack.push(toUpdate);
 

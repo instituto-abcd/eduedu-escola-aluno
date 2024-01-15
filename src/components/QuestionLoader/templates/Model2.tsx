@@ -20,6 +20,7 @@ import { PlayIcon } from "~/assets/icons/Play";
 import { useDisclosure } from '@mantine/hooks';
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { IconMessageCircle2 } from "@tabler/icons-react";
+import { useAudioStatus } from "~/stores/audio";
 
 export function Model2({
   question,
@@ -50,6 +51,7 @@ export function Model2({
     getRule,
     videoTitles
   } = useQuestionHelper(question);
+  const audioStatus = useAudioStatus();
 
   /* Autoplay Aux Audio Logic */
   const auxAutoPlayRule = getRule("auxAutoPlay");
@@ -98,6 +100,11 @@ export function Model2({
 
   const auxiliarVideo = videoTitles.find((title) => title.description && title.description.includes('Botão'));
   const playIcon = <PlayIcon width={lousaWidth * 0.03} height={lousaWidth * 0.03} />;
+
+  const onCloseModal = () => {
+    if (audioStatus.isPlaying) audioStatus.setPlaying(false);
+    close();
+  }
 
   return (
     <>
@@ -180,7 +187,7 @@ export function Model2({
       </Stack>
       <Modal 
         opened={opened} 
-        onClose={close} 
+        onClose={onCloseModal}
         title="Vídeo Auxiliar" 
         centered
       >

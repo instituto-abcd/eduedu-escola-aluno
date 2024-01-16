@@ -12,8 +12,8 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 COPY . .
 
-RUN yarn install
-RUN yarn vite build
+RUN npm install
+RUN npx vite build
 
 FROM nginx:1.16.0-alpine
 

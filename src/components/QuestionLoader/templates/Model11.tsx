@@ -67,6 +67,7 @@ export function Model11({
       setAnswer(initialSlots);
     }
   }
+  const answerRule = getRule("answers");
 
   /*
    *    Helpers para o título da questão
@@ -92,7 +93,6 @@ export function Model11({
   const isFullWidth = imageTitles.length === 0;
 
   function checkShouldRepeatAnswer() {
-    const answerRule = getRule("answers");
     if (!answerRule) return false;
 
     const answers = answerRule.value.split(",");
@@ -138,7 +138,7 @@ export function Model11({
   /* debug */
   const overwrite = (option: QuestionOption) =>
     question.options.map((q) => q.isCorrect).every((bool) => !bool)
-      ? getRule("answers")?.value === option.description
+      ? answerRule?.value === option.description
       : undefined;
 
   const autoplayRule = getRule("autoplay");
@@ -164,7 +164,7 @@ export function Model11({
   }, [question]);
 
   const getCustomWidth = useCallback(() => {
-    const answerValue = getRule("answers")?.value;
+    const answerValue = answerRule?.value;
     if (!answerValue) return 'auto';
 
     const isLengthEqualsThreeAndIncludesComma = answerValue.length === 3 && answerValue.includes(',');
@@ -178,7 +178,7 @@ export function Model11({
   }, [question]);
 
   const getCustomFontSize = useCallback(() => {
-    const answerValue = getRule("answers")?.value;
+    const answerValue = answerRule?.value;
     if (!answerValue) return boardW(18);
 
     const hasBiggerWordInOptions = question.options.some((opt) => opt.description.length > 7);

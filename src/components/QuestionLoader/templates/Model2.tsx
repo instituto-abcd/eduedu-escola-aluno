@@ -1,4 +1,4 @@
-import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text, Modal, Box } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
 import {
@@ -13,8 +13,14 @@ import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption } from "~/api/exam";
-import { boardW } from "~/constants/dimensions";
+import { boardW, lousaWidth } from "~/constants/dimensions";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { IconButton } from "~/components/EduButton";
+import { PlayIcon } from "~/assets/icons/Play";
+import { useDisclosure } from '@mantine/hooks';
+import { VideoPlayer } from "~/components/VideoPlayer";
+import { IconMessageCircle2 } from "@tabler/icons-react";
+import { useAudioStatus } from "~/stores/audio";
 
 export function Model2({
   question,
@@ -43,7 +49,9 @@ export function Model2({
     audioTitleAutoplay,
     textTitles,
     getRule,
+    videoTitles
   } = useQuestionHelper(question);
+  const audioStatus = useAudioStatus();
 
   /* Autoplay Aux Audio Logic */
   const auxAutoPlayRule = getRule("auxAutoPlay");
@@ -52,6 +60,7 @@ export function Model2({
 
   const mainAudioRef = useRef<AudioButtonRef>(null);
   const auxRef = useRef<AudioButtonRef>(null);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const styles: CSSProperties = {
     gap: noPaddingRule ? 0 : 'inherit',
@@ -89,6 +98,14 @@ export function Model2({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  const auxiliarVideo = videoTitles.find((title) => title.description && title.description.includes('Botão'));
+  const playIcon = <PlayIcon width={lousaWidth * 0.03} height={lousaWidth * 0.03} />;
+
+  const onCloseModal = () => {
+    if (audioStatus.isPlaying) audioStatus.setPlaying(false);
+    close();
+  }
+
   return (
     <>
       {hasAudioTitle && (
@@ -98,9 +115,19 @@ export function Model2({
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url!}
+              variant={inx > 0 ? "yellow" : "gray"}
+              icon={inx > 0 ? <IconMessageCircle2 size={30} /> : undefined}
               ref={inx === 1 ? auxRef : mainAudioRef}
             />
           ))}
+          {auxiliarVideo && (
+            <IconButton
+              variant="blue"
+              icon={playIcon}
+              onClick={open}
+              disabled={false}
+            />
+          )}
         </Group>
       )}
 
@@ -158,6 +185,20 @@ export function Model2({
           ))}
         </SimpleGrid>
       </Stack>
+      <Modal 
+        opened={opened} 
+        onClose={onCloseModal}
+        title="Vídeo Auxiliar" 
+        centered
+      >
+        <Box h="100%" w="100%" style={{ display: "flex", justifyContent: "center" }}>
+          <VideoPlayer 
+            src={auxiliarVideo?.file_url ?? ""}
+            autoPlay
+            style={{ height: boardW(500) }}
+          />
+        </Box>
+      </Modal>
     </>
   );
 }

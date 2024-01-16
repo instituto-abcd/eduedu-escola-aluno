@@ -12,7 +12,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 COPY . .
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npx vite build
 
 FROM nginx:1.16.0-alpine

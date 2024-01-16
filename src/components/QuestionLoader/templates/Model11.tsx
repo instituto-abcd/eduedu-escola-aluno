@@ -68,6 +68,7 @@ export function Model11({
     }
   }
   const answerRule = getRule("answers");
+  const answerValue = answerRule?.value;
 
   /*
    *    Helpers para o título da questão
@@ -138,7 +139,7 @@ export function Model11({
   /* debug */
   const overwrite = (option: QuestionOption) =>
     question.options.map((q) => q.isCorrect).every((bool) => !bool)
-      ? answerRule?.value === option.description
+      ? answerValue === option.description
       : undefined;
 
   const autoplayRule = getRule("autoplay");
@@ -164,7 +165,6 @@ export function Model11({
   }, [question]);
 
   const getCustomWidth = useCallback(() => {
-    const answerValue = answerRule?.value;
     if (!answerValue) return 'auto';
 
     const isLengthEqualsThreeAndIncludesComma = answerValue.length === 3 && answerValue.includes(',');
@@ -178,7 +178,6 @@ export function Model11({
   }, [question]);
 
   const getCustomFontSize = useCallback(() => {
-    const answerValue = answerRule?.value;
     if (!answerValue) return boardW(18);
 
     const hasBiggerWordInOptions = question.options.some((opt) => opt.description.length > 7);

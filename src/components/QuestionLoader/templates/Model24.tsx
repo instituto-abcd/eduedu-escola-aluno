@@ -1,6 +1,13 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
 import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
@@ -63,7 +70,7 @@ export function Model24({
 
   const conditions = useMemo(
     () => [isTypeSelect ? !!singleAnswer : answer !== -1],
-    [answer, singleAnswer]
+    [answer, singleAnswer],
   );
 
   useEffect(() => {
@@ -71,15 +78,17 @@ export function Model24({
   }, [conditions]);
 
   const getDashesAccordingAnswer = useCallback(() => {
-    const length = question.options.find((option) => option.isCorrect)?.description?.length;
-    return Array.prototype.join.call({length: (length || -1) + 1}, '_');
+    const length = question.options.find((option) => option.isCorrect)
+      ?.description?.length;
+    return Array.prototype.join.call({ length: (length || -1) + 1 }, "_");
   }, [question]);
 
   const singleAnswerWithUnderlineDashes = useMemo(
-    () => singleAnswer?.description 
-      ? `<span style="text-decoration: underline;">${singleAnswer?.description}</span>` 
-      : getDashesAccordingAnswer(),
-    [question, singleAnswer]
+    () =>
+      singleAnswer?.description
+        ? `<span style="text-decoration: underline;">${singleAnswer?.description}</span>`
+        : getDashesAccordingAnswer(),
+    [question, singleAnswer],
   );
 
   return (
@@ -117,30 +126,33 @@ export function Model24({
           <Stack align="center" spacing={boardW(25)}>
             {textTitles.find((title) => title.placeholder.includes("completar"))
               ?.description && (
-              <Title
-                dangerouslySetInnerHTML={{
-                  __html:
-                    textTitles.find((title) =>
-                      title.placeholder.includes("completar")
-                    )?.description ?? "",
-                }}
-                size={boardW(24)}
-                weight={500}
-                color="dark.3"
-                align="center"
-              />
-            )}
+                <Title
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      textTitles.find((title) =>
+                        title.placeholder.includes("completar"),
+                      )?.description ?? "",
+                  }}
+                  size={boardW(24)}
+                  weight={500}
+                  color="dark.3"
+                  align="center"
+                />
+              )}
 
-            {imageTitles.map((title) => title.file_url && (
-              <Image
-                key={title.file_url}
-                src={title.file_url}
-                alt={title.placeholder}
-                styles={{ image: { marginInline: "auto" } }}
-                width="auto"
-                height={boardW(170)}
-              />
-            ))}
+            {imageTitles.map(
+              (title) =>
+                title.file_url && (
+                  <Image
+                    key={title.file_url}
+                    src={title.file_url}
+                    alt={title.placeholder}
+                    styles={{ image: { marginInline: "auto" } }}
+                    width="auto"
+                    height={boardW(170)}
+                  />
+                ),
+            )}
 
             <Group mb={20}>
               {question.options.map((option, inx) => (
@@ -173,14 +185,15 @@ export function Model24({
           <Stack align="center" spacing={boardW(25)}>
             {textTitles
               .filter(
-                (title) => title.description && title.description.length > 0
+                (title) => title.description && title.description.length > 0,
               )
               .map((title) => (
                 <Title
                   dangerouslySetInnerHTML={{
                     __html: title.description.replace(
                       /_+/g,
-                      singleAnswerWithUnderlineDashes ?? getDashesAccordingAnswer()
+                      singleAnswerWithUnderlineDashes ??
+                      getDashesAccordingAnswer(),
                     ),
                   }}
                   key={title.description}
@@ -191,16 +204,19 @@ export function Model24({
                 />
               ))}
 
-            {imageTitles.map((title) => title.file_url && (
-              <Image
-                key={title.file_url}
-                src={title.file_url}
-                alt={title.placeholder}
-                styles={{ image: { marginInline: "auto" } }}
-                width="auto"
-                height={boardW(170)}
-              />
-            ))}
+            {imageTitles.map(
+              (title) =>
+                title.file_url && (
+                  <Image
+                    key={title.file_url}
+                    src={title.file_url}
+                    alt={title.placeholder}
+                    styles={{ image: { marginInline: "auto" } }}
+                    width="auto"
+                    height={boardW(170)}
+                  />
+                ),
+            )}
 
             <Group>
               {question.options.map((option, inx) => (
@@ -225,7 +241,9 @@ export function Model24({
                       }}
                     />
                   )}
-                  {option.sound_url && <IconVolume size={boardW(62)} />}
+                  {option.sound_url && !option.image_url && (
+                    <IconVolume size={boardW(62)} />
+                  )}
                 </OptionButton>
               ))}
             </Group>

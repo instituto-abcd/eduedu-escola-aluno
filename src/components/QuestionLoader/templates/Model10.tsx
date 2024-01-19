@@ -1,14 +1,13 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { boardW } from "~/constants/dimensions";
 import { Group, ScrollArea, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
-import { AudioButton } from "~/components/AudioButton";
-import { IconMessageCircle2, IconVolume } from "@tabler/icons-react";
+import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model10({
   question,
@@ -41,48 +40,12 @@ export function Model10({
 
   const hideTextRule = getRule("options_hide_text")?.value === "true" ?? false;
 
-  const autoplayRule = getRule("autoplay");
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlay = autoplayRule?.value === "false" ? false : true;
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-
   return (
     <>
       {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => {
-            const shouldPlayCheck = inx === 0 ? shouldPlay : shouldPlay === false;
-            const props = {
-              ref: inx === 0 ? mainAudioRef : auxAudioRef,
-              autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
-              icon: inx > 0 ? (
-                <IconMessageCircle2 size={30} />
-              ) : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return ( <AudioButton key={inx} src={title.file_url ?? ""} {...props}/> );
-          })}
-
+        <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
-        </Group>
+        </AudioContainer>
       )}
 
       {imageTitles.length !== 0 && textTitles

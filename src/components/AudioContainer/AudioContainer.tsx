@@ -1,11 +1,11 @@
 import { Group } from '@mantine/core';
 import { QuestionTitle } from '~/api/exam';
 import { AudioButton } from '../AudioButton';
-import { IconRotateClockwise } from '@tabler/icons-react';
+import { IconMessageCircle2, IconRotateClockwise } from '@tabler/icons-react';
 import { useAuxiliarAudio } from '~/hooks/useAuxiliarAudio';
 import { Props } from './types';
 
-export const AudioContainer = ({ question, audioTitles }: Props) => {
+export const AudioContainer = ({ question, audioTitles, hasPrimaryIcon = true }: Props) => {
   const { shouldPlay, shouldPlayAuxiliar, mainAudioRef, auxAudioRef } = useAuxiliarAudio(question);
 
   const buildAudioProps = (title: QuestionTitle) => {
@@ -14,9 +14,9 @@ export const AudioContainer = ({ question, audioTitles }: Props) => {
     const props = {
       ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
       autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
-      icon: !isEnunciationTitle ? (
-        <IconRotateClockwise size={30} />
-      ) : undefined,
+      icon: !isEnunciationTitle ? 
+        hasPrimaryIcon ? <IconRotateClockwise size={30} /> : <IconMessageCircle2 size={30} /> 
+      : undefined,
       variant: !isEnunciationTitle ? "yellow" : "gray",
     } as const;
     return props;

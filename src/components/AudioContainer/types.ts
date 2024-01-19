@@ -1,6 +1,7 @@
 import { Question, QuestionTitle } from "~/api/exam"
 
 export type Props = {
-    question: Question
+    question: Question,
     audioTitles: QuestionTitle[],
+    hasPrimaryIcon?: boolean
 };

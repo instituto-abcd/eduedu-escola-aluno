@@ -5,7 +5,7 @@ import { IconMessageCircle2, IconRotateClockwise } from '@tabler/icons-react';
 import { useAuxiliarAudio } from '~/hooks/useAuxiliarAudio';
 import { Props } from './types';
 
-export const AudioContainer = ({ question, audioTitles, hasPrimaryIcon = true }: Props) => {
+export const AudioContainer = ({ question, audioTitles, hasPrimaryIcon = true, children }: Props) => {
   const { shouldPlay, shouldPlayAuxiliar, mainAudioRef, auxAudioRef } = useAuxiliarAudio(question);
 
   const buildAudioProps = (title: QuestionTitle) => {
@@ -30,6 +30,7 @@ export const AudioContainer = ({ question, audioTitles, hasPrimaryIcon = true }:
           <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
         );
       })}
+      {children && children}
     </Group>
   );
 }

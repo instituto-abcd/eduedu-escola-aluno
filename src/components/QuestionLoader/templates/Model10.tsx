@@ -43,7 +43,7 @@ export function Model10({
   return (
     <>
       {hasAudioTitle && (
-        <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false}>
+        <AudioContainer question={question} audioTitles={audioTitles}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}

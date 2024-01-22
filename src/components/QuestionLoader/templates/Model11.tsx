@@ -158,7 +158,7 @@ export function Model11({
   return (
     <>
       {hasAudioTitle && (
-        <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
+        <AudioContainer question={question} audioTitles={audioTitles} />
       )}
 
       {hasTitle && !questionTitle.description?.includes("_") && (

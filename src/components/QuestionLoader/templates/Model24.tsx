@@ -60,7 +60,7 @@ export function Model24({
 
   return (
     <>
-      <AudioContainer question={question} audioTitles={audioTitles} />
+      <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
 
       <Stack my="auto" spacing={boardW(40)}>
         {isTypeComplete && (

@@ -15,7 +15,7 @@ export const AudioContainer = ({ question, audioTitles, hasPrimaryIcon = true, c
       ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
       autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
       icon: !isEnunciationTitle ? 
-        hasPrimaryIcon ? <IconRotateClockwise size={30} /> : <IconMessageCircle2 size={30} /> 
+        hasPrimaryIcon ? <IconMessageCircle2 size={30} /> : <IconRotateClockwise size={30} />
       : undefined,
       variant: !isEnunciationTitle ? "yellow" : "gray",
     } as const;

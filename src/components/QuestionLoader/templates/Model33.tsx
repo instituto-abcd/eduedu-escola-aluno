@@ -1,44 +1,19 @@
 import { Group, Image, Stack, Text } from "@mantine/core";
-import { IconMessageCircle2 } from "@tabler/icons-react";
 import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
-import { AudioButton } from "~/components/AudioButton";
 import { lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useTimeout } from "@mantine/hooks";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model33({ question, onConditionsChange }: ModelProps) {
-  const { audioTitles, hasAudioTitle, imageTitles, textTitles, getRule } =
-    useQuestionHelper(question);
+  const { audioTitles, hasAudioTitle, imageTitles, textTitles } = useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
 
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
-
-  /* Autoplay logic */
-  const autoplayRule = getRule("autoplay");
-  const shouldPlay = autoplayRule?.value === "false" ? false : true;
-
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-  /* End autoplay logic */
 
   const { start } = useTimeout(() => onConditionsChange([]), 1000);
 
@@ -49,21 +24,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
   return (
     <>
       {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => {
-            const props = {
-              ref: inx === 0 ? mainAudioRef : auxAudioRef,
-              autoPlay:
-                inx === 0 ? shouldPlay : shouldPlay === false ? true : false,
-              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return (
-              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
-            );
-          })}
-        </Group>
+        <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
       )}
 
       <Group noWrap m="auto" spacing={(lousaWidth * 10) / 100}>

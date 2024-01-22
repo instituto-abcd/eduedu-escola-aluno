@@ -1,23 +1,12 @@
-import {
-  Flex,
-  Group,
-  Image,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Flex, Image, ScrollArea, Stack, Text, Title, createStyles } from "@mantine/core";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconMessageCircle2 } from "@tabler/icons-react";
+import { AudioContainer } from "~/components/AudioContainer";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -41,16 +30,7 @@ export function Model32({
   onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
-
-  const {
-    textTitles,
-    imageTitles,
-    audioTitles,
-    hasAudioTitle,
-    hasImageTitle,
-    getRule,
-  } = useQuestionHelper(question);
-
+  const { textTitles, imageTitles, audioTitles, hasAudioTitle, hasImageTitle } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   useEffect(() => {
@@ -67,45 +47,12 @@ export function Model32({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-  const autoplay = getRule("autoplay")?.value === "false" ? false : true;
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      mainAudioRef.current.sound.onEnd(() => {
-        auxAudioRef.current!.sound.play();
-      });
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-
   return (
     <>
       {(hasAudioTitle || auxQuestion) && (
-        <Group mx="auto" h="50px">
-          {audioTitles.map((title, inx) => {
-            const isEnunciationTitle = title.position === 0;
-            const shouldPlayCheck = isEnunciationTitle ? autoplay : autoplay === false;
-            const props = {
-              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-              autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
-              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return (
-              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
-            );
-          })}
-
+        <AudioContainer question={question} audioTitles={audioTitles}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
-        </Group>
+        </AudioContainer>
       )}
 
       <Stack my="auto" w={boardW(800)} justify="center">

@@ -69,9 +69,7 @@ export function Model32({
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { 
-    enunciationScrollRef, enunciationScrollIndicator, setEnunciationScrollIndicator
-  } = useEnunciationScrollIndicator();
+  const { enunciationScrollRef, enunciationScrollIndicator } = useEnunciationScrollIndicator(question);
 
   useEffect(() => {
     setAnswer(null);
@@ -103,17 +101,6 @@ export function Model32({
     return () => {
       auxAudioRef.current?.sound.destroy();
     };
-  }, [question]);
-
-  useEffect(() => {
-    if (enunciationScrollRef.current) {
-      if (enunciationScrollRef.current.clientHeight > 0 && 
-          enunciationScrollRef.current.scrollHeight > enunciationScrollRef.current.clientHeight) {
-        setEnunciationScrollIndicator(true);
-        return;
-      }
-      setEnunciationScrollIndicator(false);
-    }
   }, [question]);
 
   return (

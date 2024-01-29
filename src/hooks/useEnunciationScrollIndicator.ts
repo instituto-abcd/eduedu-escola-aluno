@@ -1,8 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import { Question } from "~/api/exam";
 
-export const useEnunciationScrollIndicator = () => {
+export const useEnunciationScrollIndicator = (question: Question) => {
     const [enunciationScrollIndicator, setEnunciationScrollIndicator] = useState<boolean>(false);
     const enunciationScrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (enunciationScrollRef.current) {
+            if (enunciationScrollRef.current.clientHeight > 0 && 
+                enunciationScrollRef.current.scrollHeight > enunciationScrollRef.current.clientHeight) {
+            setEnunciationScrollIndicator(true);
+            return;
+          }
+          setEnunciationScrollIndicator(false);
+        }
+    }, [question]);
 
     useEffect(() => {
         if (!enunciationScrollRef.current) return;

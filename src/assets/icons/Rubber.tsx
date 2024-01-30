@@ -11,7 +11,7 @@ export const RubberIcon = (props: SVGProps<SVGSVGElement>) => (
     <path 
       fill="#ef858b" 
       d="M425.43,166 L352.11,92.67a41.48,41.48 0,0 0,-58.65 0h0L189.74,196.4l38.55,89.74 93.49,42.3L425.45,224.62A41.46,41.46 0,0 0,425.43 166Z" 
-      fill-rule="evenodd" 
+      fillRule="evenodd" 
       id="path_0"
     />
 

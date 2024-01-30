@@ -21,9 +21,9 @@ export function Model18({
   const text = useMemo(
     () =>
       textTitles.filter(
-        (title) => title.description && title.description.length > 0
+        (title) => title.description && title.description.length > 0,
       )[0].description,
-    [question]
+    [question],
   );
 
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
@@ -31,14 +31,14 @@ export function Model18({
       text
         .replace(/\s/g, "")
         .split("")
-        .map((char) => (char === "_" ? null : char))
+        .map((char) => (char === "_" ? null : char)),
   );
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
       produce(state, (draft) => {
         draft[index] = item;
-      })
+      }),
     );
 
     if (item) {
@@ -46,7 +46,7 @@ export function Model18({
         prevSelected.concat({
           ...item,
           positionAnswer: index,
-        })
+        }),
       );
     }
   }
@@ -62,7 +62,7 @@ export function Model18({
       text
         .replace(/\s/g, "")
         .split("")
-        .map((char) => (char === "_" ? null : char))
+        .map((char) => (char === "_" ? null : char)),
     );
   }, [question]);
 
@@ -72,12 +72,16 @@ export function Model18({
 
   const conditions = useMemo(
     () => [slots.every((slot) => slot !== null)],
-    [slots]
+    [slots],
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  const textAboveQuestion = textTitles.filter((t) =>
+    t.placeholder.includes("som"),
+  )[0];
 
   return (
     <>
@@ -85,14 +89,9 @@ export function Model18({
         <AudioContainer question={question} audioTitles={audioTitles} />
       )}
 
-      {textTitles[1] && (
-        <Text
-          size={boardW(24)}
-          color="dark.3"
-          weight={500}
-          key={textTitles[1].description}
-        >
-          {textTitles[1].description}
+      {textAboveQuestion && (
+        <Text size={boardW(24)} color="dark.3" weight={500}>
+          {textAboveQuestion.description}
         </Text>
       )}
 
@@ -131,13 +130,16 @@ export function Model18({
             <DraggableLetters
               key={inx}
               debug={{ skipDebug: true }}
-              option={{...option, description: option.description.toUpperCase()}}
+              option={{
+                ...option,
+                description: option.description.toUpperCase(),
+              }}
               hidden={
                 !!slots.find(
                   (item) =>
                     item &&
                     typeof item !== "string" &&
-                    JSON.stringify(item) === JSON.stringify(option)
+                    JSON.stringify(item) === JSON.stringify(option),
                 )
               }
             >

@@ -47,7 +47,9 @@ export function Model32({
   onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
-  const { textTitles, imageTitles, audioTitles, hasAudioTitle, hasImageTitle } = useQuestionHelper(question);
+  const {
+    textTitles, imageTitles, audioTitles, hasAudioTitle, hasImageTitle, hasTextTitle
+  } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const { enunciationScrollRef, enunciationScrollIndicator } = useEnunciationScrollIndicator(question);
 

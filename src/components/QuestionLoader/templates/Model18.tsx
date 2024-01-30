@@ -80,7 +80,7 @@ export function Model18({
   }, [conditions]);
 
   const textAboveQuestion = textTitles.filter((t) =>
-    t.placeholder.includes("som"),
+    t.placeholder?.includes("som"),
   )[0];
 
   return (

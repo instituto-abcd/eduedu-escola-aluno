@@ -7,7 +7,6 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { FloatingButton } from "~/components/FloatingButton";
 import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
 

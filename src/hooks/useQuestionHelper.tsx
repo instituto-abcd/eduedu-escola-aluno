@@ -104,6 +104,8 @@ export function useQuestionHelper(question: Question) {
     question.model_id === "MODEL12" ||
     question.model_id === "MODEL13" ;
 
+  const hasTextTitle = useMemo(() => textTitles.some((title) => title.description), [textTitles]);
+
   return {
     hasTitleOfType,
     getTitlesOfType,
@@ -123,5 +125,6 @@ export function useQuestionHelper(question: Question) {
     hasAuxQuestion,
     auxQuestionId,
     skipFeedback,
+    hasTextTitle
   };
 }

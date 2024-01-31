@@ -1,28 +1,19 @@
 import { Group, Image, Stack, Title } from "@mantine/core";
-import { IconRotateClockwise, IconVolume } from "@tabler/icons-react";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { IconVolume } from "@tabler/icons-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model24({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles, getRule } =
-    useQuestionHelper(question);
+  const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<number>(-1);
 
   // Variação de completar o texto
@@ -34,30 +25,6 @@ export function Model24({
   // Variação de selecionar alternativa
   const isTypeSelect = !isTypeComplete;
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
-
-  /* Autoplay logic */
-  const autoplayRule = getRule("autoplay");
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlay = autoplayRule?.value === "false" ? false : true;
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-  /* End autoplay logic */
 
   useEffect(() => {
     setAnswer(-1);
@@ -93,33 +60,7 @@ export function Model24({
 
   return (
     <>
-      <Group mx="auto" h="50px">
-        {audioTitles.map((title, inx) => {
-          const isEnunciationTitle = title.placeholder.includes("Enunciado");
-          const shouldPlayCheck = isEnunciationTitle
-            ? shouldPlay
-            : shouldPlay === false;
-          const props = {
-            ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-            autoPlay: shouldPlayCheck
-              ? shouldPlayAuxiliar
-                ? true
-                : false
-              : false,
-            icon:
-              inx > 0 ? (
-                <IconRotateClockwise
-                  style={{ transform: "rotateX(180deg)" }}
-                  size={30}
-                />
-              ) : undefined,
-          } as const;
-
-          return (
-            <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
-          );
-        })}
-      </Group>
+      <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
 
       <Stack my="auto" spacing={boardW(40)}>
         {isTypeComplete && (

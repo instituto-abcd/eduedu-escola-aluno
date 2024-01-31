@@ -1,23 +1,14 @@
-import {
-  Flex,
-  Group,
-  Image,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Flex, Image, ScrollArea, Stack, Text, Title, createStyles } from "@mantine/core";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconMessageCircle2 } from "@tabler/icons-react";
+import { AudioContainer } from "~/components/AudioContainer";
+import { FloatingButton } from "~/components/FloatingButton";
+import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -31,6 +22,20 @@ const useStyles = createStyles((theme) => ({
   },
   scroll: {
     overflow: 'auto',
+
+    "::-webkit-scrollbar": {
+      width: 5,
+    },
+
+    "::-webkit-scrollbar-track": {
+      borderRadius: 15,
+      background: "#f3f2f2ae",
+    },
+
+    "::-webkit-scrollbar-thumb": {
+      borderRadius: 15,
+      background: "#CCC",
+    }
   }
 }));
 
@@ -41,17 +46,11 @@ export function Model32({
   onConditionsChange,
 }: ModelProps) {
   const { classes } = useStyles();
-
   const {
-    textTitles,
-    imageTitles,
-    audioTitles,
-    hasAudioTitle,
-    hasImageTitle,
-    getRule,
+    textTitles, imageTitles, audioTitles, hasAudioTitle, hasImageTitle, hasTextTitle
   } = useQuestionHelper(question);
-
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
+  const { enunciationScrollRef, enunciationScrollIndicator } = useEnunciationScrollIndicator(question);
 
   useEffect(() => {
     setAnswer(null);
@@ -67,45 +66,12 @@ export function Model32({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-  const autoplay = getRule("autoplay")?.value === "false" ? false : true;
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      mainAudioRef.current.sound.onEnd(() => {
-        auxAudioRef.current!.sound.play();
-      });
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-
   return (
     <>
       {(hasAudioTitle || auxQuestion) && (
-        <Group mx="auto" h="50px">
-          {audioTitles.map((title, inx) => {
-            const isEnunciationTitle = title.position === 0;
-            const shouldPlayCheck = isEnunciationTitle ? autoplay : autoplay === false;
-            const props = {
-              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-              autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
-              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return (
-              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
-            );
-          })}
-
+        <AudioContainer question={question} audioTitles={audioTitles}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
-        </Group>
+        </AudioContainer>
       )}
 
       <Stack my="auto" w={boardW(800)} justify="center">
@@ -124,63 +90,73 @@ export function Model32({
           align="center"
         >
 
-          <ScrollArea mah={boardW(400)} w="48%" pr={20} className={classes.scroll} type="always">
-            {hasImageTitle && imageTitles.map((title) => (
-              <Image
-                src={title.file_url}
-                key={title.file_url}
-                width={boardW(300)}
-                m="auto"
-              />
-            ))}
+          {(hasImageTitle || hasTextTitle) && (
+            <ScrollArea 
+              mah={boardW(400)} 
+              w="48%" 
+              pr={20} 
+              className={classes.scroll} 
+              type="always" 
+              ref={enunciationScrollRef}
+            >
+              {enunciationScrollIndicator && <FloatingButton />}
+              {hasImageTitle && imageTitles.map((title) => (
+                <Image
+                  src={title.file_url}
+                  key={title.file_url}
+                  width={boardW(300)}
+                  m="auto"
+                />
+              ))}
 
-            {textTitles.length > 0 && (
-              <Stack pb={5}>
-                {question?.planet_id && (
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find(
-                          (title) =>
-                            title.placeholder?.includes("Campo") ||
-                            (!title.placeholder && title.description)
-                        )?.description ?? "",
-                    }}
-                    className={classes.typography}
-                  />
-                )}
-                {!question?.planet_id && (
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find(
-                          (title) =>
-                            title.classification ===
-                            QuestionTitleClassification.HISTORIA
-                        )?.description ??
-                        textTitles[0]?.description ??
-                        "",
-                    }}
-                    className={classes.typography}
-                  />
-                )}
+              {textTitles.length > 0 && (
+                <Stack pb={5}>
+                  {question?.planet_id && (
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find(
+                            (title) =>
+                              title.placeholder?.includes("Campo") ||
+                              (!title.placeholder && title.description)
+                          )?.description ?? "",
+                      }}
+                      className={classes.typography}
+                    />
+                  )}
+                  {!question?.planet_id && (
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find(
+                            (title) =>
+                              title.classification ===
+                              QuestionTitleClassification.HISTORIA
+                          )?.description ??
+                          textTitles[0]?.description ??
+                          "",
+                      }}
+                      className={classes.typography}
+                    />
+                  )}
 
-                {question?.planet_id && (
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        textTitles.find(
-                          (title) =>
-                            title.placeholder?.includes("Enunciado") ||
-                            title.placeholder?.includes("Quem disse")
-                        )?.description ?? "",
-                    }}
-                    className={classes.typography}
-                  />
-                )}
-              </Stack>
-            )}
-          </ScrollArea>
+                  {question?.planet_id && (
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          textTitles.find(
+                            (title) =>
+                              title.placeholder?.includes("Enunciado") ||
+                              title.placeholder?.includes("Quem disse")
+                          )?.description ?? "",
+                      }}
+                      className={classes.typography}
+                    />
+                  )}
+                </Stack>
+              )}
+            </ScrollArea>
+          )}
 
           <ScrollArea mah={boardW(420)} w="48%" pr={20} className={classes.scroll} type="always">
             <Stack pb={5}>

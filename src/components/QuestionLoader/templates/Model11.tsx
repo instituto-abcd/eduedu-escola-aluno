@@ -1,31 +1,20 @@
 import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
 import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconMessageCircle2 } from "@tabler/icons-react";
+import { AudioContainer } from "~/components/AudioContainer";
 
 const useStyles = createStyles({
   slot: {
     width: boardW(50),
     height: boardW(50),
   },
-
   option: {
     width: "auto",
     paddingBlock: boardW(10),
@@ -67,6 +56,8 @@ export function Model11({
       setAnswer(initialSlots);
     }
   }
+  const answerRule = getRule("answers");
+  const answerValue = answerRule?.value;
 
   /*
    *    Helpers para o título da questão
@@ -92,7 +83,6 @@ export function Model11({
   const isFullWidth = imageTitles.length === 0;
 
   function checkShouldRepeatAnswer() {
-    const answerRule = getRule("answers");
     if (!answerRule) return false;
 
     const answers = answerRule.value.split(",");
@@ -138,33 +128,10 @@ export function Model11({
   /* debug */
   const overwrite = (option: QuestionOption) =>
     question.options.map((q) => q.isCorrect).every((bool) => !bool)
-      ? getRule("answers")?.value === option.description
+      ? answerValue === option.description
       : undefined;
 
-  const autoplayRule = getRule("autoplay");
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlay = autoplayRule?.value === "false" ? false : true;
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
-
   const getCustomWidth = useCallback(() => {
-    const answerValue = getRule("answers")?.value;
     if (!answerValue) return 'auto';
 
     const isLengthEqualsThreeAndIncludesComma = answerValue.length === 3 && answerValue.includes(',');
@@ -178,7 +145,6 @@ export function Model11({
   }, [question]);
 
   const getCustomFontSize = useCallback(() => {
-    const answerValue = getRule("answers")?.value;
     if (!answerValue) return boardW(18);
 
     const hasBiggerWordInOptions = question.options.some((opt) => opt.description.length > 7);
@@ -192,28 +158,7 @@ export function Model11({
   return (
     <>
       {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => {
-            const isEnunciationTitle = title.position === 0;
-            const shouldPlayCheck = isEnunciationTitle
-              ? shouldPlay
-              : shouldPlay === false;
-            const props = {
-              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-              autoPlay: shouldPlayCheck
-                ? shouldPlayAuxiliar
-                  ? true
-                  : false
-                : false,
-              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return (
-              <AudioButton key={inx} src={title.file_url ?? ""} {...props} />
-            );
-          })}
-        </Group>
+        <AudioContainer question={question} audioTitles={audioTitles} />
       )}
 
       {hasTitle && !questionTitle.description?.includes("_") && (
@@ -319,7 +264,8 @@ export function Model11({
                       )}
                     </Fragment>
                   );
-                })}
+                })
+            }
           </Group>
 
           <Group align="center" position="center">

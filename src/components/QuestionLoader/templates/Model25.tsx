@@ -221,9 +221,11 @@ function SlotCard({
           alt={title.description}
           width={100}
           style={{
-            maxHeight: 130,
+            maxHeight: "100%",
             objectFit: "contain",
             marginInline: "auto",
+            inset: 0,
+            marginBlock: "auto",
           }}
         />
       )}

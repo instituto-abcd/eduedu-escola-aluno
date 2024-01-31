@@ -1,12 +1,11 @@
 import { Group } from "@mantine/core";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
 import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { useTimeout } from "@mantine/hooks";
 import { IconButton } from "~/components/EduButton";
 import { RubberIcon } from "~/assets/icons/Rubber";
 
@@ -24,6 +23,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   });
   const [modifiedData, setModifiedData] = useState<LottieLayers>();
   const [isCompletedLottie, setIsCompletedLottie] = useState(false);
+  const [controlDrawing, setControlDrawing] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const CANVAS_SIZE = boardW(450);
@@ -40,7 +40,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
       canvas.width = CANVAS_SIZE;
       canvas.height = CANVAS_SIZE;
 
@@ -51,6 +51,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
       canvas.addEventListener("mousedown", (e) => {
         if (!isCompletedLottie) return;
         isDrawing = true;
+        setControlDrawing(true);
         prevX = e.offsetX;
         prevY = e.offsetY;
       });
@@ -78,22 +79,36 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
 
       canvas.addEventListener("mouseup", () => {
         isDrawing = false;
+        setControlDrawing(false);
       });
 
       canvas.addEventListener("mouseleave", () => {
         isDrawing = false;
+        setControlDrawing(false);
       });
     }
   }, [canvasRef, isCompletedLottie]);
 
-  const { start } = useTimeout(() => {
-    onConditionsChange([]);
-  }, 4000);
-
   useEffect(() => {
     cleanUp();
-    if (isCompletedLottie) start();
   }, [question]);
+
+  useEffect(() => {
+    updateConditions();
+  }, [isCompletedLottie, controlDrawing]);
+
+  const updateConditions = useCallback(() => {
+    const currentCanvas = canvasRef.current;
+    if (currentCanvas) {
+      const isAllColorChannelsZero = !currentCanvas.getContext('2d', { willReadFrequently: true })?.getImageData(
+        0, 0, currentCanvas.width, currentCanvas.height
+      ).data.some(channel => channel !== 0);
+      onConditionsChange(!isAllColorChannelsZero && isCompletedLottie ? [] : [false]);
+      return;
+    }
+
+    onConditionsChange([false]);
+  }, [isCompletedLottie, controlDrawing]);
 
   const updateDataWithoutFillLayer = useCallback(() => {
     const outlineLayer = data?.layers.filter((layer) => !layer.nm.includes("fill"));
@@ -105,12 +120,13 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   const cleanUp = () => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
       ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      updateConditions();
     }
   }
 
-  const rubberIcon = <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />;
+  const rubberIcon = useMemo(() => <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />, []);
 
   return (
     <>

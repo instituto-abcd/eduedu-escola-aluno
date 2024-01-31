@@ -1,16 +1,14 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Group, Image, Stack, Text } from "@mantine/core";
 import { produce } from "immer";
 import { QuestionOption } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
 import { DraggableLetters } from "~/components/DraggableLetters";
 import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
 import { TextOptionButton } from "~/components/OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { IconMessageCircle2 } from "@tabler/icons-react";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model18({
   question,
@@ -18,14 +16,14 @@ export function Model18({
   onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
-  const { audioTitles, imageTitles, textTitles, getRule } = useQuestionHelper(question);
+  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
 
   const text = useMemo(
     () =>
       textTitles.filter(
-        (title) => title.description && title.description.length > 0
+        (title) => title.description && title.description.length > 0,
       )[0].description,
-    [question]
+    [question],
   );
 
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
@@ -33,14 +31,14 @@ export function Model18({
       text
         .replace(/\s/g, "")
         .split("")
-        .map((char) => (char === "_" ? null : char))
+        .map((char) => (char === "_" ? null : char)),
   );
 
   function handleDrop(item: QuestionOption | null, index: number) {
     setSlots((state) =>
       produce(state, (draft) => {
         draft[index] = item;
-      })
+      }),
     );
 
     if (item) {
@@ -48,7 +46,7 @@ export function Model18({
         prevSelected.concat({
           ...item,
           positionAnswer: index,
-        })
+        }),
       );
     }
   }
@@ -64,7 +62,7 @@ export function Model18({
       text
         .replace(/\s/g, "")
         .split("")
-        .map((char) => (char === "_" ? null : char))
+        .map((char) => (char === "_" ? null : char)),
     );
   }, [question]);
 
@@ -74,64 +72,26 @@ export function Model18({
 
   const conditions = useMemo(
     () => [slots.every((slot) => slot !== null)],
-    [slots]
+    [slots],
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const autoplayRule = getRule("autoplay");
-  const autoplayAuxRule = getRule("autoplayAux");
-  const shouldPlay = autoplayRule?.value === "false" ? false : true;
-  const shouldPlayAuxiliar = autoplayAuxRule?.value === "false" ? false : true;
-
-  const mainAudioRef = useRef<AudioButtonRef>(null);
-  const auxAudioRef = useRef<AudioButtonRef>(null);
-
-  useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
-    }
-
-    return () => {
-      auxAudioRef.current?.sound.destroy();
-    };
-  }, [question]);
+  const textAboveQuestion = textTitles.filter((t) =>
+    t.placeholder?.includes("som"),
+  )[0];
 
   return (
     <>
       {audioTitles.filter((title) => title.file_url) && (
-        <Group mx="auto">
-          {audioTitles.map((title, inx) => {
-            const isEnunciationTitle = title.position === 0;
-            const shouldPlayCheck = isEnunciationTitle ? shouldPlay : shouldPlay === false;
-            const props = {
-              ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
-              autoPlay: shouldPlayCheck ? shouldPlayAuxiliar ? true : false : false,
-              icon: inx > 0 ? <IconMessageCircle2 size={30} /> : undefined,
-              variant: inx > 0 ? "yellow" : "gray",
-            } as const;
-
-            return (
-              <AudioButton src={title.file_url!} key={title.file_url} {...props} />
-            );
-          })}
-        </Group>
+        <AudioContainer question={question} audioTitles={audioTitles} />
       )}
 
-      {textTitles[1] && (
-        <Text
-          size={boardW(24)}
-          color="dark.3"
-          weight={500}
-          key={textTitles[1].description}
-        >
-          {textTitles[1].description}
+      {textAboveQuestion && (
+        <Text size={boardW(24)} color="dark.3" weight={500}>
+          {textAboveQuestion.description}
         </Text>
       )}
 
@@ -170,13 +130,16 @@ export function Model18({
             <DraggableLetters
               key={inx}
               debug={{ skipDebug: true }}
-              option={{...option, description: option.description.toUpperCase()}}
+              option={{
+                ...option,
+                description: option.description.toUpperCase(),
+              }}
               hidden={
                 !!slots.find(
                   (item) =>
                     item &&
                     typeof item !== "string" &&
-                    JSON.stringify(item) === JSON.stringify(option)
+                    JSON.stringify(item) === JSON.stringify(option),
                 )
               }
             >

@@ -3,57 +3,83 @@ import {
   Group,
   Image,
   Header as MantineHeader,
+  MediaQuery,
   Text,
+  createStyles,
 } from "@mantine/core";
 import logo from "~/assets/logos/eduedu-azul.svg";
 import { useStudent } from "~/stores/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
+import { BREAKPOINT } from "~/constants/dimensions";
+
+const useStyles = createStyles((theme) => ({
+  logo: {
+    display: "none",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      display: "block",
+    },
+  },
+  header: {
+    paddingInline: 140,
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      justifyContent: "space-between",
+    },
+  },
+  links: {
+    alignItems: "baseline",
+    [theme.fn.smallerThan(BREAKPOINT.TABLET_HORZ)]: {
+      width: "100%",
+      justifyContent: "center",
+    },
+  },
+}));
 
 export function Navbar() {
+  const { classes } = useStyles();
   const student = useStudent();
   const links = [
-    { id: "1", label: student?.name, value: "" },
-    { id: "2", label: "Matrícula", value: student?.registry },
-    { id: "3", label: "Série", value: student?.schoolClassName },
-    { id: "4", label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
-    { id: "5", label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
+    { label: student?.name, value: "" },
+    { label: "Matrícula", value: student?.registry },
+    { label: "Série", value: student?.schoolClassName },
+    { label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
+    { label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
   ] as const;
 
   return (
-    <MantineHeader
-      height={78}
-      styles={{
-        root: {
-          margin: "auto",
-          display: "flex",
-          justifyContent: "center",
-        },
-      }}
-      py={17}
-    >
-      <Group
-        maw={1200}
-        w="100%"
-        spacing={64}
-        position="apart"
-        noWrap
-        align="center"
-        h="100%"
-        px={150}
-      >
-        <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
+    <MantineHeader height={78} py={17}>
+      <Group w="100%" noWrap h="100%" className={classes.header}>
+        <Image
+          src={logo}
+          className={classes.logo}
+          alt="EduEdu Escola"
+          width={50}
+        />
 
-        <Group noWrap>
-          <Group spacing={16}>
-            {links.map((link) => (
-              <Flex key={link.id}>
-                <Text color="dark.5" td="none" weight={600} size={14} pr={10}>
+        <Group spacing={26} noWrap className={classes.links}>
+          {links.map((link, i) => (
+            <Group key={i} spacing={6}>
+              <MediaQuery
+                smallerThan={BREAKPOINT.TABLET_HORZ}
+                styles={{ display: "none" }}
+              >
+                <Text color="dark.5" td="none" weight={600} size={14}>
                   {link.label}
+                  {i !== 0 && ":"}
                 </Text>
-                <Text size={14}>{link.value}</Text>
-              </Flex>
-            ))}
-          </Group>
+              </MediaQuery>
+              {i === 0 && (
+                <MediaQuery
+                  largerThan={BREAKPOINT.TABLET_HORZ}
+                  styles={{ display: "none" }}
+                >
+                  <Text color="dark.5" weight={700} size={16}>
+                    {link.label}
+                  </Text>
+                </MediaQuery>
+              )}
+              <Text size={14}>{link.value}</Text>
+            </Group>
+          ))}
         </Group>
       </Group>
     </MantineHeader>

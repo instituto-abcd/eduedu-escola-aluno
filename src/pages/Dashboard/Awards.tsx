@@ -20,7 +20,7 @@ export function Awards() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message} (cod: ${error.code})`,
       );
     },
   });
@@ -103,8 +103,9 @@ export function Awards() {
         {isFetching &&
           Array(AWARDS_IMAGES.length)
             .fill(null)
-            .map((_) => (
+            .map((_, i) => (
               <Skeleton
+                key={i}
                 py={40}
                 visible={true}
                 width={90}

@@ -11,7 +11,7 @@ const URL = {
   SCHOOL_CLASSES: "user/school-classes/all",
 };
 
-type SchoolClass = {
+export type SchoolClass = {
   id: string;
   name: string;
 };
@@ -39,13 +39,13 @@ export function useUserSchoolClasses(
   options?: QueryOptions<
     SchoolClass[],
     [string, SchoolClassSearch | undefined]
-  > & { search?: SchoolClassSearch }
+  > & { search?: SchoolClassSearch },
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return UserAPI.getSchoolClasses(options?.search);
     },
-    [options?.search]
+    [options?.search],
   );
 
   return useQuery([KEY.SCHOOL_CLASSES, options?.search], handler, options);

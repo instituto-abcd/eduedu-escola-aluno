@@ -6,18 +6,19 @@ const useStyles = createStyles(
   (_, { selected, reserved }: { selected: boolean; reserved: boolean }) => ({
     card: {
       position: "relative",
+      width: "100%",
     },
     lock: {
       position: "absolute",
       top: 10,
-      right: 10,
+      right: 20,
       zIndex: 1,
     },
     button: {
       display: "flex",
       height: "100%",
       width: "100%",
-      maxWidth: 268,
+      maxWidth: 298,
       padding: "10px 20px",
       borderRadius: "12px",
       border: selected ? "1px solid #ACE655" : "1px solid #228BE6",
@@ -29,7 +30,7 @@ const useStyles = createStyles(
         background: reserved ? "#B8BCC1" : "#E7F5FF",
       },
     },
-  })
+  }),
 );
 
 type Props = {
@@ -71,7 +72,7 @@ export function StudentGridCard({
           <Text
             size="lg"
             color={student.reserved ? "gray.5" : "blue.6"}
-            style={{ lineHeight: 1, whiteSpace: 'pre-wrap' }}
+            style={{ lineHeight: 1, whiteSpace: "pre-wrap" }}
           >
             {student.name}
           </Text>

@@ -58,14 +58,17 @@ export function LoginPage() {
   const [studentSearch, setStudentSearch] = useDebouncedState("", 400);
   const [selectedStudent, setSelectedStudent] = useState("");
   const studentPagination = usePagination();
-  const { data: studentsList, refetch: refetchStudents } =
-    useStudentsBySchoolclass(selectedClass, {
-      enabled: !!selectedClass,
-      onError,
-      search: { name: studentSearch },
-      page: studentPagination.page,
-      pageSize: studentPagination.pageSize,
-    });
+  const {
+    data: studentsList,
+    refetch: refetchStudents,
+    isLoading: loadingStudents,
+  } = useStudentsBySchoolclass(selectedClass, {
+    enabled: !!selectedClass,
+    onError,
+    search: { name: studentSearch },
+    page: studentPagination.page,
+    pageSize: studentPagination.pageSize,
+  });
 
   /* 4. Reservar aluno */
   const { mutate: reserveStudent } = useReserveStudent({
@@ -93,7 +96,7 @@ export function LoginPage() {
 
   return (
     <BackgroundImage src={bg} h="100vh" w="100vw">
-      <Center maw={1200} h="100%" mx="auto">
+      <Center w="100%" maw={1620} h="100%" mx="auto">
         <Stack className={classes.column}>
           {step === 3 && (
             <ClassHandles
@@ -120,14 +123,13 @@ export function LoginPage() {
           {step === 3 && (
             <Stack spacing={24}>
               <Card radius={8} shadow="md">
-                {studentsList && (
-                  <StudentSelectionGrid
-                    schoolClass={selectedClass}
-                    students={studentsList}
-                    onSelect={setSelectedStudent}
-                    onLogout={refetchStudents}
-                  />
-                )}
+                <StudentSelectionGrid
+                  schoolClass={selectedClass}
+                  students={studentsList}
+                  onSelect={setSelectedStudent}
+                  onLogout={refetchStudents}
+                  loading={loadingStudents}
+                />
 
                 <Center mt="20px">
                   {studentsList && (

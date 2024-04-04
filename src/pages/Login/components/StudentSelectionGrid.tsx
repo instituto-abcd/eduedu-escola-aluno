@@ -7,6 +7,8 @@ import {
   SimpleGrid,
   SimpleGridBreakpoint,
   Stack,
+  Skeleton,
+  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -18,17 +20,19 @@ import { onError } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 
 type Props = {
-  students: Paginated<SimplifiedStudent>;
+  students?: Paginated<SimplifiedStudent>;
   onSelect: (studentId: string) => void;
   onLogout: () => void;
   schoolClass: string;
+  loading: boolean;
 };
 
 export function StudentSelectionGrid({
-  students,
   onSelect,
   onLogout,
   schoolClass,
+  students,
+  loading,
 }: Props) {
   const [highlighted, setHighlight] = useState<string>();
 
@@ -59,10 +63,12 @@ export function StudentSelectionGrid({
     modalHandlers.open();
   }
 
+  const SKEL_AMOUNT = 12;
+
   return (
     <>
       <SimpleGrid cols={2} breakpoints={gridBreakpointsConfig} spacing="md">
-        {students.items.map((student) => (
+        {students?.items.map((student) => (
           <StudentGridCard
             key={student.id}
             student={student}
@@ -71,7 +77,26 @@ export function StudentSelectionGrid({
             selected={highlighted === student.id}
           />
         ))}
+
+        {loading &&
+          Array(SKEL_AMOUNT)
+            .fill(null)
+            .map((_, inx) => (
+              <Skeleton
+                key={inx}
+                height={68}
+                style={{ minWidth: 199 }}
+                width="100%"
+                radius="md"
+              />
+            ))}
       </SimpleGrid>
+
+      {students?.items.length === 0 && (
+        <Title ta="center" color="dimmed" my={100}>
+          Sem alunos nesta turma.
+        </Title>
+      )}
 
       <Modal
         title="Atenção - Duplicidade de Login"
@@ -103,4 +128,8 @@ export function StudentSelectionGrid({
       </Modal>
     </>
   );
+}
+
+export function StudentGridLoader() {
+  return <Skeleton height={68} width={"100%"} radius="md" />;
 }

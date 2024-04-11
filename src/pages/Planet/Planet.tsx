@@ -35,9 +35,9 @@ export function PlanetPage() {
     answer:
       | Question
       | {
-          planetCompleted?: true;
-        },
-    skipFeedback?: boolean
+        planetCompleted?: true;
+      },
+    skipFeedback?: boolean,
   ) {
     if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
@@ -62,7 +62,7 @@ export function PlanetPage() {
   }
 
   // const showStagingInfo = !import.meta.env.PROD;
-  const showStagingInfo = true; // TODO: workaround
+  const showStagingInfo = false; // TODO: workaround
 
   return (
     <>

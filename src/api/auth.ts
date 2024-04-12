@@ -8,7 +8,9 @@ import { z } from "zod";
 
 const URL = {
   AUTH_ACCESS_KEY: "/auth/access-key",
+  LOGOUT: "/auth/logout",
 };
+
 export type UserLogin = Pick<UserAuth, "accessKey">;
 type UserAuth = {
   accessKey?: string;
@@ -29,12 +31,17 @@ class AuthAPI extends API {
     const { data } = await this.api.post(URL.AUTH_ACCESS_KEY, input);
     return data;
   }
+
+  static async logout() {
+    const { data } = await this.api.post(URL.LOGOUT);
+    return data;
+  }
 }
 
 export function useAuthLogin(
-  options?: MutationOptions<UserLogin, LoginResponse>
+  options?: MutationOptions<UserLogin, LoginResponse>,
 ) {
-  const handler = useCallback(function (data: UserLogin) {
+  const handler = useCallback(function(data: UserLogin) {
     return AuthAPI.loginAccessKey(data);
   }, []);
 
@@ -57,4 +64,12 @@ export function useAuthLogin(
       options?.onSuccess?.(data, vars, ctx);
     },
   });
+}
+
+export function useAuthLogout(options?: MutationOptions) {
+  const handler = useCallback(function() {
+    return AuthAPI.logout();
+  }, []);
+
+  return useMutation(handler, options);
 }

@@ -1,5 +1,5 @@
 import {
-  Flex,
+  Anchor,
   Group,
   Image,
   Header as MantineHeader,
@@ -11,6 +11,9 @@ import logo from "~/assets/logos/eduedu-azul.svg";
 import { useStudent } from "~/stores/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
 import { BREAKPOINT } from "~/constants/dimensions";
+import { useAuthLogout } from "~/api/auth";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "~/constants/path";
 
 const useStyles = createStyles((theme) => ({
   logo: {
@@ -44,6 +47,14 @@ export function Navbar() {
     { label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
     { label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
   ] as const;
+
+  const navigate = useNavigate();
+  const { mutate: logout } = useAuthLogout({
+    onSuccess: () => {
+      useStudent.setState({}, true);
+      navigate(PATH.LOGIN);
+    },
+  });
 
   return (
     <MantineHeader height={78} py={17}>
@@ -80,6 +91,9 @@ export function Navbar() {
               <Text size={14}>{link.value}</Text>
             </Group>
           ))}
+          <Anchor size="xs" onClick={() => logout({})}>
+            (sair)
+          </Anchor>
         </Group>
       </Group>
     </MantineHeader>

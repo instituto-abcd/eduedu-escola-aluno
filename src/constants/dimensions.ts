@@ -28,7 +28,15 @@ export const scrollAreaWidth = (lousaWidth * 50) / 100;
 /* Helper */
 export const boardW = (value: number) => {
   const _value = Number(
-    value > 99 ? "0." + value.toString() : "0.0" + value.toString()
+    value > 99 ? "0." + value.toString() : "0.0" + value.toString(),
   );
   return lousaWidth * _value;
 };
+
+// Breakpoints
+export const BREAKPOINT = {
+  TABLET_VERT: 768,
+  TABLET_HORZ: 1024,
+  DESKTOP: 1440,
+  TV: 1920,
+} as const;

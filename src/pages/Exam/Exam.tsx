@@ -29,7 +29,7 @@ export function ExamPage() {
       | Question
       | {
           examCompleted?: true;
-        }
+        },
   ) {
     if ("examCompleted" in answer) {
       navigate(PATH.EXAM_EVALUATION);
@@ -44,7 +44,7 @@ export function ExamPage() {
   }
 
   // const showStagingInfo = !import.meta.env.PROD;
-  const showStagingInfo = true; // TODO: workaround
+  const showStagingInfo = false; // TODO: workaround
 
   return (
     <>

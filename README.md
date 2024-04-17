@@ -18,3 +18,4 @@ Diagramas arquiteturais (Modelo C4) :point_right:
 https://instituto-abcd.github.io/eduedu-escola-docs/
 
 ---
+

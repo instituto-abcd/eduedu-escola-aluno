@@ -24,7 +24,7 @@ const defaultIcon = (
 export const AudioButton = forwardRef(
   (
     { src, autoPlay, variant = "gray", icon = defaultIcon, ...props }: Props,
-    ref
+    ref,
   ) => {
     const { sound, isPlaying } = useCreateSound({
       src,
@@ -81,5 +81,5 @@ export const AudioButton = forwardRef(
     );
 
     return debug ? debugbutton : button;
-  }
+  },
 );

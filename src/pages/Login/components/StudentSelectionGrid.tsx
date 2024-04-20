@@ -68,15 +68,17 @@ export function StudentSelectionGrid({
   return (
     <>
       <SimpleGrid cols={2} breakpoints={gridBreakpointsConfig} spacing="md">
-        {students?.items.map((student) => (
-          <StudentGridCard
-            key={student.id}
-            student={student}
-            onLogout={(studentId) => logout(studentId)}
-            onSelected={() => setHighlight(student.id)}
-            selected={highlighted === student.id}
-          />
-        ))}
+        {students?.items
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((student) => (
+            <StudentGridCard
+              key={student.id}
+              student={student}
+              onLogout={(studentId) => logout(studentId)}
+              onSelected={() => setHighlight(student.id)}
+              selected={highlighted === student.id}
+            />
+          ))}
 
         {loading &&
           Array(SKEL_AMOUNT)

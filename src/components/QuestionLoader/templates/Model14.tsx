@@ -49,6 +49,7 @@ export function Model14({
 
     return () => {
       auxAudioRef.current?.sound.destroy();
+      mainAudioRef.current?.sound.off("end");
     };
   }, [question]);
 
@@ -59,14 +60,19 @@ export function Model14({
     } as QuestionOption);
   };
 
-  const audioTitles = question.titles.filter((title) => title.type === "AUDIO")
+  const audioTitles = question.titles
+    .filter((title) => title.type === "AUDIO")
     .filter((title) => title.file_id)
     .sort((a, b) => a.position - b.position);
 
-  const hasAudioTitle = useMemo(() => audioTitles.some((title) => title.file_id), [audioTitles]);
+  const hasAudioTitle = useMemo(
+    () => audioTitles.some((title) => title.file_id),
+    [audioTitles],
+  );
 
-  const shouldAuxAutoPlay = !!mainAudioRef && !audioTitleAutoplay(0) || 
-      !getRule('autoplay') && !mainAudioRef.current?.sound.playing;
+  const shouldAuxAutoPlay =
+    (!!mainAudioRef && !audioTitleAutoplay(0)) ||
+    (!getRule("autoplay") && !mainAudioRef.current?.sound.playing);
 
   return (
     <>
@@ -82,6 +88,7 @@ export function Model14({
           ))}
           {hasAux && (
             <AudioButton
+              id={question.id + ""}
               ref={auxAudioRef}
               src={question.options[0].sound_url!}
               variant="yellow"
@@ -102,7 +109,7 @@ export function Model14({
                 src={option.image_url}
                 key={option.image_url}
               />
-            )
+            ),
         )}
 
         <Stack w="45%">

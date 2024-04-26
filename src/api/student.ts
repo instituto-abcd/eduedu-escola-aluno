@@ -41,6 +41,7 @@ export type SimplifiedPlanet = {
   score: number;
   stars: number;
   canExecutePlanet: boolean;
+  enable: boolean;
 };
 
 export type PlanetTrack = {
@@ -150,7 +151,7 @@ export function useGetPlanetTrack(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getPlanetTrack(studentId);
   }, []);
 
@@ -162,7 +163,7 @@ export function useGetStudentAwards(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getStudentAwards(studentId);
   }, []);
 
@@ -174,7 +175,7 @@ export function useGetFirstExamQuestion(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
@@ -188,7 +189,7 @@ export function useGetExamQuestion(
   >,
 ) {
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function (input: GetQuestionInput) {
+  const handler = useCallback(function(input: GetQuestionInput) {
     return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
@@ -199,7 +200,7 @@ export function useSubmitExamEvaluation(
   options?: QueryOptions<Question, [typeof KEY.EXAM_EVALUATION]>,
 ) {
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
@@ -213,7 +214,7 @@ export function usePlanetFeedback(
   const studentId = useStudent((state) => state.id);
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 

@@ -49,6 +49,7 @@ class Sound {
   onStop: (callback: () => void) => void;
   onPause: (callback: () => void) => void;
   onSeek: (callback: () => void) => void;
+  off: (event: string) => void;
 
   constructor(howl: Howl) {
     this.play = () => {
@@ -98,6 +99,9 @@ class Sound {
     };
     this.onSeek = (callback: () => void) => {
       howl.on("seek", callback);
+    };
+    this.off = (event: string) => {
+      howl.off(event);
     };
   }
 }

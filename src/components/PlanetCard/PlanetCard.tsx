@@ -11,7 +11,12 @@ import { Link } from "react-router-dom";
 import { SimplifiedPlanet } from "~/api/student";
 import { planetsBigImage } from "~/constants";
 
-const useStyles = createStyles({
+const useStyles = createStyles((_, props: { enable: boolean }) => ({
+  container: {
+    cursor: !props.enable ? "not-allowed" : "initial",
+    userSelect: "none",
+    opacity: !props.enable ? 0.6 : 1,
+  },
   wrapper: {
     position: "relative",
     height: 190,
@@ -26,18 +31,21 @@ const useStyles = createStyles({
     top: 0,
     transform: "translateY(-50%)",
     zIndex: 5,
+    filter: props.enable ? "initial" : "grayscale(100%)",
   },
-});
+}));
 
 export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
-  const { classes } = useStyles();
+  const { classes } = useStyles({ enable: planet.enable });
 
   return (
-    <Box py={40}>
+    <Box py={40} className={classes.container}>
       <Stack className={classes.wrapper} align="center" justify="end">
         <Image
           src={planet.planetAvatar}
-          height={planetsBigImage.find(p => p == planet.planetName) ? 70 : 120}
+          height={
+            planetsBigImage.find((p) => p == planet.planetName) ? 70 : 120
+          }
           width="auto"
           className={classes.avatar}
         />
@@ -56,7 +64,7 @@ export function PlanetCard({ planet }: { planet: SimplifiedPlanet }) {
             component={Link}
             to={`/planeta/${planet.planetId}`}
             state={{ planet }}
-            // disabled={!planet.canExecutePlanet}
+            disabled={!planet.enable}
           >
             Fazer planeta
           </Button>

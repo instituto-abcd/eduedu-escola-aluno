@@ -100,7 +100,10 @@ export function LoginPage() {
         <Stack className={classes.column}>
           {step === 3 && (
             <ClassHandles
-              onSearch={setStudentSearch}
+              onSearch={(value) => {
+                setStudentSearch(value);
+                studentPagination.setPage(1);
+              }}
               onClassChange={setSelectedClass}
               selectedClass={selectedClass}
             />

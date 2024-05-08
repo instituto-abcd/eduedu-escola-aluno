@@ -47,7 +47,6 @@ export function ClassHandles({
   });
 
   useEffect(() => {
-    // studentPagination.setPage(1);
     onClassChange?.(selected);
   }, [selected]);
 

@@ -8,11 +8,23 @@ import { PlanetRoutes } from "./PlanetRoutes";
 import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { IntroPage } from "~/pages/Intro/Intro";
 import { DebugRoutes } from "./DebugRoutes";
+import { useEffect } from "react";
 
 export function AppRoutes() {
   function nested(route: string) {
     return route.endsWith("/") ? route + "*" : `${route}/*`;
   }
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    document.addEventListener("contextmenu", handler);
+
+    return () => {
+      document.removeEventListener("contextmenu", handler);
+    };
+  }, []);
 
   return (
     <BrowserRouter>

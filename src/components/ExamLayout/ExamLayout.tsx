@@ -24,6 +24,13 @@ export function ExamLayout() {
           value={examProgress}
           w={lousaWidth * 0.95}
           style={{ position: "absolute", top: progressBarHeight }}
+          styles={{
+            bar: {
+              transitionProperty: "width",
+              transitionDuration: "1.5s",
+              transitionTimingFunction: "ease-in-out",
+            },
+          }}
           size="lg"
           striped
           animate

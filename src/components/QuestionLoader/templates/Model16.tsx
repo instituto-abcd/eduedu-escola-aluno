@@ -63,7 +63,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         const x = e.offsetX;
         const y = e.offsetY;
 
-        ctx.lineWidth = 15;
+        ctx.lineWidth = 40;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.strokeStyle = "#4CB9E7";
@@ -100,10 +100,13 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   const updateConditions = useCallback(() => {
     const currentCanvas = canvasRef.current;
     if (currentCanvas) {
-      const isAllColorChannelsZero = !currentCanvas.getContext('2d', { willReadFrequently: true })?.getImageData(
-        0, 0, currentCanvas.width, currentCanvas.height
-      ).data.some(channel => channel !== 0);
-      onConditionsChange(!isAllColorChannelsZero && isCompletedLottie ? [] : [false]);
+      const isAllColorChannelsZero = !currentCanvas
+        .getContext("2d", { willReadFrequently: true })
+        ?.getImageData(0, 0, currentCanvas.width, currentCanvas.height)
+        .data.some((channel) => channel !== 0);
+      onConditionsChange(
+        !isAllColorChannelsZero && isCompletedLottie ? [] : [false],
+      );
       return;
     }
 
@@ -111,7 +114,9 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   }, [isCompletedLottie, controlDrawing]);
 
   const updateDataWithoutFillLayer = useCallback(() => {
-    const outlineLayer = data?.layers.filter((layer) => !layer.nm.includes("fill"));
+    const outlineLayer = data?.layers.filter(
+      (layer) => !layer.nm.includes("fill"),
+    );
     const updatedData = outlineLayer ? { ...data, layers: outlineLayer } : data;
     setModifiedData(updatedData);
     setIsCompletedLottie(true);
@@ -124,9 +129,12 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
       ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
       updateConditions();
     }
-  }
+  };
 
-  const rubberIcon = useMemo(() => <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />, []);
+  const rubberIcon = useMemo(
+    () => <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />,
+    [],
+  );
 
   return (
     <>
@@ -176,9 +184,9 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
             }}
             eventListeners={[
               {
-                eventName: 'complete',
+                eventName: "complete",
                 callback: () => updateDataWithoutFillLayer(),
-              }
+              },
             ]}
           />
         )}

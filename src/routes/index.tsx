@@ -14,15 +14,24 @@ export function AppRoutes() {
   function nested(route: string) {
     return route.endsWith("/") ? route + "*" : `${route}/*`;
   }
+  useEffect(() => { }, []);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const contextMenuEventHandler = (e: MouseEvent) => {
       e.preventDefault();
     };
-    document.addEventListener("contextmenu", handler);
+
+    const beforeUnloadEventHandler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = true;
+    };
+
+    document.addEventListener("contextmenu", contextMenuEventHandler);
+    window.addEventListener("beforeunload", beforeUnloadEventHandler);
 
     return () => {
-      document.removeEventListener("contextmenu", handler);
+      document.removeEventListener("contextmenu", contextMenuEventHandler);
+      document.removeEventListener("beforeunload", beforeUnloadEventHandler);
     };
   }, []);
 

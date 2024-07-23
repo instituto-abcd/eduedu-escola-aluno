@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SchoolGrade, SchoolPeriod } from "./school-class";
 import { useStudent } from "~/stores/student";
 import { Question, QuestionOption } from "./exam";
+import { useNewAward } from "~/stores/new-award";
 
 export type Student = {
   id: string;
@@ -66,6 +67,9 @@ type GetQuestionInput = {
 };
 
 type PlanetFeedback = { planetName: string; stars: number };
+type GetExamQuestionResponse =
+  | Question
+  | { examCompleted: true; newAwards?: Award[] };
 
 const KEY = {
   STUDENT: "STUDENT",
@@ -105,7 +109,7 @@ export class StudentAPI extends API {
   }
 
   static async getStudentAwards(studentId: string) {
-    const { data } = await this.api.get<{ awards: Award[] }>(
+    const { data } = await this.api.get<Award[]>(
       URL.GET_STUDENT_AWARDS(studentId),
     );
     return data;
@@ -119,7 +123,7 @@ export class StudentAPI extends API {
   }
 
   static async getExamQuestion(studentId: string, input: GetQuestionInput) {
-    const { data } = await this.api.post<Question | { examCompleted: true }>(
+    const { data } = await this.api.post<GetExamQuestionResponse>(
       URL.GET_STUDENT_EXAM_QUESTIONS(
         studentId,
         "fa387b6c-7ecf-4752-aeb3-c810a912c421", // TODO: pegar id do exam
@@ -159,7 +163,7 @@ export function useGetPlanetTrack(
 }
 
 export function useGetStudentAwards(
-  options?: QueryOptions<{ awards: Award[] }, [typeof KEY.AWARDS]>,
+  options?: QueryOptions<Award[], [typeof KEY.AWARDS]>,
 ) {
   const studentId = useStudent((state) => state.id);
 
@@ -179,32 +183,62 @@ export function useGetFirstExamQuestion(
     return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
-  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
+  return useQuery([KEY.FIRST_QUESTION], handler, options);
 }
 
 export function useGetExamQuestion(
-  options?: MutationOptions<
-    GetQuestionInput,
-    Question | { examCompleted: true }
-  >,
+  options?: MutationOptions<GetQuestionInput, GetExamQuestionResponse>,
 ) {
+  const { setNewAwards } = useNewAward();
   const studentId = useStudent((state) => state.id);
   const handler = useCallback(function(input: GetQuestionInput) {
     return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
-  return useMutation(handler, options);
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      type AwardCase = { newAwards: Award[] }; // 🤡 typescript
+      if (
+        (data as AwardCase).newAwards &&
+        (data as AwardCase).newAwards.length
+      ) {
+        const newAwards = (data as AwardCase).newAwards.map((a) => a.name);
+        setNewAwards(newAwards);
+      }
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
 }
 
 export function useSubmitExamEvaluation(
-  options?: QueryOptions<Question, [typeof KEY.EXAM_EVALUATION]>,
+  options?: QueryOptions<
+    Question | { newAwards: Award[] },
+    [typeof KEY.EXAM_EVALUATION]
+  >,
 ) {
+  const { setNewAwards, requestView } = useNewAward();
   const studentId = useStudent((state) => state.id);
   const handler = useCallback(function() {
     return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
-  return useQuery([KEY.GET_STUDENT_AWARDS], handler, options);
+  return useQuery([KEY.EXAM_EVALUATION], handler, {
+    ...options,
+    onSuccess: (data) => {
+      type AwardCase = { newAwards: Award[] }; // 🤡 typescript
+      if (
+        (data as AwardCase).newAwards &&
+        (data as AwardCase).newAwards.length
+      ) {
+        const newAwards = (data as AwardCase).newAwards.map((a) => a.name);
+        setNewAwards(newAwards);
+        requestView();
+      }
+
+      options?.onSuccess?.(data);
+    },
+  });
 }
 
 export function usePlanetFeedback(

@@ -16,7 +16,7 @@ import { useGetPlanetTrack, useGetStudentAwards } from "~/api/student";
 
 export function Awards() {
   const { data, isFetching } = useGetStudentAwards({
-    initialData: { awards: [] },
+    initialData: [],
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
@@ -31,8 +31,9 @@ export function Awards() {
   useEffect(() => {
     if (!data) return;
 
+    // TODO: melhorar...
     AWARDS_IMAGES.map((item) => {
-      data.awards.map((subitem) => {
+      data.map((subitem) => {
         item.name === subitem.name
           ? ((item.active = true),
             (item.title = subitem.title),

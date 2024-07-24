@@ -15,12 +15,14 @@ import { useSearchParams } from "react-router-dom";
 import { usePlanetFeedback } from "~/api/student";
 import feedbackLow from "~/assets/planets/feedback_low.svg";
 import feedbackHigh from "~/assets/planets/feedback_high.svg";
+import { useNewAward } from "~/stores/new-award";
 
 type Props = {
   onClose: (lastPlanetId: string | null) => void;
 };
 
 export function PlanetCompletedFeedback({ onClose }: Props) {
+  const { requestView } = useNewAward();
   const [params, setParams] = useSearchParams();
   const planetCompleted = params.get("planet-completed");
 
@@ -42,6 +44,7 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
       return prev;
     });
     onClose(planetCompleted);
+    requestView();
   }
 
   if (!planetCompleted) return null;

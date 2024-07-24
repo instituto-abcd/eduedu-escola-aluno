@@ -44,7 +44,18 @@ import superAward from "~/assets/awards/super.png";
 import superAwardLottie from "~/assets/lotties/lottie_badge_super.json";
 import superAwardSound from "~/assets/audio/badge_super.mp3";
 
-export const AWARDS_IMAGES = [
+export type AwardImage = {
+  name: string;
+  image: string;
+  lottie: any;
+  sound: string;
+  title: string;
+  active: boolean;
+  description: string;
+  id: string;
+};
+
+export const AWARDS_IMAGES: AwardImage[] = [
   {
     name: "bombastico",
     image: bombastico,

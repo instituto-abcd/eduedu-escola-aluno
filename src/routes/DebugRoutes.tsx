@@ -6,6 +6,7 @@ import { ModelsList } from "~/pages/Debug/Models/ModelList";
 import { ModelView } from "~/pages/Debug/Models/ModelView";
 import { PlanetList } from "~/pages/Debug/Planet/PlanetList";
 import { PlanetView } from "~/pages/Debug/Planet/PlanetView";
+import { SchoolYearSelect } from "~/pages/Debug/Test/SchoolYearSelect";
 
 export function DebugRoutes() {
   return (
@@ -22,6 +23,8 @@ export function DebugRoutes() {
       <Route path="model/:modelId" Component={ExamLayout}>
         <Route index Component={ModelView} />
       </Route>
+
+      <Route path="test/school-year-select" Component={SchoolYearSelect} />
     </Routes>
   );
 }

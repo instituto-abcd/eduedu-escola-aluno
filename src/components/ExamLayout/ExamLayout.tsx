@@ -7,13 +7,17 @@ import sala_3000 from "~/assets/bgs/sala_3000x900.png";
 import lousa from "~/assets/bgs/lousa-sala1.svg";
 import { LottiesExam } from "./LottiesExam";
 
+import bgStaging from "~/assets/bgs/bg_prova2.png";
+
 export function ExamLayout() {
   const progressBarHeight = (lousaHeight * 3) / 100;
   const examProgress = useExamProgress((state) => state.value);
 
+  const background = import.meta.env.DEV ? bgStaging : sala_3000;
+
   return (
     <BackgroundImage
-      src={sala_3000}
+      src={background}
       mih="100vh"
       p={0}
       styles={{ main: { padding: 0, position: "relative" } }}

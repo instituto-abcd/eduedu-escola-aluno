@@ -37,19 +37,22 @@ export type SchoolGrade =
   | "CHILDREN"
   | "FIRST_GRADE"
   | "SECOND_GRADE"
-  | "THIRD_GRADE";
+  | "THIRD_GRADE"
+  | "FOURTH_GRADE"
+  | "FIFTH_GRADE";
+
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
 export class SchoolClassAPI extends API {
   static async getStudentsById(
     id: string,
-    params?: PaginationParams & { name?: string }
+    params?: PaginationParams & { name?: string },
   ) {
     const { data } = await this.api.get<Paginated<SimplifiedStudent>>(
       URL.GET_STUDENTS_BY_ID(id),
       {
         params,
-      }
+      },
     );
     return data;
   }
@@ -74,17 +77,17 @@ export function useStudentsBySchoolclass(
   options?: QueryOptions<
     Paginated<SimplifiedStudent>,
     Array<string | number | undefined>
-  > & { search?: { name?: string } }
+  > & { search?: { name?: string } },
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return SchoolClassAPI.getStudentsById(schoolClassId, {
         "page-number": options?.page,
         "page-size": options?.pageSize,
         name: options?.search?.name,
       });
     },
-    [options?.page, options?.pageSize, options?.search?.name, schoolClassId]
+    [options?.page, options?.pageSize, options?.search?.name, schoolClassId],
   );
 
   return useQuery(
@@ -96,7 +99,7 @@ export function useStudentsBySchoolclass(
       options?.pageSize,
     ],
     handler,
-    options
+    options,
   );
 }
 
@@ -107,15 +110,14 @@ export function useReserveStudent(
       studentId: string;
     },
     ReserveStudent
-  >
+  >,
 ) {
-  const handler = useCallback(function (data: {
+  const handler = useCallback(function(data: {
     id: string;
     studentId: string;
   }) {
     return SchoolClassAPI.reserveStudent(data.id, data.studentId);
-  },
-  []);
+  }, []);
 
   return useMutation(handler, options);
 }
@@ -127,15 +129,14 @@ export function useUnreserveStudent(
       studentId: string;
     },
     ReserveStudent
-  >
+  >,
 ) {
-  const handler = useCallback(function (data: {
+  const handler = useCallback(function(data: {
     id: string;
     studentId: string;
   }) {
     return SchoolClassAPI.unreserveStudent(data.id, data.studentId);
-  },
-  []);
+  }, []);
 
   return useMutation(handler, options);
 }

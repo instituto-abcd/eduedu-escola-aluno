@@ -23,7 +23,7 @@ export function LoginForm({ onNextStep }: Props) {
 
   const authForm = useForm({
     initialValues: {
-      accessKey: "",
+      accessKey: "MIAU8003",
     },
   });
 

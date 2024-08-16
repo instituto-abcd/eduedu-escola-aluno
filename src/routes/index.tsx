@@ -14,7 +14,6 @@ export function AppRoutes() {
   function nested(route: string) {
     return route.endsWith("/") ? route + "*" : `${route}/*`;
   }
-  useEffect(() => { }, []);
 
   useEffect(() => {
     const contextMenuEventHandler = (e: MouseEvent) => {

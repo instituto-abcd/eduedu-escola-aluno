@@ -12,10 +12,17 @@ const URL = {
   GET_STUDENTS_BY_ID: (id: string) => `schoolClass/${id}/students`,
   RESERVE_STUDENT: (id: string, studentId: string) =>
     `schoolClass/${id}/students/${studentId}/reserved`,
+  COUNT_SCHOOL_GRADE: "schoolClass/count/school-grade",
 };
 
 const KEY = {
   GET_STUDENTS_BY_ID: "STUDENTS_BY_CLASS",
+  GRADE_COUNT: "SCHOOL_GRADE_COUNT",
+};
+
+type SchoolGradeCount = {
+  schoolGrade: SchoolGrade;
+  count: number;
 };
 
 type ReserveStudent = {
@@ -68,6 +75,13 @@ export class SchoolClassAPI extends API {
     const { data } = await this.api.patch(URL.RESERVE_STUDENT(id, studentId), {
       reserved: false,
     });
+    return data;
+  }
+
+  static async countSchoolGrade() {
+    const { data } = await this.api.get<SchoolGradeCount[]>(
+      URL.COUNT_SCHOOL_GRADE,
+    );
     return data;
   }
 }
@@ -139,4 +153,14 @@ export function useUnreserveStudent(
   }, []);
 
   return useMutation(handler, options);
+}
+
+export function useSchoolGradeCount(
+  options?: QueryOptions<SchoolGradeCount[], [typeof KEY.GRADE_COUNT]>,
+) {
+  const handler = useCallback(function() {
+    return SchoolClassAPI.countSchoolGrade();
+  }, []);
+
+  return useQuery([KEY.GRADE_COUNT], handler, options);
 }

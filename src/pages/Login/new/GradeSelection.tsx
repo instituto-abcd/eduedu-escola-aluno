@@ -4,11 +4,12 @@ import { MEDIA_QUERY } from "~/constants/dimensions";
 import bg from "~/assets/bg-select-option.png";
 import { Character } from "~/components/Character";
 import { useSearchParams } from "react-router-dom";
-import { SchoolGrade } from "~/api/school-class";
+import { SchoolGrade, useSchoolGradeCount } from "~/api/school-class";
+import { SCHOOL_GRADE } from "~/constants";
 
 const MAX_ITEMS = 6;
 
-const useStyles = createStyles(() => ({
+const useStyles = createStyles((_, grades: number) => ({
   container: {
     height: "100vh",
   },
@@ -80,21 +81,26 @@ const useStyles = createStyles(() => ({
     position: "relative",
     isolation: "isolate",
     minWidth: "100%",
-    minHeight: `calc((100% - 40px) / ${MAX_ITEMS})`,
+    minHeight: `calc((100% - 40px) / ${grades < MAX_ITEMS ? grades : MAX_ITEMS})`,
     containerType: "inline-size",
     color: "#F6A313",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     overflow: "clip",
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      width: `calc(100vw / ${MAX_ITEMS})`,
-      minWidth: "auto",
-    },
 
     [`&:hover .${getStylesRef("character")}`]: {
       filter: "none",
-      transform: "scale(1.1)",
+      transform: "scale(1.1) translateX(45%)",
+    },
+
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      minWidth: 0,
+      width: `calc(100vw / ${grades < MAX_ITEMS ? grades : MAX_ITEMS})`,
+
+      [`&:hover .${getStylesRef("character")}`]: {
+        transform: "scale(1.1)",
+      },
     },
 
     p: {
@@ -105,6 +111,7 @@ const useStyles = createStyles(() => ({
       lineHeight: 1,
       userSelect: "none",
       pointerEvents: "none",
+      textAlign: "center",
       [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
         fontSize: "min( 20cqw, 70px )",
       },
@@ -112,52 +119,51 @@ const useStyles = createStyles(() => ({
 
     ".item_bg": {
       position: "absolute",
+      objectFit: "cover",
       inset: 0,
       width: "100%",
-      height: "auto",
+      height: "100%",
       zIndex: -2,
       filter: "grayscale(1)",
       transition: "filter 150ms ease",
 
       [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
         height: "100vh",
-        width: "auto",
       },
 
       "&:hover": {
         filter: "none",
       },
-
-      "&:nth-of-type(odd)": {},
     },
   },
 
   character: {
     ref: getStylesRef("character"),
-    position: "absolute",
-    marginLeft: "auto",
-    top: 0,
-    bottom: "auto",
-    zIndex: -1,
     userSelect: "none",
     pointerEvents: "none",
+    position: "absolute",
     filter: "grayscale(1)",
-    transition: "all 100ms ease",
-    height: "160%",
+    transition: "all 100ms ease-in-out",
+    zIndex: -1,
     width: "auto",
-    left: "76%",
+    maxWidth: 200,
+    margin: "auto",
+    right: 0,
+    marginRight: 0,
+    marginBlock: "auto",
+    insetBlock: 0,
+    transform: "translateX(45%)",
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      height: "160%",
       width: "auto",
-      left: "90%",
     },
     [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      height: "auto",
       right: "auto",
       left: "auto",
-      top: "70%",
-      minWidth: "130%",
-      height: "auto",
+      bottom: "-8%",
+      marginBottom: 0,
+      transform: "none",
     },
   },
 }));
@@ -168,8 +174,8 @@ type Props = {
 };
 
 export function GradeSelection({ onBack, onNext }: Props) {
-  const { classes } = useStyles();
   const [_, setQuery] = useSearchParams();
+  const { data: schoolGrade } = useSchoolGradeCount({ enabled: false });
 
   function next(grade: SchoolGrade) {
     setQuery((prev) => {
@@ -179,14 +185,8 @@ export function GradeSelection({ onBack, onNext }: Props) {
     onNext();
   }
 
-  const grades: Record<SchoolGrade, string> = {
-    CHILDREN: "Infantil",
-    FIRST_GRADE: "1º",
-    SECOND_GRADE: "2º",
-    THIRD_GRADE: "3º",
-    FOURTH_GRADE: "4º",
-    FIFTH_GRADE: "5º",
-  } as const;
+  const grades = schoolGrade!.filter((grade) => grade.count);
+  const { classes } = useStyles(grades.length);
 
   return (
     <div className={classes.container}>
@@ -198,9 +198,13 @@ export function GradeSelection({ onBack, onNext }: Props) {
       </div>
 
       <div className={classes.itemsContainer}>
-        {(Object.keys(grades) as SchoolGrade[]).map((g, i) => (
-          <div className={classes.item} key={g} onClick={() => next(g)}>
-            <p>{grades[g]}</p>
+        {grades.map(({ schoolGrade }, i) => (
+          <div
+            className={classes.item}
+            key={i}
+            onClick={() => next(schoolGrade)}
+          >
+            <p>{SCHOOL_GRADE[schoolGrade].split(" ")[0]}</p>
 
             <Character id={i + 1} className={classes.character} />
             <img src={bg} alt="" role="presentation" className="item_bg" />

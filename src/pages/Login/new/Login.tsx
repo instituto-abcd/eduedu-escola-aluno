@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ProfileSelection } from "./ProfileSelection";
 import { GradeSelection } from "./GradeSelection";
+import { ClassSelection } from "./ClassSelection";
+import { useSchoolGradeCount } from "~/api/school-class";
 
 enum LOGIN_STEP {
   PROFILE,
@@ -11,6 +13,9 @@ enum LOGIN_STEP {
 
 export function LoginPage() {
   const [step, setStep] = useState<LOGIN_STEP>(LOGIN_STEP.PROFILE);
+
+  // TODO: add loader component
+  const { isLoading: isLoadingGrades } = useSchoolGradeCount();
 
   const next = () =>
     setStep((s) => {
@@ -29,6 +34,9 @@ export function LoginPage() {
       return <ProfileSelection onNext={next} />;
     case LOGIN_STEP.GRADE:
       return <GradeSelection onNext={next} onBack={back} />;
+    case LOGIN_STEP.CLASS:
+      return <ClassSelection onNext={next} onBack={back} />;
+
     default:
       return (
         <>

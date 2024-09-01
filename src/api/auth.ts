@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { API } from "./base";
 import { useMutation } from "@tanstack/react-query";
 import { MutationOptions } from "./api-types";
-import { useUserStore } from "~/stores/user";
 import { decodeJwt } from "~/utils/decodeJwt";
 import { z } from "zod";
 
@@ -41,7 +40,7 @@ class AuthAPI extends API {
 export function useAuthLogin(
   options?: MutationOptions<UserLogin, LoginResponse>,
 ) {
-  const handler = useCallback(function(data: UserLogin) {
+  const handler = useCallback(function (data: UserLogin) {
     return AuthAPI.loginAccessKey(data);
   }, []);
 
@@ -60,14 +59,13 @@ export function useAuthLogin(
 
       tokenValidation.parse(token);
 
-      useUserStore.setState({ ...data });
       options?.onSuccess?.(data, vars, ctx);
     },
   });
 }
 
 export function useAuthLogout(options?: MutationOptions) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return AuthAPI.logout();
   }, []);
 

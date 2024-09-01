@@ -13,11 +13,28 @@ const URL = {
   RESERVE_STUDENT: (id: string, studentId: string) =>
     `schoolClass/${id}/students/${studentId}/reserved`,
   COUNT_SCHOOL_GRADE: "schoolClass/count/school-grade",
+  ALL: "schoolClass/all-no-auth",
 };
 
 const KEY = {
   GET_STUDENTS_BY_ID: "STUDENTS_BY_CLASS",
   GRADE_COUNT: "SCHOOL_GRADE_COUNT",
+  ALL: "SCHOOL_CLASS_ALL",
+};
+
+export type SchoolClass = {
+  id: string;
+  name: string;
+  schoolGrade: SchoolGrade;
+  studentsCount: number;
+  teachers: {
+    id: string;
+    name: string;
+  }[];
+  schoolYear: {
+    id: string;
+    name: string;
+  };
 };
 
 type SchoolGradeCount = {
@@ -84,6 +101,21 @@ export class SchoolClassAPI extends API {
     );
     return data;
   }
+
+  static async getAll() {
+    const { data } = await this.api.get<Paginated<SchoolClass>>(URL.ALL);
+    return data;
+  }
+}
+
+export function useSchoolClassGetAll(
+  options?: QueryOptions<Paginated<SchoolClass>, [typeof KEY.ALL]>,
+) {
+  const handler = useCallback(function () {
+    return SchoolClassAPI.getAll();
+  }, []);
+
+  return useQuery([KEY.ALL], handler, options);
 }
 
 export function useStudentsBySchoolclass(
@@ -94,7 +126,7 @@ export function useStudentsBySchoolclass(
   > & { search?: { name?: string } },
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getStudentsById(schoolClassId, {
         "page-number": options?.page,
         "page-size": options?.pageSize,
@@ -126,7 +158,7 @@ export function useReserveStudent(
     ReserveStudent
   >,
 ) {
-  const handler = useCallback(function(data: {
+  const handler = useCallback(function (data: {
     id: string;
     studentId: string;
   }) {
@@ -145,7 +177,7 @@ export function useUnreserveStudent(
     ReserveStudent
   >,
 ) {
-  const handler = useCallback(function(data: {
+  const handler = useCallback(function (data: {
     id: string;
     studentId: string;
   }) {
@@ -158,7 +190,7 @@ export function useUnreserveStudent(
 export function useSchoolGradeCount(
   options?: QueryOptions<SchoolGradeCount[], [typeof KEY.GRADE_COUNT]>,
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return SchoolClassAPI.countSchoolGrade();
   }, []);
 

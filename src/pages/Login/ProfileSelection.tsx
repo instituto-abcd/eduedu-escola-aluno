@@ -2,7 +2,6 @@ import { createStyles } from "@mantine/core";
 import { EduEduLogo } from "~/components/icons/EduEduLogo";
 
 import { MEDIA_QUERY } from "~/constants/dimensions";
-import { useSearchParams } from "react-router-dom";
 import {
   CharacterStudent,
   CharacterProfessor,
@@ -32,6 +31,13 @@ const useStyles = createStyles(() => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      height: "100vh",
+      width: "50vw",
+      justifyContent: "flex-end",
+      paddingBottom: 120,
+      gap: 80,
+    },
 
     ":hover": {
       filter: "none",
@@ -41,16 +47,9 @@ const useStyles = createStyles(() => ({
       margin: 0,
       width: "fit-content",
       height: "fit-content",
-      fontSize: "12cqw",
+      fontSize: "min(10cqw, 52px)",
       fontWeight: "bold",
       color: "white",
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        fontSize: "8cqw",
-      },
-      [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-        top: 0,
-        bottom: "auto",
-      },
     },
   },
 
@@ -65,6 +64,10 @@ const useStyles = createStyles(() => ({
   character: {
     width: "auto",
     height: "60%",
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      height: "auto",
+      width: "60%",
+    },
   },
 
   bg_student: {
@@ -79,15 +82,9 @@ type Profile = "STUDENT" | "TEACHER";
 
 export function ProfileSelection({ onNext }: { onNext: () => void }) {
   const { classes, cx } = useStyles();
-  const [_, setQuery] = useSearchParams();
 
   function handleSelection(value: Profile) {
-    setQuery((ps) => {
-      ps.set("profile", value);
-      return ps;
-    });
-
-    onNext();
+    if (value === "STUDENT") return onNext();
   }
 
   return (

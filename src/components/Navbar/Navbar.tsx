@@ -14,7 +14,6 @@ import { BREAKPOINT } from "~/constants/dimensions";
 import { useAuthLogout } from "~/api/auth";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
-import { useUserStore } from "~/stores/user";
 
 const useStyles = createStyles((theme) => ({
   logo: {
@@ -41,7 +40,6 @@ const useStyles = createStyles((theme) => ({
 export function Navbar() {
   const { classes } = useStyles();
   const student = useStudent();
-  const userStore = useUserStore();
   const links = [
     { label: student?.name, value: "" },
     { label: "Matrícula", value: student?.registry },
@@ -54,7 +52,6 @@ export function Navbar() {
   const { mutate: logout } = useAuthLogout({
     onSuccess: () => {
       useStudent.setState({}, true);
-      userStore.signOut();
       navigate(PATH.LOGIN);
     },
   });

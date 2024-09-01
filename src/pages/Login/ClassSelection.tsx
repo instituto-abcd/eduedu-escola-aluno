@@ -1,12 +1,16 @@
 import { createStyles, getStylesRef } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import bg from "~/assets/bg-select-option.png";
 import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
 import { useEffect, useMemo, useState } from "react";
-import { Sprite } from "~/components/Sprite";
+import { Sprite } from "~/components/vector/Sprite";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
-import { Confirmation } from "./_components/Confirmation";
+import { Confirmation } from "./components/Confirmation";
+import { SchoolClass, useSchoolClassGetAll } from "~/api/school-class";
+import { useStudent } from "~/stores/student";
+import { Header } from "./components/Header";
+
+// TODO: hide controls when unable to click
 
 const MAX_ITEMS = 5;
 
@@ -15,64 +19,10 @@ type Props = {
   onBack: () => void;
 };
 
-const useStyles = createStyles(() => ({
+const useStyles = createStyles((_, qty: number) => ({
   container: {
     position: "relative",
     height: "100vh",
-  },
-
-  header: {
-    width: "100%",
-    paddingBlock: 8,
-    paddingInline: 20,
-    backgroundColor: "#000",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "1rem",
-    height: 40,
-    position: "relative",
-    userSelect: "none",
-    pointerEvents: "none",
-    zIndex: 20,
-
-    h1: {
-      fontSize: 20,
-      textAlign: "center",
-    },
-
-    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      paddingBlock: 22,
-      h1: {
-        fontSize: 30,
-      },
-    },
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      position: "fixed",
-      backgroundColor: "transparent",
-      zIndex: 999,
-    },
-  },
-
-  button: {
-    border: 0,
-    outline: 0,
-    backgroundColor: "red",
-    color: "white",
-    borderRadius: "100%",
-    display: "grid",
-    placeItems: "center",
-    padding: 6.5,
-    boxSizing: "border-box",
-    cursor: "pointer",
-    position: "absolute",
-    left: 16,
-    margin: "auto",
-    pointerEvents: "all",
-    svg: {
-      strokeWidth: 5,
-    },
   },
 
   carousel: {
@@ -102,7 +52,7 @@ const useStyles = createStyles(() => ({
     justifyContent: "center",
     alignItems: "center",
     minWidth: "100%",
-    minHeight: `calc((100vh - 40px)  / ${MAX_ITEMS})`,
+    minHeight: `calc((100vh - 40px)  / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
 
     [`&:hover .${getStylesRef("sprite")}`]: {
       filter: "none",
@@ -110,7 +60,7 @@ const useStyles = createStyles(() => ({
     },
 
     [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      width: `calc(100% / ${MAX_ITEMS})`,
+      width: `calc(100% / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
       minWidth: "auto",
       flexDirection: "column",
       gap: "20%",
@@ -139,6 +89,7 @@ const useStyles = createStyles(() => ({
       inset: 0,
       width: "100%",
       height: "auto",
+      minHeight: "100%",
       zIndex: -2,
       filter: "grayscale(1)",
       transition: "filter 150ms ease",
@@ -146,6 +97,7 @@ const useStyles = createStyles(() => ({
       [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
         height: "100vh",
         width: "auto",
+        minHeight: "auto",
       },
 
       "&:hover": {
@@ -162,7 +114,6 @@ const useStyles = createStyles(() => ({
     pointerEvents: "none",
     width: "auto",
     maxWidth: "25%",
-    height: "90%",
     position: "absolute",
     right: 0,
 
@@ -192,25 +143,44 @@ const useStyles = createStyles(() => ({
     rotate: "180deg",
     marginTop: 0,
     top: "7%",
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      rotate: "90deg",
+      top: 0,
+      marginLeft: 0,
+      marginBlock: "auto",
+      left: "7%",
+    },
   },
 
   // RIGHT - DOWN - NEXT
   control_2: {
     marginBottom: 0,
     bottom: "7%",
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      rotate: "-90deg",
+      marginRight: 0,
+      marginBlock: "auto",
+      right: "7%",
+      bottom: 0,
+    },
   },
 }));
 
-// TODO: fetch classes from api
-
 export function ClassSelection({ onNext, onBack }: Props) {
+  const updateStudentState = useStudent((s) => s.update);
   const [carousel, setCarousel] = useState<Embla | null>(null);
-  const { classes, cx } = useStyles();
 
-  const items = Array(15).fill("1º A");
+  const { data: schoolClass } = useSchoolClassGetAll({
+    enabled: false,
+  });
+  const { classes, cx } = useStyles(
+    schoolClass?.items ? schoolClass.items.length : MAX_ITEMS,
+  );
 
   const slides = useMemo(() => {
-    const list: Array<string[]> = [];
+    const list: Array<SchoolClass[]> = [];
+    const items = schoolClass?.items ?? [];
+
     if (!items.length) return list;
 
     items.forEach((item) => {
@@ -232,7 +202,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
     });
 
     return list;
-  }, [items]);
+  }, [schoolClass]);
 
   // Handle carousel orientation based on screen size.
   const [orientation, setOrientation] =
@@ -262,23 +232,19 @@ export function ClassSelection({ onNext, onBack }: Props) {
     image: JSX.Element;
   }>();
 
-  function select(name: string, spriteId: number) {
+  function select(item: SchoolClass, spriteId: number) {
+    updateStudentState({ schoolClassId: item.id });
     if (window.innerWidth >= 1024) return onNext();
 
     setSelected({
-      text: name,
+      text: item.name,
       image: <Sprite id={spriteId} />,
     });
   }
 
   return (
     <div className={classes.container}>
-      <div className={classes.header}>
-        <div className={classes.button} onClick={onBack}>
-          <IconX size={16} />
-        </div>
-        <h1>Qual a sua sala?</h1>
-      </div>
+      <Header title="Qual a sua sala?" onClose={onBack} />
 
       <Carousel
         classNames={{
@@ -299,7 +265,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
                 key={i}
                 onClick={() => select(item, index * MAX_ITEMS + i)}
               >
-                <p>{item}</p>
+                <p>{item.name}</p>
 
                 <Sprite id={index * MAX_ITEMS + i} className={classes.sprite} />
                 <img src={bg} alt="" role="presentation" className="item_bg" />

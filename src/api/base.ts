@@ -3,7 +3,6 @@ import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
-import { useUserStore } from "../stores/user";
 import { BaseError } from "./api-types";
 
 export class API {
@@ -20,8 +19,7 @@ export class API {
   );
 
   private static appendToken(req: InternalAxiosRequestConfig<unknown>) {
-    const { accessToken } = useUserStore.getState();
-
+    const accessToken = undefined;
     return {
       ...req,
       headers: {
@@ -59,7 +57,7 @@ export class API {
 
   private static async checkToken() {
     try {
-      const { accessToken } = useUserStore.getState();
+      const accessToken = undefined;
       if (!accessToken) throw Error();
 
       const { data } = await this.api.get<{ valido: boolean }>(
@@ -68,7 +66,6 @@ export class API {
 
       if (!data.valido) throw Error();
     } catch {
-      useUserStore.setState({ accessToken: "" });
       window.location.pathname = "/login";
     }
   }

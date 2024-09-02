@@ -5,6 +5,8 @@ import { Sprite } from "~/components/vector/Sprite";
 import { AccessCodes, useGetAccessCodes } from "~/api/user";
 import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
+import { LockIcon } from "~/components/icons/LockIcon";
+import { LockOpenIcon } from "~/components/icons/LockOpenIcon";
 
 const MAX_ITEMS = 4;
 
@@ -106,11 +108,29 @@ const useStyles = createStyles(() => ({
       position: "relative",
     },
   },
+
+  lock: {
+    position: "absolute",
+    zIndex: 20,
+    insetBlock: 0,
+    right: "10%",
+    marginBlock: "auto",
+    width: 37,
+    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+      width: 68.7,
+    },
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      width: 68.7,
+      insetBlock: "auto",
+      marginBlock: 0,
+      insetInline: 0,
+      marginInline: "auto",
+      top: "10%",
+    },
+  },
 }));
 
 type Props = { onNext: () => void; onBack: () => void };
-
-// TODO: lock svg
 
 export function PasswordSelection({ onBack, onNext }: Props) {
   const studentState = useStudent();
@@ -144,6 +164,11 @@ export function PasswordSelection({ onBack, onNext }: Props) {
               className={classes.sprite}
             />
             <img src={bg} alt="" role="presentation" className="item_bg" />
+            {code.correctAnswer ? (
+              <LockOpenIcon className={classes.lock} />
+            ) : (
+              <LockIcon className={classes.lock} />
+            )}
           </div>
         ))}
       </div>

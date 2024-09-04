@@ -3,6 +3,7 @@ import { Student } from "~/api/student";
 import { AcceptRoundBtn } from "~/components/icons/AcceptRoundBtn";
 import { RefuseRoundBtn } from "~/components/icons/RefuseRoundBtn";
 import { MEDIA_QUERY } from "~/constants/dimensions";
+import titoTita from "~/assets/tito-e-tita.png";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -18,10 +19,20 @@ const useStyles = createStyles(() => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: "5vh",
+    gap: 40,
     containerType: "inline-size",
     borderRadius: 40,
     padding: 40,
+    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+      padding: 84.5,
+    },
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      flexDirection: "row",
+    },
+  },
+
+  img: {
+    maxWidth: "100%",
   },
 
   visible: {
@@ -39,7 +50,6 @@ const useStyles = createStyles(() => ({
     fontSize: "min(20cqw, 40px)",
     fontWeight: "bold",
     color: "#000",
-    textAlign: "center",
     margin: 0,
     span: {
       color: "#339AF0",
@@ -50,9 +60,17 @@ const useStyles = createStyles(() => ({
   controls: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: "min(25cqw, 140px)",
 
     svg: { width: "min(20vw, 130px)" },
+  },
+
+  inner: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    gap: 20,
   },
 }));
 
@@ -67,24 +85,24 @@ export function StudentConfirmation({ acceptCb, student }: Props) {
 
   return (
     <div className={cx([classes.container, visible && classes.visible])}>
-      {/* 
-        TODO: svg 
-      */}
+      <img src={titoTita} className={classes.img} />
 
-      {student && (
-        <h1 className={classes.text}>
-          <span>Você é</span>
-          <br />
-          {student.name}?
-        </h1>
-      )}
+      <div className={classes.inner}>
+        {student && (
+          <h1 className={classes.text}>
+            <span>Você é</span>
+            <br />
+            {student.name}?
+          </h1>
+        )}
 
-      <div className={classes.controls}>
-        <div onClick={() => acceptCb(false)}>
-          <RefuseRoundBtn />
-        </div>
-        <div onClick={() => acceptCb(true)}>
-          <AcceptRoundBtn />
+        <div className={classes.controls}>
+          <div onClick={() => acceptCb(false)}>
+            <RefuseRoundBtn />
+          </div>
+          <div onClick={() => acceptCb(true)}>
+            <AcceptRoundBtn />
+          </div>
         </div>
       </div>
     </div>

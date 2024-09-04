@@ -4,8 +4,6 @@ export function RefuseRoundBtn(props: SVGProps<SVGSVGElement>) {
   const id = useId();
   return (
     <svg
-      width={130}
-      height={130}
       preserveAspectRatio="xMinYMin meet"
       overflow="visible"
       viewBox="0 0 130 130"

@@ -155,6 +155,8 @@ const useStyles = createStyles(
 
 type Props = { onNext: () => void; onBack: () => void };
 
+// TODO: reserved student confirmation
+
 export function StudentSelection({ onNext, onBack }: Props) {
   const studentState = useStudent();
   const [carouselHandler, setHandler] = useState<Embla>();
@@ -162,7 +164,7 @@ export function StudentSelection({ onNext, onBack }: Props) {
   const { classes, cx } = useStyles(carouselState);
   const [selected, setSelected] = useState<string>();
 
-  const { data: students, isLoading } = useStudentGetAll(
+  const { data: students } = useStudentGetAll(
     {
       schoolClassId: studentState.schoolClassId,
       initialLetter: selected,

@@ -33,7 +33,7 @@ jobs:
         run: |-
           docker build \
           --build-arg ARG_VITE_API_URL=$ARG_VITE_API_URL \
-          --build-arg ARG_VITE_ADMIN_URL=$ARG_VITE_ADMIN_URL \
+          --build-arg ARG_VITE_ADMIN_URL=https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/ \
           -t $IMAGE_NAME:latest .
 
       - name: Configure Docker Client

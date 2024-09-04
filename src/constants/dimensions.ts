@@ -40,3 +40,10 @@ export const BREAKPOINT = {
   DESKTOP: 1440,
   TV: 1920,
 } as const;
+
+export const MEDIA_QUERY = {
+  MOBILE: "(max-width: 360px)",
+  TABLET_VERT: "(min-width: 768px)",
+  TABLET_HORZ: "(min-width: 1024px)",
+  DESKTOP: "(min-width: 1024px)",
+} as const;

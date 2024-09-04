@@ -1,5 +1,10 @@
 import { useCallback } from "react";
-import { MutationOptions, QueryOptions } from "./api-types";
+import {
+  MutationOptions,
+  Paginated,
+  PaginationParams,
+  QueryOptions,
+} from "./api-types";
 import { API } from "./base";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SchoolGrade, SchoolPeriod } from "./school-class";
@@ -19,6 +24,8 @@ export type Student = {
   sea?: string;
   lct?: string;
   reserved: boolean;
+  examPerformed: boolean;
+  firstAccess: boolean;
 };
 
 export type Planet = {
@@ -71,6 +78,9 @@ type GetExamQuestionResponse =
   | Question
   | { examCompleted: true; newAwards?: Award[] };
 
+type StudentReserveResponse = { success: boolean };
+type StudentReserveInput = { reserved: boolean };
+
 const KEY = {
   STUDENT: "STUDENT",
   PLANET_TRACK: "PLANET_TRACK",
@@ -79,6 +89,7 @@ const KEY = {
   EXAM_EVALUATION: "EXAM_EVALUATION",
   PLANET_FEEDBACK: "PLANET_FEEDBACK",
   AWARDS: "STUDENT_AWARDS",
+  GET_ALL: "ALL_STUDENTS",
 };
 
 const URL = {
@@ -92,9 +103,24 @@ const URL = {
   EXAM_EVALUATION: (id: string) => `student/${id}/exam-evaluation`,
   PLANET_FEEDBACK: (studentId: string, planetId: string) =>
     `student/${studentId}/planets/${planetId}`,
+  GET_ALL: "student/all-no-auth",
+  RESERVE: (id: string) => `student/${id}/reserved`,
 };
 
+type StudentGetAllSearch = {
+  schoolClassId?: string;
+  initialLetter?: string;
+} & PaginationParams;
+
 export class StudentAPI extends API {
+  static async getAllStudents(search?: StudentGetAllSearch) {
+    const { data } = await this.api.get<Paginated<Student>>(URL.GET_ALL, {
+      params: search,
+    });
+
+    return data;
+  }
+
   static async getStudent(studentId: string) {
     const { data } = await this.api.get<Student>(URL.GET_STUDENT(studentId));
     return data;
@@ -148,6 +174,14 @@ export class StudentAPI extends API {
       });
     return data;
   }
+
+  static async reserve(studentId: string, input: StudentReserveInput) {
+    const { data } = await this.api.patch<StudentReserveResponse>(
+      URL.RESERVE(studentId),
+      input,
+    );
+    return data;
+  }
 }
 
 export function useGetPlanetTrack(
@@ -155,7 +189,7 @@ export function useGetPlanetTrack(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getPlanetTrack(studentId);
   }, []);
 
@@ -167,7 +201,7 @@ export function useGetStudentAwards(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getStudentAwards(studentId);
   }, []);
 
@@ -179,7 +213,7 @@ export function useGetFirstExamQuestion(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
@@ -191,7 +225,7 @@ export function useGetExamQuestion(
 ) {
   const { setNewAwards } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function(input: GetQuestionInput) {
+  const handler = useCallback(function (input: GetQuestionInput) {
     return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
@@ -219,7 +253,7 @@ export function useSubmitExamEvaluation(
 ) {
   const { setNewAwards, requestView } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
@@ -248,14 +282,17 @@ export function usePlanetFeedback(
   const studentId = useStudent((state) => state.id);
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
   return useQuery([KEY.PLANET_FEEDBACK], handler, {
     ...options,
+    // @ts-ignore
     onSuccess: (data, vars, ctx) => {
+      // @ts-ignore
       options?.onSuccess?.(data, vars, ctx);
+      // @ts-ignore
       queryClient.setQueryData([KEY.PLANET_TRACK], (oldData: PlanetTrack) => {
         if (!oldData || !oldData.planetTrack) return oldData;
 
@@ -278,4 +315,37 @@ export function usePlanetFeedback(
       });
     },
   });
+}
+
+export function useStudentGetAll(
+  search?: StudentGetAllSearch,
+  options?: QueryOptions<
+    Paginated<Student>,
+    [typeof KEY.GET_ALL, StudentGetAllSearch | undefined]
+  >,
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getAllStudents(search);
+    },
+    [search],
+  );
+
+  return useQuery([KEY.GET_ALL, search], handler, options);
+}
+
+export function useStudentReserve(
+  options?: MutationOptions<
+    { studentId: string } & StudentReserveInput,
+    StudentReserveResponse
+  >,
+) {
+  const handler = useCallback(function ({
+    studentId,
+    ...input
+  }: { studentId: string } & StudentReserveInput) {
+    return StudentAPI.reserve(studentId, input);
+  }, []);
+
+  return useMutation(handler, options);
 }

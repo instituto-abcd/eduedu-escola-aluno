@@ -1,10 +1,10 @@
 import { Box, Container, Flex, Group } from "@mantine/core";
-import { useUserStore } from "~/stores/user";
+import { useStudent } from "~/stores/student";
 
 const VERSION = import.meta.env.VITE_APP_VERSION;
 
 export function Footer() {
-  const { schoolName } = useUserStore();
+  const schoolName = useStudent((s) => s.schoolClassName);
   return (
     <Box
       style={{ backgroundColor: "#509BCA", color: "#fff", padding: "12px 0" }}

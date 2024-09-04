@@ -11,10 +11,10 @@ import logo from "~/assets/logos/eduedu-azul.svg";
 import { useStudent } from "~/stores/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
 import { BREAKPOINT } from "~/constants/dimensions";
-import { useAuthLogout } from "~/api/auth";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
-import { useUserStore } from "~/stores/user";
+import { SchoolGrade, SchoolPeriod } from "~/api/school-class";
+import { useStudentReserve } from "~/api/student";
 
 const useStyles = createStyles((theme) => ({
   logo: {
@@ -41,7 +41,6 @@ const useStyles = createStyles((theme) => ({
 export function Navbar() {
   const { classes } = useStyles();
   const student = useStudent();
-  const userStore = useUserStore();
   const links = [
     { label: student?.name, value: "" },
     { label: "Matrícula", value: student?.registry },
@@ -51,10 +50,21 @@ export function Navbar() {
   ] as const;
 
   const navigate = useNavigate();
-  const { mutate: logout } = useAuthLogout({
+  const { mutate: unreserve } = useStudentReserve({
     onSuccess: () => {
-      useStudent.setState({}, true);
-      userStore.signOut();
+      student.update({
+        id: "",
+        name: "",
+        registry: "",
+        schoolClassId: "",
+        schoolClassName: "",
+        schoolGrade: "" as SchoolGrade,
+        schoolPeriod: "" as SchoolPeriod,
+        reserved: false,
+        firstAccess: true,
+        examPerformed: false,
+      });
+
       navigate(PATH.LOGIN);
     },
   });
@@ -94,7 +104,12 @@ export function Navbar() {
               <Text size={14}>{link.value}</Text>
             </Group>
           ))}
-          <Anchor size="xs" onClick={() => logout({})}>
+          <Anchor
+            size="xs"
+            onClick={() =>
+              unreserve({ studentId: student.id, reserved: false })
+            }
+          >
             (sair)
           </Anchor>
         </Group>

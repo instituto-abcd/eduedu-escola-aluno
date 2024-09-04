@@ -11,9 +11,9 @@ export const PROFILE_SELECT: {
   value: UserProfile;
   label: string;
 }[] = [
-  { value: "DIRECTOR", label: "Direção/Coordenação" },
-  { value: "TEACHER", label: "Professor" },
-];
+    { value: "DIRECTOR", label: "Direção/Coordenação" },
+    { value: "TEACHER", label: "Professor" },
+  ];
 
 export const USER_STATUS = {
   ACTIVE: "Ativo",
@@ -26,9 +26,9 @@ export const STATUS_SELECT: {
   value: UserStatus;
   label: string;
 }[] = [
-  { value: "ACTIVE", label: "Ativo" },
-  { value: "INACTIVE", label: "Inativo" },
-];
+    { value: "ACTIVE", label: "Ativo" },
+    { value: "INACTIVE", label: "Inativo" },
+  ];
 
 export const paginationOptions = [
   { value: "10", label: "10" },
@@ -56,6 +56,8 @@ export const SCHOOL_GRADE: Record<SchoolGrade, string> = {
   FIRST_GRADE: "1º Ano Fundamental",
   SECOND_GRADE: "2º Ano Fundamental",
   THIRD_GRADE: "3º Ano Fundamental",
+  FOURTH_GRADE: "4º Ano Fundamental",
+  FIFTH_GRADE: "5º Ano Fundamental",
 } as const;
 
 export const SCHOOL_PERIOD: Record<SchoolPeriod, string> = {

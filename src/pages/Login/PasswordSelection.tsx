@@ -7,6 +7,7 @@ import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
 import { LockIcon } from "~/components/icons/LockIcon";
 import { LockOpenIcon } from "~/components/icons/LockOpenIcon";
+import { LoginLoader } from "./LoginLoader";
 
 const MAX_ITEMS = 4;
 
@@ -134,9 +135,12 @@ type Props = { onNext: () => void; onBack: () => void };
 
 export function PasswordSelection({ onBack, onNext }: Props) {
   const studentState = useStudent();
-  const { data: accessCodes } = useGetAccessCodes(studentState.schoolClassId, {
-    enabled: false,
-  });
+  const { data: accessCodes, isLoading } = useGetAccessCodes(
+    studentState.schoolClassId,
+    {
+      enabled: false,
+    },
+  );
 
   function handleNext(code: AccessCodes) {
     if (code.correctAnswer) {
@@ -145,6 +149,8 @@ export function PasswordSelection({ onBack, onNext }: Props) {
   }
 
   const { classes } = useStyles();
+
+  if (isLoading) return <LoginLoader />;
   return (
     <div className={classes.container}>
       <Header title="Qual sua senha?" onClose={onBack} />

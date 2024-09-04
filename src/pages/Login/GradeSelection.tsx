@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Confirmation } from "./components/Confirmation";
 import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
+import { LoginLoader } from "./LoginLoader";
 
 const MAX_ITEMS = 6;
 
@@ -123,7 +124,9 @@ type Props = {
 };
 
 export function GradeSelection({ onBack, onNext }: Props) {
-  const { data: schoolGrade } = useSchoolGradeCount({ enabled: false });
+  const { data: schoolGrade, isLoading } = useSchoolGradeCount({
+    enabled: false,
+  });
   const updateStudentState = useStudent((s) => s.update);
 
   const grades = schoolGrade?.filter((grade) => grade.count) ?? [];
@@ -155,6 +158,7 @@ export function GradeSelection({ onBack, onNext }: Props) {
     });
   }
 
+  if (isLoading) return <LoginLoader />;
   return (
     <div className={classes.container}>
       <Header onClose={onBack} title="Qual o seu ano escolar?" />

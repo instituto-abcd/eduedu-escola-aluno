@@ -1,7 +1,7 @@
 import bgFog from "~/assets/bg-fog.png";
 import { createStyles } from "@mantine/core";
 import { MEDIA_QUERY } from "~/constants/dimensions";
-import { Student, useStudentGetAll } from "~/api/student";
+import { Student, useStudentGetAll, useStudentReserve } from "~/api/student";
 import { useStudent } from "~/stores/student";
 import { Carousel, Embla } from "@mantine/carousel";
 import { useEffect, useMemo, useState } from "react";
@@ -162,7 +162,7 @@ export function StudentSelection({ onNext, onBack }: Props) {
   const { classes, cx } = useStyles(carouselState);
   const [selected, setSelected] = useState<string>();
 
-  const { data: students } = useStudentGetAll(
+  const { data: students, isLoading } = useStudentGetAll(
     {
       schoolClassId: studentState.schoolClassId,
       initialLetter: selected,
@@ -247,13 +247,20 @@ export function StudentSelection({ onNext, onBack }: Props) {
     setSelected(l);
   }
 
+  const { mutate: reserve } = useStudentReserve({
+    onSuccess: () => {
+      studentState.update({ reserved: true });
+      onNext();
+    },
+  });
+
   function handleSelection(a: boolean) {
     if (!a || !confirmation) {
       setConfirmation(undefined);
       return;
     }
     studentState.update(confirmation);
-    onNext();
+    reserve({ studentId: confirmation.id, reserved: true });
   }
 
   const [confirmation, setConfirmation] = useState<Student>();

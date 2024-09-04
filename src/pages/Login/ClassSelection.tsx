@@ -9,6 +9,8 @@ import { Confirmation } from "./components/Confirmation";
 import { SchoolClass, useSchoolClassGetAll } from "~/api/school-class";
 import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
+import { useCarouselState } from "~/hooks/useCarouselState";
+import { LoginLoader } from "./LoginLoader";
 
 // TODO: hide controls when unable to click
 
@@ -19,163 +21,172 @@ type Props = {
   onBack: () => void;
 };
 
-const useStyles = createStyles((_, qty: number) => ({
-  container: {
-    position: "relative",
-    height: "100vh",
-  },
-
-  carousel: {
-    minWidth: "100vw",
-    minHeight: "100vh",
-  },
-
-  itemsContainer: {
-    width: "100%",
-    height: "calc(100vh - 40px)",
-    display: "flex",
-    flexDirection: "column",
-
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      flexDirection: "row",
+const useStyles = createStyles(
+  (
+    _,
+    props: { qty: number; canScrollPrev: boolean; canScrollNext: boolean },
+  ) => ({
+    container: {
+      position: "relative",
       height: "100vh",
     },
-  },
 
-  item: {
-    position: "relative",
-    isolation: "isolate",
-    containerType: "inline-size",
-    overflow: "clip",
-    color: "#F6A313",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minWidth: "100%",
-    minHeight: `calc((100vh - 40px)  / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
-
-    [`&:hover .${getStylesRef("sprite")}`]: {
-      filter: "none",
-      transform: "scale(1.1)",
+    carousel: {
+      minWidth: "100vw",
+      minHeight: "100vh",
     },
 
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      width: `calc(100% / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
-      minWidth: "auto",
+    itemsContainer: {
+      width: "100%",
+      height: "calc(100vh - 40px)",
+      display: "flex",
       flexDirection: "column",
-      gap: "20%",
+
+      [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+        flexDirection: "row",
+        height: "100vh",
+      },
+    },
+
+    item: {
+      position: "relative",
+      isolation: "isolate",
+      containerType: "inline-size",
+      overflow: "clip",
+      color: "#F6A313",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minWidth: "100%",
+      minHeight: `calc((100vh - 40px)  / ${props.qty < MAX_ITEMS ? props.qty : MAX_ITEMS})`,
 
       [`&:hover .${getStylesRef("sprite")}`]: {
         filter: "none",
         transform: "scale(1.1)",
       },
+
+      [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+        width: `calc(100% / ${props.qty < MAX_ITEMS ? props.qty : MAX_ITEMS})`,
+        minWidth: "auto",
+        flexDirection: "column",
+        gap: "20%",
+
+        [`&:hover .${getStylesRef("sprite")}`]: {
+          filter: "none",
+          transform: "scale(1.1)",
+        },
+      },
+
+      p: {
+        fontSize: "min( 10cqw, 40px )",
+        fontWeight: "bold",
+        maxWidth: "fit-content",
+        margin: 0,
+        lineHeight: 1,
+        userSelect: "none",
+        pointerEvents: "none",
+        [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+          fontSize: "min( 20cqw, 70px )",
+        },
+      },
+
+      ".item_bg": {
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "auto",
+        minHeight: "100%",
+        zIndex: -2,
+        filter: "grayscale(1)",
+        transition: "filter 150ms ease",
+
+        [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+          height: "100vh",
+          width: "auto",
+          minHeight: "auto",
+        },
+
+        "&:hover": {
+          filter: "none",
+        },
+      },
     },
 
-    p: {
-      fontSize: "min( 10cqw, 40px )",
-      fontWeight: "bold",
-      maxWidth: "fit-content",
-      margin: 0,
-      lineHeight: 1,
+    sprite: {
+      ref: getStylesRef("sprite"),
+      filter: "grayscale(1)",
+      transition: "all 150ms ease-in-out",
       userSelect: "none",
       pointerEvents: "none",
+      width: "auto",
+      maxWidth: "25%",
+      position: "absolute",
+      right: 0,
+
       [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-        fontSize: "min( 20cqw, 70px )",
+        maxHeight: "20%",
+        maxWidth: "90%",
+        width: "auto",
+        position: "relative",
       },
     },
 
-    ".item_bg": {
+    control: {
+      width: 40,
+      height: 40,
       position: "absolute",
       inset: 0,
-      width: "100%",
-      height: "auto",
-      minHeight: "100%",
-      zIndex: -2,
-      filter: "grayscale(1)",
-      transition: "filter 150ms ease",
+      zIndex: 10,
+      margin: "auto",
 
+      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+        width: 70,
+        height: 70,
+      },
+    },
+    // LEFT - UP - PREV
+    control_1: {
+      rotate: "180deg",
+      marginTop: 0,
+      top: "7%",
+      display: props.canScrollPrev ? "block" : "none",
       [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-        height: "100vh",
-        width: "auto",
-        minHeight: "auto",
-      },
-
-      "&:hover": {
-        filter: "none",
+        rotate: "90deg",
+        top: 0,
+        marginLeft: 0,
+        marginBlock: "auto",
+        left: "7%",
       },
     },
-  },
 
-  sprite: {
-    ref: getStylesRef("sprite"),
-    filter: "grayscale(1)",
-    transition: "all 150ms ease-in-out",
-    userSelect: "none",
-    pointerEvents: "none",
-    width: "auto",
-    maxWidth: "25%",
-    position: "absolute",
-    right: 0,
-
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      maxHeight: "20%",
-      maxWidth: "90%",
-      width: "auto",
-      position: "relative",
+    // RIGHT - DOWN - NEXT
+    control_2: {
+      marginBottom: 0,
+      bottom: "7%",
+      display: props.canScrollNext ? "block" : "none",
+      [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+        rotate: "-90deg",
+        marginRight: 0,
+        marginBlock: "auto",
+        right: "7%",
+        bottom: 0,
+      },
     },
-  },
-
-  control: {
-    width: 40,
-    height: 40,
-    position: "absolute",
-    inset: 0,
-    zIndex: 10,
-    margin: "auto",
-
-    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      width: 70,
-      height: 70,
-    },
-  },
-  // LEFT - UP - PREV
-  control_1: {
-    rotate: "180deg",
-    marginTop: 0,
-    top: "7%",
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      rotate: "90deg",
-      top: 0,
-      marginLeft: 0,
-      marginBlock: "auto",
-      left: "7%",
-    },
-  },
-
-  // RIGHT - DOWN - NEXT
-  control_2: {
-    marginBottom: 0,
-    bottom: "7%",
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      rotate: "-90deg",
-      marginRight: 0,
-      marginBlock: "auto",
-      right: "7%",
-      bottom: 0,
-    },
-  },
-}));
+  }),
+);
 
 export function ClassSelection({ onNext, onBack }: Props) {
   const updateStudentState = useStudent((s) => s.update);
-  const [carousel, setCarousel] = useState<Embla | null>(null);
+  const [carousel, setCarousel] = useState<Embla>();
+  const carouselState = useCarouselState(carousel);
 
-  const { data: schoolClass } = useSchoolClassGetAll({
+  const { data: schoolClass, isLoading } = useSchoolClassGetAll({
     enabled: false,
   });
-  const { classes, cx } = useStyles(
-    schoolClass?.items ? schoolClass.items.length : MAX_ITEMS,
-  );
+  const { classes, cx } = useStyles({
+    qty: schoolClass?.items ? schoolClass.items.length : MAX_ITEMS,
+    ...carouselState,
+  });
 
   const slides = useMemo(() => {
     const list: Array<SchoolClass[]> = [];
@@ -242,6 +253,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
     });
   }
 
+  if (isLoading) return <LoginLoader />;
   return (
     <div className={classes.container}>
       <Header title="Qual a sua sala?" onClose={onBack} />
@@ -254,6 +266,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
         }}
         withControls={false}
         containScroll="trimSnaps"
+        slidesToScroll={1}
         getEmblaApi={setCarousel}
         orientation={orientation}
       >

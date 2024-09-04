@@ -17,10 +17,11 @@ export const useStudent = create<StudentStore>()(
       registry: "",
       schoolClassId: "",
       schoolClassName: "",
-      status: "",
       schoolGrade: "" as SchoolGrade,
       schoolPeriod: "" as SchoolPeriod,
       reserved: false,
+      firstAccess: true,
+      examPerformed: false,
       update: (d) => set(d),
       valid: () => {
         const valid = validStudentSchema.safeParse(get());

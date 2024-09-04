@@ -47,6 +47,7 @@ type ReserveStudent = {
   studentId: string;
 };
 
+// NOTE: unused
 export type SimplifiedStudent = {
   id: string;
   name: string;
@@ -68,6 +69,7 @@ export type SchoolGrade =
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
 export class SchoolClassAPI extends API {
+  // NOTE: unused
   static async getStudentsById(
     id: string,
     params?: PaginationParams & { name?: string },
@@ -118,6 +120,7 @@ export function useSchoolClassGetAll(
   return useQuery([KEY.ALL], handler, options);
 }
 
+// NOTE: unused
 export function useStudentsBySchoolclass(
   schoolClassId: string,
   options?: QueryOptions<

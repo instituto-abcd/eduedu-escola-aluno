@@ -24,6 +24,8 @@ export type Student = {
   sea?: string;
   lct?: string;
   reserved: boolean;
+  examPerformed: boolean;
+  firstAccess: boolean;
 };
 
 export type Planet = {
@@ -76,6 +78,9 @@ type GetExamQuestionResponse =
   | Question
   | { examCompleted: true; newAwards?: Award[] };
 
+type StudentReserveResponse = { success: boolean };
+type StudentReserveInput = { reserved: boolean };
+
 const KEY = {
   STUDENT: "STUDENT",
   PLANET_TRACK: "PLANET_TRACK",
@@ -99,6 +104,7 @@ const URL = {
   PLANET_FEEDBACK: (studentId: string, planetId: string) =>
     `student/${studentId}/planets/${planetId}`,
   GET_ALL: "student/all-no-auth",
+  RESERVE: (id: string) => `student/${id}/reserved`,
 };
 
 type StudentGetAllSearch = {
@@ -166,6 +172,14 @@ export class StudentAPI extends API {
       .catch((error: Error) => {
         throw new Error(error.message);
       });
+    return data;
+  }
+
+  static async reserve(studentId: string, input: StudentReserveInput) {
+    const { data } = await this.api.patch<StudentReserveResponse>(
+      URL.RESERVE(studentId),
+      input,
+    );
     return data;
   }
 }
@@ -274,8 +288,11 @@ export function usePlanetFeedback(
 
   return useQuery([KEY.PLANET_FEEDBACK], handler, {
     ...options,
+    // @ts-ignore
     onSuccess: (data, vars, ctx) => {
+      // @ts-ignore
       options?.onSuccess?.(data, vars, ctx);
+      // @ts-ignore
       queryClient.setQueryData([KEY.PLANET_TRACK], (oldData: PlanetTrack) => {
         if (!oldData || !oldData.planetTrack) return oldData;
 
@@ -315,4 +332,20 @@ export function useStudentGetAll(
   );
 
   return useQuery([KEY.GET_ALL, search], handler, options);
+}
+
+export function useStudentReserve(
+  options?: MutationOptions<
+    { studentId: string } & StudentReserveInput,
+    StudentReserveResponse
+  >,
+) {
+  const handler = useCallback(function ({
+    studentId,
+    ...input
+  }: { studentId: string } & StudentReserveInput) {
+    return StudentAPI.reserve(studentId, input);
+  }, []);
+
+  return useMutation(handler, options);
 }

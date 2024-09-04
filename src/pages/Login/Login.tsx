@@ -7,10 +7,11 @@ import { PasswordSelection } from "./PasswordSelection";
 import { useGetAccessCodes } from "~/api/user";
 import { useStudent } from "~/stores/student";
 import { StudentSelection } from "./StudentSelection";
-import { useStudentGetAll } from "~/api/student";
+import { useStudentGetAll, useStudentReserve } from "~/api/student";
 import { AudioSettings } from "./AudioSettings";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
+import { LoginLoader } from "./LoginLoader";
 
 enum LOGIN_STEP {
   PROFILE,
@@ -26,30 +27,35 @@ export function LoginPage() {
   const [step, setStep] = useState<LOGIN_STEP>(LOGIN_STEP.PROFILE);
   const studentState = useStudent();
 
-  // TODO: add loader component
-  const { isLoading: isLoadingGrades } = useSchoolGradeCount();
-  const { isLoading: isLoadingClasses } = useSchoolClassGetAll();
-  const { isLoading: isLoadingCodes } = useGetAccessCodes(
-    studentState.schoolClassId,
-    {
-      enabled: !!studentState.schoolClassId,
-    },
-  );
-  const { isLoading: isLoadingStudents } = useStudentGetAll(
+  useSchoolGradeCount();
+  useSchoolClassGetAll();
+  useGetAccessCodes(studentState.schoolClassId, {
+    enabled: !!studentState.schoolClassId,
+  });
+  useStudentGetAll(
     { schoolClassId: studentState.schoolClassId, "page-size": 9999 },
-    {
-      enabled: !!studentState.schoolClassId,
-    },
+    { enabled: !!studentState.schoolClassId },
   );
 
-  const next = () =>
-    setStep((s) => {
-      if (s === LOGIN_STEP.STUDENT) {
-        navigate(PATH.DASHBOARD);
-        return s;
+  const next = () => {
+    if (step === LOGIN_STEP.STUDENT) {
+      if (studentState.firstAccess) {
+        navigate(PATH.INTRO);
+        return;
       }
+
+      if (!studentState.examPerformed) {
+        navigate(PATH.EXAM);
+        return;
+      }
+      navigate(PATH.DASHBOARD);
+      return;
+    }
+
+    setStep((s) => {
       return s + 1;
     });
+  };
 
   const back = () =>
     setStep((s) => {
@@ -72,10 +78,6 @@ export function LoginPage() {
     //   return <AudioSettings onNext={next} onBack={back} />;
 
     default:
-      return (
-        <>
-          <h1>hello?</h1>
-        </>
-      );
+      return <LoginLoader />;
   }
 }

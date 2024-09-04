@@ -7,7 +7,7 @@ import { PasswordSelection } from "./PasswordSelection";
 import { useGetAccessCodes } from "~/api/user";
 import { useStudent } from "~/stores/student";
 import { StudentSelection } from "./StudentSelection";
-import { useStudentGetAll, useStudentReserve } from "~/api/student";
+import { useStudentGetAll } from "~/api/student";
 import { AudioSettings } from "./AudioSettings";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
@@ -28,7 +28,10 @@ export function LoginPage() {
   const studentState = useStudent();
 
   useSchoolGradeCount();
-  useSchoolClassGetAll();
+  useSchoolClassGetAll({
+    enabled: !!studentState.schoolGrade,
+    params: { schoolGrade: studentState.schoolGrade },
+  });
   useGetAccessCodes(studentState.schoolClassId, {
     enabled: !!studentState.schoolClassId,
   });

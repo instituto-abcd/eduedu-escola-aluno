@@ -2,7 +2,7 @@ import { Box, createStyles, getStylesRef } from "@mantine/core";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import bg from "~/assets/bg-select-option.png";
 import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sprite } from "~/components/vector/Sprite";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { Confirmation } from "./components/Confirmation";
@@ -179,13 +179,17 @@ const useStyles = createStyles(
 );
 
 export function ClassSelection({ onNext, onBack }: Props) {
-  const updateStudentState = useStudent((s) => s.update);
+  const studentState = useStudent();
   const [carousel, setCarousel] = useState<Embla>();
   const carouselState = useCarouselState(carousel);
 
-  const { data: schoolClass, isLoading } = useSchoolClassGetAll({
+  const { data: schoolClass, isFetching: isLoading } = useSchoolClassGetAll({
     enabled: false,
+    params: {
+      schoolGrade: studentState.schoolGrade,
+    },
   });
+
   const { classes, cx } = useStyles({
     qty: schoolClass?.items ? schoolClass.items.length : MAX_ITEMS,
     ...carouselState,
@@ -225,7 +229,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
   }>();
 
   function select(item: SchoolClass, spriteId: number) {
-    updateStudentState({ schoolClassId: item.id });
+    studentState.update({ schoolClassId: item.id });
     if (window.innerWidth >= 1024) return onNext();
 
     setSelected({

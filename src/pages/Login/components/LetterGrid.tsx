@@ -61,13 +61,17 @@ const useStyles = createStyles({
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
       columnGap: 28,
-      gridTemplateColumns: `repeat(${letters.length / 2}, 1fr)`,
+      gridTemplateColumns: "repeat(auto-fill, 1fr)", // BUG: "invalid property value"
       gridTemplateRows: "repeat(3, 1fr)",
       span: {
         "&:last-of-type": {
           gridColumn: "initial",
         },
       },
+    },
+
+    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+      gridTemplateColumns: `repeat(${letters.length / 2}, 1fr)`,
     },
   },
 

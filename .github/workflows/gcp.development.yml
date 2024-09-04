@@ -2,7 +2,7 @@
 name: DEVELOPMENT - CI/CD Pipeline
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   build-push:
     name: Build and Push Docker Image
@@ -14,46 +14,48 @@ jobs:
       REGISTRY_PREFIX: us-east1-docker.pkg.dev
       REGISTRY_NAME: eduedu-escola-aluno-development
       ARG_VITE_API_URL: ${{ secrets.ARG_VITE_API_URL }}
+      ARG_VITE_ADMIN_URL: https://dev-eduedu-escola-admin-3djofcpyaq-uc.a.run.app/
       NODE_OPTIONS: "--max_old_space_size=4096"
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    - uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIAL }}'
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ env.PROJECT_ID }}
+      - uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIAL }}"
 
-    - name: Build Docker Image
-      run: |-
-        docker build \
-        --build-arg ARG_VITE_API_URL=$ARG_VITE_API_URL \
-        -t $IMAGE_NAME:latest .
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
 
-    - name: Configure Docker Client
-      run: |-
-        gcloud auth configure-docker --quiet
-        gcloud auth configure-docker $REGISTRY_PREFIX --quiet
+      - name: Build Docker Image
+        run: |-
+          docker build \
+          --build-arg ARG_VITE_API_URL=$ARG_VITE_API_URL \
+          --build-arg ARG_VITE_ADMIN_URL=$ARG_VITE_ADMIN_URL \
+          -t $IMAGE_NAME:latest .
 
-    - name: Push Docker Image to Artifact Registry
-      run: |-
-        docker tag $IMAGE_NAME:latest $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
-        docker push $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
+      - name: Configure Docker Client
+        run: |-
+          gcloud auth configure-docker --quiet
+          gcloud auth configure-docker $REGISTRY_PREFIX --quiet
 
-    - name: Send Build Error Message
-      if: failure()
-      uses: appleboy/discord-action@master
-      with:
-        webhook_id: ${{ secrets.WEBHOOK_ID }}
-        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-        color: "#ff0000"
-        username: "GitHub Bot"
-        avatar_url: https://i.imgur.com/Kvn45ev.png
-        message: Portal Aluno | Algo de errado não está certo com o código... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Push Docker Image to Artifact Registry
+        run: |-
+          docker tag $IMAGE_NAME:latest $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
+          docker push $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
+
+      - name: Send Build Error Message
+        if: failure()
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.WEBHOOK_ID }}
+          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+          color: "#ff0000"
+          username: "GitHub Bot"
+          avatar_url: https://i.imgur.com/Kvn45ev.png
+          message: Portal Aluno | Algo de errado não está certo com o código... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
     outputs:
       git-tag: ${{ steps.increment-git-tag.outputs.git-tag }}
@@ -70,30 +72,30 @@ jobs:
       REGISTRY_NAME: eduedu-escola-aluno-development
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    - uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIAL }}'
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Deploy
-      id: 'deploy'
-      uses: 'google-github-actions/deploy-cloudrun@v0'
-      with:
-        service: 'dev-eduedu-escola-aluno'
-        image: '${{ env.REGISTRY_PREFIX }}/${{ env.PROJECT_ID }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}'
-        region: us-central1
+      - uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIAL }}"
 
-    - name: 'App URL'
-      run: 'curl "${{ steps.deploy.outputs.url }}"'
+      - name: Deploy
+        id: "deploy"
+        uses: "google-github-actions/deploy-cloudrun@v0"
+        with:
+          service: "dev-eduedu-escola-aluno"
+          image: "${{ env.REGISTRY_PREFIX }}/${{ env.PROJECT_ID }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"
+          region: us-central1
 
-    - name: Send Success Message
-      uses: appleboy/discord-action@master
-      with:
-        webhook_id: ${{ secrets.WEBHOOK_ID }}
-        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-        color: "#00ba55"
-        username: "GitHub Bot"
-        avatar_url: https://i.imgur.com/Kvn45ev.png
-        message: Portal Aluno | Commit '${{ github.event.head_commit.message }}' disponível no ambiente de DEV | ${{ secrets.APP_URL }}
+      - name: "App URL"
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
+
+      - name: Send Success Message
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.WEBHOOK_ID }}
+          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+          color: "#00ba55"
+          username: "GitHub Bot"
+          avatar_url: https://i.imgur.com/Kvn45ev.png
+          message: Portal Aluno | Commit '${{ github.event.head_commit.message }}' disponível no ambiente de DEV | ${{ secrets.APP_URL }}

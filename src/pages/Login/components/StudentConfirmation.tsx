@@ -64,6 +64,9 @@ const useStyles = createStyles(() => ({
     gap: "min(25cqw, 140px)",
 
     svg: { width: "min(20vw, 130px)" },
+    "&>div": {
+      cursor: "pointer",
+    },
   },
 
   inner: {

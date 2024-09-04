@@ -4,11 +4,13 @@ import { MEDIA_QUERY } from "~/constants/dimensions";
 import { Student, useStudentGetAll, useStudentReserve } from "~/api/student";
 import { useStudent } from "~/stores/student";
 import { Carousel, Embla } from "@mantine/carousel";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { useCarouselState } from "~/hooks/useCarouselState";
 import { StudentConfirmation } from "./components/StudentConfirmation";
 import { Header } from "./components/Header";
+import { LetterGrid } from "./components/LetterGrid";
+import { useGridSlide } from "~/hooks/useGridSlide";
 
 const useStyles = createStyles(
   (_, props: { canScrollPrev: boolean; canScrollNext: boolean }) => ({
@@ -25,49 +27,6 @@ const useStyles = createStyles(
       alignItems: "center",
       gap: 20,
       padding: 16,
-    },
-
-    letterGrid: {
-      width: "100%",
-      display: "grid",
-      gridTemplateColumns: "repeat(5, 1fr)",
-      placeItems: "center",
-      alignItems: "center",
-      rowGap: 20,
-
-      span: {
-        cursor: "pointer",
-        fontWeight: 700,
-        fontSize: 30,
-        lineHeight: 1,
-        color: "#fff",
-        display: "grid",
-        placeItems: "center",
-        margin: 0,
-        backgroundColor: "#3B93C4",
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-
-        "&:last-of-type": {
-          gridColumn: "span 5",
-        },
-      },
-
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        columnGap: 28,
-        gridTemplateColumns: "repeat(auto-fill, 55px)",
-        gridTemplateRows: "repeat(3, 1fr)",
-        span: {
-          "&:last-of-type": {
-            gridColumn: "initial",
-          },
-        },
-      },
-    },
-
-    selected: {
-      border: "4px solid white",
     },
 
     carouselContainer: {
@@ -195,11 +154,9 @@ export function StudentSelection({ onNext, onBack }: Props) {
 
     updateBreakpoint();
     window.addEventListener("resize", updateBreakpoint);
-    window.addEventListener("DOMContentLoaded", updateBreakpoint);
 
     return () => {
       window.removeEventListener("resize", updateBreakpoint);
-      window.removeEventListener("DOMContentLoaded", updateBreakpoint);
     };
   }, []);
 
@@ -211,34 +168,7 @@ export function StudentSelection({ onNext, onBack }: Props) {
 
   // Dividir alunos em arrays aninhados para mostrar
   // multiplos alunos em 1 único slide de carrosel
-  const slides = useMemo(() => {
-    const list: Array<Student[]> = [];
-    const items = students?.items ?? [];
-    const [cols, rows] = limit;
-    const gridLimit = cols * rows;
-
-    if (!items.length) return list;
-
-    items.forEach((item) => {
-      const currentIndex = list.length === 0 ? 0 : list.length - 1;
-      const initialized = Array.isArray(list[currentIndex]);
-
-      if (initialized) {
-        if (list[currentIndex].length === gridLimit) {
-          list.push([item]);
-          return;
-        }
-
-        list[currentIndex].push(item);
-        return;
-      }
-
-      list.push([item]);
-      return;
-    });
-
-    return list;
-  }, [limit, students]);
+  const slides = useGridSlide({ items: students?.items ?? [], layout: limit });
 
   function handleLetterSelect(l: string) {
     if (selected === l) {
@@ -273,18 +203,7 @@ export function StudentSelection({ onNext, onBack }: Props) {
   return (
     <div className={classes.bg}>
       <Header transparent title="Qual o seu nome?" onClose={onBack} />
-
-      <div className={classes.letterGrid}>
-        {letters.map((l) => (
-          <span
-            key={l}
-            className={selected === l ? classes.selected : ""}
-            onClick={() => handleLetterSelect(l)}
-          >
-            {l}
-          </span>
-        ))}
-      </div>
+      <LetterGrid onSelect={handleLetterSelect} selected={selected} />
 
       <div className={classes.carouselContainer}>
         <Carousel
@@ -331,38 +250,10 @@ export function StudentSelection({ onNext, onBack }: Props) {
   );
 }
 
-const letters = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "W",
-  "X",
-  "Y",
-  "Z",
-];
 const scrollQtyBreakpoint: Record<keyof typeof MEDIA_QUERY, [number, number]> =
-  {
-    MOBILE: [1, 4],
-    TABLET_VERT: [3, 6],
-    TABLET_HORZ: [4, 6],
-    DESKTOP: [4, 6],
-  };
+{
+  MOBILE: [1, 4],
+  TABLET_VERT: [3, 6],
+  TABLET_HORZ: [4, 6],
+  DESKTOP: [4, 6],
+};

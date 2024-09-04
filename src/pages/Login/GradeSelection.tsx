@@ -14,7 +14,8 @@ const MAX_ITEMS = 6;
 
 const useStyles = createStyles((_, grades: number) => ({
   container: {
-    height: "100vh",
+    height: "calc(100vh - 40px)",
+    maxHeight: "calc(100vh - 40px)",
   },
 
   itemsContainer: {
@@ -31,7 +32,7 @@ const useStyles = createStyles((_, grades: number) => ({
     position: "relative",
     isolation: "isolate",
     minWidth: "100%",
-    minHeight: `calc((100% - 40px) / ${grades < MAX_ITEMS ? grades : MAX_ITEMS})`,
+    minHeight: `calc((100vh - 40px) / ${grades < MAX_ITEMS ? grades : MAX_ITEMS})`,
     containerType: "inline-size",
     color: "#F6A313",
     display: "flex",

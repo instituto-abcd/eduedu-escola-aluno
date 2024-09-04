@@ -1,4 +1,4 @@
-import { createStyles, getStylesRef } from "@mantine/core";
+import { Box, createStyles, getStylesRef } from "@mantine/core";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import bg from "~/assets/bg-select-option.png";
 import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
@@ -11,6 +11,7 @@ import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
 import { useCarouselState } from "~/hooks/useCarouselState";
 import { LoginLoader } from "./LoginLoader";
+import { useGridSlide } from "~/hooks/useGridSlide";
 
 // TODO: hide controls when unable to click
 
@@ -27,13 +28,13 @@ const useStyles = createStyles(
     props: { qty: number; canScrollPrev: boolean; canScrollNext: boolean },
   ) => ({
     container: {
-      position: "relative",
-      height: "100vh",
+      height: "calc(100vh - 40px)",
+      maxHeight: "calc(100vh - 40px)",
     },
 
     carousel: {
       minWidth: "100vw",
-      minHeight: "100vh",
+      minHeight: "100%",
     },
 
     itemsContainer: {
@@ -58,7 +59,7 @@ const useStyles = createStyles(
       justifyContent: "center",
       alignItems: "center",
       minWidth: "100%",
-      minHeight: `calc((100vh - 40px)  / ${props.qty < MAX_ITEMS ? props.qty : MAX_ITEMS})`,
+      minHeight: `calc(100% / attr(data-total number) )`,
 
       [`&:hover .${getStylesRef("sprite")}`]: {
         filter: "none",
@@ -80,13 +81,15 @@ const useStyles = createStyles(
       p: {
         fontSize: "min( 10cqw, 40px )",
         fontWeight: "bold",
-        maxWidth: "fit-content",
+        maxWidth: "100%",
         margin: 0,
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
         lineHeight: 1,
         userSelect: "none",
         pointerEvents: "none",
         [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-          fontSize: "min( 20cqw, 70px )",
+          fontSize: "min( 20cqw, 50px )",
         },
       },
 
@@ -188,32 +191,10 @@ export function ClassSelection({ onNext, onBack }: Props) {
     ...carouselState,
   });
 
-  const slides = useMemo(() => {
-    const list: Array<SchoolClass[]> = [];
-    const items = schoolClass?.items ?? [];
-
-    if (!items.length) return list;
-
-    items.forEach((item) => {
-      const currentIndex = list.length === 0 ? 0 : list.length - 1;
-      const initialized = Array.isArray(list[currentIndex]);
-
-      if (initialized) {
-        if (list[currentIndex].length === MAX_ITEMS) {
-          list.push([item]);
-          return;
-        }
-
-        list[currentIndex].push(item);
-        return;
-      }
-
-      list.push([item]);
-      return;
-    });
-
-    return list;
-  }, [schoolClass]);
+  const slides = useGridSlide({
+    items: schoolClass?.items ?? [],
+    layout: [1, MAX_ITEMS],
+  });
 
   // Handle carousel orientation based on screen size.
   const [orientation, setOrientation] =
@@ -224,12 +205,12 @@ export function ClassSelection({ onNext, onBack }: Props) {
       setOrientation(window.innerWidth >= 1024 ? "horizontal" : "vertical");
     };
 
+    updateOrientation();
+
     window.addEventListener("resize", updateOrientation);
-    window.addEventListener("DOMContentLoaded", updateOrientation);
 
     return () => {
       window.removeEventListener("resize", updateOrientation);
-      window.removeEventListener("DOMContentLoaded", updateOrientation);
     };
   }, [carousel]);
 
@@ -272,17 +253,24 @@ export function ClassSelection({ onNext, onBack }: Props) {
       >
         {slides.map((items, index) => (
           <Carousel.Slide key={index}>
-            {items.map((item, i) => (
-              <div
-                className={classes.item}
+            {items.map((item, i, arr) => (
+              <Box
                 key={i}
                 onClick={() => select(item, index * MAX_ITEMS + i)}
+                className={classes.item}
+                sx={{
+                  height: `calc( (100vh - 40px) / min(${MAX_ITEMS}, ${arr.length}) )`,
+                  [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
+                    height: "100%",
+                    width: `calc( 100vw / min(${MAX_ITEMS}, ${arr.length}) )`,
+                  },
+                }}
               >
                 <p>{item.name}</p>
 
                 <Sprite id={index * MAX_ITEMS + i} className={classes.sprite} />
                 <img src={bg} alt="" role="presentation" className="item_bg" />
-              </div>
+              </Box>
             ))}
           </Carousel.Slide>
         ))}

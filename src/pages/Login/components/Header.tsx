@@ -30,11 +30,6 @@ const useStyles = createStyles({
         fontSize: 30,
       },
     },
-    [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-      position: "fixed",
-      backgroundColor: "transparent",
-      zIndex: 999,
-    },
   },
 
   transparent: {

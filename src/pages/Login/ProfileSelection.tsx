@@ -1,6 +1,5 @@
 import { createStyles } from "@mantine/core";
 import { EduEduLogo } from "~/components/icons/EduEduLogo";
-
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import {
   CharacterStudent,
@@ -64,9 +63,9 @@ const useStyles = createStyles(() => ({
   character: {
     width: "auto",
     height: "60%",
+    maxHeight: 250,
     [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
       height: "auto",
-      width: "60%",
     },
   },
 

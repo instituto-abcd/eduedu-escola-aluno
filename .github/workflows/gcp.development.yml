@@ -14,7 +14,7 @@ jobs:
       REGISTRY_PREFIX: us-east1-docker.pkg.dev
       REGISTRY_NAME: eduedu-escola-aluno-development
       ARG_VITE_API_URL: ${{ secrets.ARG_VITE_API_URL }}
-      ARG_VITE_ADMIN_URL: https://dev-eduedu-escola-admin-3djofcpyaq-uc.a.run.app/
+      ARG_VITE_ADMIN_URL: ${{ secrets.ARG_VITE_ADMIN_URL }}
       NODE_OPTIONS: "--max_old_space_size=4096"
 
     steps:
@@ -33,7 +33,7 @@ jobs:
         run: |-
           docker build \
           --build-arg ARG_VITE_API_URL=$ARG_VITE_API_URL \
-          --build-arg ARG_VITE_ADMIN_URL=https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/ \
+          --build-arg ARG_VITE_ADMIN_URL=$ARG_VITE_ADMIN_URL \
           -t $IMAGE_NAME:latest .
 
       - name: Configure Docker Client

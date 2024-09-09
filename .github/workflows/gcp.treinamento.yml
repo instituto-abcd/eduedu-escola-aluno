@@ -14,7 +14,7 @@ jobs:
       REGISTRY_PREFIX: us-east1-docker.pkg.dev
       REGISTRY_NAME: eduedu-escola-aluno-treinamento
       ARG_VITE_API_URL: ${{ secrets.ARG_VITE_API_URL }}
-      ARG_VITE_ADMIN_URL: https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/ # TODO: url treinamento
+      ARG_VITE_ADMIN_URL: ${{ secrets.ARG_VITE_ADMIN_URL }}
       NODE_OPTIONS: "--max_old_space_size=4096"
 
     steps:

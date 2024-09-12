@@ -41,7 +41,7 @@ export function LoginPage() {
   );
 
   const next = () => {
-    if (step === LOGIN_STEP.STUDENT) {
+    if (step === LOGIN_STEP.PREFERENCES) {
       if (studentState.firstAccess) {
         navigate(PATH.INTRO);
         return;
@@ -77,8 +77,8 @@ export function LoginPage() {
       return <PasswordSelection onNext={next} onBack={back} />;
     case LOGIN_STEP.STUDENT:
       return <StudentSelection onNext={next} onBack={back} />;
-    // case LOGIN_STEP.PREFERENCES:
-    //   return <AudioSettings onNext={next} onBack={back} />;
+    case LOGIN_STEP.PREFERENCES:
+      return <AudioSettings onNext={next} onBack={back} />;
 
     default:
       return <LoginLoader />;

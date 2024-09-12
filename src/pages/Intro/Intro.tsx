@@ -1,41 +1,73 @@
-import { BackgroundImage, Button, Center, Stack } from "@mantine/core";
-import { useState } from "react";
+import { createStyles } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import bgIntro from "~/assets/bgs/bg-intro-video.png";
+
+import video_360_800 from "~/assets/video/intro_360x800.mp4";
+import video_1024_640 from "~/assets/video/intro_1024x640.mp4";
+import video_1024_768 from "~/assets/video/intro_1024x768.mp4";
+import video_768_1024 from "~/assets/video/intro_768x1024.mp4";
+import { MEDIA_QUERY } from "~/constants/dimensions";
 import { PATH } from "~/constants/path";
+
+const useStyles = createStyles({
+  container: {
+    width: "100vw",
+    height: "100vh",
+    overflow: "clip",
+    position: "relative",
+  },
+
+  video: {
+    minWidth: "100%",
+    height: "auto",
+    maxHeight: "100%",
+    objectPosition: "center",
+    objectFit: "cover",
+  },
+});
+
+const videosDict: Record<keyof typeof MEDIA_QUERY, string> = {
+  MOBILE: video_360_800,
+  TABLET_VERT: video_768_1024,
+  TABLET_HORZ: video_1024_640,
+  DESKTOP: video_1024_768,
+};
 
 export function IntroPage() {
   const navigate = useNavigate();
-  const url = import.meta.env.VITE_ASSETS === "LOCAL" ?
-    import.meta.env.VITE_API_URL + "assets-data/ABERTURA.mp4" :
-    "https://firebasestorage.googleapis.com/v0/b/eduedu-escola-hub---stg.appspot.com/o/student%2FABERTURA.mp4?alt=media&token=5776a00f-1b23-4953-beab-550d71f891e9";
+  const [dimension, setDimension] =
+    useState<keyof typeof MEDIA_QUERY>("MOBILE");
 
-  const [canGoToExam, setCanGoToExam] = useState(false);
+  useEffect(() => {
+    const update = () => {
+      setDimension(
+        window.innerWidth < 768
+          ? "MOBILE"
+          : window.innerWidth < 1024
+            ? "TABLET_VERT"
+            : "DESKTOP",
+      );
+    };
+
+    update();
+
+    window.addEventListener("resize", update);
+
+    return () => {
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  const { classes } = useStyles();
 
   return (
-    <BackgroundImage src={bgIntro} h="100vh">
-      <Center h="100vh">
-        <Stack>
-          <video
-            autoPlay
-            src={url}
-            width={720}
-            height={540}
-            onLoad={() => {
-              setCanGoToExam(false);
-            }}
-            onPlay={() => {
-              setCanGoToExam(false);
-            }}
-            onPause={() => {
-              setCanGoToExam(true);
-            }}
-          ></video>
-          {/* TODO: Retornar disable do botão abaixo */}
-          {/* <Button disabled={!canGoToExam} onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button> */}
-          <Button onClick={() => navigate(PATH.EXAM)}>Iniciar prova</Button>
-        </Stack>
-      </Center>
-    </BackgroundImage>
+    <div className={classes.container}>
+      <video
+        className={classes.video}
+        src={videosDict[dimension]}
+        autoPlay
+        onEnded={() => navigate(PATH.EXAM)}
+      />
+    </div>
   );
 }

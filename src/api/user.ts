@@ -50,7 +50,7 @@ export function useUserSchoolClasses(
   > & { search?: SchoolClassSearch },
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return UserAPI.getSchoolClasses(options?.search);
     },
     [options?.search],
@@ -61,14 +61,14 @@ export function useUserSchoolClasses(
 
 export function useGetAccessCodes(
   userId: string,
-  options?: QueryOptions<AccessCodes[], [typeof KEY.ACCESS_CODE]>,
+  options?: QueryOptions<AccessCodes[], [typeof KEY.ACCESS_CODE, string]>,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return UserAPI.getAccessCodes(userId);
     },
     [userId],
   );
 
-  return useQuery([KEY.ACCESS_CODE], handler, options);
+  return useQuery([KEY.ACCESS_CODE, userId], handler, options);
 }

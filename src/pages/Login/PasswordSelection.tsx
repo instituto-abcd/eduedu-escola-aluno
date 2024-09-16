@@ -6,7 +6,6 @@ import { AccessCodes, useGetAccessCodes } from "~/api/user";
 import { useStudent } from "~/stores/student";
 import { Header } from "./components/Header";
 import { LockIcon } from "~/components/icons/LockIcon";
-import { LockOpenIcon } from "~/components/icons/LockOpenIcon";
 import { LoginLoader } from "./LoginLoader";
 
 const MAX_ITEMS = 4;
@@ -126,7 +125,7 @@ const useStyles = createStyles(() => ({
       marginBlock: 0,
       insetInline: 0,
       marginInline: "auto",
-      top: "10%",
+      top: "6%",
     },
   },
 }));
@@ -170,11 +169,7 @@ export function PasswordSelection({ onBack, onNext }: Props) {
               className={classes.sprite}
             />
             <img src={bg} alt="" role="presentation" className="item_bg" />
-            {code.correctAnswer ? (
-              <LockOpenIcon className={classes.lock} />
-            ) : (
-              <LockIcon className={classes.lock} />
-            )}
+            <LockIcon className={classes.lock} />
           </div>
         ))}
       </div>

@@ -251,9 +251,9 @@ export function StudentSelection({ onNext, onBack }: Props) {
 }
 
 const scrollQtyBreakpoint: Record<keyof typeof MEDIA_QUERY, [number, number]> =
-{
-  MOBILE: [1, 4],
-  TABLET_VERT: [3, 6],
-  TABLET_HORZ: [4, 6],
-  DESKTOP: [4, 6],
-};
+  {
+    MOBILE: [1, 4],
+    TABLET_VERT: [3, 6],
+    TABLET_HORZ: [4, 6],
+    DESKTOP: [4, 6],
+  };

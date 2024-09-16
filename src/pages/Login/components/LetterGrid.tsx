@@ -60,8 +60,7 @@ const useStyles = createStyles({
     },
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      columnGap: 28,
-      gridTemplateColumns: "repeat(auto-fill, 1fr)", // BUG: "invalid property value"
+      columnGap: 10,
       gridTemplateRows: "repeat(3, 1fr)",
       span: {
         "&:last-of-type": {

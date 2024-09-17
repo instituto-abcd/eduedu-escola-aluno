@@ -8,12 +8,19 @@ import lousa from "~/assets/bgs/lousa-sala1.svg";
 import { LottiesExam } from "./LottiesExam";
 
 import bgStaging from "~/assets/bgs/bg_prova2.png";
+import { useEffect } from "react";
 
 export function ExamLayout() {
   const progressBarHeight = (lousaHeight * 3) / 100;
-  const examProgress = useExamProgress((state) => state.value);
+  const examProgress = useExamProgress();
 
   const background = import.meta.env.DEV ? bgStaging : sala_3000;
+
+  useEffect(() => {
+    return () => {
+      examProgress.setValue(0);
+    };
+  }, []);
 
   return (
     <BackgroundImage
@@ -25,7 +32,7 @@ export function ExamLayout() {
       <Navbar />
       <Center style={{ position: "relative" }}>
         <Progress
-          value={examProgress}
+          value={examProgress.value}
           w={lousaWidth * 0.95}
           style={{ position: "absolute", top: progressBarHeight }}
           styles={{

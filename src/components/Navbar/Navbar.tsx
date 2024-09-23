@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Group,
   Image,
   Header as MantineHeader,
@@ -11,10 +10,7 @@ import logo from "~/assets/logos/eduedu-azul.svg";
 import { useStudent } from "~/stores/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
 import { BREAKPOINT } from "~/constants/dimensions";
-import { useNavigate } from "react-router-dom";
-import { PATH } from "~/constants/path";
-import { SchoolGrade, SchoolPeriod } from "~/api/school-class";
-import { useStudentReserve } from "~/api/student";
+import { Logout } from "../Logout";
 
 const useStyles = createStyles((theme) => ({
   logo: {
@@ -48,26 +44,6 @@ export function Navbar() {
     { label: "Turma", value: SCHOOL_GRADE[student?.schoolGrade] },
     { label: "Período", value: SCHOOL_PERIOD[student?.schoolPeriod] },
   ] as const;
-
-  const navigate = useNavigate();
-  const { mutate: unreserve } = useStudentReserve({
-    onSuccess: () => {
-      student.update({
-        id: "",
-        name: "",
-        registry: "",
-        schoolClassId: "",
-        schoolClassName: "",
-        schoolGrade: "" as SchoolGrade,
-        schoolPeriod: "" as SchoolPeriod,
-        reserved: false,
-        firstAccess: true,
-        examPerformed: false,
-      });
-
-      navigate(PATH.LOGIN);
-    },
-  });
 
   return (
     <MantineHeader height={78} py={17}>
@@ -104,14 +80,7 @@ export function Navbar() {
               <Text size={14}>{link.value}</Text>
             </Group>
           ))}
-          <Anchor
-            size="xs"
-            onClick={() =>
-              unreserve({ studentId: student.id, reserved: false })
-            }
-          >
-            (sair)
-          </Anchor>
+          <Logout />
         </Group>
       </Group>
     </MantineHeader>

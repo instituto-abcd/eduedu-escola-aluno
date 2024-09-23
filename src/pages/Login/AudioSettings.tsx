@@ -20,6 +20,7 @@ const useStyles = createStyles({
     minWidth: "100%",
     height: "auto",
     maxHeight: "100%",
+    minHeight: "100vh",
     objectPosition: "bottom",
     objectFit: "cover",
     position: "absolute",

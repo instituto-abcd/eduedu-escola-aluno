@@ -1,5 +1,5 @@
 import { createStyles } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import video_360_800 from "~/assets/video/intro_360x800.mp4";
@@ -8,6 +8,7 @@ import video_1024_768 from "~/assets/video/intro_1024x768.mp4";
 import video_768_1024 from "~/assets/video/intro_768x1024.mp4";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import { PATH } from "~/constants/path";
+import { IconPlayerPlayFilled } from "@tabler/icons-react";
 
 const useStyles = createStyles({
   container: {
@@ -20,9 +21,19 @@ const useStyles = createStyles({
   video: {
     minWidth: "100%",
     height: "auto",
+    minHeight: "100vh",
     maxHeight: "100%",
     objectPosition: "center",
     objectFit: "cover",
+  },
+
+  icon: {
+    cursor: "pointer",
+    opacity: 0.75,
+    position: "absolute",
+    inset: 0,
+    margin: "auto",
+    color: "white",
   },
 });
 
@@ -59,14 +70,24 @@ export function IntroPage() {
   }, []);
 
   const { classes } = useStyles();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <div className={classes.container}>
       <video
+        ref={videoRef}
         className={classes.video}
         src={videosDict[dimension]}
-        autoPlay
+        autoPlay={false}
         onEnded={() => navigate(PATH.EXAM)}
+        onPlay={() => setIsPlaying(true)}
+      />
+      <IconPlayerPlayFilled
+        size={100}
+        className={classes.icon}
+        onClick={() => videoRef.current?.play()}
+        style={{ display: isPlaying ? "none" : "block" }}
       />
     </div>
   );

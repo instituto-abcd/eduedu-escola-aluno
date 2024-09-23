@@ -26,7 +26,7 @@ export function AppRoutes() {
     };
 
     document.addEventListener("contextmenu", contextMenuEventHandler);
-    window.addEventListener("beforeunload", beforeUnloadEventHandler);
+    document.addEventListener("beforeunload", beforeUnloadEventHandler);
 
     return () => {
       document.removeEventListener("contextmenu", contextMenuEventHandler);

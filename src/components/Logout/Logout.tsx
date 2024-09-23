@@ -46,7 +46,12 @@ export function Logout() {
           login?
         </Text>
         <Group position="right">
-          <Button variant="outline" color="gray" loading={isLoading}>
+          <Button
+            variant="outline"
+            color="gray"
+            disabled={isLoading}
+            onClick={handlers.close}
+          >
             Cancelar
           </Button>
           <Button

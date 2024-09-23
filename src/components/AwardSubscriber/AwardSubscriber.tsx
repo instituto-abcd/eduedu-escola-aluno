@@ -6,11 +6,12 @@ import { useNewAward } from "~/stores/new-award";
 import { AwardDisplay } from "../AwardDisplay/AwardDisplay";
 
 export function AwardSubscriber() {
-  const { awards, viewRequested, setNewAwards } = useNewAward();
+  const { awards, viewRequested, setNewAwards, resetView } = useNewAward();
   const [isOpen, { open, close }] = useDisclosure();
 
   function onModalClose() {
     setNewAwards([]);
+    resetView();
     close();
   }
 
@@ -31,7 +32,7 @@ export function AwardSubscriber() {
         {awards.map((n) => {
           const img = AWARDS_IMAGES.find((img) => img.name === n);
           if (img) {
-            return <AwardDisplay award={img} key={n} />;
+            return <AwardDisplay award={{ ...img, active: true }} key={n} />;
           }
         })}
       </SimpleGrid>

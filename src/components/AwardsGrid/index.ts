@@ -1,0 +1,1 @@
+export { AwardsGrid } from "./AwardsGrid";

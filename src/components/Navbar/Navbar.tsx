@@ -12,7 +12,15 @@ import { SCHOOL_GRADE, SCHOOL_PERIOD } from "../../constants";
 import { BREAKPOINT } from "~/constants/dimensions";
 import { Logout } from "../Logout";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((theme, inView: boolean) => ({
+  base: {
+    position: "absolute",
+    insetInline: 0,
+    top: 0,
+    transform: inView ? "none" : "translateY(-110%)",
+    transition: "all 200ms ease-in-out",
+  },
+
   logo: {
     display: "none",
     [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
@@ -34,8 +42,13 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function Navbar() {
-  const { classes } = useStyles();
+type Props = {
+  inView: boolean;
+  onMouseLeave: () => void;
+};
+
+export function Navbar({ inView, onMouseLeave }: Props) {
+  const { classes } = useStyles(inView);
   const student = useStudent();
   const links = [
     { label: student?.name, value: "" },
@@ -46,13 +59,18 @@ export function Navbar() {
   ] as const;
 
   return (
-    <MantineHeader height={78} py={17}>
+    <MantineHeader
+      height={50}
+      className={classes.base}
+      onMouseLeave={onMouseLeave}
+    >
       <Group w="100%" noWrap h="100%" className={classes.header}>
         <Image
           src={logo}
           className={classes.logo}
           alt="EduEdu Escola"
-          width={50}
+          height="90%"
+          width="auto"
         />
 
         <Group spacing={26} noWrap className={classes.links}>

@@ -47,3 +47,5 @@ export const MEDIA_QUERY = {
   TABLET_HORZ: "(min-width: 1024px)",
   DESKTOP: "(min-width: 1024px)",
 } as const;
+
+export type MediaQueryKey = keyof typeof MEDIA_QUERY;

@@ -5,7 +5,6 @@ import { boardW, lousaHeight } from "~/constants/dimensions";
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";
-import { ModelProgress } from "../components/ModelProgress";
 
 export function ModelView() {
   const { modelId } = useParams();
@@ -86,19 +85,21 @@ export function ModelView() {
 
       {currentQuestion !== -1 && data?.[currentQuestion] && (
         <Stack
-          style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}
+          style={{
+            position: "fixed",
+            bottom: 70,
+            left: 30,
+            zIndex: 999,
+          }}
           id="debugger"
         >
-          <ModelProgress
-            current={currentQuestion}
-            total={data.length}
-            question={data[currentQuestion]}
-            onQuestionChange={setCurrentQuestion}
-          />
           <QuestionInfo
             question={data[currentQuestion]}
             next={handleNextQuestion}
             previous={handlePreviousQuestion}
+            current={currentQuestion}
+            total={data.length}
+            onQuestionChange={setCurrentQuestion}
           />
         </Stack>
       )}

@@ -1,75 +1,59 @@
 import { Outlet } from "react-router-dom";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useExamProgress } from "~/stores/exam-progress";
-import { BackgroundImage, Box, Center, Progress } from "@mantine/core";
+import { createStyles, Progress, Stack } from "@mantine/core";
 import { Navbar } from "~/components/Navbar/Navbar";
-import sala_3000 from "~/assets/bgs/sala_3000x900.png";
-import lousa from "~/assets/bgs/lousa-sala1.svg";
-import { LottiesExam } from "./LottiesExam";
-
-import bgStaging from "~/assets/bgs/bg_prova2.png";
 import { useEffect } from "react";
+import { useDisclosure } from "@mantine/hooks";
 
 export function ExamLayout() {
-  const progressBarHeight = (lousaHeight * 3) / 100;
+  const { classes } = useStyles();
+
+  // Progressbar handlers
   const examProgress = useExamProgress();
-
-  const background = import.meta.env.DEV ? bgStaging : sala_3000;
-
   useEffect(() => {
     return () => {
       examProgress.setValue(0);
     };
   }, []);
 
-  return (
-    <BackgroundImage
-      src={background}
-      mih="100vh"
-      p={0}
-      styles={{ main: { padding: 0, position: "relative" } }}
-    >
-      <Navbar />
-      <Center style={{ position: "relative" }}>
-        <Progress
-          value={examProgress.value}
-          w={lousaWidth * 0.95}
-          style={{ position: "absolute", top: progressBarHeight }}
-          styles={{
-            bar: {
-              transitionProperty: "width",
-              transitionDuration: "1.5s",
-              transitionTimingFunction: "ease-in-out",
-            },
-          }}
-          size="lg"
-          striped
-          animate
-          radius="xl"
-        />
-        <BackgroundImage
-          src={lousa}
-          h={lousaHeight}
-          w={lousaWidth}
-          mt={(progressBarHeight * 22) / 100}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            userSelect: "none",
-          }}
-        >
-          <Box
-            w={(lousaWidth * 94) / 100}
-            h={(lousaHeight * 86) / 100}
-            mt={(progressBarHeight * 350) / 100}
-          >
-            <Outlet />
-          </Box>
-        </BackgroundImage>
-      </Center>
+  // Navbar - header handlers
+  const [inView, headerHandler] = useDisclosure(false);
+  function handleHeaderTrigger(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) {
+    if (e.clientY <= 10) {
+      headerHandler.open();
+    }
+  }
 
-      <LottiesExam />
-    </BackgroundImage>
+  return (
+    <Stack className={classes.container} onMouseMove={handleHeaderTrigger}>
+      <Navbar inView={inView} onMouseLeave={headerHandler.close} />
+      <Progress
+        value={examProgress.value}
+        w={400} // TODO: calcular w
+        styles={{
+          bar: {
+            transitionProperty: "width",
+            transitionDuration: "1.5s",
+            transitionTimingFunction: "ease-in-out",
+          },
+        }}
+        size="lg"
+        striped
+        animate
+        radius="xl"
+      />
+      <Outlet />
+    </Stack>
   );
 }
+
+const useStyles = createStyles({
+  container: {
+    height: "100vh",
+    width: "100vw",
+    backgroundColor: "#AFCBE0",
+    alignItems: "center",
+  },
+});

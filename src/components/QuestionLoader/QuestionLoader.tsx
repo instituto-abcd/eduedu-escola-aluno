@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Question, QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useGetExamQuestion } from "~/api/student";
-import { lousaHeight } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
@@ -14,7 +13,7 @@ import { modelIsAutoAdvance } from "~/constants";
 type QuestionLoaderProps = {
   answerCallback: (
     nextQuestion: Question | { examCompleted?: true; planetCompleted?: true },
-    skipFeedback?: boolean
+    skipFeedback?: boolean,
   ) => void;
   question: Question;
 };
@@ -35,7 +34,7 @@ export function QuestionLoader({
     auxQuestionId ?? "",
     {
       enabled: hasAuxQuestion,
-    }
+    },
   );
 
   const commonProps: ModelProps = {
@@ -82,7 +81,7 @@ export function QuestionLoader({
   /* Conditions - bloqueio de continuar */
   useEffect(() => {
     const shouldEnableContinue = [...conditions, !isPlaying].every(
-      (bool) => bool === true
+      (bool) => bool === true,
     );
 
     setContinueDisabled(!shouldEnableContinue);
@@ -98,20 +97,19 @@ export function QuestionLoader({
   }, [continueDisabled]);
 
   return (
-    <Stack w="100%" h="100%" align="center" style={{ position: "relative" }}>
+    <Stack
+      w="100%"
+      h="100%"
+      align="center"
+      style={{ position: "relative" }}
+      pb={12}
+    >
       <ModelMapper commonProps={commonProps} />
 
       <EduButton disabled={continueDisabled} onClick={submitAnswer}>
         Continuar
       </EduButton>
-      <LoadingOverlay
-        visible={isLoading}
-        style={{
-          maxHeight: (lousaHeight * 80) / 100,
-          borderRadius: 40,
-          width: "100%",
-        }}
-      />
+      <LoadingOverlay visible={isLoading} />
     </Stack>
   );
 }

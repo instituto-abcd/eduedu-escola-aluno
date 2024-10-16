@@ -7,30 +7,30 @@ export function useQuestionHelper(question: Question) {
   const isPlanet = !!question.planet_id;
 
   const hasTitleOfType = useCallback(
-    function (type: string) {
+    function(type: string) {
       return question.titles.filter((title) => title.type === type).length > 0;
     },
-    [question]
+    [question],
   );
 
   const getTitlesOfType = useCallback(
     function getTitlesOfType(type: string) {
       return question.titles.filter((title) => title.type === type);
     },
-    [question]
+    [question],
   );
 
   const getSupportText = useCallback(
     function getSupportText(text: string, options?: { uuid?: boolean }) {
       const supportText = question.titles.filter(
-        (title) => title?.placeholder?.includes(text) && !!title?.description
+        (title) => title?.placeholder?.includes(text) && !!title?.description,
       );
 
       if (supportText.length > 0) return supportText;
 
       if (options?.uuid) {
         const supportTextWithUuid = question.titles.filter(
-          (title) => validateUUID(title.description) === true
+          (title) => validateUUID(title.description) === true,
         );
 
         return supportTextWithUuid;
@@ -38,7 +38,7 @@ export function useQuestionHelper(question: Question) {
 
       return [];
     },
-    [question]
+    [question],
   );
 
   const textTitles = getTitlesOfType("TEXT");
@@ -50,21 +50,20 @@ export function useQuestionHelper(question: Question) {
   const auxQuestionId = hasAuxQuestion ? supportText[0].description : null;
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
-      option.image_url ?? option.sound_url ?? "_"
-    })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
+      })`;
   }
 
   /*
    * Image helpers
    */
-  const imageTitles = getTitlesOfType("IMAGE").filter(
-    (title) => title.file_url
-  );
+  const imageTitles = getTitlesOfType("IMAGE")
+    .filter((title) => title.file_url)
+    .filter((t) => typeof t.file_url === "string" && t.file_url !== "");
 
   const hasImageTitle = useMemo(
     () => imageTitles.some((title) => title.file_url),
-    [imageTitles]
+    [imageTitles],
   );
 
   /*
@@ -77,7 +76,7 @@ export function useQuestionHelper(question: Question) {
 
   const hasAudioTitle = useMemo(
     () => audioTitles.some((title) => title.file_url),
-    [audioTitles]
+    [audioTitles],
   );
   const audioTitleAutoplay = (index: number) => {
     if (index !== 0) return false;
@@ -102,9 +101,12 @@ export function useQuestionHelper(question: Question) {
     getRule("skipFeedback")?.value === "true" ||
     question.model_id === "MODEL27" ||
     question.model_id === "MODEL12" ||
-    question.model_id === "MODEL13" ;
+    question.model_id === "MODEL13";
 
-  const hasTextTitle = useMemo(() => textTitles.some((title) => title.description), [textTitles]);
+  const hasTextTitle = useMemo(
+    () => textTitles.some((title) => title.description),
+    [textTitles],
+  );
 
   return {
     hasTitleOfType,
@@ -125,6 +127,6 @@ export function useQuestionHelper(question: Question) {
     hasAuxQuestion,
     auxQuestionId,
     skipFeedback,
-    hasTextTitle
+    hasTextTitle,
   };
 }

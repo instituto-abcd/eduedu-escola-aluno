@@ -1,12 +1,12 @@
-import { Group, Image, Stack, Title } from "@mantine/core";
-import { IconVolume } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { OptionButton } from "~/components/OptionButton";
-import { boardW } from "~/constants/dimensions";
-import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
-import { AudioContainer } from "~/components/AudioContainer";
+import { Flex, Image, SimpleGrid, Stack, Title } from '@mantine/core';
+import { IconVolume } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { QuestionOption } from '~/api/exam';
+import { OptionButton } from '~/components/OptionButton';
+import { boardW } from '~/constants/dimensions';
+import { useQuestionHelper } from '~/hooks/useQuestionHelper';
+import { ModelProps } from '.';
+import { AudioContainer } from '~/components/AudioContainer';
 
 export function Model24({
   question,
@@ -17,10 +17,10 @@ export function Model24({
   const [answer, setAnswer] = useState<number>(-1);
 
   // Variação de completar o texto
-  const varExeptions = ["Texto para completar, exp: a menina perdeu a ____"];
+  const varExeptions = ['Texto para completar, exp: a menina perdeu a ____'];
   const isTypeComplete = textTitles
     .filter((title) => !varExeptions.includes(title.placeholder))
-    .some((title) => title.placeholder.includes("completar"));
+    .some((title) => title.placeholder.includes('completar'));
 
   // Variação de selecionar alternativa
   const isTypeSelect = !isTypeComplete;
@@ -37,7 +37,7 @@ export function Model24({
 
   const conditions = useMemo(
     () => [isTypeSelect ? !!singleAnswer : answer !== -1],
-    [answer, singleAnswer],
+    [answer, singleAnswer]
   );
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function Model24({
   const getDashesAccordingAnswer = useCallback(() => {
     const length = question.options.find((option) => option.isCorrect)
       ?.description?.length;
-    return Array.prototype.join.call({ length: (length || -1) + 1 }, "_");
+    return Array.prototype.join.call({ length: (length || -1) + 1 }, '_');
   }, [question]);
 
   const singleAnswerWithUnderlineDashes = useMemo(
@@ -55,31 +55,43 @@ export function Model24({
       singleAnswer?.description
         ? `<span style="text-decoration: underline;">${singleAnswer?.description}</span>`
         : getDashesAccordingAnswer(),
-    [question, singleAnswer],
+    [question, singleAnswer]
   );
 
   return (
     <>
-      <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
+      <AudioContainer
+        question={question}
+        audioTitles={audioTitles}
+        hasPrimaryIcon={false}
+      />
 
-      <Stack my="auto" spacing={boardW(40)}>
+      <Stack
+        my="auto"
+        spacing={boardW(40)}
+      >
         {isTypeComplete && (
-          <Stack align="center" spacing={boardW(25)}>
-            {textTitles.find((title) => title.placeholder.includes("completar"))
+          <Flex
+            align="center"
+            justify={'center'}
+            gap={20}
+            wrap="wrap"
+          >
+            {textTitles.find((title) => title.placeholder.includes('completar'))
               ?.description && (
-                <Title
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find((title) =>
-                        title.placeholder.includes("completar"),
-                      )?.description ?? "",
-                  }}
-                  size={boardW(24)}
-                  weight={500}
-                  color="dark.3"
-                  align="center"
-                />
-              )}
+              <Title
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find((title) =>
+                      title.placeholder.includes('completar')
+                    )?.description ?? '',
+                }}
+                size={boardW(24)}
+                weight={500}
+                color="dark.3"
+                align="center"
+              />
+            )}
 
             {imageTitles.map(
               (title) =>
@@ -88,14 +100,21 @@ export function Model24({
                     key={title.file_url}
                     src={title.file_url}
                     alt={title.placeholder}
-                    styles={{ image: { marginInline: "auto" } }}
-                    width="auto"
-                    height={boardW(170)}
+                    styles={{
+                      image: {
+                        marginInline: 'auto',
+                      },
+                    }}
+                    width={'auto'}
+                    height={boardW(275)}
                   />
-                ),
+                )
             )}
 
-            <Group mb={20}>
+            <SimpleGrid
+              mb={20}
+              cols={2}
+            >
               {question.options.map((option, inx) => (
                 <OptionButton
                   key={inx}
@@ -118,15 +137,18 @@ export function Model24({
                   )}
                 </OptionButton>
               ))}
-            </Group>
-          </Stack>
+            </SimpleGrid>
+          </Flex>
         )}
 
         {isTypeSelect && (
-          <Stack align="center" spacing={boardW(25)}>
+          <Stack
+            align="center"
+            spacing={boardW(25)}
+          >
             {textTitles
               .filter(
-                (title) => title.description && title.description.length > 0,
+                (title) => title.description && title.description.length > 0
               )
               .map((title) => (
                 <Title
@@ -134,7 +156,7 @@ export function Model24({
                     __html: title.description.replace(
                       /_+/g,
                       singleAnswerWithUnderlineDashes ??
-                      getDashesAccordingAnswer(),
+                        getDashesAccordingAnswer()
                     ),
                   }}
                   key={title.description}
@@ -145,49 +167,63 @@ export function Model24({
                 />
               ))}
 
-            {imageTitles.map(
-              (title) =>
-                title.file_url && (
-                  <Image
-                    key={title.file_url}
-                    src={title.file_url}
-                    alt={title.placeholder}
-                    styles={{ image: { marginInline: "auto" } }}
-                    width="auto"
-                    height={boardW(170)}
-                  />
-                ),
-            )}
-
-            <Group>
-              {question.options.map((option, inx) => (
-                <OptionButton
-                  key={inx}
-                  option={option}
-                  onClick={() => setSingleAnswer(option)}
-                  data-selected={
-                    JSON.stringify(singleAnswer) === JSON.stringify(option)
-                  }
-                  style={{
-                    width: boardW(190),
-                    height: boardW(120),
-                  }}
-                >
-                  {option.description}
-                  {option.image_url && (
-                    <img
-                      src={option.image_url}
-                      style={{
-                        height: boardW(100),
+            <Flex
+              wrap="wrap"
+              align={'center'}
+              justify={'center'}
+              gap={20}
+            >
+              {imageTitles.map(
+                (title) =>
+                  title.file_url && (
+                    <Image
+                      key={title.file_url}
+                      src={title.file_url}
+                      alt={title.placeholder}
+                      styles={{
+                        image: {
+                          marginInline: 'auto',
+                        },
                       }}
+                      width={boardW(365)}
+                      height={125}
                     />
-                  )}
-                  {option.sound_url && !option.image_url && (
-                    <IconVolume size={boardW(62)} />
-                  )}
-                </OptionButton>
-              ))}
-            </Group>
+                  )
+              )}
+
+              <SimpleGrid
+                cols={2}
+                spacing={20}
+              >
+                {question.options.map((option, inx) => (
+                  <OptionButton
+                    key={inx}
+                    option={option}
+                    onClick={() => setSingleAnswer(option)}
+                    data-selected={
+                      JSON.stringify(singleAnswer) === JSON.stringify(option)
+                    }
+                    style={{
+                      width: boardW(190),
+                      height: boardW(120),
+                    }}
+                  >
+                    {option.description}
+                    {option.image_url && (
+                      <img
+                        src={option.image_url}
+                        style={{
+                          height: boardW(100),
+                        }}
+                      />
+                    )}
+                    {option.sound_url && !option.image_url && (
+                      <IconVolume size={boardW(62)} />
+                    )}
+                  </OptionButton>
+                ))}
+              </SimpleGrid>
+            </Flex>
           </Stack>
         )}
       </Stack>

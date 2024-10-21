@@ -8,20 +8,17 @@ import {
   Badge,
   Table,
   MultiSelect,
-  LoadingOverlay,
 } from "@mantine/core";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDebugQuestions } from "~/api/debug";
 
 export function QuestionListPage() {
-  const { data, isFetching } = useDebugQuestions({ initialData: [] });
+  const { data } = useDebugQuestions({ initialData: [] });
   const [filter, setFilter] = useState<string[]>([]);
 
   return (
     <Stack mih="100vh" align="center" p="xl">
-      <LoadingOverlay visible={isFetching} loaderProps={{ color: "lime" }} />
-
       <Stack spacing={0} justify="center" align="center">
         <Title color="dark.4" order={1}>
           Questões de Prova
@@ -46,7 +43,7 @@ export function QuestionListPage() {
       <SimpleGrid cols={7}>
         {data
           ?.filter((q) =>
-            filter.length > 0 ? filter.includes(q.model_id) : true
+            filter.length > 0 ? filter.includes(q.model_id) : true,
           )
           .map((question) => (
             <Paper

@@ -90,6 +90,7 @@ const KEY = {
   PLANET_FEEDBACK: "PLANET_FEEDBACK",
   AWARDS: "STUDENT_AWARDS",
   GET_ALL: "ALL_STUDENTS",
+  MUT_GET_EXAM_QUESTION: "GET_EXAM_QUESTION",
 };
 
 const URL = {
@@ -189,7 +190,7 @@ export function useGetPlanetTrack(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getPlanetTrack(studentId);
   }, []);
 
@@ -201,7 +202,7 @@ export function useGetStudentAwards(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getStudentAwards(studentId);
   }, []);
 
@@ -213,7 +214,7 @@ export function useGetFirstExamQuestion(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
@@ -225,12 +226,13 @@ export function useGetExamQuestion(
 ) {
   const { setNewAwards } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function (input: GetQuestionInput) {
+  const handler = useCallback(function(input: GetQuestionInput) {
     return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
   return useMutation(handler, {
     ...options,
+    mutationKey: [KEY.MUT_GET_EXAM_QUESTION],
     onSuccess: (data, vars, ctx) => {
       type AwardCase = { newAwards: Award[] }; // 🤡 typescript
       if (
@@ -253,7 +255,7 @@ export function useSubmitExamEvaluation(
 ) {
   const { setNewAwards, requestView } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
@@ -282,7 +284,7 @@ export function usePlanetFeedback(
   const studentId = useStudent((state) => state.id);
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function () {
+  const handler = useCallback(function() {
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
@@ -325,7 +327,7 @@ export function useStudentGetAll(
   >,
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return StudentAPI.getAllStudents(search);
     },
     [search],
@@ -340,7 +342,7 @@ export function useStudentReserve(
     StudentReserveResponse
   >,
 ) {
-  const handler = useCallback(function ({
+  const handler = useCallback(function({
     studentId,
     ...input
   }: { studentId: string } & StudentReserveInput) {
@@ -349,3 +351,5 @@ export function useStudentReserve(
 
   return useMutation(handler, options);
 }
+
+export const STUDENT_API_LOADER_KEYS = [KEY.MUT_GET_EXAM_QUESTION];

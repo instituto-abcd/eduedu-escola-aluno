@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useExamProgress } from "~/stores/exam-progress";
-import { createStyles, Progress, Stack } from "@mantine/core";
+import { createStyles, Stack } from "@mantine/core";
 import { Navbar } from "~/components/Navbar/Navbar";
 import { useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -29,21 +29,25 @@ export function ExamLayout() {
   return (
     <Stack className={classes.container} onMouseMove={handleHeaderTrigger}>
       <Navbar inView={inView} onMouseLeave={headerHandler.close} />
-      <Progress
-        value={examProgress.value}
-        w={400} // TODO: calcular w
-        styles={{
-          bar: {
-            transitionProperty: "width",
-            transitionDuration: "1.5s",
-            transitionTimingFunction: "ease-in-out",
-          },
-        }}
-        size="lg"
-        striped
-        animate
-        radius="xl"
-      />
+      {/*
+        <Progress
+          value={examProgress.value}
+          w={400} // TODO: calcular w
+          styles={{
+            bar: {
+              transitionProperty: "width",
+              transitionDuration: "1.5s",
+              transitionTimingFunction: "ease-in-out",
+            },
+          }}
+          size="lg"
+          striped
+          animate
+          radius="xl"
+        />
+      
+         TODO: definir se continuará a ser usado a barra de progresso
+      */}
       <Outlet />
     </Stack>
   );

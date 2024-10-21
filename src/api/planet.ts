@@ -21,6 +21,12 @@ const URL = {
     `planet/${planetId}/questions/${questionId}`,
 };
 
+const KEY = {
+  PLANET_QUESTION: "PLANET_QUESTION",
+  PLANET_FIRST_QUESTION: "PLANET_FIRST_QUESTION",
+  MUT_PLANET_ANSWER: "PLANET_ANSWER",
+};
+
 class PlanetAPI extends API {
   static async getFirstQuestion(studentId: string, planetId: string) {
     const { data } = await this.api.get<Question>(
@@ -52,18 +58,18 @@ class PlanetAPI extends API {
 
 export function usePlanetGetFirstQuestion(
   planetId: string,
-  options?: QueryOptions<Question, ["PLANET_FIRST_QUESTION"]>,
+  options?: QueryOptions<Question, [typeof KEY.PLANET_FIRST_QUESTION]>,
 ) {
   const studentId = useStudent((state) => state.id);
 
   const handler = useCallback(
-    function () {
+    function() {
       return PlanetAPI.getFirstQuestion(studentId, planetId);
     },
     [planetId],
   );
 
-  return useQuery(["PLANET_FIRST_QUESTION"], handler, options);
+  return useQuery([KEY.PLANET_FIRST_QUESTION], handler, options);
 }
 
 export function usePlanetAnswer(
@@ -71,27 +77,43 @@ export function usePlanetAnswer(
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function ({
+  const handler = useCallback(function({
     planetId,
     ...answer
   }: AnswerInput & { planetId: string }) {
     return PlanetAPI.answerQuestion(studentId, planetId, answer);
   }, []);
 
-  return useMutation(handler, options);
+  return useMutation(handler, {
+    ...options,
+    mutationKey: [KEY.MUT_PLANET_ANSWER],
+  });
 }
 
 export function usePlanetGetQuestion(
   planetId: string,
   questionId: string,
-  options?: QueryOptions<Question, ["PLANET_QUESTION", string, string]>,
+  options?: QueryOptions<
+    Question,
+    [typeof KEY.PLANET_QUESTION, string, string]
+  >,
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return PlanetAPI.getQuestion(planetId, questionId);
     },
     [planetId, questionId],
   );
 
-  return useQuery(["PLANET_QUESTION", planetId, questionId], handler, options);
+  return useQuery(
+    [KEY.PLANET_QUESTION, planetId, questionId],
+    handler,
+    options,
+  );
 }
+
+export const PLANET_API_LOADER_KEYS = [
+  KEY.PLANET_QUESTION,
+  KEY.PLANET_FIRST_QUESTION,
+  KEY.MUT_PLANET_ANSWER,
+];

@@ -2,7 +2,6 @@ import {
   Badge,
   Group,
   Image,
-  LoadingOverlay,
   Paper,
   SimpleGrid,
   Stack,
@@ -13,12 +12,10 @@ import { Link } from "react-router-dom";
 import { useDebugPlanets } from "~/api/debug";
 
 export function PlanetList() {
-  const { data, isFetching } = useDebugPlanets({ initialData: [] });
+  const { data } = useDebugPlanets({ initialData: [] });
 
   return (
     <Stack mih="100vh" align="center" p="xl">
-      <LoadingOverlay visible={isFetching} loaderProps={{ color: "yellow" }} />
-
       <Stack spacing={0} justify="center" align="center">
         <Title color="dark.4" order={1}>
           Planetas
@@ -53,8 +50,8 @@ export function PlanetList() {
                     !planet.status
                       ? "orange"
                       : planet.status === "PRODUÇÃO"
-                      ? "green"
-                      : "blue"
+                        ? "green"
+                        : "blue"
                   }
                 >
                   {planet.status ?? "N/A"}

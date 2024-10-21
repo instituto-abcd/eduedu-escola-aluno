@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useDebugModelQuestions } from "~/api/debug";
-import { boardW, lousaHeight } from "~/constants/dimensions";
-import { Button, LoadingOverlay, Stack } from "@mantine/core";
+import { boardW } from "~/constants/dimensions";
+import { Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";
 
@@ -12,7 +12,7 @@ export function ModelView() {
   const searchIndex = query.get("index");
 
   const [currentQuestion, setCurrentQuestion] = useState(-1);
-  const { data, isFetching } = useDebugModelQuestions(modelId ?? "", {
+  const { data } = useDebugModelQuestions(modelId ?? "", {
     enabled: !!modelId,
     initialData: [],
     onSuccess: (data) => {
@@ -55,40 +55,19 @@ export function ModelView() {
 
   return (
     <>
-      <Stack
-        h="100%"
-        w="100%"
-        align="center"
-        spacing={boardW(40)}
-        style={{ position: "relative" }}
-      >
-        {currentQuestion !== -1 && data?.[currentQuestion] && (
-          <QuestionLoader
-            question={data[currentQuestion]}
-            answerCallback={() => null}
-          />
-        )}
-
-        <LoadingOverlay
-          visible={isFetching}
-          style={{ maxHeight: (lousaHeight * 80) / 100 }}
+      {currentQuestion !== -1 && data?.[currentQuestion] && (
+        <QuestionLoader
+          question={data[currentQuestion]}
+          answerCallback={() => null}
         />
-      </Stack>
-      <Button
-        component={Link}
-        to="/debug/model"
-        style={{ position: "absolute", top: 50, right: 50 }}
-        variant="default"
-      >
-        Voltar
-      </Button>
+      )}
 
       {currentQuestion !== -1 && data?.[currentQuestion] && (
         <Stack
           style={{
             position: "fixed",
-            bottom: 70,
-            left: 30,
+            bottom: 60,
+            left: 20,
             zIndex: 999,
           }}
           id="debugger"

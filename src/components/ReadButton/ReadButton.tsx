@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useDisclosure } from "@mantine/hooks";
-import { IconButton } from "../EduButton";
 import { Modal, Stack } from "@mantine/core";
-import { IconBook } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
 import { ModelMapper } from "../QuestionLoader/ModelMapper";
 import { lousaWidth } from "~/constants/dimensions";
+import { ButtonRead } from "../Buttons";
 
 type Props = {
   question: Question;
@@ -20,11 +19,7 @@ export function ReadButton({ question }: Props) {
 
   return (
     <>
-      <IconButton
-        onClick={open}
-        icon={<IconBook size={34} />}
-        variant="yellow"
-      />
+      <ButtonRead onClick={open} />
 
       <Modal
         size="auto"
@@ -42,8 +37,8 @@ export function ReadButton({ question }: Props) {
           <ModelMapper
             commonProps={{
               question,
-              onAnswerChange: () => {},
-              onConditionsChange: () => {},
+              onAnswerChange: () => { },
+              onConditionsChange: () => { },
             }}
           />
         </Stack>

@@ -35,11 +35,23 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
     const lastActivePlanetIndex =
       track?.planetTrack?.findIndex((planet) => !planet.canExecutePlanet) || 0;
 
+    let nextEnabledPlanetIndex = 0;
+
+    if (track?.planetTrack) {
+      nextEnabledPlanetIndex =
+        lastActivePlanetIndex === -1
+          ? track?.planetTrack.length - 1
+          : 1
+    }
+
     const enabledPlanets = {
       ...track,
       planetTrack:
         lastActivePlanetIndex >= 0
-          ? track?.planetTrack?.slice(0, lastActivePlanetIndex + 1)
+          ? track?.planetTrack?.slice(
+              0,
+              lastActivePlanetIndex + nextEnabledPlanetIndex
+            )
           : track?.planetTrack || [],
     };
 

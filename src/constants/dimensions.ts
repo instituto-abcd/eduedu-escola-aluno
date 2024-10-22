@@ -44,7 +44,7 @@ export const MEDIA_QUERY = {
 export type MediaQueryKey = keyof typeof MEDIA_QUERY;
 
 // TODO: decidir entre media-query e breakpoints e padronizar com um
-export const BREAKPOINT: Record<MediaQueryKey, number> = {
+export const BREAKPOINT = {
   MOBILE: 360,
   TABLET_VERT: 768,
   TABLET_HORZ: 1024,

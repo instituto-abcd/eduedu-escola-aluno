@@ -8,8 +8,8 @@ import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
 
 type componentProps = {
-    planets: Array[];
-}
+  planets: SimplifiedPlanet[];
+};
 export function Planets({ planets }: componentProps) {
     const [embla, setEmbla] = useState<Embla>();
     return (

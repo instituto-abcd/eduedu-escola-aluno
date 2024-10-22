@@ -32,6 +32,17 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
     const { data: track, isLoading } = useGetPlanetTrack();
     const breakpoint = useCurrentBreakpoint();
 
+    const lastActivePlanetIndex =
+      track?.planetTrack?.findIndex((planet) => !planet.canExecutePlanet) || 0;
+
+    const enabledPlanets = {
+      ...track,
+      planetTrack:
+        lastActivePlanetIndex >= 0
+          ? track?.planetTrack?.slice(0, lastActivePlanetIndex + 1)
+          : track?.planetTrack || [],
+    };
+
     const gridSlides = useGridSlide({
       items: track?.planetTrack ?? [],
       layout: [1, 2],

@@ -91,9 +91,9 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
         >
           {breakpoint === "MOBILE"
             ? gridSlides.map((items, inx) => (
-              <Carousel.Slide key={inx}>
-                <Group position="center">
-                  {items.map((planet, i) => (
+                <Carousel.Slide key={inx}>
+                  <Group position="center">
+                    {items.map((planet, i) => (
                     <PlanetCard planet={planet} key={i} size={"small"} />
                   ))}
                 </Group>

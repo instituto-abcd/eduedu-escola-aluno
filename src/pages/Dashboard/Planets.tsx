@@ -4,8 +4,9 @@ import { Box, Title, Button, Image } from "@mantine/core";
 import arrowLeft from "~/assets/planets/arrowLeft.png";
 import arrowRight from "~/assets/planets/arrowRight.png";
 
-import { Rating } from '@smastrom/react-rating'
-import '@smastrom/react-rating/style.css'
+import { Rating } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
+import { SimplifiedPlanet } from '~/api/student';
 
 type componentProps = {
   planets: SimplifiedPlanet[];

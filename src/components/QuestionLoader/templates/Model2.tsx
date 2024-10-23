@@ -1,26 +1,14 @@
-import { Group, SimpleGrid, Stack, Text, Modal, Box } from "@mantine/core";
+import { Group, SimpleGrid, Stack, Text, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
-import {
-  CSSProperties,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption } from "~/api/exam";
-import { boardW, lousaWidth } from "~/constants/dimensions";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconButton } from "~/components/EduButton";
-import { PlayIcon } from "~/assets/icons/Play";
-import { useDisclosure } from '@mantine/hooks';
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { IconMessageCircle2 } from "@tabler/icons-react";
-import { useAudioStatus } from "~/stores/audio";
+import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
+import { BREAKPOINT } from "~/constants/dimensions";
 
 export function Model2({
   question,
@@ -28,20 +16,19 @@ export function Model2({
   onConditionsChange,
 }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
-    question.options.map(() => null)
+    question.options.map(() => null),
   );
 
   const handleDrop = useCallback(function (
     item: QuestionOption | null,
-    index: number
+    index: number,
   ) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft[index] = item ? { ...item, positionAnswer: index } : item;
-      })
+      }),
     );
-  },
-  []);
+  }, []);
 
   const {
     audioTitles,
@@ -49,24 +36,16 @@ export function Model2({
     audioTitleAutoplay,
     textTitles,
     getRule,
-    videoTitles
+    videoTitles,
   } = useQuestionHelper(question);
-  const audioStatus = useAudioStatus();
 
   /* Autoplay Aux Audio Logic */
   const auxAutoPlayRule = getRule("auxAutoPlay");
   const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
-  const noPaddingRule = getRule("noPadding")?.value === "true" ?? false;
+  const noPaddingRule = getRule("noPadding")?.value === "true";
 
   const mainAudioRef = useRef<AudioButtonRef>(null);
   const auxRef = useRef<AudioButtonRef>(null);
-  const [opened, { open, close }] = useDisclosure(false);
-
-  const styles: CSSProperties = {
-    gap: noPaddingRule ? 0 : 'inherit',
-    display: noPaddingRule ? 'flex' : 'grid',
-    justifyContent: noPaddingRule ? 'center' : 'auto',
-  };
 
   useEffect(() => {
     if (mainAudioRef.current && auxRef.current) {
@@ -85,26 +64,27 @@ export function Model2({
 
   useEffect(() => {
     onAnswerChange(
-      answers.filter((answer) => answer !== null) as QuestionOption[]
+      answers.filter((answer) => answer !== null) as QuestionOption[],
     );
   }, [answers]);
 
   const conditions = useMemo(
     () => [answers.every((answer) => answer !== null)],
-    [answers]
+    [answers],
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const auxiliarVideo = videoTitles.find((title) => title.description && title.description.includes('Botão'));
-  const playIcon = <PlayIcon width={lousaWidth * 0.03} height={lousaWidth * 0.03} />;
+  const auxVideo = videoTitles.find(
+    (title) => title.description && title.description.includes("Botão"),
+  );
 
-  const onCloseModal = () => {
-    if (audioStatus.isPlaying) audioStatus.setPlaying(false);
-    close();
-  }
+  const cardSize =
+    question.options.length > 3 ? question.options.length : undefined;
+
+  const { classes } = useStyles({ noPaddingRule });
 
   return (
     <>
@@ -115,47 +95,39 @@ export function Model2({
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url!}
-              variant={inx > 0 ? "yellow" : "gray"}
-              icon={inx > 0 ? <IconMessageCircle2 size={30} /> : undefined}
               ref={inx === 1 ? auxRef : mainAudioRef}
             />
           ))}
-          {auxiliarVideo && (
-            <IconButton
-              variant="blue"
-              icon={playIcon}
-              onClick={open}
-              disabled={false}
-            />
+          {auxVideo && (
+            <AuxiliaryVideoModal videoUrl={auxVideo.file_url ?? ""} />
           )}
         </Group>
       )}
 
-      <Stack my="auto">
+      <Stack className={classes.content}>
         {textTitles.map((title) => (
           <Text
-            size={boardW(24)}
+            size={24}
             color="dark.3"
             weight={500}
             key={title.description}
+            align="center"
           >
             {title.description}
           </Text>
         ))}
 
-        <SimpleGrid
-          cols={question.options.length}
-          spacing={boardW(20)}
-          style={styles}
-        >
+        <SimpleGrid cols={question.options.length} className={classes.dropzone}>
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
               onDrop={(item) => handleDrop(item, inx)}
               item={slot}
+              size={cardSize}
               replaceWith={
                 <DraggableCard
                   item={slot}
+                  size={cardSize}
                   image={slot?.image_url}
                   text={slot?.description}
                   sound={slot?.sound_url}
@@ -169,11 +141,15 @@ export function Model2({
           ))}
         </SimpleGrid>
 
-        <SimpleGrid cols={question.options.length} spacing={boardW(24)}>
+        <SimpleGrid
+          cols={question.options.length}
+          className={classes.optionGrid}
+        >
           {question.options.map((item) => (
             <DraggableCard
               item={item}
               key={item.position}
+              size={cardSize}
               image={item.image_url}
               text={item.description}
               sound={item.sound_url}
@@ -185,20 +161,41 @@ export function Model2({
           ))}
         </SimpleGrid>
       </Stack>
-      <Modal 
-        opened={opened} 
-        onClose={onCloseModal}
-        title="Vídeo Auxiliar" 
-        centered
-      >
-        <Box h="100%" w="100%" style={{ display: "flex", justifyContent: "center" }}>
-          <VideoPlayer 
-            src={auxiliarVideo?.file_url ?? ""}
-            autoPlay
-            style={{ height: boardW(500) }}
-          />
-        </Box>
-      </Modal>
     </>
   );
 }
+
+type StyleProps = { noPaddingRule: boolean };
+const useStyles = createStyles((theme, props: StyleProps) => ({
+  optionGrid: {
+    width: "100%",
+    gap: 16,
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      gap: 35,
+    },
+    [theme.fn.largerThan(BREAKPOINT.DESKTOP)]: {
+      placeItems: "center",
+    },
+  },
+  dropzone: {
+    width: "100%",
+    gap: props.noPaddingRule ? 0 : 16,
+    display: props.noPaddingRule ? "flex" : "grid",
+    justifyContent: props.noPaddingRule ? "center" : "auto",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      gap: props.noPaddingRule ? 0 : 35,
+    },
+    [theme.fn.largerThan(BREAKPOINT.DESKTOP)]: {
+      placeItems: "center",
+    },
+  },
+  content: {
+    marginBlock: "auto",
+    alignItems: "center",
+    width: "100%",
+    gap: 16,
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      gap: 35,
+    },
+  },
+}));

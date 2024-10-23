@@ -33,7 +33,7 @@ export function Model10({
     setAnswer(null);
   }, [question]);
 
-  const hideTextRule = getRule("options_hide_text")?.value === "true" ?? false;
+  const hideTextRule = getRule("options_hide_text")?.value === "true";
 
   const { classes } = useStyles();
 

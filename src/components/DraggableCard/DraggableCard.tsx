@@ -1,53 +1,12 @@
 import { Text, createStyles } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CSSProperties } from "react";
 import { useDrag } from "react-dnd";
-import { lousaWidth } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
 import { DebugProps } from "../Debug";
-
-const useStyles = createStyles((theme) => ({
-  card: {
-    width: (lousaWidth * 14) / 100,
-    height: (lousaWidth * 16) / 100,
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    boxShadow: "0 4px 0 0 #228BE6",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#228BE6",
-    display: "grid",
-    placeItems: "center",
-    position: "relative",
-  },
-  close: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    padding: 4,
-    backgroundColor: theme.colors.red[6],
-    color: "#fff",
-    borderRadius: "50%",
-    border: 0,
-    display: "grid",
-    placeItems: "center",
-    transform: "translate(50%, -50%)",
-    cursor: "pointer",
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: 600,
-    color: "#228BE6",
-    userSelect: "none",
-    pointerEvents: "none",
-  },
-  audio: {
-    display: "none",
-  },
-}));
+import { BREAKPOINT } from "~/constants/dimensions";
 
 type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   item: T;
@@ -60,6 +19,7 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   onClear?: () => void;
   debug?: DebugProps;
   noPaddingRule?: boolean | false;
+  size?: number;
 };
 
 export function DraggableCard<T>({
@@ -74,10 +34,9 @@ export function DraggableCard<T>({
   textClasses,
   itemType = "ANSWER_CARD",
   noPaddingRule,
+  size,
   ...props
 }: Props<T>) {
-  const { classes, cx } = useStyles();
-
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: itemType,
@@ -86,21 +45,13 @@ export function DraggableCard<T>({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [item]
+    [item],
   );
 
   const { sound, isPlaying } = useCreateSound({
     src: _sound ?? "",
     skipPlayStatus: true,
   });
-
-  const styles: CSSProperties = {
-    opacity: isDragging ? 0.4 : hidden ? 0.1 : 1,
-    cursor: isDragging ? "move" : "grab",
-    pointerEvents: hidden || isPlaying ? "none" : "all",
-    width: noPaddingRule ? "auto" : undefined,
-    padding: noPaddingRule ? 0 : 16,
-  };
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     if (sound) sound.play();
@@ -110,31 +61,22 @@ export function DraggableCard<T>({
   /* debug */
   const canDebug = useDebugInfo((s) => s.answer);
 
+  const { classes, cx } = useStyles({
+    isDragging,
+    noPadding: !!noPaddingRule,
+    hidden,
+    isPlaying,
+    size,
+  });
   return (
     <div
       {...props}
       className={cx(classes.card, props.className)}
-      style={styles}
       ref={disabled ? null : drag}
       onDragStart={onClick}
       onClickCapture={onClick}
     >
-      {image && (
-        <img
-          src={image}
-          style={{
-            pointerEvents: "none",
-            userSelect: "none",
-            maxWidth: "100%",
-            maxHeight: "100%",
-            marginInline: "auto",
-            objectFit: "cover",
-            position: "absolute",
-            inset: 0,
-            marginBlock: "auto",
-          }}
-        />
-      )}
+      {image && <img src={image} className={classes.img} />}
       {text && !image && (
         <Text className={cx(classes.text, textClasses)}>{text}</Text>
       )}
@@ -155,3 +97,77 @@ export function DraggableCard<T>({
     </div>
   );
 }
+
+type StyleProps = {
+  isDragging: boolean;
+  noPadding: boolean;
+  hidden?: boolean;
+  isPlaying: boolean;
+  size?: number;
+};
+
+const useStyles = createStyles((theme, props: StyleProps) => ({
+  card: {
+    borderRadius: 20,
+    backgroundColor: "#F8F6F2",
+    boxShadow: "0px 8px 0px 0px #4C494166",
+    display: "grid",
+    placeItems: "center",
+    position: "relative",
+    width: props.size ? `calc(max-content / ${props.size})` : 105,
+    height: 192,
+    opacity: props.isDragging ? 0.4 : props.hidden ? 0.1 : 1,
+    cursor: props.isDragging ? "move" : "grab",
+    pointerEvents: props.hidden || props.isPlaying ? "none" : "all",
+    padding: props.noPadding ? 0 : 16,
+    overflow: "hidden",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      width: props.size ? `calc(max-content / ${props.size})` : 190,
+      height: 192,
+      borderRadius: 45,
+    },
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      width: 190,
+    },
+  },
+  close: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    padding: 4,
+    backgroundColor: theme.colors.red[6],
+    color: "#fff",
+    borderRadius: "50%",
+    border: 0,
+    display: "grid",
+    placeItems: "center",
+    transform: "translate(50%, -50%)",
+    cursor: "pointer",
+    zIndex: 9,
+  },
+  text: {
+    fontSize: 30,
+    fontWeight: 600,
+    color: "#228BE6",
+    userSelect: "none",
+    pointerEvents: "none",
+  },
+  img: {
+    pointerEvents: "none",
+    userSelect: "none",
+    maxWidth: "100%",
+    maxHeight: props.noPadding ? "auto" : "100%",
+    marginInline: props.noPadding ? 0 : "auto",
+    width: props.noPadding ? "100%" : undefined,
+    overflow: props.noPadding ? "clip" : undefined,
+    padding: props.noPadding ? 0 : 6,
+    objectFit: "cover",
+    position: "absolute",
+    inset: 0,
+    marginBlock: "auto",
+    borderRadius: props.noPadding ? 0 : 20,
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      borderRadius: props.noPadding ? 0 : 45,
+    },
+  },
+}));

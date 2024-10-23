@@ -2,7 +2,7 @@
 name: TREINAMENTO - CI/CD Pipeline
 on:
   push:
-    branches: [staging]
+    branches: [treinamento]
 jobs:
   build-push:
     name: Build and Push Docker Image
@@ -53,7 +53,7 @@ jobs:
     name: Deploy New Revision
     needs: build-push
     runs-on: ubuntu-latest
-    environment: STAGING
+    environment: treinamento
     env:
       IMAGE_NAME: eduedu-escola-aluno-treinamento
       PROJECT_ID: edueduescola-teste

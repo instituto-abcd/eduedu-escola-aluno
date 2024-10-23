@@ -1,4 +1,4 @@
-import { createStyles, LoadingOverlay, Stack } from "@mantine/core";
+import { createStyles, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Question, QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
@@ -113,15 +113,20 @@ export function QuestionLoader({
 const useStyles = createStyles((theme) => ({
   container: {
     flexGrow: 1,
-    paddingBlock: 12,
     alignItems: "center",
     backgroundColor: "#AFCBE0",
+    padding: 12,
+    "&>*": {
+      maxWidth: 1280,
+    },
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      padding: 30,
+    },
   },
   continue: {
     marginTop: "auto",
     [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
       alignSelf: "end",
-      marginRight: 30,
     },
   },
 }));

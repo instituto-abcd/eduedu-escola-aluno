@@ -53,7 +53,7 @@ jobs:
     name: Deploy New Revision
     needs: build-push
     runs-on: ubuntu-latest
-    environment: STAGING
+    environment: staging
     env:
       IMAGE_NAME: eduedu-escola-aluno-staging
       PROJECT_ID: edueduescola-teste

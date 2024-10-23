@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useDebugModelQuestions } from "~/api/debug";
-import { boardW } from "~/constants/dimensions";
 import { Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";

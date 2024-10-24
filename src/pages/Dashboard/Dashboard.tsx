@@ -1,4 +1,4 @@
-import { BackgroundImage, Group, Stack, createStyles } from "@mantine/core";
+import { BackgroundImage, Stack, createStyles } from "@mantine/core";
 import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
@@ -34,13 +34,6 @@ const useStyles = createStyles({
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
       display: "flex",
     },
-
-    "svg:nth-of-type(1)": {
-      transform: "rotate(90deg)",
-    },
-    "svg:nth-of-type(2)": {
-      transform: "rotate(-90deg)",
-    },
   },
 });
 
@@ -60,14 +53,26 @@ export function DashboardPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("planets");
 
   return (
-    <BackgroundImage src={bg} className={classes.bg}>
-      <Stack className={classes.container} py="md">
-        <ViewModeToggle onModeChanged={setViewMode} mode={viewMode} />
+    <BackgroundImage
+      src={bg}
+      className={classes.bg}
+    >
+      <Stack
+        className={classes.container}
+        py="md"
+      >
+        <ViewModeToggle
+          onModeChanged={setViewMode}
+          mode={viewMode}
+        />
         <Stack
           style={{ height: "100%", maxHeight: "calc(100vh - 200px)" }}
           justify="center"
         >
-          <PlanetTrack visible={viewMode === "planets"} ref={trackRef} />
+          <PlanetTrack
+            visible={viewMode === "planets"}
+            ref={trackRef}
+          />
           <AwardsGrid visible={viewMode === "awards"} />
         </Stack>
       </Stack>
@@ -98,7 +103,8 @@ export function DashboardPage() {
               height={80}
               onClick={() => trackRef.current?.embla?.scrollNext()}
             />
-        </Group>
+          </div>
+        </>
       )}
       <PlanetCompletedFeedback onClose={onFeedbackEnd} />
     </BackgroundImage>

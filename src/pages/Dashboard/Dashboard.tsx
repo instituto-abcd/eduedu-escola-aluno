@@ -28,12 +28,8 @@ const useStyles = createStyles({
   controls: {
     display: "none",
     position: "absolute",
-    inset: 0,
-    top: "auto",
-    width: "100%",
-    padding: 20,
-    maxWidth: 1000,
-    marginInline: "auto",
+    bottom: "5%",
+    cursor: "pointer",
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
       display: "flex",

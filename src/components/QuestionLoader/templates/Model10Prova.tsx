@@ -1,16 +1,13 @@
-import { Box, Group, Image, SimpleGrid, Stack, Title } from "@mantine/core";
+import { createStyles, ScrollArea, SimpleGrid, Title } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
-import {
-  lousaPaddingTop,
-  lousaWidth,
-  textoMedium,
-} from "~/constants/dimensions";
+import { BREAKPOINT, textoMedium } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { AudioContainer } from "~/components/AudioContainer";
+import { IconVolume } from "@tabler/icons-react";
 
 export function Model10Prova({
   question,
@@ -19,7 +16,10 @@ export function Model10Prova({
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, hasAudioTitle, getRule } =
+    useQuestionHelper(question);
+
+  const hideTextRule = getRule("options_hide_text")?.value === "true";
 
   useEffect(() => {
     setAnswer(null);
@@ -35,60 +35,148 @@ export function Model10Prova({
     onAnswerChange(answer ? [answer] : []);
   }, [answer]);
 
+  const { classes } = useStyles();
+
   return (
-    <>
-      <Group mx="auto">
-        {audioTitles.map((title) => (
-          <AudioButton
-            src={title.file_url ?? ""}
-            key={title.file_url}
-            autoPlay={true}
-          />
-        ))}
+    <div className={classes.container}>
+      {hasAudioTitle && (
+        <AudioContainer question={question} audioTitles={audioTitles}>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </AudioContainer>
+      )}
 
-        {auxQuestion && <ReadButton question={auxQuestion} />}
-      </Group>
+      {textTitles.map((title) => (
+        <Title
+          key={title.description}
+          align="center"
+          color="dark.3"
+          size={textoMedium}
+          mb={20}
+        >
+          {title.description}
+        </Title>
+      ))}
 
-      <Stack my="auto" pt={lousaPaddingTop}>
-        {textTitles.map((title) => (
-          <Title
-            key={title.description}
-            align="center"
-            color="dark.3"
-            size={textoMedium}
-            mb={20}
-          >
-            {title.description}
-          </Title>
-        ))}
-
-        <Group mx="auto" spacing={(lousaWidth * 5) / 100}>
-          <Box maw={(lousaWidth * 50) / 100}>
-            {imageTitles.map((title) => (
-              <Image
-                src={title.file_url}
-                alt={title.description}
-                width={((lousaWidth * 30) / 100).toString()}
-                key={title.file_url}
-              />
+      <div className={classes.content}>
+        {imageTitles.length === 0 &&
+          textTitles
+            .filter(
+              (title) => title.description && !title.placeholder.includes("ID"),
+            )
+            .map((title, inx) => (
+              <ScrollArea mah={400} w={350} type="auto" key={inx} px="xs">
+                <Title
+                  color="dark.3"
+                  size={title.description.split(" ").length > 1 ? 22 : 70}
+                  align="center"
+                  dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+                />
+              </ScrollArea>
             ))}
-          </Box>
-          <Box maw={(lousaWidth * 50) / 100}>
-            <SimpleGrid cols={2}>
-              {question.options.map((option) => (
-                <OptionButton
-                  key={option.description}
-                  onClick={() => setAnswer(option)}
-                  data-selected={answer?.position === option.position}
-                  option={option}
-                >
-                  {option.description}
-                </OptionButton>
-              ))}
-            </SimpleGrid>
-          </Box>
-        </Group>
-      </Stack>
-    </>
+
+        <ImageTitle titles={imageTitles} />
+
+        <SimpleGrid cols={2}>
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={inx}
+              onClick={() =>
+                setAnswer({
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? +option.position
+                    : undefined,
+                })
+              }
+              data-selected={
+                JSON.stringify(answer) ===
+                JSON.stringify({
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? option.position
+                    : undefined,
+                })
+              }
+              option={option}
+            >
+              {(!option.image_url || !hideTextRule) && (
+                <>{option.description}</>
+              )}
+
+              {option.image_url && (
+                <img
+                  src={option.image_url}
+                  alt={option.description}
+                  width={100}
+                  style={{
+                    maxHeight: 110,
+                    objectFit: "contain",
+                    marginInline: "auto",
+                  }}
+                />
+              )}
+              {!option.image_url && option.sound_url && !option.description && (
+                <IconVolume size={80} />
+              )}
+            </OptionButton>
+          ))}
+        </SimpleGrid>
+      </div>
+    </div>
   );
 }
+
+function ImageTitle({ titles }: { titles: QuestionTitle[] }) {
+  const { classes } = useStyles();
+  return (
+    <div className={classes.ImageTitle_container}>
+      {titles.map((title) => (
+        <img
+          src={title.file_url!}
+          alt={title.description}
+          key={title.file_url}
+          height={300}
+        />
+      ))}
+    </div>
+  );
+}
+
+const useStyles = createStyles((theme) => ({
+  ImageTitle_container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    img: {
+      objectFit: "contain",
+      maxWidth: "90%",
+      width: 295,
+      maxHeight: 300,
+    },
+  },
+
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "100%",
+    gap: 20,
+    marginBlock: "auto",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      flexDirection: "row",
+      gap: 80,
+    },
+  },
+
+  container: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {},
+  },
+}));

@@ -9,9 +9,10 @@ import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 const modeIndex: Record<ViewMode, number> = {
   planets: 0,
   awards: 1,
+  list: 2,
 };
 
-export type ViewMode = "planets" | "awards";
+export type ViewMode = "planets" | "awards" | "list";
 
 type Props = {
   forceBehavior?: MediaQueryKey;
@@ -60,7 +61,7 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
         width={241}
         height={180}
         src={atividades}
-        onClick={() => onModeChanged("planets")}
+        onClick={() => onModeChanged(mode === "planets" ? "list" : "planets")}
         className={classes.img}
       />
       <Image

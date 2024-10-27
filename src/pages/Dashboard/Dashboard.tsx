@@ -3,7 +3,7 @@ import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
 import { AwardsGrid } from "~/components/AwardsGrid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ViewModeToggle, type ViewMode } from "~/components/ViewModeToggle";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { MEDIA_QUERY } from "~/constants/dimensions";
@@ -39,11 +39,21 @@ const useStyles = createStyles({
       display: "flex",
     },
 
-    "svg:nth-of-type(1)": {
+    button: {
+      background: "transparent",
+      border: 0,
+      cursor: "pointer",
+    },
+
+    "button:nth-of-type(1)": {
       transform: "rotate(90deg)",
     },
-    "svg:nth-of-type(2)": {
+    "button:nth-of-type(2)": {
       transform: "rotate(-90deg)",
+    },
+    "button:nth-of-type(2)[disabled]": {
+      cursor: "not-allowed",
+      opacity: 0.5,
     },
   },
 });
@@ -92,14 +102,27 @@ export function DashboardPage() {
   }, [currentPlanetIndex]);
 
   return (
-    <BackgroundImage src={bg} className={classes.bg}>
-      <Stack className={classes.container} py="md">
-        <ViewModeToggle onModeChanged={setViewMode} mode={viewMode} />
+    <BackgroundImage
+      src={bg}
+      className={classes.bg}
+    >
+      <Stack
+        className={classes.container}
+        py="md"
+      >
+        <ViewModeToggle
+          onModeChanged={setViewMode}
+          mode={viewMode}
+        />
         <Stack
           style={{ height: "100%", maxHeight: "calc(100vh - 200px)" }}
           justify="center"
         >
-          <PlanetTrack visible={viewMode === "planets"} ref={trackRef} />
+          <PlanetTrack
+            visible={viewMode === "planets"}
+            ref={trackRef}
+          />
+
           <AwardsGrid visible={viewMode === "awards"} />
         </Stack>
       </Stack>
@@ -113,7 +136,6 @@ export function DashboardPage() {
             <ArrowDownBtn
               width={80}
               height={80}
-            onClick={() => trackRef.current?.embla?.scrollPrev()}
             />
           </button>
           <button
@@ -123,7 +145,6 @@ export function DashboardPage() {
             <ArrowDownBtn
               width={80}
               height={80}
-            onClick={() => trackRef.current?.embla?.scrollNext()}
             />
           </button>
         </Group>

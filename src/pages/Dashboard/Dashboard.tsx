@@ -50,6 +50,9 @@ const useStyles = createStyles({
 
 export function DashboardPage() {
   const trackRef = useRef<PlanetTrackRef>(null);
+  const [currentPlanetIndex, setCurrentPlanetIndex] = useState(0);
+  const [isBtnNextPlanetDisabled, setIsBtnNextPlanetDisabled] = useState(false);
+
   function onFeedbackEnd(lastPlanetId: string | null) {
     if (!lastPlanetId) return;
 
@@ -62,6 +65,31 @@ export function DashboardPage() {
 
   const { classes } = useStyles();
   const [viewMode, setViewMode] = useState<ViewMode>("planets");
+
+  const nextPlanet = () => {
+    trackRef.current?.embla?.scrollNext();
+
+    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+  };
+
+  const prevPlanet = () => {
+    trackRef.current?.embla?.scrollPrev();
+
+    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+  };
+
+  useEffect(() => {
+    if (trackRef.current && trackRef.current.track) {
+      const nextPlanetIndex =
+        currentPlanetIndex === trackRef.current.track.length - 1
+          ? trackRef.current.track.length - 1
+          : currentPlanetIndex + 1;
+
+      setIsBtnNextPlanetDisabled(
+        trackRef.current.track[nextPlanetIndex]?.canExecutePlanet === false
+      );
+    }
+  }, [currentPlanetIndex]);
 
   return (
     <BackgroundImage src={bg} className={classes.bg}>

@@ -104,17 +104,28 @@ export function DashboardPage() {
         </Stack>
       </Stack>
       {viewMode === "planets" && (
-        <Group className={classes.controls} noWrap position="apart">
-          <ArrowDownBtn
-            width={80}
-            height={80}
+        <Group
+          className={classes.controls}
+          noWrap
+          position="apart"
+        >
+          <button onClick={prevPlanet}>
+            <ArrowDownBtn
+              width={80}
+              height={80}
             onClick={() => trackRef.current?.embla?.scrollPrev()}
-          />
-          <ArrowDownBtn
-            width={80}
-            height={80}
+            />
+          </button>
+          <button
+            onClick={nextPlanet}
+            disabled={isBtnNextPlanetDisabled}
+          >
+            <ArrowDownBtn
+              width={80}
+              height={80}
             onClick={() => trackRef.current?.embla?.scrollNext()}
-          />
+            />
+          </button>
         </Group>
       )}
       <PlanetCompletedFeedback onClose={onFeedbackEnd} />

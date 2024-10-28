@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { ViewModeToggle, type ViewMode } from "~/components/ViewModeToggle";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { MEDIA_QUERY } from "~/constants/dimensions";
+import { PlanetsGrid } from "~/components/PlanetsGrid";
 
 const useStyles = createStyles({
   bg: {
@@ -73,6 +74,10 @@ export function DashboardPage() {
         >
           <PlanetTrack visible={viewMode === "planets"} ref={trackRef} />
           <AwardsGrid visible={viewMode === "awards"} />
+          <PlanetsGrid
+            visible={viewMode === "list"}
+            setViewMode={setViewMode}
+          />
         </Stack>
       </Stack>
       {viewMode === "planets" && (

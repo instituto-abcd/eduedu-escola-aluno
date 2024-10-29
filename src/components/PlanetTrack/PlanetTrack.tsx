@@ -32,19 +32,8 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
     const { data: track, isLoading } = useGetPlanetTrack();
     const breakpoint = useCurrentBreakpoint();
 
-    const lastActivePlanetIndex =
-      track?.planetTrack?.findIndex((planet) => !planet.canExecutePlanet) || 0;
-
-    const enabledPlanets = {
-      ...track,
-      planetTrack:
-        lastActivePlanetIndex >= 0
-          ? track?.planetTrack?.slice(0, lastActivePlanetIndex + 1)
-          : track?.planetTrack || [],
-    };
-
     const gridSlides = useGridSlide({
-      items: enabledPlanets?.planetTrack ?? [],
+      items: track?.planetTrack ?? [],
       layout: [1, 2],
     });
 
@@ -91,6 +80,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
           className={classes.carousel}
           onSlideChange={setActiveSlide}
           {...carouselProps[breakpoint]}
+          
         >
           {breakpoint === 'MOBILE'
             ? gridSlides.map((items, inx) => (
@@ -106,7 +96,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
                   </Group>
                 </Carousel.Slide>
               ))
-            : enabledPlanets?.planetTrack?.map((planet, i) => (
+            : track?.planetTrack?.map((planet, i) => (
                 <Carousel.Slide key={i}>
                   <Group position="center">
                     <PlanetCard

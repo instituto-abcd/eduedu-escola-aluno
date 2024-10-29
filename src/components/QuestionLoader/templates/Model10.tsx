@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { boardW, BREAKPOINT } from "~/constants/dimensions";
+import { BREAKPOINT } from "~/constants/dimensions";
 import { createStyles, ScrollArea, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
@@ -51,13 +51,13 @@ export function Model10({
             (title) => title.description && !title.placeholder.includes("ID"),
           )
           .map((title, inx) => (
-            <ScrollArea mah={boardW(100)} type="auto" key={inx} px="xs">
+            <ScrollArea mah={100} type="auto" key={inx} px="xs">
               <Title
                 color="dark.3"
-                size={boardW(22)}
+                size={22}
                 align="center"
                 dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-                px={boardW(10)}
+                px={10}
               />
             </ScrollArea>
           ))}
@@ -69,20 +69,10 @@ export function Model10({
               (title) => title.description && !title.placeholder.includes("ID"),
             )
             .map((title, inx) => (
-              <ScrollArea
-                mah={boardW(400)}
-                w={boardW(350)}
-                type="auto"
-                key={inx}
-                px="xs"
-              >
+              <ScrollArea mah={400} w={350} type="auto" key={inx} px="xs">
                 <Title
                   color="dark.3"
-                  size={
-                    title.description.split(" ").length > 1
-                      ? boardW(22)
-                      : boardW(70)
-                  }
+                  size={title.description.split(" ").length > 1 ? 22 : 70}
                   align="center"
                   dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
                 />
@@ -122,16 +112,16 @@ export function Model10({
                 <img
                   src={option.image_url}
                   alt={option.description}
-                  width={boardW(100)}
+                  width={100}
                   style={{
-                    maxHeight: boardW(110),
+                    maxHeight: 110,
                     objectFit: "contain",
                     marginInline: "auto",
                   }}
                 />
               )}
               {!option.image_url && option.sound_url && !option.description && (
-                <IconVolume size={boardW(80)} />
+                <IconVolume size={80} />
               )}
             </OptionButton>
           ))}

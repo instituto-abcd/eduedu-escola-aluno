@@ -12,7 +12,6 @@ import {
   IconRotateClockwise,
 } from "@tabler/icons-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { boardW } from "~/constants/dimensions";
 import { useAudioStatus } from "~/stores/audio";
 import { useDebugInfo } from "~/stores/debug-info";
 
@@ -21,7 +20,7 @@ const useStyles = createStyles({
     position: "relative",
   },
   video: {
-    height: boardW(250),
+    maxWidth: "100%",
   },
   controls: {
     position: "absolute",

@@ -16,17 +16,6 @@ export function QuestionView() {
 
   return (
     <>
-      <Stack
-        h="100%"
-        w="100%"
-        align="center"
-        spacing={boardW(40)}
-        style={{ position: "relative" }}
-      >
-        {question && (
-          <QuestionLoader question={question} answerCallback={() => null} />
-        )}
-      </Stack>
       <Button
         component={Link}
         to="/debug/questions"

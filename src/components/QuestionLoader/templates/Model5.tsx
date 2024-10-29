@@ -3,36 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
 import { ReadButton } from "~/components/ReadButton";
-
-const useStyles = createStyles({
-  option: {
-    width: boardW(140),
-    height: boardW(140),
-
-    img: {
-      maxWidth: boardW(100),
-      maxHeight: boardW(100),
-      objectFit: "contain",
-    },
-  },
-
-  textOption: {
-    width: "100%",
-    height: "min-content",
-    paddingBlock: boardW(16),
-    paddingInline: boardW(26),
-    fontSize: boardW(20),
-  },
-
-  title: {
-    fontSize: boardW(26),
-  },
-});
+import { AudioContainer } from "~/components/AudioContainer";
+import { BREAKPOINT } from "~/constants/dimensions";
+import { ImageTitle } from "~/components/question-components";
+import { VideoTitle } from "~/components/question-components/VideoTitle";
 
 export function Model5({
   question,
@@ -58,8 +36,8 @@ export function Model5({
       if (multipleAnswer.includes(option)) {
         setMultipleAnswer(
           multipleAnswer.filter(
-            (opt) => JSON.stringify(opt) !== JSON.stringify(option)
-          )
+            (opt) => JSON.stringify(opt) !== JSON.stringify(option),
+          ),
         );
       } else {
         setMultipleAnswer([...multipleAnswer, option]);
@@ -77,7 +55,7 @@ export function Model5({
 
   const hasVideo = videoTitles.some((title) => title.file_url);
   const hasText = textTitles.some(
-    (title) => !title.placeholder?.startsWith("ID")
+    (title) => !title.placeholder?.startsWith("ID"),
   );
   const hasImage = imageTitles.some((title) => title.file_url);
   const hasSupportText = supportText.some((title) => !!title.description);
@@ -103,7 +81,7 @@ export function Model5({
       question.multiplesAnswer
         ? [multipleAnswer.length > 0]
         : [Boolean(answer)],
-    [answer, multipleAnswer]
+    [answer, multipleAnswer],
   );
 
   useEffect(() => {
@@ -111,30 +89,17 @@ export function Model5({
   }, [conditions]);
 
   return (
-    <>
-      {(hasAudioTitle || hasSupportText) && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              src={title.file_url ?? ""}
-              key={inx}
-              autoPlay={audioTitleAutoplay(inx)}
-            />
-          ))}
-          {auxQuestion && <ReadButton question={auxQuestion} />}
-        </Group>
-      )}
+    <div className={classes.container}>
+      {hasAudioTitle ||
+        (hasSupportText && (
+          <AudioContainer question={question} audioTitles={audioTitles}>
+            {auxQuestion && <ReadButton question={auxQuestion} />}
+          </AudioContainer>
+        ))}
 
-      <Group
-        spacing={boardW(80)}
-        my="auto"
-        w="100%"
-        position="center"
-        noWrap
-        px={8}
-      >
-        <Stack w="45%" align="center">
-          {!hasVideo && hasText && (
+      <div className={classes.content}>
+        {!hasVideo && hasText && (
+          <div className={classes.textBubble}>
             <Title
               color="dark.3"
               align="center"
@@ -145,61 +110,108 @@ export function Model5({
                   textTitles.find(
                     (title) =>
                       !title.placeholder?.startsWith("ID") ||
-                      !title.placeholder?.includes("ID")
+                      !title.placeholder?.includes("ID"),
                   )?.description ?? "",
               }}
               className={classes.title}
             />
-          )}
-          {hasImage &&
-            imageTitles
-              .filter((title) => title.file_url)
-              .map((title, inx) => (
-                <img
-                  src={title.file_url!}
-                  width={boardW(300)}
-                  style={{ maxHeight: boardW(400) }}
-                  key={inx}
-                />
-              ))}
-          {videoTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <VideoPlayer src={title.file_url!} key={inx} autoPlay />
-            ))}
-        </Stack>
+          </div>
+        )}
 
-        <SimpleGrid
-          cols={question.options.some((op) => !!op.image_url) ? 2 : 1}
-          w="fit-content"
-        >
-          {question.options.map((option, inx) =>
-            option.image_url ? (
-              <OptionButton
-                key={inx}
-                onClick={() => handleOptionClick(option)}
-                data-selected={getSelectedState(option)}
-                option={option}
-                className={classes.option}
-              >
-                <img src={option.image_url} alt={option.description} />
-                {option.description}
-              </OptionButton>
-            ) : (
-              <TextOptionButton
-                key={inx}
-                onClick={() => handleOptionClick(option)}
-                data-selected={getSelectedState(option)}
-                className={classes.textOption}
-                option={option}
-                debug={{ size: 8 }}
-              >
-                {option.description}
-              </TextOptionButton>
-            )
-          )}
-        </SimpleGrid>
-      </Group>
-    </>
+        <ImageTitle titles={imageTitles} />
+
+        <VideoTitle titles={videoTitles} />
+      </div>
+      <SimpleGrid
+        cols={question.options.some((op) => !!op.image_url) ? 2 : 1}
+        className={classes.grid}
+      >
+        {question.options.map((option, inx) =>
+          option.image_url ? (
+            <OptionButton
+              key={inx}
+              onClick={() => handleOptionClick(option)}
+              data-selected={getSelectedState(option)}
+              option={option}
+              className={classes.option}
+            >
+              <img src={option.image_url} alt={option.description} />
+              {option.description}
+            </OptionButton>
+          ) : (
+            <TextOptionButton
+              key={inx}
+              onClick={() => handleOptionClick(option)}
+              data-selected={getSelectedState(option)}
+              className={classes.textOption}
+              option={option}
+              debug={{ size: 8 }}
+            >
+              {option.description}
+            </TextOptionButton>
+          ),
+        )}
+      </SimpleGrid>
+    </div>
   );
 }
+
+const useStyles = createStyles((theme) => ({
+  option: {
+    width: 140,
+    height: 140,
+
+    img: {
+      maxWidth: 100,
+      maxHeight: 100,
+      objectFit: "contain",
+    },
+  },
+
+  textOption: {
+    width: "100%",
+    height: "min-content",
+    paddingBlock: 16,
+    paddingInline: 26,
+    fontSize: 20,
+  },
+
+  title: {
+    fontSize: 26,
+  },
+
+  container: {
+    height: "100%",
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    gap: 20,
+  },
+
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 25,
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      flexDirection: "row",
+    },
+  },
+
+  grid: {
+    placeItems: "center",
+  },
+
+  textBubble: {
+    backgroundColor: "white",
+    borderRadius: 45,
+    padding: 30,
+    dislay: "flex",
+    flexDirection: "column",
+    gap: 30,
+    maxHeight: 250,
+    overflowY: "scroll",
+  },
+}));

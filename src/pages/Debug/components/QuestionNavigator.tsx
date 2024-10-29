@@ -18,30 +18,26 @@ export function QuestionNavigator({
   }, [current]);
 
   return (
-    <Paper p="sm" withBorder shadow="md">
-      <Stack align="flex-end">
-        <Text color="dimmed" size={10} weight={700} align="center" w="100%">
-          © QUESTION NAVIGATOR 5000 (beta)
-        </Text>
-        <Select
-          data={questions.map((q, inx) => ({
-            label: `${inx} — ${q.model_id}`,
-            value: inx.toString(),
-          }))}
-          label="Navegar questões"
-          value={value}
-          onChange={setValue}
-          searchable
-        />
-        <Button
-          onClick={() => value && onNavigate(+value)}
-          size="sm"
-          compact
-          color="teal"
-        >
-          Go →
-        </Button>
-      </Stack>
-    </Paper>
+    <Stack align="flex-end">
+      <Select
+        data={questions.map((q, inx) => ({
+          label: `${inx} — ${q.model_id}`,
+          value: inx.toString(),
+        }))}
+        label="Navegar questões"
+        value={value}
+        onChange={setValue}
+        searchable
+      />
+      <Button
+        onClick={() => value && onNavigate(+value)}
+        size="sm"
+        compact
+        color="teal"
+        fullWidth
+      >
+        Go
+      </Button>
+    </Stack>
   );
 }

@@ -3,7 +3,7 @@ import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
 import { AwardsGrid } from "~/components/AwardsGrid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ViewModeToggle, type ViewMode } from "~/components/ViewModeToggle";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { MEDIA_QUERY } from "~/constants/dimensions";
@@ -39,17 +39,30 @@ const useStyles = createStyles({
       display: "flex",
     },
 
-    "svg:nth-of-type(1)": {
+    button: {
+      background: "transparent",
+      border: 0,
+      cursor: "pointer",
+    },
+
+    "button:nth-of-type(1)": {
       transform: "rotate(90deg)",
     },
-    "svg:nth-of-type(2)": {
+    "button:nth-of-type(2)": {
       transform: "rotate(-90deg)",
+    },
+    "button:nth-of-type(2)[disabled]": {
+      cursor: "not-allowed",
+      opacity: 0.5,
     },
   },
 });
 
 export function DashboardPage() {
   const trackRef = useRef<PlanetTrackRef>(null);
+  const [currentPlanetIndex, setCurrentPlanetIndex] = useState(0);
+  const [isBtnNextPlanetDisabled, setIsBtnNextPlanetDisabled] = useState(false);
+
   function onFeedbackEnd(lastPlanetId: string | null) {
     if (!lastPlanetId) return;
 
@@ -63,30 +76,77 @@ export function DashboardPage() {
   const { classes } = useStyles();
   const [viewMode, setViewMode] = useState<ViewMode>("planets");
 
+  const nextPlanet = () => {
+    trackRef.current?.embla?.scrollNext();
+
+    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+  };
+
+  const prevPlanet = () => {
+    trackRef.current?.embla?.scrollPrev();
+
+    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+  };
+
+  useEffect(() => {
+    if (trackRef.current && trackRef.current.track) {
+      const nextPlanetIndex =
+        currentPlanetIndex === trackRef.current.track.length - 1
+          ? trackRef.current.track.length - 1
+          : currentPlanetIndex + 1;
+
+      setIsBtnNextPlanetDisabled(
+        trackRef.current.track[nextPlanetIndex]?.canExecutePlanet === false
+      );
+    }
+  }, [currentPlanetIndex]);
+
   return (
-    <BackgroundImage src={bg} className={classes.bg}>
-      <Stack className={classes.container} py="md">
-        <ViewModeToggle onModeChanged={setViewMode} mode={viewMode} />
+    <BackgroundImage
+      src={bg}
+      className={classes.bg}
+    >
+      <Stack
+        className={classes.container}
+        py="md"
+      >
+        <ViewModeToggle
+          onModeChanged={setViewMode}
+          mode={viewMode}
+        />
         <Stack
           style={{ height: "100%", maxHeight: "calc(100vh - 200px)" }}
           justify="center"
         >
-          <PlanetTrack visible={viewMode === "planets"} ref={trackRef} />
+          <PlanetTrack
+            visible={viewMode === "planets"}
+            ref={trackRef}
+          />
+
           <AwardsGrid visible={viewMode === "awards"} />
         </Stack>
       </Stack>
       {viewMode === "planets" && (
-        <Group className={classes.controls} noWrap position="apart">
-          <ArrowDownBtn
-            width={80}
-            height={80}
-            onClick={() => trackRef.current?.embla?.scrollPrev()}
-          />
-          <ArrowDownBtn
-            width={80}
-            height={80}
-            onClick={() => trackRef.current?.embla?.scrollNext()}
-          />
+        <Group
+          className={classes.controls}
+          noWrap
+          position="apart"
+        >
+          <button onClick={prevPlanet}>
+            <ArrowDownBtn
+              width={80}
+              height={80}
+            />
+          </button>
+          <button
+            onClick={nextPlanet}
+            disabled={isBtnNextPlanetDisabled}
+          >
+            <ArrowDownBtn
+              width={80}
+              height={80}
+            />
+          </button>
         </Group>
       )}
       <PlanetCompletedFeedback onClose={onFeedbackEnd} />

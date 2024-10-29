@@ -34,13 +34,6 @@ export const boardW = (value: number) => {
 };
 
 // Breakpoints
-export const BREAKPOINT = {
-  TABLET_VERT: 768,
-  TABLET_HORZ: 1024,
-  DESKTOP: 1440,
-  TV: 1920,
-} as const;
-
 export const MEDIA_QUERY = {
   MOBILE: "(max-width: 360px)",
   TABLET_VERT: "(min-width: 768px)",
@@ -49,3 +42,11 @@ export const MEDIA_QUERY = {
 } as const;
 
 export type MediaQueryKey = keyof typeof MEDIA_QUERY;
+
+// TODO: decidir entre media-query e breakpoints e padronizar com um
+export const BREAKPOINT = {
+  MOBILE: 360,
+  TABLET_VERT: 768,
+  TABLET_HORZ: 1024,
+  DESKTOP: 1024,
+} as const;

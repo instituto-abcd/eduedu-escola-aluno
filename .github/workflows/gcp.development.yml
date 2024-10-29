@@ -46,17 +46,6 @@ jobs:
           docker tag $IMAGE_NAME:latest $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
           docker push $REGISTRY_PREFIX/$PROJECT_ID/$REGISTRY_NAME/$IMAGE_NAME:${{github.run_number}}
 
-      - name: Send Build Error Message
-        if: failure()
-        uses: appleboy/discord-action@master
-        with:
-          webhook_id: ${{ secrets.WEBHOOK_ID }}
-          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-          color: "#ff0000"
-          username: "GitHub Bot"
-          avatar_url: https://i.imgur.com/Kvn45ev.png
-          message: Portal Aluno | Algo de errado não está certo com o código... | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
     outputs:
       git-tag: ${{ steps.increment-git-tag.outputs.git-tag }}
 
@@ -64,7 +53,7 @@ jobs:
     name: Deploy New Revision
     needs: build-push
     runs-on: ubuntu-latest
-    environment: DEVELOPMENT
+    environment: development
     env:
       IMAGE_NAME: eduedu-escola-aluno-development
       PROJECT_ID: edueduescola-teste
@@ -89,13 +78,3 @@ jobs:
 
       - name: "App URL"
         run: 'curl "${{ steps.deploy.outputs.url }}"'
-
-      - name: Send Success Message
-        uses: appleboy/discord-action@master
-        with:
-          webhook_id: ${{ secrets.WEBHOOK_ID }}
-          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
-          color: "#00ba55"
-          username: "GitHub Bot"
-          avatar_url: https://i.imgur.com/Kvn45ev.png
-          message: Portal Aluno | Commit '${{ github.event.head_commit.message }}' disponível no ambiente de DEV | ${{ secrets.APP_URL }}

@@ -1,14 +1,15 @@
-import { LoadingOverlay, Stack } from "@mantine/core";
+import { createStyles, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Question, QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
 import { useGetExamQuestion } from "~/api/student";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { EduButton } from "../EduButton";
 import { ModelMapper } from "./ModelMapper";
 import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
 import { modelIsAutoAdvance } from "~/constants";
+import { ButtonContinue } from "../Buttons";
+import { BREAKPOINT } from "~/constants/dimensions";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -29,7 +30,7 @@ export function QuestionLoader({
   const { hasAuxQuestion, auxQuestionId, skipFeedback } =
     useQuestionHelper(question);
 
-  const { data: auxQuestion, isFetching: isLoadingAux } = usePlanetGetQuestion(
+  const { data: auxQuestion } = usePlanetGetQuestion(
     question.planet_id,
     auxQuestionId ?? "",
     {
@@ -44,15 +45,13 @@ export function QuestionLoader({
     onConditionsChange: setConditions,
   };
 
-  const { mutate: mutateExam, isLoading: isLoadingExam } = useGetExamQuestion({
+  const { mutate: mutateExam } = useGetExamQuestion({
     onSuccess: (q) => answerCallback(q, skipFeedback),
   });
 
-  const { mutate: mutatePlanet, isLoading: isLoadingPlanet } = usePlanetAnswer({
+  const { mutate: mutatePlanet } = usePlanetAnswer({
     onSuccess: (q) => answerCallback(q, skipFeedback),
   });
-
-  const isLoading = isLoadingExam || isLoadingPlanet || isLoadingAux;
 
   function submitAnswer() {
     const isExam = !question.planet_id;
@@ -96,20 +95,38 @@ export function QuestionLoader({
     submitAnswer();
   }, [continueDisabled]);
 
+  const { classes } = useStyles();
+
   return (
-    <Stack
-      w="100%"
-      h="100%"
-      align="center"
-      style={{ position: "relative" }}
-      pb={12}
-    >
+    <Stack className={classes.container} id="question-loader">
       <ModelMapper commonProps={commonProps} />
 
-      <EduButton disabled={continueDisabled} onClick={submitAnswer}>
-        Continuar
-      </EduButton>
-      <LoadingOverlay visible={isLoading} />
+      <ButtonContinue
+        disabled={continueDisabled}
+        onClick={submitAnswer}
+        className={classes.continue}
+      />
     </Stack>
   );
 }
+
+const useStyles = createStyles((theme) => ({
+  container: {
+    flexGrow: 1,
+    alignItems: "center",
+    backgroundColor: "#AFCBE0",
+    padding: 12,
+    "&>*": {
+      maxWidth: 1280,
+    },
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      padding: 30,
+    },
+  },
+  continue: {
+    marginTop: "auto",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
+      alignSelf: "end",
+    },
+  },
+}));

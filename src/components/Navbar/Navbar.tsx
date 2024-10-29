@@ -24,6 +24,7 @@ const useStyles = createStyles((theme, inView: boolean) => ({
   logo: {
     display: "none",
     [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      // TODO: usar novos breakpoints
       display: "block",
     },
   },

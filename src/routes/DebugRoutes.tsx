@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import { ExamLayout } from "~/components/ExamLayout/ExamLayout";
 import { DebugPage } from "~/pages/Debug/Debug";
 import { QuestionListPage } from "~/pages/Debug/ExamQuestions/QuestionList";
 import { QuestionView } from "~/pages/Debug/ExamQuestions/QuestionView";
@@ -15,18 +14,11 @@ export function DebugRoutes() {
     <Routes>
       <Route index Component={DebugPage} />
       <Route path="planet" Component={PlanetList} />
-      <Route path="planet/:planetId" Component={ExamLayout}>
-        <Route index Component={PlanetView} />
-      </Route>
+      <Route path="planet/:planetId" Component={PlanetView} />
       <Route path="questions" Component={QuestionListPage} />
-      <Route path="questions/:questionId" Component={ExamLayout}>
-        <Route index Component={QuestionView} />
-      </Route>
+      <Route path="questions/:questionId" Component={QuestionView} />
       <Route path="model" Component={ModelsList} />
-      <Route path="model/:modelId" Component={ExamLayout}>
-        <Route index Component={ModelView} />
-      </Route>
-
+      <Route path="model/:modelId" Component={ModelView} />
       <Route path="test/school-year-select" Component={SchoolYearSelect} />
       <Route path="test/school-class-select" Component={SchoolClassSelect} />
     </Routes>

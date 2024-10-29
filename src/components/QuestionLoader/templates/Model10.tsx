@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption } from "~/api/exam";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { boardW } from "~/constants/dimensions";
-import { Group, ScrollArea, SimpleGrid, Title } from "@mantine/core";
+import { BREAKPOINT } from "~/constants/dimensions";
+import { createStyles, ScrollArea, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
@@ -16,13 +16,8 @@ export function Model10({
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const {
-    imageTitles,
-    textTitles,
-    audioTitles,
-    hasAudioTitle,
-    getRule,
-  } = useQuestionHelper(question);
+  const { imageTitles, textTitles, audioTitles, hasAudioTitle, getRule } =
+    useQuestionHelper(question);
 
   const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
@@ -38,56 +33,53 @@ export function Model10({
     setAnswer(null);
   }, [question]);
 
-  const hideTextRule = getRule("options_hide_text")?.value === "true" ?? false;
+  const hideTextRule = getRule("options_hide_text")?.value === "true";
+
+  const { classes } = useStyles();
 
   return (
-    <>
+    <div className={classes.container}>
       {hasAudioTitle && (
         <AudioContainer question={question} audioTitles={audioTitles}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
 
-      {imageTitles.length !== 0 && textTitles
-        .filter((title) => title.description && !title.placeholder.includes("ID"))
-        .map((title, inx) => (
-          <ScrollArea mah={boardW(100)} type="auto" key={inx} px="xs">
-            <Title
-              color="dark.3"
-              size={boardW(22)}
-              align="center"
-              dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-              px={boardW(10)}
-            />
-          </ScrollArea>
-        ))}
-
-      <Group spacing={20} my="auto">
-        {imageTitles.length === 0 && textTitles
-          .filter((title) => title.description && !title.placeholder.includes("ID"))
+      {imageTitles.length !== 0 &&
+        textTitles
+          .filter(
+            (title) => title.description && !title.placeholder.includes("ID"),
+          )
           .map((title, inx) => (
-            <ScrollArea mah={boardW(400)} w={boardW(350)} type="auto" key={inx} px="xs">
+            <ScrollArea mah={100} type="auto" key={inx} px="xs">
               <Title
                 color="dark.3"
-                size={title.description.split(' ').length > 1 ? boardW(22) : boardW(70)}
+                size={22}
                 align="center"
                 dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+                px={10}
               />
             </ScrollArea>
-          ))
-        }
-
-        {imageTitles
-          .filter((title) => title.file_url)
-          .map((title) => (
-            <img
-              src={title.file_url!}
-              alt={title.description}
-              width={boardW(350)}
-              style={{ maxHeight: boardW(400), objectFit: "contain" }}
-              key={title.file_url}
-            />
           ))}
+
+      <div className={classes.content}>
+        {imageTitles.length === 0 &&
+          textTitles
+            .filter(
+              (title) => title.description && !title.placeholder.includes("ID"),
+            )
+            .map((title, inx) => (
+              <ScrollArea mah={400} w={350} type="auto" key={inx} px="xs">
+                <Title
+                  color="dark.3"
+                  size={title.description.split(" ").length > 1 ? 22 : 70}
+                  align="center"
+                  dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
+                />
+              </ScrollArea>
+            ))}
+
+        <ImageTitle titles={imageTitles} />
 
         <SimpleGrid cols={2}>
           {question.options.map((option, inx) => (
@@ -120,21 +112,76 @@ export function Model10({
                 <img
                   src={option.image_url}
                   alt={option.description}
-                  width={boardW(100)}
+                  width={100}
                   style={{
-                    maxHeight: boardW(110),
+                    maxHeight: 110,
                     objectFit: "contain",
                     marginInline: "auto",
                   }}
                 />
               )}
               {!option.image_url && option.sound_url && !option.description && (
-                <IconVolume size={boardW(80)} />
+                <IconVolume size={80} />
               )}
             </OptionButton>
           ))}
         </SimpleGrid>
-      </Group>
-    </>
+      </div>
+    </div>
   );
 }
+
+function ImageTitle({ titles }: { titles: QuestionTitle[] }) {
+  const { classes } = useStyles();
+  return (
+    <div className={classes.ImageTitle_container}>
+      {titles.map((title) => (
+        <img
+          src={title.file_url!}
+          alt={title.description}
+          key={title.file_url}
+          height={300}
+        />
+      ))}
+    </div>
+  );
+}
+
+const useStyles = createStyles((theme) => ({
+  ImageTitle_container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    img: {
+      objectFit: "contain",
+      maxWidth: "90%",
+      width: 295,
+      maxHeight: 300,
+    },
+  },
+
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "100%",
+    gap: 20,
+    marginBlock: "auto",
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
+      flexDirection: "row",
+      gap: 80,
+    },
+  },
+
+  container: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+
+    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {},
+  },
+}));

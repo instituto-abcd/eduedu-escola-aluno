@@ -1,4 +1,4 @@
-import { Loader, Progress, Stack } from "@mantine/core";
+import { Loader, Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
@@ -28,8 +28,8 @@ export function ExamPage() {
     answer:
       | Question
       | {
-          examCompleted?: true;
-        },
+        examCompleted?: true;
+      },
   ) {
     if ("examCompleted" in answer) {
       navigate(PATH.EXAM_EVALUATION);
@@ -48,10 +48,14 @@ export function ExamPage() {
 
   return (
     <>
-      <Progress
-        value={currentQuestion?.progress ?? 0}
-        style={{ position: "fixed", top: 100, zIndex: 999 }}
-      />
+      {/* 
+          <Progress
+            value={currentQuestion?.progress ?? 0}
+            style={{ position: "fixed", top: 100, zIndex: 999, display: "none" }}
+          />
+
+        TODO: definir se o progress vai continuar no layout
+      */}
       <Stack
         spacing={lousaWidth * 0.045}
         align="center"

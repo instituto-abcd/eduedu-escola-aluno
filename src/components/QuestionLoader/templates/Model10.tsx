@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { BREAKPOINT } from "~/constants/dimensions";
@@ -8,7 +8,7 @@ import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import { ImageTitle } from "~/components/question-components";
+import { ImageTitle, TextBubble } from "~/components/question-components";
 
 export function Model10({
   question,
@@ -41,7 +41,10 @@ export function Model10({
   return (
     <div className={classes.container}>
       {hasAudioTitle && (
-        <AudioContainer question={question} audioTitles={audioTitles}>
+        <AudioContainer
+          question={question}
+          audioTitles={audioTitles}
+        >
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
@@ -49,35 +52,26 @@ export function Model10({
       {imageTitles.length !== 0 &&
         textTitles
           .filter(
-            (title) => title.description && !title.placeholder.includes("ID"),
+            (title) => title.description && !title.placeholder.includes("ID")
           )
           .map((title, inx) => (
-            <ScrollArea mah={100} type="auto" key={inx} px="xs">
-              <Title
-                color="dark.3"
-                size={22}
-                align="center"
-                dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-                px={10}
-              />
-            </ScrollArea>
+            <TextBubble
+              key={inx}
+              text={title.description ?? ""}
+            />
           ))}
 
       <div className={classes.content}>
         {imageTitles.length === 0 &&
           textTitles
             .filter(
-              (title) => title.description && !title.placeholder.includes("ID"),
+              (title) => title.description && !title.placeholder.includes("ID")
             )
             .map((title, inx) => (
-              <ScrollArea mah={400} w={350} type="auto" key={inx} px="xs">
-                <Title
-                  color="dark.3"
-                  size={title.description.split(" ").length > 1 ? 22 : 70}
-                  align="center"
-                  dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-                />
-              </ScrollArea>
+              <TextBubble
+                key={inx}
+                text={title.description ?? ""}
+              />
             ))}
 
         <ImageTitle titles={imageTitles} />

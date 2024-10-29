@@ -1,4 +1,4 @@
-import { BackgroundImage, Group, Stack, createStyles } from "@mantine/core";
+import { BackgroundImage, Stack, createStyles } from "@mantine/core";
 import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
@@ -28,12 +28,9 @@ const useStyles = createStyles({
   controls: {
     display: "none",
     position: "absolute",
-    inset: 0,
-    top: "auto",
+    bottom: "15%",
+    cursor: "pointer",
     width: "100%",
-    padding: 20,
-    maxWidth: 1000,
-    marginInline: "auto",
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
       display: "flex",
@@ -43,13 +40,16 @@ const useStyles = createStyles({
       background: "transparent",
       border: 0,
       cursor: "pointer",
+      position: "absolute",
     },
 
     "button:nth-of-type(1)": {
       transform: "rotate(90deg)",
+      left: "5%",
     },
     "button:nth-of-type(2)": {
       transform: "rotate(-90deg)",
+      right: "5%",
     },
     "button:nth-of-type(2)[disabled]": {
       cursor: "not-allowed",
@@ -79,25 +79,33 @@ export function DashboardPage() {
   const nextPlanet = () => {
     trackRef.current?.embla?.scrollNext();
 
-    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+    setCurrentPlanetIndex(
+      trackRef.current?.embla?.selectedScrollSnap() as number
+    );
   };
 
   const prevPlanet = () => {
     trackRef.current?.embla?.scrollPrev();
 
-    setCurrentPlanetIndex(trackRef.current?.embla?.selectedScrollSnap() || 0);
+    setCurrentPlanetIndex(
+      trackRef.current?.embla?.selectedScrollSnap() as number
+    );
   };
 
   useEffect(() => {
     if (trackRef.current && trackRef.current.track) {
-      const nextPlanetIndex =
-        currentPlanetIndex === trackRef.current.track.length - 1
-          ? trackRef.current.track.length - 1
+      const track = trackRef.current.track;
+
+      const nextIndex =
+        currentPlanetIndex === track.length - 1
+          ? currentPlanetIndex
           : currentPlanetIndex + 1;
 
-      setIsBtnNextPlanetDisabled(
-        trackRef.current.track[nextPlanetIndex]?.canExecutePlanet === false
-      );
+      const IsnextPlanetDisabled =
+        track[currentPlanetIndex].canExecutePlanet &&
+        track[nextIndex].canExecutePlanet === false;
+
+      setIsBtnNextPlanetDisabled(!IsnextPlanetDisabled);
     }
   }, [currentPlanetIndex]);
 
@@ -122,16 +130,11 @@ export function DashboardPage() {
             visible={viewMode === "planets"}
             ref={trackRef}
           />
-
           <AwardsGrid visible={viewMode === "awards"} />
         </Stack>
       </Stack>
       {viewMode === "planets" && (
-        <Group
-          className={classes.controls}
-          noWrap
-          position="apart"
-        >
+        <div className={classes.controls}>
           <button onClick={prevPlanet}>
             <ArrowDownBtn
               width={80}
@@ -147,7 +150,7 @@ export function DashboardPage() {
               height={80}
             />
           </button>
-        </Group>
+        </div>
       )}
       <PlanetCompletedFeedback onClose={onFeedbackEnd} />
     </BackgroundImage>

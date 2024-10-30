@@ -8,6 +8,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
 import { IconVolume } from "@tabler/icons-react";
+import {
+  ImageTitle,
+  TextBubble,
+  TitleBubble,
+} from "~/components/question-components";
 
 export function Model10Prova({
   question,
@@ -40,38 +45,32 @@ export function Model10Prova({
   return (
     <div className={classes.container}>
       {hasAudioTitle && (
-        <AudioContainer question={question} audioTitles={audioTitles}>
+        <AudioContainer
+          question={question}
+          audioTitles={audioTitles}
+        >
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
 
-      {textTitles.map((title) => (
-        <Title
-          key={title.description}
-          align="center"
-          color="dark.3"
-          size={textoMedium}
-          mb={20}
-        >
-          {title.description}
-        </Title>
+      {textTitles.map((title, inx) => (
+        <TitleBubble
+          key={inx}
+          text={title.description}
+        />
       ))}
 
       <div className={classes.content}>
         {imageTitles.length === 0 &&
           textTitles
             .filter(
-              (title) => title.description && !title.placeholder.includes("ID"),
+              (title) => title.description && !title.placeholder.includes("ID")
             )
             .map((title, inx) => (
-              <ScrollArea mah={400} w={350} type="auto" key={inx} px="xs">
-                <Title
-                  color="dark.3"
-                  size={title.description.split(" ").length > 1 ? 22 : 70}
-                  align="center"
-                  dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
-                />
-              </ScrollArea>
+              <TextBubble
+                key={inx}
+                text={title.description ?? ""}
+              />
             ))}
 
         <ImageTitle titles={imageTitles} />
@@ -126,36 +125,7 @@ export function Model10Prova({
   );
 }
 
-function ImageTitle({ titles }: { titles: QuestionTitle[] }) {
-  const { classes } = useStyles();
-  return (
-    <div className={classes.ImageTitle_container}>
-      {titles.map((title) => (
-        <img
-          src={title.file_url!}
-          alt={title.description}
-          key={title.file_url}
-          height={300}
-        />
-      ))}
-    </div>
-  );
-}
-
 const useStyles = createStyles((theme) => ({
-  ImageTitle_container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-
-    img: {
-      objectFit: "contain",
-      maxWidth: "90%",
-      width: 295,
-      maxHeight: 300,
-    },
-  },
-
   content: {
     display: "flex",
     flexDirection: "column",
@@ -176,7 +146,6 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-
-    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {},
+    gap: 20,
   },
 }));

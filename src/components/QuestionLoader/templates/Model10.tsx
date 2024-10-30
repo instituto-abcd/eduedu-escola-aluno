@@ -3,12 +3,16 @@ import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { BREAKPOINT } from "~/constants/dimensions";
-import { createStyles, ScrollArea, SimpleGrid, Title } from "@mantine/core";
+import { createStyles, SimpleGrid } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import { ImageTitle, TextBubble } from "~/components/question-components";
+import {
+  ImageTitle,
+  TextBubble,
+  TitleBubble,
+} from "~/components/question-components";
 
 export function Model10({
   question,
@@ -55,7 +59,7 @@ export function Model10({
             (title) => title.description && !title.placeholder.includes("ID")
           )
           .map((title, inx) => (
-            <TextBubble
+            <TitleBubble
               key={inx}
               text={title.description ?? ""}
             />

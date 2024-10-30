@@ -56,10 +56,10 @@ export function Model24({
   const { classes } = useStyles();
 
   // Variação de completar o texto
-  const varExeptions = ['Texto para completar, exp: a menina perdeu a ____'];
+  const varExeptions = ["Texto para completar, exp: a menina perdeu a ____"];
   const isTypeComplete = textTitles
     .filter((title) => !varExeptions.includes(title.placeholder))
-    .some((title) => title.placeholder.includes('completar'));
+    .some((title) => title.placeholder.includes("completar"));
 
   // Variação de selecionar alternativa
   const isTypeSelect = !isTypeComplete;
@@ -86,7 +86,7 @@ export function Model24({
   const getDashesAccordingAnswer = useCallback(() => {
     const length = question.options.find((option) => option.isCorrect)
       ?.description?.length;
-    return Array.prototype.join.call({ length: (length || -1) + 1 }, '_');
+    return Array.prototype.join.call({ length: (length || -1) + 1 }, "_");
   }, [question]);
 
   const singleAnswerWithUnderlineDashes = useMemo(
@@ -112,19 +112,19 @@ export function Model24({
         {isTypeComplete && (
           <Flex
             align="center"
-            justify={'center'}
+            justify={"center"}
             gap={20}
             wrap="wrap"
             className={classes.content}
           >
-            {textTitles.find((title) => title.placeholder.includes('completar'))
+            {textTitles.find((title) => title.placeholder.includes("completar"))
               ?.description && (
               <Title
                 dangerouslySetInnerHTML={{
                   __html:
                     textTitles.find((title) =>
-                      title.placeholder.includes('completar')
-                    )?.description ?? '',
+                      title.placeholder.includes("completar")
+                    )?.description ?? "",
                 }}
                 size={boardW(24)}
                 weight={500}
@@ -137,18 +137,17 @@ export function Model24({
               (title) =>
                 title.file_url && (
                   <Stack className={classes.container}>
-                  <Image
-                    key={title.file_url}
-                    src={title.file_url}
-                    alt={title.placeholder}
-                    styles={{
-                      image: {
-                        marginInline: 'auto',
-                      },
-                    }}
-                    width={'auto'}
-                    height={boardW(275)}
-                  />
+                    <Image
+                      key={title.file_url}
+                      src={title.file_url}
+                      alt={title.placeholder}
+                      styles={{
+                        image: {
+                          marginInline: "auto",
+                        },
+                      }}
+                    />
+                  </Stack>
                 )
             )}
 
@@ -210,8 +209,8 @@ export function Model24({
 
             <Flex
               wrap="wrap"
-              align={'center'}
-              justify={'center'}
+              align={"center"}
+              justify={"center"}
               gap={20}
               className={classes.content}
             >
@@ -219,18 +218,17 @@ export function Model24({
                 (title) =>
                   title.file_url && (
                     <Stack className={classes.container}>
-                    <Image
-                      key={title.file_url}
-                      src={title.file_url}
-                      alt={title.placeholder}
-                      styles={{
-                        image: {
-                          marginInline: 'auto',
-                        },
-                      }}
-                      width={boardW(365)}
-                      height={125}
-                    />
+                      <Image
+                        key={title.file_url}
+                        src={title.file_url}
+                        alt={title.placeholder}
+                        styles={{
+                          image: {
+                            marginInline: "auto",
+                          },
+                        }}
+                      />
+                    </Stack>
                   )
               )}
 
@@ -258,7 +256,7 @@ export function Model24({
                       <img
                         src={option.image_url}
                         style={{
-                          height: boardW(100),
+                          height: boardW(170),
                         }}
                       />
                     )}

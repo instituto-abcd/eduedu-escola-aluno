@@ -1,12 +1,49 @@
-import { Group, Image, Stack, Title } from "@mantine/core";
+import {
+  createStyles,
+  Flex,
+  Image,
+  SimpleGrid,
+  Stack,
+  Title,
+} from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
-import { boardW } from "~/constants/dimensions";
+import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
+
+const useStyles = createStyles(() => {
+  return {
+    content: {
+      display: "flex",
+      flexDirection: "column",
+      gap: boardW(45),
+
+      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+        flexDirection: "row",
+        gap: boardW(110),
+      },
+    },
+
+    container: {
+      img: {
+        objectFit: "contain",
+        maxWidth: "80%",
+        width: 295,
+        maxHeight: 300,
+      },
+
+      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+        img: {
+          maxWidth: "90%",
+        },
+      },
+    },
+  };
+});
 
 export function Model24({
   question,
@@ -15,6 +52,8 @@ export function Model24({
 }: ModelProps) {
   const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<number>(-1);
+
+  const { classes } = useStyles();
 
   // Variação de completar o texto
   const varExeptions = ["Texto para completar, exp: a menina perdeu a ____"];
@@ -37,7 +76,7 @@ export function Model24({
 
   const conditions = useMemo(
     () => [isTypeSelect ? !!singleAnswer : answer !== -1],
-    [answer, singleAnswer],
+    [answer, singleAnswer]
   );
 
   useEffect(() => {
@@ -55,47 +94,67 @@ export function Model24({
       singleAnswer?.description
         ? `<span style="text-decoration: underline;">${singleAnswer?.description}</span>`
         : getDashesAccordingAnswer(),
-    [question, singleAnswer],
+    [question, singleAnswer]
   );
 
   return (
     <>
-      <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
+      <AudioContainer
+        question={question}
+        audioTitles={audioTitles}
+        hasPrimaryIcon={false}
+      />
 
-      <Stack my="auto" spacing={boardW(40)}>
+      <Stack
+        my="auto"
+        spacing={boardW(40)}
+      >
         {isTypeComplete && (
-          <Stack align="center" spacing={boardW(25)}>
+          <Flex
+            align="center"
+            justify={"center"}
+            gap={20}
+            wrap="wrap"
+            className={classes.content}
+          >
             {textTitles.find((title) => title.placeholder.includes("completar"))
               ?.description && (
-                <Title
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find((title) =>
-                        title.placeholder.includes("completar"),
-                      )?.description ?? "",
-                  }}
-                  size={boardW(24)}
-                  weight={500}
-                  color="dark.3"
-                  align="center"
-                />
-              )}
+              <Title
+                dangerouslySetInnerHTML={{
+                  __html:
+                    textTitles.find((title) =>
+                      title.placeholder.includes("completar")
+                    )?.description ?? "",
+                }}
+                size={boardW(24)}
+                weight={500}
+                color="dark.3"
+                align="center"
+              />
+            )}
 
             {imageTitles.map(
               (title) =>
                 title.file_url && (
-                  <Image
-                    key={title.file_url}
-                    src={title.file_url}
-                    alt={title.placeholder}
-                    styles={{ image: { marginInline: "auto" } }}
-                    width="auto"
-                    height={boardW(170)}
-                  />
-                ),
+                  <Stack className={classes.container}>
+                    <Image
+                      key={title.file_url}
+                      src={title.file_url}
+                      alt={title.placeholder}
+                      styles={{
+                        image: {
+                          marginInline: "auto",
+                        },
+                      }}
+                    />
+                  </Stack>
+                )
             )}
 
-            <Group mb={20}>
+            <SimpleGrid
+              mb={20}
+              cols={2}
+            >
               {question.options.map((option, inx) => (
                 <OptionButton
                   key={inx}
@@ -118,15 +177,18 @@ export function Model24({
                   )}
                 </OptionButton>
               ))}
-            </Group>
-          </Stack>
+            </SimpleGrid>
+          </Flex>
         )}
 
         {isTypeSelect && (
-          <Stack align="center" spacing={boardW(25)}>
+          <Stack
+            align="center"
+            spacing={boardW(25)}
+          >
             {textTitles
               .filter(
-                (title) => title.description && title.description.length > 0,
+                (title) => title.description && title.description.length > 0
               )
               .map((title) => (
                 <Title
@@ -134,7 +196,7 @@ export function Model24({
                     __html: title.description.replace(
                       /_+/g,
                       singleAnswerWithUnderlineDashes ??
-                      getDashesAccordingAnswer(),
+                        getDashesAccordingAnswer()
                     ),
                   }}
                   key={title.description}
@@ -145,49 +207,66 @@ export function Model24({
                 />
               ))}
 
-            {imageTitles.map(
-              (title) =>
-                title.file_url && (
-                  <Image
-                    key={title.file_url}
-                    src={title.file_url}
-                    alt={title.placeholder}
-                    styles={{ image: { marginInline: "auto" } }}
-                    width="auto"
-                    height={boardW(170)}
-                  />
-                ),
-            )}
+            <Flex
+              wrap="wrap"
+              align={"center"}
+              justify={"center"}
+              gap={20}
+              className={classes.content}
+            >
+              {imageTitles.map(
+                (title) =>
+                  title.file_url && (
+                    <Stack className={classes.container}>
+                      <Image
+                        key={title.file_url}
+                        src={title.file_url}
+                        alt={title.placeholder}
+                        styles={{
+                          image: {
+                            marginInline: "auto",
+                          },
+                        }}
+                      />
+                    </Stack>
+                  )
+              )}
 
-            <Group>
-              {question.options.map((option, inx) => (
-                <OptionButton
-                  key={inx}
-                  option={option}
-                  onClick={() => setSingleAnswer(option)}
-                  data-selected={
-                    JSON.stringify(singleAnswer) === JSON.stringify(option)
-                  }
-                  style={{
-                    width: boardW(190),
-                    height: boardW(120),
-                  }}
-                >
-                  {option.description}
-                  {option.image_url && (
-                    <img
-                      src={option.image_url}
-                      style={{
-                        height: boardW(100),
-                      }}
-                    />
-                  )}
-                  {option.sound_url && !option.image_url && (
-                    <IconVolume size={boardW(62)} />
-                  )}
-                </OptionButton>
-              ))}
-            </Group>
+              <SimpleGrid
+                cols={2}
+                spacing={20}
+              >
+                {question.options.map((option, inx) => (
+                  <OptionButton
+                    key={inx}
+                    option={option}
+                    onClick={() => setSingleAnswer(option)}
+                    data-selected={
+                      JSON.stringify(singleAnswer) === JSON.stringify(option)
+                    }
+                    style={{
+                      width: "auto",
+                      minWidth: option.description ? '150px' : '120px',
+                      height: "auto",
+                      minHeight: option.description ? '70px' : '150px',
+                    }}
+                  >
+                    {option.description}
+                    {option.image_url && (
+                      <img
+                        src={option.image_url}
+                        style={{
+                          height: boardW(170),
+                        }}
+                      />
+                    )}
+                    {option.sound_url && !option.image_url && (
+                      <IconVolume size={boardW(62)} />
+                    )}
+                  </OptionButton>
+                ))}
+              </SimpleGrid>
+            </Flex>
           </Stack>
         )}
       </Stack>

@@ -32,6 +32,7 @@ const useStyles = createStyles((theme) => ({
   },
   text: {
     color: "#4D4941",
+    textAlign: "center",
     fontSize: 20,
     lineHeight: "27px",
     [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {

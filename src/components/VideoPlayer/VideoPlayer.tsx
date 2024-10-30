@@ -99,7 +99,7 @@ export function VideoPlayer({ className, ...props }: Props) {
 
         <div className={classes.controls}>
           {isLoadingData && <Loader />}
-          {!audioStatus.isPlaying && (
+          {!audioStatus.isPlaying && !isLoadingData && (
             <IconRotateClockwise
               size={100}
               className={classes.icon}
@@ -129,12 +129,19 @@ function Debug({
   if (!debug) return children;
 
   return (
-    <HoverCard width={200} shadow="md" position="left">
+    <HoverCard
+      width={200}
+      shadow="md"
+      position="left"
+    >
       <HoverCard.Target>
         <div>{children}</div>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Table withBorder fontSize={12}>
+        <Table
+          withBorder
+          fontSize={12}
+        >
           <tbody>
             <tr>
               <td>Playing?</td>

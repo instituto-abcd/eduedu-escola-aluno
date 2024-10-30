@@ -1,9 +1,9 @@
-import { createStyles, ScrollArea, SimpleGrid, Title } from "@mantine/core";
+import { createStyles, SimpleGrid } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
-import { BREAKPOINT, textoMedium } from "~/constants/dimensions";
+import { BREAKPOINT } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
@@ -21,7 +21,7 @@ export function Model10Prova({
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, hasAudioTitle, getRule } =
+  const { imageTitles, textTitles, hasAudioTitle, getRule } =
     useQuestionHelper(question);
 
   const hideTextRule = getRule("options_hide_text")?.value === "true";
@@ -45,10 +45,7 @@ export function Model10Prova({
   return (
     <div className={classes.container}>
       {hasAudioTitle && (
-        <AudioContainer
-          question={question}
-          audioTitles={audioTitles}
-        >
+        <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}

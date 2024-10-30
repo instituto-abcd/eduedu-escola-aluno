@@ -37,7 +37,7 @@ export function Model2Video({
 
   useEffect(() => {
     onAnswerChange(
-      slots.filter((answer) => answer !== null) as QuestionOption[]
+      slots.filter((answer) => answer !== null) 
     );
   }, [slots]);
 

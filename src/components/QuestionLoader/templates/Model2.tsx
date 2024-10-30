@@ -64,7 +64,7 @@ export function Model2({
 
   useEffect(() => {
     onAnswerChange(
-      answers.filter((answer) => answer !== null) as QuestionOption[],
+      answers.filter((answer) => answer !== null) ,
     );
   }, [answers]);
 

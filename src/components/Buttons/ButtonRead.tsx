@@ -15,8 +15,8 @@ function _ButtonRead({ children: _, size = 50, ...props }: Props) {
   return (
     <UnstyledButton {...props}>
       <svg
-        width={50}
-        height={50}
+        width={size}
+        height={size}
         viewBox="0 0 50 50"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +66,10 @@ function _ButtonRead({ children: _, size = 50, ...props }: Props) {
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#FFB800" />
-            <stop offset={1} stopColor="#FFD400" />
+            <stop
+              offset={1}
+              stopColor="#FFD400"
+            />
           </linearGradient>
         </defs>
       </svg>
@@ -75,5 +78,5 @@ function _ButtonRead({ children: _, size = 50, ...props }: Props) {
 }
 
 export const ButtonRead = createPolymorphicComponent<"button", Props>(
-  _ButtonRead,
+  _ButtonRead
 );

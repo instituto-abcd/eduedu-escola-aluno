@@ -29,5 +29,6 @@ module.exports = {
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/no-misused-promises": "off",
   },
 };

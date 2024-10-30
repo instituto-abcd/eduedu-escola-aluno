@@ -108,7 +108,7 @@ export function Model11Prova({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answer.filter((item) => item !== null) as QuestionOption[]);
+    onAnswerChange(answer.filter((item) => item !== null) );
   }, [answer]);
 
   const conditions = useMemo(() => [!answer.includes(null)], [answer]);

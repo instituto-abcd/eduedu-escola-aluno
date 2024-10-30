@@ -59,7 +59,7 @@ export function Model19({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answers.filter((ans) => ans !== null) as QuestionOption[]);
+    onAnswerChange(answers.filter((ans) => ans !== null) );
   }, [answers]);
 
   const conditions = useMemo(

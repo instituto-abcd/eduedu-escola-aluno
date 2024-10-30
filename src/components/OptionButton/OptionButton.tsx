@@ -58,7 +58,7 @@ type StyleProps = {
   height?: number;
 };
 
-export const useStyles = createStyles((_, props: StyleProps) => ({
+const useStyles = createStyles((_, props: StyleProps) => ({
   button: {
     width: props.width,
     height: props.height,

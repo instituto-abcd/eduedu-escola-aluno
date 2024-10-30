@@ -39,7 +39,7 @@ export function Model14({
 
   useEffect(() => {
     if (auxAudioRef.current) {
-      const auxSound = auxAudioRef.current!.sound;
+      const auxSound = auxAudioRef.current.sound;
       mainAudioRef.current?.sound.onEnd(() => {
         if (hasAux && auxSound && !auxSound.playing()) {
           auxSound.play();

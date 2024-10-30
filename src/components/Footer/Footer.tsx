@@ -1,7 +1,7 @@
 import { Box, Container, Flex, Group } from "@mantine/core";
 import { useStudent } from "~/stores/student";
 
-const VERSION = import.meta.env.VITE_APP_VERSION;
+const VERSION: string = import.meta.env.VITE_APP_VERSION;
 
 export function Footer() {
   const schoolName = useStudent((s) => s.schoolClassName);

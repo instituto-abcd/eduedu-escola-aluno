@@ -84,7 +84,8 @@ export function ProfileSelection({ onNext }: { onNext: () => void }) {
 
   function handleSelection(value: Profile) {
     if (value === "STUDENT") return onNext();
-    if (value === "TEACHER") return window.open(import.meta.env.VITE_ADMIN_URL);
+    if (value === "TEACHER")
+      return window.open(import.meta.env.VITE_ADMIN_URL as string);
   }
 
   return (

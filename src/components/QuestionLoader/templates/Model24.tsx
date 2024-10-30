@@ -247,8 +247,10 @@ export function Model24({
                       JSON.stringify(singleAnswer) === JSON.stringify(option)
                     }
                     style={{
-                      width: boardW(190),
-                      height: boardW(120),
+                      width: "auto",
+                      minWidth: option.description ? '150px' : '120px',
+                      height: "auto",
+                      minHeight: option.description ? '70px' : '150px',
                     }}
                   >
                     {option.description}

@@ -114,17 +114,22 @@ export function DraggableLetters({
       {option.image_url && (
         <Image
           src={option.image_url}
-          alt={option.image_name ?? ""}
           style={{ maxWidth: boardW(65) }}
         />
       )}
       {!option.image_url && option.description && (
-        <Text p={0} m={0}>
+        <Text
+          p={0}
+          m={0}
+        >
           {option.description}
         </Text>
       )}
       {onClear && (
-        <button className={classes.close} onClick={onClear}>
+        <button
+          className={classes.close}
+          onClick={onClear}
+        >
           <IconTrash size={16} />
         </button>
       )}

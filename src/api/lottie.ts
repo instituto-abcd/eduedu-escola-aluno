@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryOptions } from "./api-types";
 
 export type LottieLayers = { layers: Record<string, string>[] };
-export type LottieType = Record<string, unknown> & LottieLayers;
+type LottieType = Record<string, unknown> & LottieLayers;
 
 class LottieAPI extends API {
   static async downloadLottieFile(lottieId: string) {

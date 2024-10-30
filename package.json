@@ -7,18 +7,17 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-deadcode": "ts-prune"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "^6.0.17",
     "@mantine/core": "^6.0.16",
-    "@mantine/form": "^6.0.16",
     "@mantine/hooks": "^6.0.16",
     "@mantine/modals": "^6.0.16",
     "@mantine/notifications": "^6.0.16",
     "@nanostores/react": "^0.8.0",
-    "@smastrom/react-rating": "^1.5.0",
     "@tabler/icons-react": "^2.25.0",
     "@tanstack/react-query": "^4.29.23",
     "@tanstack/react-query-devtools": "^4.29.23",
@@ -52,6 +51,7 @@
     "eslint": "^8.44.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
+    "ts-prune": "^0.10.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.0"
   }

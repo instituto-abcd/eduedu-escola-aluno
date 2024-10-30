@@ -29,7 +29,7 @@ export type AccessCodes = {
   correctAnswer: boolean;
 };
 
-export class UserAPI extends API {
+class UserAPI extends API {
   static async getSchoolClasses(params?: SchoolClassSearch) {
     const { data } = await this.api.get<SchoolClass[]>(URL.SCHOOL_CLASSES, {
       params,
@@ -43,31 +43,15 @@ export class UserAPI extends API {
   }
 }
 
-export function useUserSchoolClasses(
-  options?: QueryOptions<
-    SchoolClass[],
-    [string, SchoolClassSearch | undefined]
-  > & { search?: SchoolClassSearch },
-) {
-  const handler = useCallback(
-    function () {
-      return UserAPI.getSchoolClasses(options?.search);
-    },
-    [options?.search],
-  );
-
-  return useQuery([KEY.SCHOOL_CLASSES, options?.search], handler, options);
-}
-
 export function useGetAccessCodes(
   userId: string,
-  options?: QueryOptions<AccessCodes[], [typeof KEY.ACCESS_CODE, string]>,
+  options?: QueryOptions<AccessCodes[], [typeof KEY.ACCESS_CODE, string]>
 ) {
   const handler = useCallback(
     function () {
       return UserAPI.getAccessCodes(userId);
     },
-    [userId],
+    [userId]
   );
 
   return useQuery([KEY.ACCESS_CODE, userId], handler, options);

@@ -1,4 +1,4 @@
-import { Button, Paper, Select, Stack, Text } from "@mantine/core";
+import { Button, Select, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Question } from "~/api/exam";
 

@@ -11,6 +11,7 @@ export function Logout() {
   const student = useStudent();
   const { mutate, isLoading } = useStudentReserve({
     onSuccess: () => {
+      handlers.close();
       student.update({
         id: "",
         name: "",
@@ -32,7 +33,10 @@ export function Logout() {
 
   return (
     <>
-      <Anchor size="xs" onClick={handlers.toggle}>
+      <Anchor
+        size="xs"
+        onClick={handlers.toggle}
+      >
         (sair)
       </Anchor>
 

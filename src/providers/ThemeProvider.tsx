@@ -1,7 +1,7 @@
 import { MantineProvider, MantineThemeOverride } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-import { DividerStyles, TextStyles } from "~/styles";
+import { TextStyles } from "~/styles";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -9,7 +9,6 @@ const theme: MantineThemeOverride = {
   fontFamily: "Inter, sans-serif",
 
   components: {
-    DividerStyles,
     TextStyles,
   },
 
@@ -25,7 +24,11 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
     <DndProvider backend={HTML5Backend}>
-      <MantineProvider withNormalizeCSS withGlobalStyles theme={theme}>
+      <MantineProvider
+        withNormalizeCSS
+        withGlobalStyles
+        theme={theme}
+      >
         <ModalsProvider>
           <Notifications position="top-center" />
           {children}

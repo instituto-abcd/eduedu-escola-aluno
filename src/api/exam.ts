@@ -121,11 +121,3 @@ export type Question = {
     | "QMES2x3Video"
     | "QORD3x2";
 };
-
-export type IExam = {
-  id: string;
-  domain_code: string;
-  status: string;
-  questions: Question[];
-  version: number;
-};

@@ -1,6 +1,6 @@
 import { UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
 
-export type BaseResponse<T> = {
+type BaseResponse<T> = {
   success: boolean;
   data?: T;
   errors?: ApiError;
@@ -22,13 +22,13 @@ export type QueryOptions<
   Output,
   Key,
   Input = Output,
-  Err = ApiError
+  Err = ApiError,
 > = UseQueryOptions<Output, Err, Input, Key> & {
   page?: number;
   pageSize?: number;
 };
 
-export type PaginationOptions = {
+type PaginationOptions = {
   totalItems: number;
   pageSize: number;
   pageNumber: number;

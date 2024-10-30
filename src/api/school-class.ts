@@ -51,10 +51,10 @@ type SchoolClassAllParams = Partial<{
 
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
-export class SchoolClassAPI extends API {
+class SchoolClassAPI extends API {
   static async countSchoolGrade() {
     const { data } = await this.api.get<SchoolGradeCount[]>(
-      URL.COUNT_SCHOOL_GRADE,
+      URL.COUNT_SCHOOL_GRADE
     );
     return data;
   }
@@ -70,22 +70,22 @@ export class SchoolClassAPI extends API {
 export function useSchoolClassGetAll(
   options?: QueryOptions<Paginated<SchoolClass>, [typeof KEY.ALL, any]> & {
     params?: SchoolClassAllParams;
-  },
+  }
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getAll(options?.params);
     },
-    [options?.params],
+    [options?.params]
   );
 
   return useQuery([KEY.ALL, options?.params], handler, options);
 }
 
 export function useSchoolGradeCount(
-  options?: QueryOptions<SchoolGradeCount[], [typeof KEY.GRADE_COUNT]>,
+  options?: QueryOptions<SchoolGradeCount[], [typeof KEY.GRADE_COUNT]>
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return SchoolClassAPI.countSchoolGrade();
   }, []);
 

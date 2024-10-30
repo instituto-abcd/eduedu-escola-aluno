@@ -1,4 +1,4 @@
-import { SimpleGrid, Title, createStyles } from "@mantine/core";
+import { SimpleGrid, createStyles } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";

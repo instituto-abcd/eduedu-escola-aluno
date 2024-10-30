@@ -52,7 +52,7 @@ export type SimplifiedPlanet = {
   enable: boolean;
 };
 
-export type PlanetTrack = {
+type PlanetTrack = {
   studentId: string;
   examId: string;
   examDate: Date;
@@ -61,7 +61,7 @@ export type PlanetTrack = {
   examPerformed: boolean;
 };
 
-export type Award = {
+type Award = {
   id: string;
   name: string;
   title: string;
@@ -113,7 +113,7 @@ type StudentGetAllSearch = {
   initialLetter?: string;
 } & PaginationParams;
 
-export class StudentAPI extends API {
+class StudentAPI extends API {
   static async getAllStudents(search?: StudentGetAllSearch) {
     const { data } = await this.api.get<Paginated<Student>>(URL.GET_ALL, {
       params: search,
@@ -129,7 +129,7 @@ export class StudentAPI extends API {
 
   static async getPlanetTrack(studentId: string) {
     const { data } = await this.api.get<PlanetTrack>(
-      URL.GET_STUDENT_PLANET_TRACK(studentId),
+      URL.GET_STUDENT_PLANET_TRACK(studentId)
     );
 
     return data;
@@ -137,14 +137,14 @@ export class StudentAPI extends API {
 
   static async getStudentAwards(studentId: string) {
     const { data } = await this.api.get<Award[]>(
-      URL.GET_STUDENT_AWARDS(studentId),
+      URL.GET_STUDENT_AWARDS(studentId)
     );
     return data;
   }
 
   static async getFirstExamQuestion(studentId: string) {
     const { data } = await this.api.get<Question>(
-      URL.GET_STUDENT_EXAM_QUESTIONS_1(studentId),
+      URL.GET_STUDENT_EXAM_QUESTIONS_1(studentId)
     );
     return data;
   }
@@ -153,9 +153,9 @@ export class StudentAPI extends API {
     const { data } = await this.api.post<GetExamQuestionResponse>(
       URL.GET_STUDENT_EXAM_QUESTIONS(
         studentId,
-        "fa387b6c-7ecf-4752-aeb3-c810a912c421", // TODO: pegar id do exam
+        "fa387b6c-7ecf-4752-aeb3-c810a912c421" // TODO: pegar id do exam
       ),
-      input,
+      input
     );
 
     return data;
@@ -179,18 +179,18 @@ export class StudentAPI extends API {
   static async reserve(studentId: string, input: StudentReserveInput) {
     const { data } = await this.api.patch<StudentReserveResponse>(
       URL.RESERVE(studentId),
-      input,
+      input
     );
     return data;
   }
 }
 
 export function useGetPlanetTrack(
-  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>,
+  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getPlanetTrack(studentId);
   }, []);
 
@@ -198,11 +198,11 @@ export function useGetPlanetTrack(
 }
 
 export function useGetStudentAwards(
-  options?: QueryOptions<Award[], [typeof KEY.AWARDS]>,
+  options?: QueryOptions<Award[], [typeof KEY.AWARDS]>
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getStudentAwards(studentId);
   }, []);
 
@@ -210,11 +210,11 @@ export function useGetStudentAwards(
 }
 
 export function useGetFirstExamQuestion(
-  options?: QueryOptions<Question, [typeof KEY.FIRST_QUESTION]>,
+  options?: QueryOptions<Question, [typeof KEY.FIRST_QUESTION]>
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.getFirstExamQuestion(studentId);
   }, []);
 
@@ -222,11 +222,11 @@ export function useGetFirstExamQuestion(
 }
 
 export function useGetExamQuestion(
-  options?: MutationOptions<GetQuestionInput, GetExamQuestionResponse>,
+  options?: MutationOptions<GetQuestionInput, GetExamQuestionResponse>
 ) {
   const { setNewAwards } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function(input: GetQuestionInput) {
+  const handler = useCallback(function (input: GetQuestionInput) {
     return StudentAPI.getExamQuestion(studentId, input);
   }, []);
 
@@ -251,11 +251,11 @@ export function useSubmitExamEvaluation(
   options?: QueryOptions<
     Question | { newAwards: Award[] },
     [typeof KEY.EXAM_EVALUATION]
-  >,
+  >
 ) {
   const { setNewAwards, requestView } = useNewAward();
   const studentId = useStudent((state) => state.id);
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.submitExamEvaluation(studentId);
   }, []);
 
@@ -279,12 +279,12 @@ export function useSubmitExamEvaluation(
 
 export function usePlanetFeedback(
   planetId: string,
-  options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>,
+  options?: QueryOptions<PlanetFeedback, [typeof KEY.PLANET_FEEDBACK]>
 ) {
   const studentId = useStudent((state) => state.id);
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return StudentAPI.planetFeedback(studentId, planetId);
   }, []);
 
@@ -299,14 +299,14 @@ export function usePlanetFeedback(
         if (!oldData || !oldData.planetTrack) return oldData;
 
         const toUpdate = oldData.planetTrack.find(
-          (planet) => planet.planetName === data.name,
+          (planet) => planet.planetName === data.name
         );
 
         if (!toUpdate) return oldData;
 
         toUpdate.stars = data.stars;
         const newTrack = oldData.planetTrack.filter(
-          (p) => p.planetName !== data.name,
+          (p) => p.planetName !== data.name
         );
         newTrack.push(toUpdate);
 
@@ -324,13 +324,13 @@ export function useStudentGetAll(
   options?: QueryOptions<
     Paginated<Student>,
     [typeof KEY.GET_ALL, StudentGetAllSearch | undefined]
-  >,
+  >
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return StudentAPI.getAllStudents(search);
     },
-    [search],
+    [search]
   );
 
   return useQuery([KEY.GET_ALL, search], handler, options);
@@ -340,9 +340,9 @@ export function useStudentReserve(
   options?: MutationOptions<
     { studentId: string } & StudentReserveInput,
     StudentReserveResponse
-  >,
+  >
 ) {
-  const handler = useCallback(function({
+  const handler = useCallback(function ({
     studentId,
     ...input
   }: { studentId: string } & StudentReserveInput) {

@@ -1,12 +1,7 @@
-// Aux & Utils:
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { Question } from "~/api/exam";
-import { boardW } from "~/constants/dimensions";
-
-// Components:
 import { Button, Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
-import { QuestionLoader } from "~/components/QuestionLoader";
 
 export function QuestionView() {
   const location = useLocation();
@@ -27,6 +22,9 @@ export function QuestionView() {
       <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>
         <QuestionInfo
           question={question}
+          current={0}
+          total={0}
+          onQuestionChange={() => {}}
           next={() => {
             return;
           }}

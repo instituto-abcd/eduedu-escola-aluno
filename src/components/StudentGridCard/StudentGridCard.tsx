@@ -1,6 +1,6 @@
 import { Button, Box, Stack, createStyles, Text } from "@mantine/core";
 import { IconLockOpen } from "@tabler/icons-react";
-import { SimplifiedStudent } from "~/api/school-class";
+import { Student } from "~/api/student";
 
 const useStyles = createStyles(
   (_, { selected, reserved }: { selected: boolean; reserved: boolean }) => ({
@@ -30,11 +30,11 @@ const useStyles = createStyles(
         background: reserved ? "#B8BCC1" : "#E7F5FF",
       },
     },
-  }),
+  })
 );
 
 type Props = {
-  student: SimplifiedStudent;
+  student: Student;
   selected: boolean;
   onLogout: (studentId: string) => void;
   onSelected: (studentId: string) => void;
@@ -59,7 +59,11 @@ export function StudentGridCard({
   return (
     <Box className={classes.card}>
       {student.reserved && (
-        <IconLockOpen color="#228BE6" height={20} className={classes.lock} />
+        <IconLockOpen
+          color="#228BE6"
+          height={20}
+          className={classes.lock}
+        />
       )}
       <Button
         id={student.id}
@@ -76,7 +80,10 @@ export function StudentGridCard({
           >
             {student.name}
           </Text>
-          <Text fz="md" c={student.reserved ? "gray.5" : "gray.7"}>
+          <Text
+            fz="md"
+            c={student.reserved ? "gray.5" : "gray.7"}
+          >
             {student.registry}
           </Text>
         </Stack>

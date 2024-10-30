@@ -1,12 +1,49 @@
-import { Flex, Image, SimpleGrid, Stack, Title } from '@mantine/core';
-import { IconVolume } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { QuestionOption } from '~/api/exam';
-import { OptionButton } from '~/components/OptionButton';
-import { boardW } from '~/constants/dimensions';
-import { useQuestionHelper } from '~/hooks/useQuestionHelper';
-import { ModelProps } from '.';
-import { AudioContainer } from '~/components/AudioContainer';
+import {
+  createStyles,
+  Flex,
+  Image,
+  SimpleGrid,
+  Stack,
+  Title,
+} from "@mantine/core";
+import { IconVolume } from "@tabler/icons-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { QuestionOption } from "~/api/exam";
+import { OptionButton } from "~/components/OptionButton";
+import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
+import { useQuestionHelper } from "~/hooks/useQuestionHelper";
+import { ModelProps } from ".";
+import { AudioContainer } from "~/components/AudioContainer";
+
+const useStyles = createStyles(() => {
+  return {
+    content: {
+      display: "flex",
+      flexDirection: "column",
+      gap: boardW(45),
+
+      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+        flexDirection: "row",
+        gap: boardW(110),
+      },
+    },
+
+    container: {
+      img: {
+        objectFit: "contain",
+        maxWidth: "80%",
+        width: 295,
+        maxHeight: 300,
+      },
+
+      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
+        img: {
+          maxWidth: "90%",
+        },
+      },
+    },
+  };
+});
 
 export function Model24({
   question,
@@ -15,6 +52,8 @@ export function Model24({
 }: ModelProps) {
   const { audioTitles, textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<number>(-1);
+
+  const { classes } = useStyles();
 
   // Variação de completar o texto
   const varExeptions = ['Texto para completar, exp: a menina perdeu a ____'];
@@ -76,6 +115,7 @@ export function Model24({
             justify={'center'}
             gap={20}
             wrap="wrap"
+            className={classes.content}
           >
             {textTitles.find((title) => title.placeholder.includes('completar'))
               ?.description && (
@@ -96,6 +136,7 @@ export function Model24({
             {imageTitles.map(
               (title) =>
                 title.file_url && (
+                  <Stack className={classes.container}>
                   <Image
                     key={title.file_url}
                     src={title.file_url}
@@ -172,10 +213,12 @@ export function Model24({
               align={'center'}
               justify={'center'}
               gap={20}
+              className={classes.content}
             >
               {imageTitles.map(
                 (title) =>
                   title.file_url && (
+                    <Stack className={classes.container}>
                     <Image
                       key={title.file_url}
                       src={title.file_url}

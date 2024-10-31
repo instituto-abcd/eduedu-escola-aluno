@@ -85,12 +85,11 @@ export function Model5({
        * TODO: move to separate component
        */}
 
-      {hasAudioTitle ||
-        (hasSupportText && (
-          <AudioContainer question={question}>
-            {auxQuestion && <ReadButton question={auxQuestion} />}
-          </AudioContainer>
-        ))}
+      {(hasAudioTitle || hasSupportText) && (
+        <AudioContainer question={question}>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </AudioContainer>
+      )}
 
       <div className={classes.content}>
         {!hasVideo && hasText && (

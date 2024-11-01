@@ -14,7 +14,6 @@ import {
   TitleBubble,
 } from "~/components/question-components";
 
-
 export function Model10({
   question,
   auxQuestion,
@@ -22,7 +21,7 @@ export function Model10({
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, hasAudioTitle, getRule } =
+  const { imageTitles, textTitles, hasAudioTitle, getRule } =
     useQuestionHelper(question);
 
   const conditions = useMemo(() => [Boolean(answer)], [answer]);
@@ -46,10 +45,7 @@ export function Model10({
   return (
     <div className={classes.container}>
       {hasAudioTitle && (
-        <AudioContainer
-          question={question}
-          audioTitles={audioTitles}
-        >
+        <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
@@ -80,54 +76,54 @@ export function Model10({
             ))}
 
         <div className="flex flex-col md:flex-row items-center justify-center">
-        <ImageTitle titles={imageTitles} />
+          <ImageTitle titles={imageTitles} />
 
-        <SimpleGrid cols={2}>
-          {question.options.map((option, inx) => (
-            <OptionButton
-              key={inx}
-              className={classes.button}
-              onClick={() =>
-                setAnswer({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? +option.position
-                    : undefined,
-                })
-              }
-              data-selected={
-                JSON.stringify(answer) ===
-                JSON.stringify({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? option.position
-                    : undefined,
-                })
-              }
-              option={option}
-            >
-              {(!option.image_url || !hideTextRule) && (
-                <>{option.description}</>
-              )}
+          <SimpleGrid cols={2}>
+            {question.options.map((option, inx) => (
+              <OptionButton
+                key={inx}
+                className={classes.button}
+                onClick={() =>
+                  setAnswer({
+                    ...option,
+                    positionAnswer: question.orderedAnswer
+                      ? +option.position
+                      : undefined,
+                  })
+                }
+                data-selected={
+                  JSON.stringify(answer) ===
+                  JSON.stringify({
+                    ...option,
+                    positionAnswer: question.orderedAnswer
+                      ? option.position
+                      : undefined,
+                  })
+                }
+                option={option}
+              >
+                {(!option.image_url || !hideTextRule) && (
+                  <>{option.description}</>
+                )}
 
-              {option.image_url && (
-                <img
-                  src={option.image_url}
-                  alt={option.description}
-                  width={100}
-                  style={{
-                    maxHeight: 110,
-                    objectFit: "contain",
-                    marginInline: "auto",
-                  }}
-                />
-              )}
-              {!option.image_url && option.sound_url && !option.description && (
-                <IconVolume size={80} />
-              )}
-            </OptionButton>
-          ))}
-        </SimpleGrid>
+                {option.image_url && (
+                  <img
+                    src={option.image_url}
+                    alt={option.description}
+                    width={100}
+                    style={{
+                      maxHeight: 110,
+                      objectFit: "contain",
+                      marginInline: "auto",
+                    }}
+                  />
+                )}
+                {!option.image_url &&
+                  option.sound_url &&
+                  !option.description && <IconVolume size={80} />}
+              </OptionButton>
+            ))}
+          </SimpleGrid>
         </div>
       </div>
     </div>
@@ -161,5 +157,5 @@ const useStyles = createStyles((theme) => ({
   button: {
     minWidth: "157px",
     height: "192px",
-  }
+  },
 }));

@@ -45,6 +45,7 @@ export const AudioContainer = ({
     <Group
       mx="auto"
       h="50px"
+      className="flex flex-row justify-center md:justify-start items-start w-full"
     >
       {audioTitles.map((title, inx) => {
         const props = buildAudioProps(title);

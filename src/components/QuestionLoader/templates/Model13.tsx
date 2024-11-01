@@ -101,7 +101,7 @@ export function Model13({
   return (
     <>
       {hasAudioTitle && (
-        <Group>
+        <div className="flex flex-row justify-center md:justify-start items-center w-full">
           {audioTitles.map((title, inx) => (
             <AudioButton
               key={inx}
@@ -109,7 +109,7 @@ export function Model13({
               src={title.file_url!}
             />
           ))}
-        </Group>
+        </div>
       )}
 
       {textTitles.map((title) => (

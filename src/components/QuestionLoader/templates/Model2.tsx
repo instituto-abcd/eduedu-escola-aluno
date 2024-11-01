@@ -1,4 +1,4 @@
-import { Group, SimpleGrid, Stack, Text, createStyles } from "@mantine/core";
+import { SimpleGrid } from "@mantine/core";
 import { ModelProps } from ".";
 import { DraggableCardSlot, DraggableCard } from "~/components/DraggableCard";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -8,7 +8,7 @@ import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption } from "~/api/exam";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
-import { BREAKPOINT } from "~/constants/dimensions";
+import { cx } from "~/utils/cx";
 
 export function Model2({
   question,
@@ -16,17 +16,17 @@ export function Model2({
   onConditionsChange,
 }: ModelProps) {
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
-    question.options.map(() => null),
+    question.options.map(() => null)
   );
 
-  const handleDrop = useCallback(function (
+  const handleDrop = useCallback(function(
     item: QuestionOption | null,
-    index: number,
+    index: number
   ) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft[index] = item ? { ...item, positionAnswer: index } : item;
-      }),
+      })
     );
   }, []);
 
@@ -63,14 +63,12 @@ export function Model2({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(
-      answers.filter((answer) => answer !== null) ,
-    );
+    onAnswerChange(answers.filter((answer) => answer !== null));
   }, [answers]);
 
   const conditions = useMemo(
     () => [answers.every((answer) => answer !== null)],
-    [answers],
+    [answers]
   );
 
   useEffect(() => {
@@ -78,18 +76,17 @@ export function Model2({
   }, [conditions]);
 
   const auxVideo = videoTitles.find(
-    (title) => title.description && title.description.includes("Botão"),
+    (title) => title.description && title.description.includes("Botão")
   );
 
   const cardSize =
     question.options.length > 3 ? question.options.length : undefined;
 
-  const { classes } = useStyles({ noPaddingRule });
-
   return (
     <>
+      {/* TODO: global `MediaRow(q)` component for audio/auxiliary/text buttons */}
       {hasAudioTitle && (
-        <Group>
+        <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
               key={inx}
@@ -101,23 +98,25 @@ export function Model2({
           {auxVideo && (
             <AuxiliaryVideoModal videoUrl={auxVideo.file_url ?? ""} />
           )}
-        </Group>
+        </div>
       )}
 
-      <Stack className={classes.content}>
+      <div className="my-auto flex flex-col items-center w-full gap-4 md:gap-9">
         {textTitles.map((title) => (
-          <Text
-            size={24}
-            color="dark.3"
-            weight={500}
+          <p
             key={title.description}
-            align="center"
+            className="text-center text-zinc-600 text-2xl font-medium"
           >
             {title.description}
-          </Text>
+          </p>
         ))}
 
-        <SimpleGrid cols={question.options.length} className={classes.dropzone}>
+        <SimpleGrid
+          cols={question.options.length}
+          className={cx("xl:place-items-center grid", {
+            ["gap-0 md:gap-0 flex justify-center "]: noPaddingRule,
+          })}
+        >
           {answers.map((slot, inx) => (
             <DraggableCardSlot
               key={inx}
@@ -143,7 +142,7 @@ export function Model2({
 
         <SimpleGrid
           cols={question.options.length}
-          className={classes.optionGrid}
+          className="gap-4"
         >
           {question.options.map((item) => (
             <DraggableCard
@@ -160,42 +159,7 @@ export function Model2({
             />
           ))}
         </SimpleGrid>
-      </Stack>
+      </div>
     </>
   );
 }
-
-type StyleProps = { noPaddingRule: boolean };
-const useStyles = createStyles((theme, props: StyleProps) => ({
-  optionGrid: {
-    width: "100%",
-    gap: 16,
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      gap: 35,
-    },
-    [theme.fn.largerThan(BREAKPOINT.DESKTOP)]: {
-      placeItems: "center",
-    },
-  },
-  dropzone: {
-    width: "100%",
-    gap: props.noPaddingRule ? 0 : 16,
-    display: props.noPaddingRule ? "flex" : "grid",
-    justifyContent: props.noPaddingRule ? "center" : "auto",
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      gap: props.noPaddingRule ? 0 : 35,
-    },
-    [theme.fn.largerThan(BREAKPOINT.DESKTOP)]: {
-      placeItems: "center",
-    },
-  },
-  content: {
-    marginBlock: "auto",
-    alignItems: "center",
-    width: "100%",
-    gap: 16,
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      gap: 35,
-    },
-  },
-}));

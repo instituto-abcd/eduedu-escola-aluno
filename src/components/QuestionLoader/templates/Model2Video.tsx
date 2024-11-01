@@ -1,10 +1,9 @@
-import { Box, Group, SimpleGrid, Stack } from "@mantine/core";
+import { SimpleGrid } from "@mantine/core";
 import { produce } from "immer";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { lousaPaddingTop, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -17,7 +16,7 @@ export function Model2Video({
     question.options.map(() => null)
   );
 
-  const handleDrop = useCallback(function (
+  const handleDrop = useCallback(function(
     item: QuestionOption | null,
     index: number
   ) {
@@ -26,8 +25,7 @@ export function Model2Video({
         draft[index] = item ? { ...item, positionAnswer: index } : item;
       })
     );
-  },
-  []);
+  }, []);
 
   const { videoTitles } = useQuestionHelper(question);
 
@@ -36,9 +34,7 @@ export function Model2Video({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(
-      slots.filter((answer) => answer !== null) 
-    );
+    onAnswerChange(slots.filter((answer) => answer !== null));
   }, [slots]);
 
   const conditions = useMemo(
@@ -51,68 +47,59 @@ export function Model2Video({
   }, [conditions]);
 
   return (
-    <>
-      <Group noWrap grow my="auto" pt={lousaPaddingTop}>
-        <Box
-          w={(lousaWidth * 38) / 100}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <VideoPlayer src={videoTitles[0]?.file_url ?? ""} autoPlay />
-        </Box>
+    <div className="flex flex-col gap-6 xl:gap-28 lg:flex-row items-center justify-center flex-1">
+      <div className="lg:w-1/3 xl:w-max">
+        <VideoPlayer
+          src={videoTitles[0]?.file_url ?? ""}
+          autoPlay
+        />
+      </div>
 
-        <Stack
-          maw={(lousaWidth * 62) / 100}
-          style={{
-            padding: "1vw",
-          }}
+      <div className="flex flex-col gap-4 md:gap-9 min-w-min">
+        <SimpleGrid
+          cols={question.options.length}
+          style={{ placeItems: "center" }}
+          spacing={20}
         >
-          <SimpleGrid
-            cols={question.options.length}
-            style={{ placeItems: "center" }}
-            spacing={20}
-          >
-            {slots.map((slot, inx) => (
-              <DraggableCardSlot
-                key={inx}
-                accept="ANSWER_CARD"
-                onDrop={(item) => handleDrop(item, inx)}
-                item={slot}
-                replaceWith={
-                  <DraggableCard
-                    item={slot}
-                    image={slot?.image_url}
-                    text={slot?.description}
-                    sound={slot?.sound_url}
-                    disabled
-                    onClear={() => handleDrop(null, inx)}
-                    debug={{ skipDebug: true }}
-                  />
-                }
-              />
-            ))}
-          </SimpleGrid>
+          {slots.map((slot, inx) => (
+            <DraggableCardSlot
+              key={inx}
+              accept="ANSWER_CARD"
+              onDrop={(item) => handleDrop(item, inx)}
+              item={slot}
+              replaceWith={
+                <DraggableCard
+                  item={slot}
+                  image={slot?.image_url}
+                  text={slot?.description}
+                  sound={slot?.sound_url}
+                  disabled
+                  onClear={() => handleDrop(null, inx)}
+                  debug={{ skipDebug: true }}
+                />
+              }
+            />
+          ))}
+        </SimpleGrid>
 
-          <SimpleGrid
-            cols={question.options.length}
-            style={{ placeItems: "center" }}
-            spacing={20}
-          >
-            {question.options.map((item, inx) => (
-              <DraggableCard
-                item={item}
-                image={item.image_url}
-                text={item.description}
-                sound={item.sound_url}
-                key={inx}
-                hidden={
-                  !!slots.find((slot) => slot?.position === item.position)
-                }
-                debug={{ debugProperty: "position" }}
-              />
-            ))}
-          </SimpleGrid>
-        </Stack>
-      </Group>
-    </>
+        <SimpleGrid
+          cols={question.options.length}
+          style={{ placeItems: "center" }}
+          spacing={20}
+        >
+          {question.options.map((item, inx) => (
+            <DraggableCard
+              item={item}
+              image={item.image_url}
+              text={item.description}
+              sound={item.sound_url}
+              key={inx}
+              hidden={!!slots.find((slot) => slot?.position === item.position)}
+              debug={{ debugProperty: "position" }}
+            />
+          ))}
+        </SimpleGrid>
+      </div>
+    </div>
   );
 }

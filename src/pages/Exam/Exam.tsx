@@ -28,8 +28,8 @@ export function ExamPage() {
     answer:
       | Question
       | {
-        examCompleted?: true;
-      },
+          examCompleted?: true;
+        }
   ) {
     if ("examCompleted" in answer) {
       navigate(PATH.EXAM_EVALUATION);
@@ -48,29 +48,12 @@ export function ExamPage() {
 
   return (
     <>
-      {/* 
-          <Progress
-            value={currentQuestion?.progress ?? 0}
-            style={{ position: "fixed", top: 100, zIndex: 999, display: "none" }}
-          />
-
-        TODO: definir se o progress vai continuar no layout
-      */}
-      <Stack
-        spacing={lousaWidth * 0.045}
-        align="center"
-        h="100%"
-        w="100%"
-        style={{ position: "relative" }}
-      >
-        {isLoading && <Loader />}
-        {currentQuestion && (
-          <QuestionLoader
-            question={currentQuestion}
-            answerCallback={handleAnswer}
-          />
-        )}
-      </Stack>
+      {currentQuestion && (
+        <QuestionLoader
+          question={currentQuestion}
+          answerCallback={handleAnswer}
+        />
+      )}
 
       {currentQuestion && showStagingInfo && (
         <Stack style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}>

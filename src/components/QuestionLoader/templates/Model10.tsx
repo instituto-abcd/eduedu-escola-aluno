@@ -79,6 +79,7 @@ export function Model10({
               />
             ))}
 
+        <div className="flex flex-col md:flex-row items-center justify-center">
         <ImageTitle titles={imageTitles} />
 
         <SimpleGrid cols={2}>
@@ -127,6 +128,7 @@ export function Model10({
             </OptionButton>
           ))}
         </SimpleGrid>
+        </div>
       </div>
     </div>
   );
@@ -153,10 +155,11 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    gap: 10,
   },
 
   button: {
-    width: "157px",
+    minWidth: "157px",
     height: "192px",
   }
 }));

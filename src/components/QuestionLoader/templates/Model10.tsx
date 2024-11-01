@@ -14,6 +14,7 @@ import {
   TitleBubble,
 } from "~/components/question-components";
 
+
 export function Model10({
   question,
   auxQuestion,
@@ -84,6 +85,7 @@ export function Model10({
           {question.options.map((option, inx) => (
             <OptionButton
               key={inx}
+              className={classes.button}
               onClick={() =>
                 setAnswer({
                   ...option,
@@ -152,4 +154,9 @@ const useStyles = createStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  button: {
+    width: "157px",
+    height: "192px",
+  }
 }));

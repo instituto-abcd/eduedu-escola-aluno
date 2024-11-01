@@ -50,7 +50,11 @@ export function Model13({
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function onDrop(item: QuestionOption | null, index: number, title: QuestionTitle) {
+  function onDrop(
+    item: QuestionOption | null,
+    index: number,
+    title: QuestionTitle
+  ) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
@@ -171,9 +175,16 @@ function SlotCard({
   const { classes } = useStyles(collectedProps.isOver);
 
   return (
-    <div className={classes.slot} ref={drop}>
+    <div
+      className={classes.slot}
+      ref={drop}
+    >
       {image && (
-        <img src={image} height={boardW(150)} className={classes.optionImage} />
+        <img
+          src={image}
+          height={boardW(150)}
+          className={classes.optionImage}
+        />
       )}
       <Text
         size={image ? boardW(20) : boardW(30)}

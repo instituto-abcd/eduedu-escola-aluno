@@ -114,7 +114,7 @@ const useStyles = createStyles((theme) => ({
   container: {
     flexGrow: 1,
     alignItems: "center",
-    backgroundColor: "#AFCBE0",
+    backgroundColor: "#FFF",
     padding: 12,
     "&>*": {
       maxWidth: 1280,

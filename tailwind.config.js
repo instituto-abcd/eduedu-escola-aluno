@@ -10,7 +10,7 @@ export default {
     },
     extend: {
       colors: {
-        background: "#AFCBE0",
+        background: "#FFF",
       },
     },
   },

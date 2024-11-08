@@ -14,7 +14,7 @@ import { BREAKPOINT } from "~/constants/dimensions";
 type QuestionLoaderProps = {
   answerCallback: (
     nextQuestion: Question | { examCompleted?: true; planetCompleted?: true },
-    skipFeedback?: boolean,
+    skipFeedback?: boolean
   ) => void;
   question: Question;
 };
@@ -35,7 +35,7 @@ export function QuestionLoader({
     auxQuestionId ?? "",
     {
       enabled: hasAuxQuestion,
-    },
+    }
   );
 
   const commonProps: ModelProps = {
@@ -55,6 +55,8 @@ export function QuestionLoader({
 
   function submitAnswer() {
     const isExam = !question.planet_id;
+
+    setContinueDisabled(true);
 
     if (isExam) {
       mutateExam({
@@ -80,7 +82,7 @@ export function QuestionLoader({
   /* Conditions - bloqueio de continuar */
   useEffect(() => {
     const shouldEnableContinue = [...conditions, !isPlaying].every(
-      (bool) => bool === true,
+      (bool) => bool === true
     );
 
     setContinueDisabled(!shouldEnableContinue);
@@ -98,7 +100,10 @@ export function QuestionLoader({
   const { classes } = useStyles();
 
   return (
-    <Stack className={classes.container} id="question-loader">
+    <Stack
+      className={classes.container}
+      id="question-loader"
+    >
       <ModelMapper commonProps={commonProps} />
 
       <ButtonContinue

@@ -106,6 +106,8 @@ const URL = {
     `student/${studentId}/planets/${planetId}`,
   GET_ALL: "student/all-no-auth",
   RESERVE: (id: string) => `student/${id}/reserved`,
+  DEBUG_FULL_TRACK: (id: string) =>
+    `student/${id}/planet-track-without-availability`,
 };
 
 type StudentGetAllSearch = {
@@ -183,6 +185,14 @@ class StudentAPI extends API {
     );
     return data;
   }
+
+  static async debugGetFullTrack(studentId: string) {
+    const { data } = await this.api.get<PlanetTrack>(
+      URL.DEBUG_FULL_TRACK(studentId)
+    );
+
+    return data;
+  }
 }
 
 export function useGetPlanetTrack(
@@ -192,6 +202,18 @@ export function useGetPlanetTrack(
 
   const handler = useCallback(function () {
     return StudentAPI.getPlanetTrack(studentId);
+  }, []);
+
+  return useQuery([KEY.PLANET_TRACK], handler, options);
+}
+
+export function useDebugGetFullTrack(
+  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
+) {
+  const studentId = useStudent((state) => state.id);
+
+  const handler = useCallback(function () {
+    return StudentAPI.debugGetFullTrack(studentId);
   }, []);
 
   return useQuery([KEY.PLANET_TRACK], handler, options);

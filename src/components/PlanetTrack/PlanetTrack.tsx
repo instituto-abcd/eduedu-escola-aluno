@@ -1,15 +1,20 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
-import { Carousel, CarouselProps, Embla } from '@mantine/carousel';
-import { Stack, Group, createStyles } from '@mantine/core';
-import { SimplifiedPlanet, useGetPlanetTrack } from '~/api/student';
-import { PlanetCard } from '~/components/PlanetCard/PlanetCard';
-import fimProvaAudio from '~/assets/audio/FIM_PROVA.mp3';
-import fimProvaLottie from '~/assets/lotties/FIM_PROVA.json';
-import Lottie from 'react-lottie';
-import { useCreateSound } from '~/hooks/useCreateSound';
-import { useGridSlide } from '~/hooks/useGridSlide';
-import { MediaQueryKey } from '~/constants/dimensions';
-import { useCurrentBreakpoint } from '~/hooks/useCurrentBreakpoint';
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
+import { Stack, Group, createStyles } from "@mantine/core";
+import {
+  SimplifiedPlanet,
+  useDebugGetFullTrack,
+  useGetPlanetTrack,
+} from "~/api/student";
+import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
+import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
+import fimProvaLottie from "~/assets/lotties/FIM_PROVA.json";
+import Lottie from "react-lottie";
+import { useCreateSound } from "~/hooks/useCreateSound";
+import { useGridSlide } from "~/hooks/useGridSlide";
+import { MediaQueryKey } from "~/constants/dimensions";
+import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { useToggle } from "@mantine/hooks";
 
 export type PlanetTrackRef = {
   embla?: Embla;
@@ -23,6 +28,7 @@ type Props = {
 export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
   ({ visible }, ref) => {
     const [embla, setEmbla] = useState<Embla>();
+    const [unlock, toggleUnlock] = useToggle();
 
     useImperativeHandle(ref, () => ({
       embla,
@@ -30,6 +36,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
     }));
 
     const { data: track, isLoading } = useGetPlanetTrack();
+    useDebugGetFullTrack({ enabled: unlock });
     const breakpoint = useCurrentBreakpoint();
 
     const gridSlides = useGridSlide({
@@ -39,26 +46,26 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
 
     const carouselProps: Record<MediaQueryKey, CarouselProps> = {
       MOBILE: {
-        align: 'start',
-        orientation: 'vertical',
+        align: "start",
+        orientation: "vertical",
       },
       TABLET_VERT: {
-        orientation: 'horizontal',
-        align: 'center',
-        slideSize: '33%',
-        styles: { slide: { marginBlock: 'auto' } },
+        orientation: "horizontal",
+        align: "center",
+        slideSize: "33%",
+        styles: { slide: { marginBlock: "auto" } },
       },
       TABLET_HORZ: {
-        orientation: 'horizontal',
-        align: 'center',
-        slideSize: '33%',
-        styles: { slide: { marginBlock: 'auto' } },
+        orientation: "horizontal",
+        align: "center",
+        slideSize: "33%",
+        styles: { slide: { marginBlock: "auto" } },
       },
       DESKTOP: {
-        orientation: 'horizontal',
-        align: 'center',
-        slideSize: '33%',
-        styles: { slide: { marginBlock: 'auto' } },
+        orientation: "horizontal",
+        align: "center",
+        slideSize: "33%",
+        styles: { slide: { marginBlock: "auto" } },
       },
     };
 
@@ -80,9 +87,8 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
           className={classes.carousel}
           onSlideChange={setActiveSlide}
           {...carouselProps[breakpoint]}
-          
         >
-          {breakpoint === 'MOBILE'
+          {breakpoint === "MOBILE"
             ? gridSlides.map((items, inx) => (
                 <Carousel.Slide key={inx}>
                   <Group position="center">
@@ -90,7 +96,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
                       <PlanetCard
                         planet={planet}
                         key={i}
-                        size={'small'}
+                        size={"small"}
                       />
                     ))}
                   </Group>
@@ -101,12 +107,21 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
                   <Group position="center">
                     <PlanetCard
                       planet={planet}
-                      size={activeSlide === i ? 'large' : 'medium'}
+                      size={activeSlide === i ? "large" : "medium"}
                     />
                   </Group>
                 </Carousel.Slide>
               ))}
         </Carousel>
+
+        {import.meta.env.DEV && !unlock && (
+          <button
+            className="p-4 bg-blue-600 font-bold z-20 opacity-100 absolute bottom-4 inset-x-0 mx-auto w-fit rounded text-white"
+            onClick={() => toggleUnlock()}
+          >
+            Remover limite diário
+          </button>
+        )}
       </Stack>
     );
   }
@@ -127,14 +142,14 @@ function NoTrackAvailable() {
           autoplay: true,
           animationData: fimProvaLottie,
           rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice',
+            preserveAspectRatio: "xMidYMid slice",
           },
         }}
         height={400}
         width={400}
         eventListeners={[
           {
-            eventName: 'DOMLoaded',
+            eventName: "DOMLoaded",
             callback: sound.play,
           },
         ]}
@@ -145,12 +160,13 @@ function NoTrackAvailable() {
 
 const useStyles = createStyles((_, visible: boolean) => ({
   carousel: {
-    maxHeight: '90vh',
+    maxHeight: "90vh",
     marginTop: 20,
-    display: visible ? 'block' : 'none',
-    marginBlock: 'auto',
+    display: visible ? "block" : "none",
+    marginBlock: "auto",
+    position: "relative",
   },
   container: {
-    maxHeight: 'calc(100vh - 200px)',
+    maxHeight: "calc(100vh - 200px)",
   },
 }));

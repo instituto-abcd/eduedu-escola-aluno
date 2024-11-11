@@ -114,7 +114,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
               ))}
         </Carousel>
 
-        {import.meta.env.DEV && !unlock && (
+        {!unlock && (
           <button
             className="p-4 bg-blue-600 font-bold z-20 opacity-100 absolute bottom-4 inset-x-0 mx-auto w-fit rounded text-white"
             onClick={() => toggleUnlock()}

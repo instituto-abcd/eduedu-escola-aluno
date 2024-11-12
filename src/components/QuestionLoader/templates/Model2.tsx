@@ -9,6 +9,8 @@ import { QuestionOption } from "~/api/exam";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
 import { cx } from "~/utils/cx";
+import { PictureDndSlot } from "~/components/question-components";
+import { PictureDndCard } from "~/components/question-components";
 
 export function Model2({
   question,
@@ -19,7 +21,7 @@ export function Model2({
     question.options.map(() => null)
   );
 
-  const handleDrop = useCallback(function(
+  const handleDrop = useCallback(function (
     item: QuestionOption | null,
     index: number
   ) {
@@ -84,7 +86,6 @@ export function Model2({
 
   return (
     <>
-      {/* TODO: global `MediaRow(q)` component for audio/auxiliary/text buttons */}
       {hasAudioTitle && (
         <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
@@ -101,7 +102,7 @@ export function Model2({
         </div>
       )}
 
-      <div className="my-auto flex flex-col items-center w-full gap-4 md:gap-9">
+      <div className="my-auto flex flex-col items-center w-full gap-4 md:gap-9 max-h-[80vh]">
         {textTitles.map((title) => (
           <p
             key={title.description}
@@ -111,38 +112,62 @@ export function Model2({
           </p>
         ))}
 
-        <SimpleGrid
-          cols={question.options.length}
-          className={cx("xl:place-items-center grid", {
-            ["gap-0 md:gap-0 flex justify-center "]: noPaddingRule,
-          })}
-        >
-          {answers.map((slot, inx) => (
-            <DraggableCardSlot
-              key={inx}
-              onDrop={(item) => handleDrop(item, inx)}
-              item={slot}
-              size={cardSize}
-              replaceWith={
-                <DraggableCard
-                  item={slot}
-                  size={cardSize}
-                  image={slot?.image_url}
-                  text={slot?.description}
-                  sound={slot?.sound_url}
-                  disabled
-                  onClear={() => handleDrop(null, inx)}
-                  debug={{ skipDebug: true }}
-                  noPaddingRule={noPaddingRule}
-                />
-              }
-            />
-          ))}
-        </SimpleGrid>
+        {!noPaddingRule && (
+          <SimpleGrid
+            cols={question.options.length}
+            className="xl:place-items-center grid xl:h-[40vh] xl:w-auto"
+          >
+            {answers.map((slot, inx) => (
+              <DraggableCardSlot
+                key={inx}
+                onDrop={(item) => handleDrop(item, inx)}
+                item={slot}
+                size={cardSize}
+                replaceWith={
+                  <DraggableCard
+                    item={slot}
+                    image={slot?.image_url}
+                    text={slot?.description}
+                    sound={slot?.sound_url}
+                    disabled
+                    onClear={() => handleDrop(null, inx)}
+                    debug={{ skipDebug: true }}
+                  />
+                }
+              />
+            ))}
+          </SimpleGrid>
+        )}
 
+        {noPaddingRule && (
+          <SimpleGrid
+            cols={question.options.length}
+            className="place-items-center grid gap-0 md:gap-0 justify-center xl:h-[40vh] xl:w-auto"
+          >
+            {answers.map((slot, inx) => (
+              <PictureDndSlot
+                key={inx}
+                onDrop={(item) => handleDrop(item, inx)}
+                item={slot}
+                index={inx}
+                total={question.options.length}
+                replaceWith={
+                  <PictureDndCard
+                    item={slot}
+                    image={slot?.image_url ?? ""}
+                    sound={slot?.sound_url}
+                    disabled
+                    onClear={() => handleDrop(null, inx)}
+                    debug={{ skipDebug: true }}
+                  />
+                }
+              />
+            ))}
+          </SimpleGrid>
+        )}
         <SimpleGrid
           cols={question.options.length}
-          className="gap-4"
+          className="gap-4 xl:h-[40vh] xl:w-auto"
         >
           {question.options.map((item) => (
             <DraggableCard

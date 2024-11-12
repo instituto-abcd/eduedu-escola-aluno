@@ -1,7 +1,6 @@
-import { createStyles } from "@mantine/core";
 import { useDrop } from "react-dnd";
 import { QuestionOption } from "~/api/exam";
-import { BREAKPOINT } from "~/constants/dimensions";
+import { cx } from "~/utils/cx";
 
 type Props<T> = {
   onDrop: (item: T | null) => void;
@@ -23,9 +22,7 @@ export function DraggableCardSlot<T = QuestionOption>({
   accept = "ANSWER_CARD",
   ...props
 }: Props<T>) {
-  const { classes, cx } = useStyles({ size });
-
-  const [, drop] = useDrop(
+  const [{ isOver }, drop] = useDrop(
     () => ({
       accept,
       drop: onDrop,
@@ -33,7 +30,7 @@ export function DraggableCardSlot<T = QuestionOption>({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [],
+    []
   );
 
   if (item !== null && replaceWith) return replaceWith;
@@ -41,27 +38,17 @@ export function DraggableCardSlot<T = QuestionOption>({
   return (
     <div
       {...props}
-      className={cx(classes.card, className)}
-      style={{}}
+      className={cx(
+        "rounded-[20px] md:rounded-[45px] shadow-0px_8px_0px_#4C494166 transition-all bg-[#DADADA]",
+        "w-[30vw] md:w-[25vw] md:max-w-[200px] max-w-[140px] h-[190px] aspect-square",
+        {
+          ["w-[105px] md:w-[190px] xl:max-w-none xl:w-auto xl:h-full"]: !size,
+          [`w-[calc(max-content/${size} xl:w-auto)]`]: !!size,
+          ["bg-green-300"]: isOver,
+        },
+        className
+      )}
       ref={drop}
     />
   );
 }
-
-const useStyles = createStyles((theme, props: { size?: number }) => ({
-  card: {
-    borderRadius: 20,
-    backgroundColor: "#DADADA",
-    boxShadow: "0px 8px 0px 0px #4C494166",
-    width: props.size ? `calc(max-content / ${props.size})` : 105,
-    height: 192,
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      borderRadius: 45,
-      width: props.size ? `calc(max-content / ${props.size})` : 190,
-      height: 192,
-    },
-    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
-      width: 190,
-    },
-  },
-}));

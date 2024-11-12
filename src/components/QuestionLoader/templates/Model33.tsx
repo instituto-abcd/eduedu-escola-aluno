@@ -1,4 +1,4 @@
-import { Group, Image, Stack, Text } from "@mantine/core";
+import { Image, Stack, Text } from "@mantine/core";
 import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { lousaWidth } from "~/constants/dimensions";
@@ -9,7 +9,8 @@ import { useTimeout } from "@mantine/hooks";
 import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model33({ question, onConditionsChange }: ModelProps) {
-  const { audioTitles, hasAudioTitle, imageTitles, textTitles } = useQuestionHelper(question);
+  const { hasAudioTitle, imageTitles, textTitles } =
+    useQuestionHelper(question);
   const illustration = imageTitles[0]?.file_url ?? "";
 
   const hasTextOrImage =
@@ -24,12 +25,18 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
   return (
     <>
       {hasAudioTitle && (
-        <AudioContainer question={question} audioTitles={audioTitles} hasPrimaryIcon={false} />
+        <AudioContainer
+          question={question}
+          hasPrimaryIcon={false}
+        />
       )}
 
-      <Group noWrap m="auto" spacing={(lousaWidth * 10) / 100}>
+      <div className="flex flex-col gap-4 md:flex-row items-center justify-center mt-auto">
         {hasTextOrImage && (
-          <Stack align="center" spacing={0}>
+          <Stack
+            align="center"
+            spacing={0}
+          >
             {illustration && (
               <Image
                 src={illustration}
@@ -63,7 +70,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
           height="auto"
           width={(lousaWidth * 30) / 100}
         />
-      </Group>
+      </div>
     </>
   );
 }

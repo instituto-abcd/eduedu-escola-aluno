@@ -1,4 +1,11 @@
-import { Flex, Image, ScrollArea, Stack, Text, Title, createStyles } from "@mantine/core";
+import {
+  Image,
+  ScrollArea,
+  Stack,
+  Text,
+  Title,
+  createStyles,
+} from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -9,6 +16,7 @@ import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
 import { FloatingButton } from "~/components/FloatingButton";
 import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
+import { TEXT_PLACEHOLDERS } from "~/constants/text-placeholders";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -21,7 +29,7 @@ const useStyles = createStyles((theme) => ({
     textAlign: "center",
   },
   scroll: {
-    overflow: 'auto',
+    overflow: "auto",
 
     "::-webkit-scrollbar": {
       width: 5,
@@ -35,8 +43,8 @@ const useStyles = createStyles((theme) => ({
     "::-webkit-scrollbar-thumb": {
       borderRadius: 15,
       background: "#CCC",
-    }
-  }
+    },
+  },
 }));
 
 export function Model32({
@@ -47,10 +55,15 @@ export function Model32({
 }: ModelProps) {
   const { classes } = useStyles();
   const {
-    textTitles, imageTitles, audioTitles, hasAudioTitle, hasImageTitle, hasTextTitle
+    textTitles,
+    imageTitles,
+    hasAudioTitle,
+    hasImageTitle,
+    hasTextTitle,
   } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { enunciationScrollRef, enunciationScrollIndicator } = useEnunciationScrollIndicator(question);
+  const { enunciationScrollRef, enunciationScrollIndicator } =
+    useEnunciationScrollIndicator(question);
 
   useEffect(() => {
     setAnswer(null);
@@ -68,14 +81,20 @@ export function Model32({
 
   return (
     <>
-      {(hasAudioTitle || auxQuestion) && (
-        <AudioContainer question={question} audioTitles={audioTitles}>
-          {auxQuestion && <ReadButton question={auxQuestion} />}
-        </AudioContainer>
-      )}
+      <div className="md:min-h-14 md:self-start">
+        {(hasAudioTitle || auxQuestion) && (
+          <AudioContainer question={question}>
+            {auxQuestion && <ReadButton question={auxQuestion} />}
+          </AudioContainer>
+        )}
+      </div>
 
-      <Stack my="auto" w={boardW(800)} justify="center">
-        <Title color="dark.3" size={boardW(24)} align="center">
+      <div className="w-full md:w-5/6 my-auto">
+        <Title
+          color="dark.3"
+          size={boardW(24)}
+          align="center"
+        >
           {
             textTitles.find(
               (title) =>
@@ -84,82 +103,97 @@ export function Model32({
           }
         </Title>
 
-        <Flex
-          w="100%"
-          justify={textTitles.length > 0 ? "space-between" : "center"}
-          align="center"
-        >
-
+        <div className="h-auto md:min-h-[370px] gap-4 w-auto flex flex-col md:flex-row justify-around items-center">
           {(hasImageTitle || hasTextTitle) && (
-            <ScrollArea 
-              mah={boardW(400)} 
-              w="48%" 
-              pr={20} 
-              className={classes.scroll} 
-              type="always" 
-              ref={enunciationScrollRef}
-            >
-              {enunciationScrollIndicator && <FloatingButton />}
-              {hasImageTitle && imageTitles.map((title) => (
-                <Image
-                  src={title.file_url}
-                  key={title.file_url}
-                  width={boardW(300)}
-                  m="auto"
-                />
-              ))}
-
-              {textTitles.length > 0 && (
-                <Stack pb={5}>
-                  {question?.planet_id && (
-                    <Text
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          textTitles.find(
-                            (title) =>
-                              title.placeholder?.includes("Campo") ||
-                              (!title.placeholder && title.description)
-                          )?.description ?? "",
-                      }}
-                      className={classes.typography}
+            <div className="w-full flex justify-center items-center">
+              <ScrollArea
+                mah={boardW(400)}
+                w="100%"
+                pr={20}
+                className={`${classes.scroll} flex flex-col items-center justify-center text-center`}
+                type="always"
+                ref={enunciationScrollRef}
+              >
+                {enunciationScrollIndicator && <FloatingButton />}
+                {hasImageTitle &&
+                  imageTitles.map((title) => (
+                    <Image
+                      src={title.file_url}
+                      key={title.file_url}
+                      width={boardW(300)}
+                      m="auto"
                     />
-                  )}
-                  {!question?.planet_id && (
-                    <Text
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          textTitles.find(
-                            (title) =>
-                              title.classification ===
-                              QuestionTitleClassification.HISTORIA
-                          )?.description ??
-                          textTitles[0]?.description ??
-                          "",
-                      }}
-                      className={classes.typography}
-                    />
-                  )}
-
-                  {question?.planet_id && (
-                    <Text
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          textTitles.find(
-                            (title) =>
-                              title.placeholder?.includes("Enunciado") ||
-                              title.placeholder?.includes("Quem disse")
-                          )?.description ?? "",
-                      }}
-                      className={classes.typography}
-                    />
-                  )}
-                </Stack>
-              )}
-            </ScrollArea>
+                  ))}
+                {textTitles.length > 0 && (
+                  <Stack
+                    pb={5}
+                    px={4}
+                    mt={5}
+                  >
+                    {question?.planet_id && (
+                      <Text
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            textTitles.find(
+                              (title) =>
+                                title.placeholder?.includes(
+                                  TEXT_PLACEHOLDERS.CAMPO
+                                ) ||
+                                (!title.placeholder && title.description)
+                            )?.description ?? "",
+                        }}
+                        className={classes.typography}
+                      />
+                    )}
+                    {!question?.planet_id && (
+                      <Text
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            textTitles.find(
+                              (title) =>
+                                title.classification ===
+                                QuestionTitleClassification.HISTORIA
+                            )?.description ??
+                            textTitles[0]?.description ??
+                            "",
+                        }}
+                        className={classes.typography}
+                      />
+                    )}
+                    {question?.planet_id && (
+                      <Text
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            textTitles.find(
+                              (title) =>
+                                title.placeholder?.includes(
+                                  TEXT_PLACEHOLDERS.ENUNCIADO
+                                ) ||
+                                title.placeholder?.includes(
+                                  TEXT_PLACEHOLDERS.QUEM_DISSE
+                                )
+                            )?.description ?? "",
+                        }}
+                        className={classes.typography}
+                      />
+                    )}
+                  </Stack>
+                )}
+              </ScrollArea>
+            </div>
           )}
 
-          <ScrollArea mah={boardW(420)} w="48%" pr={20} className={classes.scroll} type="always">
-            <Stack pb={5}>
+          <ScrollArea
+            mah={boardW(470)}
+            w="90%"
+            pr={20}
+            className={classes.scroll}
+            type="always"
+          >
+            <Stack
+              pb={5}
+              className="w-full"
+            >
               <Text
                 size={boardW(20)}
                 weight={600}
@@ -197,14 +231,15 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
+                  className="h-10"
                 >
                   {option.description}
                 </TextOptionButton>
               ))}
             </Stack>
           </ScrollArea>
-        </Flex>
-      </Stack>
+        </div>
+      </div>
     </>
   );
 }

@@ -115,7 +115,7 @@ type ClassTargets =
   | "lock";
 
 export function PlanetCard({ planet, size }: PlanetCardProps) {
-  const { classes, cx } = useStyles({ enable: planet.enable });
+  const { classes, cx } = useStyles({ enable: planet.canExecutePlanet });
 
   const sizeClasses: Record<
     PlanetCardProps["size"],
@@ -157,7 +157,10 @@ export function PlanetCard({ planet, size }: PlanetCardProps) {
         justify={size === "small" ? "end" : "space-between"}
         spacing={6}
       >
-        <img src={planet.planetAvatar} className={getClass("avatar")} />
+        <img
+          src={planet.planetAvatar}
+          className={getClass("avatar")}
+        />
         <h3 className={getClass("name")}>{planet.planetName}</h3>
         <Rating
           readOnly

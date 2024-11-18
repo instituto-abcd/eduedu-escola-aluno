@@ -1,11 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
 import { Stack, Group, createStyles } from "@mantine/core";
-import {
-  SimplifiedPlanet,
-  useDebugGetFullTrack,
-  useGetPlanetTrack,
-} from "~/api/student";
+import { SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
 import fimProvaLottie from "~/assets/lotties/FIM_PROVA.json";
@@ -28,21 +24,35 @@ type Props = {
 export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
   ({ visible }, ref) => {
     const [embla, setEmbla] = useState<Embla>();
-    const [unlock, toggleUnlock] = useToggle();
+    const [unlockLimit, toggleUnlockLimit] = useToggle();
+    const [unlockAll, toggleUnlockAll] = useToggle();
 
     useImperativeHandle(ref, () => ({
       embla,
       track: track?.planetTrack,
     }));
 
-    const { data: track, isLoading } = useGetPlanetTrack();
-    useDebugGetFullTrack({ enabled: unlock });
+    const { data: track, isLoading } = useGetPlanetTrack(undefined, {
+      usePlanetAvailability: !unlockLimit,
+      hideLastPlanets: !unlockAll,
+      canExecuteAnyPlanet: unlockAll,
+    });
     const breakpoint = useCurrentBreakpoint();
 
     const gridSlides = useGridSlide({
       items: track?.planetTrack ?? [],
       layout: [1, 2],
     });
+
+    // usePlanetAvailability
+    // true = planetas vem com limite diario
+    // false = planetas vem sem limite
+    //
+    // hideLastPlanets
+    // true = a trilha acaba com apenas +1 planeta bloqueado
+    // false = a trilha vem completa
+    //
+    // canE
 
     const carouselProps: Record<MediaQueryKey, CarouselProps> = {
       MOBILE: {
@@ -114,14 +124,24 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
               ))}
         </Carousel>
 
-        {!unlock && (
-          <button
-            className="p-4 bg-blue-600 font-bold z-20 opacity-100 absolute bottom-4 inset-x-0 mx-auto w-fit rounded text-white"
-            onClick={() => toggleUnlock()}
-          >
-            Remover limite diário
-          </button>
-        )}
+        <div className="absolute bottom-4 inset-x-0 mx-auto flex gap-4 w-fit">
+          {!unlockLimit && (
+            <button
+              className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
+              onClick={() => toggleUnlockLimit()}
+            >
+              Remover limite diário
+            </button>
+          )}
+          {!unlockAll && (
+            <button
+              className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
+              onClick={() => toggleUnlockAll()}
+            >
+              Listar todos planetas
+            </button>
+          )}
+        </div>
       </Stack>
     );
   }

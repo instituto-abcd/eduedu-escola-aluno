@@ -106,14 +106,28 @@ const URL = {
     `student/${studentId}/planets/${planetId}`,
   GET_ALL: "student/all-no-auth",
   RESERVE: (id: string) => `student/${id}/reserved`,
-  DEBUG_FULL_TRACK: (id: string) =>
-    `student/${id}/planet-track-without-availability`,
 };
 
 type StudentGetAllSearch = {
   schoolClassId?: string;
   initialLetter?: string;
 } & PaginationParams;
+
+// useplanetavailability
+// true = planetas vem com limite diario
+// false = planetas vem sem limite
+//
+// hideLastPlanets
+// true = a trilha acaba com apenas +1 planeta bloqueado
+// false = a trilha vem completa
+//
+// canExecuteAnyPlanet
+// auto explicativo
+type PlanetTrackParams = {
+  usePlanetAvailability?: boolean;
+  hideLastPlanets?: boolean;
+  canExecuteAnyPlanet?: boolean;
+};
 
 class StudentAPI extends API {
   static async getAllStudents(search?: StudentGetAllSearch) {
@@ -129,9 +143,10 @@ class StudentAPI extends API {
     return data;
   }
 
-  static async getPlanetTrack(studentId: string) {
+  static async getPlanetTrack(studentId: string, params?: PlanetTrackParams) {
     const { data } = await this.api.get<PlanetTrack>(
-      URL.GET_STUDENT_PLANET_TRACK(studentId)
+      URL.GET_STUDENT_PLANET_TRACK(studentId),
+      { params }
     );
 
     return data;
@@ -185,38 +200,40 @@ class StudentAPI extends API {
     );
     return data;
   }
-
-  static async debugGetFullTrack(studentId: string) {
-    const { data } = await this.api.get<PlanetTrack>(
-      URL.DEBUG_FULL_TRACK(studentId)
-    );
-
-    return data;
-  }
 }
 
 export function useGetPlanetTrack(
-  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
+  options?: QueryOptions<
+    PlanetTrack,
+    [typeof KEY.PLANET_TRACK, PlanetTrackParams]
+  >,
+  params?: PlanetTrackParams
 ) {
   const studentId = useStudent((state) => state.id);
 
-  const handler = useCallback(function () {
-    return StudentAPI.getPlanetTrack(studentId);
-  }, []);
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getPlanetTrack(studentId, params);
+    },
+    [
+      params?.usePlanetAvailability,
+      params?.hideLastPlanets,
+      params?.canExecuteAnyPlanet,
+    ]
+  );
 
-  return useQuery([KEY.PLANET_TRACK], handler, options);
-}
-
-export function useDebugGetFullTrack(
-  options?: QueryOptions<PlanetTrack, [typeof KEY.PLANET_TRACK]>
-) {
-  const studentId = useStudent((state) => state.id);
-
-  const handler = useCallback(function () {
-    return StudentAPI.debugGetFullTrack(studentId);
-  }, []);
-
-  return useQuery([KEY.PLANET_TRACK], handler, options);
+  return useQuery(
+    [
+      KEY.PLANET_TRACK,
+      {
+        canExecuteAnyPlanet: params?.canExecuteAnyPlanet,
+        hideLastPlanets: params?.hideLastPlanets,
+        usePlanetAvailability: params?.usePlanetAvailability,
+      },
+    ],
+    handler,
+    options
+  );
 }
 
 export function useGetStudentAwards(

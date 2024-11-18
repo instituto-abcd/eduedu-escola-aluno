@@ -38,7 +38,7 @@ export function OptionButton({
     <button
       {...props}
       className={cx(
-        "shadow-card relative bg-surface rounded-[45px] grid place-items-center cursor-pointer select-none",
+        "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none",
         "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px]",
         "data-[selected=true]:bg-[#DFFEC5] data-[selected=true]:border border-[#ACE655] data-[selected=true]:shadow-[0px_5px_0px_0px_#ACE655]",
         "w-[138px] h-[120px] lg:w-full lg:h-full lg:aspect-square",

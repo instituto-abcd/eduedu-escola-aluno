@@ -54,7 +54,7 @@ export function PictureDndCard<T>({
       {...props}
       className={cx(
         "relative aspect-video w-[30vw] md:w-[25vw] md:max-w-[200px] max-w-[140px]",
-        "lg:max-w-none lg:w-full lg:h-auto aspect-[14/19]",
+        "xl:max-w-none xl:w-full xl:h-auto aspect-[14/19]",
         {
           ["pointer-events-none"]: isPlaying,
           ["opacity-20 -scale-50"]: isDragging,

@@ -1,9 +1,7 @@
-import { createStyles, SimpleGrid } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
-import { BREAKPOINT } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
@@ -40,10 +38,8 @@ export function Model10Prova({
     onAnswerChange(answer ? [answer] : []);
   }, [answer]);
 
-  const { classes } = useStyles();
-
   return (
-    <div className={classes.container}>
+    <div className="grow flex flex-col gap-5 size-full">
       {hasAudioTitle && (
         <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
@@ -57,7 +53,7 @@ export function Model10Prova({
         />
       ))}
 
-      <div className={classes.content}>
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 lg:h-[80vh] size-full grow">
         {imageTitles.length === 0 &&
           textTitles
             .filter(
@@ -72,7 +68,7 @@ export function Model10Prova({
 
         <ImageTitle titles={imageTitles} />
 
-        <SimpleGrid cols={2}>
+        <div className="grid grid-cols-2 grid-rows-2 gap-5 lg:h-full">
           {question.options.map((option, inx) => (
             <OptionButton
               key={inx}
@@ -116,33 +112,8 @@ export function Model10Prova({
               )}
             </OptionButton>
           ))}
-        </SimpleGrid>
+        </div>
       </div>
     </div>
   );
 }
-
-const useStyles = createStyles((theme) => ({
-  content: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: "100%",
-    gap: 20,
-    marginBlock: "auto",
-    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
-      flexDirection: "row",
-      gap: 80,
-    },
-  },
-
-  container: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 20,
-  },
-}));

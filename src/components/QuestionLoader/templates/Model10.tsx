@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { BREAKPOINT } from "~/constants/dimensions";
-import { createStyles, SimpleGrid } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
@@ -40,10 +38,8 @@ export function Model10({
 
   const hideTextRule = getRule("options_hide_text")?.value === "true";
 
-  const { classes } = useStyles();
-
   return (
-    <div className={classes.container}>
+    <div className="grow flex flex-col gap-5 size-full">
       {hasAudioTitle && (
         <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
@@ -62,7 +58,7 @@ export function Model10({
             />
           ))}
 
-      <div className={classes.content}>
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 lg:h-[80vh] size-full grow">
         {imageTitles.length === 0 &&
           textTitles
             .filter(
@@ -75,87 +71,49 @@ export function Model10({
               />
             ))}
 
-        <div className="flex flex-col md:flex-row items-center justify-center">
-          <ImageTitle titles={imageTitles} />
+        <ImageTitle titles={imageTitles} />
 
-          <SimpleGrid cols={2}>
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={inx}
-                className={classes.button}
-                onClick={() =>
-                  setAnswer({
-                    ...option,
-                    positionAnswer: question.orderedAnswer
-                      ? +option.position
-                      : undefined,
-                  })
-                }
-                data-selected={
-                  JSON.stringify(answer) ===
-                  JSON.stringify({
-                    ...option,
-                    positionAnswer: question.orderedAnswer
-                      ? option.position
-                      : undefined,
-                  })
-                }
-                option={option}
-              >
-                {(!option.image_url || !hideTextRule) && (
-                  <>{option.description}</>
-                )}
+        <div className="grid grid-cols-2 gap-5 lg:h-full">
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={inx}
+              onClick={() =>
+                setAnswer({
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? +option.position
+                    : undefined,
+                })
+              }
+              data-selected={
+                JSON.stringify(answer) ===
+                JSON.stringify({
+                  ...option,
+                  positionAnswer: question.orderedAnswer
+                    ? option.position
+                    : undefined,
+                })
+              }
+              option={option}
+            >
+              {(!option.image_url || !hideTextRule) && (
+                <>{option.description}</>
+              )}
 
-                {option.image_url && (
-                  <img
-                    src={option.image_url}
-                    alt={option.description}
-                    width={100}
-                    style={{
-                      maxHeight: 110,
-                      objectFit: "contain",
-                      marginInline: "auto",
-                    }}
-                  />
-                )}
-                {!option.image_url &&
-                  option.sound_url &&
-                  !option.description && <IconVolume size={80} />}
-              </OptionButton>
-            ))}
-          </SimpleGrid>
+              {option.image_url && (
+                <img
+                  src={option.image_url}
+                  alt={option.description}
+                  className="max-h-[100px] xl:max-h-full object-contain mx-auto w-auto"
+                />
+              )}
+              {!option.image_url && option.sound_url && !option.description && (
+                <IconVolume size={80} />
+              )}
+            </OptionButton>
+          ))}
         </div>
       </div>
     </div>
   );
 }
-
-const useStyles = createStyles((theme) => ({
-  content: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: "100%",
-    gap: 20,
-    marginBlock: "auto",
-    [theme.fn.largerThan(BREAKPOINT.TABLET_HORZ)]: {
-      flexDirection: "row",
-      gap: 80,
-    },
-  },
-
-  container: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-
-  button: {
-    minWidth: "157px",
-    height: "192px",
-  },
-}));

@@ -1,4 +1,4 @@
-import { Loader, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
@@ -6,7 +6,6 @@ import { Question } from "~/api/exam";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
-import { lousaWidth } from "~/constants/dimensions";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 import { AudioInterface } from "~/sounds";
 

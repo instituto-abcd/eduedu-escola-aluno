@@ -11,6 +11,13 @@ export default {
     extend: {
       colors: {
         background: "#FFF",
+        surface: "#F8F6F2",
+        text: "#4D4941",
+      },
+      boxShadow: {
+        card: "0px 8px 0px 0px #4c494166",
+        "card-thin": "0px 2px 0px 0px #4c494166",
+        "card-medium": "0px 5px 0px 0px #4c494166",
       },
     },
   },

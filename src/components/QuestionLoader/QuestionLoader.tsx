@@ -122,7 +122,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "#FFF",
     padding: 12,
     "&>*": {
-      maxWidth: 1440,
+      // maxWidth: 1440,
     },
     [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
       padding: 30,

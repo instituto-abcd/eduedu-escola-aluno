@@ -1,43 +1,25 @@
-import { Text, createStyles } from "@mantine/core";
-import { BREAKPOINT } from "~/constants/dimensions";
+import { cx } from "~/utils/cx";
 
 type Props = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
-> & { text: string };
+> & { text: string; containerClasses?: string };
 
-export function TextBubble({ text, className }: Props) {
-  const { cx, classes } = useStyles();
-
+export function TextBubble({ text, className, containerClasses }: Props) {
   return (
-    <div className={cx(classes.textBubble, className)}>
-      <Text
-        className={classes.text}
+    <div
+      className={cx(
+        "bg-white rounded-[45px] p-7 flex flex-col gap-7 max-h-[2550px] overflow-y-scroll ",
+        containerClasses
+      )}
+    >
+      <p
         dangerouslySetInnerHTML={{ __html: text }}
+        className={cx(
+          "text-text text-center text-xl md:text-2xl xl:text-4xl",
+          className
+        )}
       />
     </div>
   );
 }
-
-const useStyles = createStyles((theme) => ({
-  textBubble: {
-    backgroundColor: "white",
-    borderRadius: 45,
-    padding: 30,
-    dislay: "flex",
-    flexDirection: "column",
-    gap: 30,
-    maxHeight: 250,
-    overflowY: "scroll",
-  },
-  text: {
-    color: "#4D4941",
-    textAlign: "center",
-    fontSize: 20,
-    lineHeight: "27px",
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      fontSize: 25,
-      lineHeight: "34px",
-    },
-  },
-}));

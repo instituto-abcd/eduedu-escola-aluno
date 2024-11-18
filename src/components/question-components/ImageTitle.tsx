@@ -1,33 +1,39 @@
-import { createStyles } from "@mantine/core";
 import { QuestionTitle } from "~/api/exam";
+import { cx } from "~/utils/cx";
 
-export function ImageTitle({ titles }: { titles: QuestionTitle[] }) {
-  const { classes } = useStyles();
+type Props = {
+  titles: QuestionTitle[];
+  imgClasses?: string;
+  containerClasses?: string;
+  height?: number;
+};
+
+export function ImageTitle({
+  titles,
+  imgClasses,
+  containerClasses,
+  height = 300,
+}: Props) {
   return (
-    <div className={classes.ImageTitle_container}>
+    <div
+      className={cx(
+        "flex justify-center items-center h-full",
+        containerClasses
+      )}
+    >
       {titles.map((title) => (
         <img
           src={title.file_url!}
           alt={title.description}
           key={title.file_url}
-          height={300}
+          height={height}
+          className={cx(
+            "object-contain max-w-[90%] w-[295px] max-h-[300px]",
+            "lg:max-w-full lg:max-h-full lg:h-full lg:w-auto",
+            imgClasses
+          )}
         />
       ))}
     </div>
   );
 }
-
-const useStyles = createStyles(() => ({
-  ImageTitle_container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-
-    img: {
-      objectFit: "contain",
-      maxWidth: "90%",
-      width: 295,
-      maxHeight: 300,
-    },
-  },
-}));

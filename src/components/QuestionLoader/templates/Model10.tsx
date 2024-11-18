@@ -71,9 +71,11 @@ export function Model10({
               />
             ))}
 
-        <ImageTitle titles={imageTitles} />
+        <div className="lg:w-1/2">
+          <ImageTitle titles={imageTitles} />
+        </div>
 
-        <div className="grid grid-cols-2 gap-5 lg:h-full">
+        <div className="grid grid-cols-2 gap-5 lg:min-w-[50%]">
           {question.options.map((option, inx) => (
             <OptionButton
               key={inx}

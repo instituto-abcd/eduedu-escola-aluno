@@ -10,6 +10,7 @@ import { useAudioStatus } from "~/stores/audio";
 import { modelIsAutoAdvance } from "~/constants";
 import { ButtonContinue } from "../Buttons";
 import { BREAKPOINT } from "~/constants/dimensions";
+import { Header } from "../question-components/Header";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -104,6 +105,10 @@ export function QuestionLoader({
       className={classes.container}
       id="question-loader"
     >
+      <Header
+        question={question}
+        auxQuestion={auxQuestion}
+      />
       <ModelMapper commonProps={commonProps} />
 
       <ButtonContinue

@@ -4,8 +4,6 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { OptionButton } from "~/components/OptionButton";
 import { IconVolume } from "@tabler/icons-react";
-import { ReadButton } from "~/components/ReadButton";
-import { AudioContainer } from "~/components/AudioContainer";
 import {
   ImageTitle,
   TextBubble,
@@ -14,13 +12,11 @@ import {
 
 export function Model10({
   question,
-  auxQuestion,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, hasAudioTitle, getRule } =
-    useQuestionHelper(question);
+  const { imageTitles, textTitles, getRule } = useQuestionHelper(question);
 
   const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
@@ -40,12 +36,6 @@ export function Model10({
 
   return (
     <div className="grow flex flex-col gap-5 size-full">
-      {hasAudioTitle && (
-        <AudioContainer question={question}>
-          {auxQuestion && <ReadButton question={auxQuestion} />}
-        </AudioContainer>
-      )}
-
       {imageTitles.length !== 0 &&
         textTitles
           .filter(

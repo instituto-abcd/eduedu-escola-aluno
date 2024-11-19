@@ -11,6 +11,8 @@ const useStyles = createStyles((theme) => {
   return {
     container: {
       img: {
+        width: "300px !important",
+
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
           width: "300px !important",
         },
@@ -19,6 +21,7 @@ const useStyles = createStyles((theme) => {
         },
       },
       svg: {
+        width: "300px !important",
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
           width: "300px !important",
         },

@@ -44,16 +44,6 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
       layout: [1, 2],
     });
 
-    // usePlanetAvailability
-    // true = planetas vem com limite diario
-    // false = planetas vem sem limite
-    //
-    // hideLastPlanets
-    // true = a trilha acaba com apenas +1 planeta bloqueado
-    // false = a trilha vem completa
-    //
-    // canE
-
     const carouselProps: Record<MediaQueryKey, CarouselProps> = {
       MOBILE: {
         align: "start",

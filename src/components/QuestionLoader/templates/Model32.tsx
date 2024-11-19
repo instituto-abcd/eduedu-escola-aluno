@@ -231,7 +231,7 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="h-10"
+                  className="h-10 w-full"
                 >
                   {option.description}
                 </TextOptionButton>

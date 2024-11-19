@@ -91,54 +91,59 @@ export function Model5({
         </AudioContainer>
       )}
 
-      {!hasVideo && hasText && (
-        <TitleBubble
-          text={
-            textTitles.find(
-              (title) =>
-                !title.placeholder?.startsWith("ID") ||
-                !title.placeholder?.includes("ID")
-            )?.description ?? ""
-          }
-        />
-      )}
+      <div className="flex flex-col lg:flex-row lg:items-center w-full">
+        <div className="lg:min-w-[50%]">
+          {!hasVideo && hasText && (
+            <TitleBubble
+              text={
+                textTitles.find(
+                  (title) =>
+                    !title.placeholder?.startsWith("ID") ||
+                    !title.placeholder?.includes("ID")
+                )?.description ?? ""
+              }
+            />
+          )}
 
-      <ImageTitle titles={imageTitles} />
+          <ImageTitle titles={imageTitles} />
 
-      <VideoTitle titles={videoTitles} />
-      <div className="grid grid-cols-2 gap-6 place-content-center">
-        {question.options.map((option, inx) =>
-          option.image_url ? (
-            <OptionButton
-              key={inx}
-              onClick={() => handleOptionClick(option)}
-              data-selected={getSelectedState(option)}
-              option={option}
-            >
-              <img
-                src={option.image_url}
-                alt={option.description}
-                className={cx("max-h-[90%] max-w-[90%] h-full w-auto", {
-                  ["max-h-[60%]"]:
-                    typeof option.description === "string" &&
-                    option.description !== "",
-                })}
-              />
-              {option.description}
-            </OptionButton>
-          ) : (
-            <TextOptionButton
-              key={inx}
-              onClick={() => handleOptionClick(option)}
-              data-selected={getSelectedState(option)}
-              className={classes.textOption}
-              option={option}
-              debug={{ size: 8 }}
-            >
-              {option.description}
-            </TextOptionButton>
-          )
-        )}
+          <VideoTitle titles={videoTitles} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 place-content-center lg:min-w-[50%]">
+          {question.options.map((option, inx) =>
+            option.image_url ? (
+              <OptionButton
+                key={inx}
+                onClick={() => handleOptionClick(option)}
+                data-selected={getSelectedState(option)}
+                option={option}
+              >
+                <img
+                  src={option.image_url}
+                  alt={option.description}
+                  className={cx("max-h-[90%] max-w-[90%] h-full w-auto", {
+                    ["max-h-[60%]"]:
+                      typeof option.description === "string" &&
+                      option.description !== "",
+                  })}
+                />
+                {option.description}
+              </OptionButton>
+            ) : (
+              <TextOptionButton
+                key={inx}
+                onClick={() => handleOptionClick(option)}
+                data-selected={getSelectedState(option)}
+                className={classes.textOption}
+                option={option}
+                debug={{ size: 8 }}
+              >
+                {option.description}
+              </TextOptionButton>
+            )
+          )}
+        </div>
       </div>
     </div>
   );

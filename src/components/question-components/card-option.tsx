@@ -6,19 +6,19 @@ import { DebugDiv } from "../Debug/DebugDiv";
 import { cx } from "~/utils/cx";
 import { validString } from "~/utils/string";
 import { useCreateSound } from "~/hooks/useCreateSound";
+import { IconVolume } from "@tabler/icons-react";
 
 type Props = VariantProps<typeof button> & {
   option: QuestionOption;
   debug?: DebugProps;
-  properties: ("text" | "image" | "audio")[];
+  properties: ("text" | "image" | "audio" | null)[];
   selected: boolean;
 } & Pick<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "onClick">;
 
 const button = cva(
   [
     "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none",
-    "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px]",
-    "data-[selected=true]:bg-[#DFFEC5] data-[selected=true]:border border-[#ACE655] data-[selected=true]:shadow-[0px_5px_0px_0px_#ACE655]",
+    "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
   ],
   {
     variants: {
@@ -28,7 +28,7 @@ const button = cva(
           "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-w-full lg:max-h-[300px] aspect-square",
       },
       selected: {
-        true: "bg-[#DFFEC5] shadow-[0px_5px_0px_0px_#ACE655]",
+        true: "!bg-[#DFFEC5] border border-[#ACE655] !shadow-[0px_5px_0px_0px_#ACE655]",
       },
     },
     defaultVariants: {
@@ -72,6 +72,7 @@ export function CardOption({
       <Image
         show={showImg}
         neighborText={showText}
+        disabled={disabled || isPlaying}
         url={option.image_url!}
       />
 
@@ -81,6 +82,10 @@ export function CardOption({
       >
         {option.description}
       </Text>
+
+      {!showImg && validString(option.sound_url) && !showText && (
+        <IconVolume className="stroke-text size-[80%]" />
+      )}
 
       {canDebug && !debug?.skipDebug && (
         <DebugDiv debug={debug}>{option.isCorrect}</DebugDiv>
@@ -106,7 +111,7 @@ function Text({
         "text-text font-extrabold text-xl w-full",
         "lg:text-[2.5cqw] lg:leading-[100%] lg:break-words",
         {
-          ["lg:text-[2cqw] mt-1"]: neighborImg,
+          ["lg:text-[10cqw] text-[8cqw] mt-1"]: neighborImg,
         }
       )}
     >
@@ -119,10 +124,12 @@ function Image({
   show,
   url,
   neighborText,
+  disabled,
 }: {
   show: boolean;
   url: string;
   neighborText: boolean;
+  disabled: boolean;
 }) {
   if (!show) return null;
 
@@ -131,6 +138,7 @@ function Image({
       src={url}
       className={cx("max-h-[90%] max-w-[90%] h-full w-auto", {
         ["h-2/3"]: neighborText,
+        ["grayscale"]: disabled,
       })}
     />
   );

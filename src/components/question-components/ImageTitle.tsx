@@ -31,7 +31,7 @@ export function ImageTitle({
           height={height}
           className={cx(
             "object-contain max-w-[90%] w-[295px] max-h-[300px]",
-            "lg:max-w-full lg:max-h-full lg:h-full lg:w-auto",
+            "lg:max-w-[600px] lg:max-h-[600px] lg:h-full lg:w-auto",
             imgClasses
           )}
         />

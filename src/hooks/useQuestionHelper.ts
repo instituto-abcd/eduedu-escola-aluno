@@ -7,30 +7,30 @@ export function useQuestionHelper(question: Question) {
   const isPlanet = !!question.planet_id;
 
   const hasTitleOfType = useCallback(
-    function(type: string) {
+    function (type: string) {
       return question.titles.filter((title) => title.type === type).length > 0;
     },
-    [question],
+    [question]
   );
 
   const getTitlesOfType = useCallback(
     function getTitlesOfType(type: string) {
       return question.titles.filter((title) => title.type === type);
     },
-    [question],
+    [question]
   );
 
   const getSupportText = useCallback(
     function getSupportText(text: string, options?: { uuid?: boolean }) {
       const supportText = question.titles.filter(
-        (title) => title?.placeholder?.includes(text) && !!title?.description,
+        (title) => title?.placeholder?.includes(text) && !!title?.description
       );
 
       if (supportText.length > 0) return supportText;
 
       if (options?.uuid) {
         const supportTextWithUuid = question.titles.filter(
-          (title) => validateUUID(title.description) === true,
+          (title) => validateUUID(title.description) === true
         );
 
         return supportTextWithUuid;
@@ -38,7 +38,7 @@ export function useQuestionHelper(question: Question) {
 
       return [];
     },
-    [question],
+    [question]
   );
 
   const textTitles = getTitlesOfType("TEXT");
@@ -50,8 +50,9 @@ export function useQuestionHelper(question: Question) {
   const auxQuestionId = hasAuxQuestion ? supportText[0].description : null;
 
   function optionArrKey(option: QuestionOption, inx?: number) {
-    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${option.image_url ?? option.sound_url ?? "_"
-      })`;
+    return `[${inx ?? "_"}]-[${option.position}]:${option.description}(${
+      option.image_url ?? option.sound_url ?? "_"
+    })`;
   }
 
   /*
@@ -63,7 +64,7 @@ export function useQuestionHelper(question: Question) {
 
   const hasImageTitle = useMemo(
     () => imageTitles.some((title) => title.file_url),
-    [imageTitles],
+    [imageTitles]
   );
 
   /*
@@ -71,12 +72,15 @@ export function useQuestionHelper(question: Question) {
    */
 
   const audioTitles = getTitlesOfType("AUDIO")
-    .filter((title) => title.file_url)
+    .filter(
+      (title) =>
+        typeof title.file_url === "string" && title.file_url.trim() !== ""
+    )
     .sort((a, b) => a.position - b.position);
 
   const hasAudioTitle = useMemo(
     () => audioTitles.some((title) => title.file_url),
-    [audioTitles],
+    [audioTitles]
   );
   const audioTitleAutoplay = (index: number) => {
     if (index !== 0) return false;
@@ -105,7 +109,7 @@ export function useQuestionHelper(question: Question) {
 
   const hasTextTitle = useMemo(
     () => textTitles.some((title) => title.description),
-    [textTitles],
+    [textTitles]
   );
 
   return {

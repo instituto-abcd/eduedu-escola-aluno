@@ -11,16 +11,19 @@ const useStyles = createStyles((theme) => {
   return {
     container: {
       img: {
+        width: "400px !important",
+
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "300px !important",
+          width: "400px !important",
         },
         [`@media (max-width: ${theme.breakpoints.sm})`]: {
           width: "250px !important",
         },
       },
       svg: {
+        width: "350px !important",
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "300px !important",
+          width: "350px !important",
         },
         [`@media (max-width: ${theme.breakpoints.sm})`]: {
           width: "200px !important",
@@ -70,6 +73,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
                 color="dark.3"
                 weight={500}
                 key={title.description}
+                align="center"
               >
                 {title.description}
               </Text>

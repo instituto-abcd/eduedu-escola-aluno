@@ -105,10 +105,6 @@ export function QuestionLoader({
       className={classes.container}
       id="question-loader"
     >
-      <Header
-        question={question}
-        auxQuestion={auxQuestion}
-      />
       <ModelMapper commonProps={commonProps} />
 
       <ButtonContinue

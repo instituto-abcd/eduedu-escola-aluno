@@ -4,6 +4,8 @@ import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
+import { ReadButton } from "~/components/ReadButton";
+import { AudioContainer } from "~/components/AudioContainer";
 import { ImageTitle, TitleBubble } from "~/components/question-components";
 import { VideoTitle } from "~/components/question-components/VideoTitle";
 import { cx } from "~/utils/cx";
@@ -12,8 +14,9 @@ export function Model5({
   question,
   onAnswerChange,
   onConditionsChange,
+  auxQuestion,
 }: ModelProps) {
-  const { videoTitles, textTitles, imageTitles, supportText } =
+  const { videoTitles, textTitles, imageTitles, hasAudioTitle, supportText } =
     useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
@@ -78,7 +81,13 @@ export function Model5({
 
   return (
     <div className="w-full grow flex flex-col items-center justify-evenly gap-5">
-      <div className="flex flex-col lg:flex-row lg:items-center w-full">
+      {(hasAudioTitle || hasSupportText) && (
+        <AudioContainer question={question}>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </AudioContainer>
+      )}
+
+      <div className="flex flex-col lg:flex-row w-full">
         <div className="lg:min-w-[50%]">
           {!hasVideo && hasText && (
             <TitleBubble

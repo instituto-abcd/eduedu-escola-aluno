@@ -88,7 +88,7 @@ export function Model5({
       )}
 
       <div className="flex flex-col lg:flex-row w-full">
-        <div className="lg:min-w-[50%]">
+        <div className="w-fit lg:min-w-[50%]">
           {!hasVideo && hasText && (
             <TitleBubble
               text={

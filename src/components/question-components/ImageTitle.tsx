@@ -14,6 +14,8 @@ export function ImageTitle({
   containerClasses,
   height = 300,
 }: Props) {
+  if (!titles.length) return null;
+
   return (
     <div
       className={cx(

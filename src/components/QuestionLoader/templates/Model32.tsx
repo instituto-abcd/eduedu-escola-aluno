@@ -223,6 +223,8 @@ export function Model32({
                     JSON.stringify(answer) === JSON.stringify(option)
                   }
                   option={option}
+                  aspectSquare={false}
+                  fullHeight={false}
                   style={{
                     width: "100%",
                     wordWrap: "break-word",
@@ -231,7 +233,7 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="h-10 w-full"
+                  className="h-14 w-full"
                 >
                   {option.description}
                 </TextOptionButton>

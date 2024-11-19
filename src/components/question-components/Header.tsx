@@ -13,6 +13,7 @@ type Props = {
 // TODO: define ref - auxaudio or main audio
 // TODO: define autoplay rule
 // TODO: aux video
+// TODO: hasSupportText
 
 export function Header({ question, auxQuestion }: Props) {
   const { getRule, hasAudioTitle, audioTitles } = useQuestionHelper(question);

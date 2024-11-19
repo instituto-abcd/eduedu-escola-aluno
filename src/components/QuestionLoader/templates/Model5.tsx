@@ -1,6 +1,4 @@
-import { createStyles } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
-import { OptionButton, TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
@@ -8,7 +6,7 @@ import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
 import { ImageTitle, TitleBubble } from "~/components/question-components";
 import { VideoTitle } from "~/components/question-components/VideoTitle";
-import { cx } from "~/utils/cx";
+import { CardOption } from "~/components/question-components/card-option";
 
 export function Model5({
   question,
@@ -21,7 +19,6 @@ export function Model5({
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const [multipleAnswer, setMultipleAnswer] = useState<QuestionOption[]>([]);
-  const { classes } = useStyles();
 
   function handleOptionClick(option: QuestionOption) {
     if (question.multiplesAnswer) {
@@ -80,15 +77,16 @@ export function Model5({
   }, [conditions]);
 
   return (
-    <div className="w-full grow flex flex-col items-center justify-evenly gap-5">
+    <>
       {(hasAudioTitle || hasSupportText) && (
         <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
 
-      <div className="flex flex-col lg:flex-row w-full">
-        <div className="w-fit lg:min-w-[50%]">
+      <div className="flex flex-col items-center size-full my-auto lg:flex-row">
+        {/* Titles */}
+        <div className="w-fit flex flex-col items-center lg:justify-center lg:min-w-[50%] lg:h-full">
           {!hasVideo && hasText && (
             <TitleBubble
               text={
@@ -102,55 +100,23 @@ export function Model5({
           )}
 
           <ImageTitle titles={imageTitles} />
-
           <VideoTitle titles={videoTitles} />
         </div>
 
-        <div className="grid grid-cols-2 gap-6 place-content-center lg:min-w-[50%]">
-          {question.options.map((option, inx) =>
-            option.image_url ? (
-              <OptionButton
-                key={inx}
-                onClick={() => handleOptionClick(option)}
-                data-selected={getSelectedState(option)}
-                option={option}
-              >
-                <img
-                  src={option.image_url}
-                  alt={option.description}
-                  className={cx("max-h-[90%] max-w-[90%] h-full w-auto", {
-                    ["max-h-[60%]"]:
-                      typeof option.description === "string" &&
-                      option.description !== "",
-                  })}
-                />
-                {option.description}
-              </OptionButton>
-            ) : (
-              <TextOptionButton
-                key={inx}
-                onClick={() => handleOptionClick(option)}
-                data-selected={getSelectedState(option)}
-                className={classes.textOption}
-                option={option}
-                debug={{ size: 8 }}
-              >
-                {option.description}
-              </TextOptionButton>
-            )
-          )}
+        {/* Options */}
+        <div className="max-h-full lg:size-full grid grid-cols-2 gap-6 place-items-center">
+          {question.options.map((option, inx) => (
+            <CardOption
+              key={inx}
+              onClick={() => handleOptionClick(option)}
+              selected={getSelectedState(option)}
+              option={option}
+              properties={["image", "text"]}
+              shape="square"
+            />
+          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
-
-const useStyles = createStyles(() => ({
-  textOption: {
-    width: "100%",
-    height: "min-content",
-    paddingBlock: 16,
-    paddingInline: 26,
-    fontSize: 20,
-  },
-}));

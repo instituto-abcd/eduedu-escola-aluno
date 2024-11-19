@@ -1,4 +1,3 @@
-import { createStyles, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Question, QuestionOption } from "~/api/exam";
 import { usePlanetAnswer, usePlanetGetQuestion } from "~/api/planet";
@@ -9,8 +8,7 @@ import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
 import { modelIsAutoAdvance } from "~/constants";
 import { ButtonContinue } from "../Buttons";
-import { BREAKPOINT } from "~/constants/dimensions";
-import { Header } from "../question-components/Header";
+// import { Header } from "../question-components/Header";
 
 type QuestionLoaderProps = {
   answerCallback: (
@@ -98,11 +96,9 @@ export function QuestionLoader({
     submitAnswer();
   }, [continueDisabled]);
 
-  const { classes } = useStyles();
-
   return (
-    <Stack
-      className={classes.container}
+    <div
+      className="grow h-screen flex flex-col items-center bg-white p-3 md:p-8"
       id="question-loader"
     >
       <ModelMapper commonProps={commonProps} />
@@ -110,29 +106,8 @@ export function QuestionLoader({
       <ButtonContinue
         disabled={continueDisabled}
         onClick={submitAnswer}
-        className={classes.continue}
+        className="mt-auto md:self-end"
       />
-    </Stack>
+    </div>
   );
 }
-
-const useStyles = createStyles((theme) => ({
-  container: {
-    flexGrow: 1,
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 12,
-    "&>*": {
-      // maxWidth: 1440,
-    },
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      padding: 30,
-    },
-  },
-  continue: {
-    marginTop: "auto",
-    [theme.fn.largerThan(BREAKPOINT.TABLET_VERT)]: {
-      alignSelf: "end",
-    },
-  },
-}));

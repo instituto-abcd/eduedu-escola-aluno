@@ -8,7 +8,6 @@ import { AudioButton } from "~/components/AudioButton";
 import { QuestionOption } from "~/api/exam";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
-import { cx } from "~/utils/cx";
 import { PictureDndSlot } from "~/components/question-components";
 import { PictureDndCard } from "~/components/question-components";
 

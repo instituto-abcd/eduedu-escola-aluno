@@ -11,6 +11,7 @@ export type OptionButtonProps =
     debug?: DebugProps;
     aspectSquare?: boolean;
     fullHeight?: boolean;
+    classHeight?: string;
   };
 
 export function OptionButton({
@@ -19,6 +20,7 @@ export function OptionButton({
   children,
   aspectSquare = true,
   fullHeight = true,
+  classHeight = "h-[120px]",
   ...props
 }: OptionButtonProps) {
   const { sound, isPlaying } = useCreateSound({
@@ -45,12 +47,13 @@ export function OptionButton({
         "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none",
         "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px]",
         "data-[selected=true]:bg-[#DFFEC5] data-[selected=true]:border border-[#ACE655] data-[selected=true]:shadow-[0px_5px_0px_0px_#ACE655]",
-        "w-[138px] h-[120px] lg:w-full",
+        "w-[138px] lg:w-full",
         "text-text font-extrabold text-xl lg:text-2xl xl:text-[3cqw] xl:leading-[100%] xl:break-words",
         {
           ["lg:aspect-square"]: aspectSquare === true,
           ["lg:h-full"]: fullHeight === true,
         },
+        classHeight,
         props.className
       )}
       onClick={onClick}

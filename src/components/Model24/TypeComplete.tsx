@@ -15,7 +15,7 @@ interface TypeCompleteProps {
   imageTitles: QuestionTitle[];
   question: Question;
   answer: number;
-  setAnswer: (inx: number) => void;
+  setAnswer: React.Dispatch<React.SetStateAction<number>>
 }
 
 const useStyles = createStyles(() => {

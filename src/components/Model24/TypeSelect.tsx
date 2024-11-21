@@ -11,7 +11,7 @@ interface TypeSelectProps {
   question: Question;
   dashes: string;
   singleAnswer: QuestionOption | null;
-  setSingleAnswer: (value: React.SetStateAction<QuestionOption | null>) => void;
+  setSingleAnswer: React.Dispatch<React.SetStateAction<QuestionOption | null>>;
 }
 
 const useStyles = createStyles(() => {
@@ -97,7 +97,7 @@ export const Model24TypeSelect = ({
                   styles={{
                     image: {
                       marginInline: "auto",
-                      objectFit: "contain"
+                      objectFit: "contain",
                     },
                   }}
                 />

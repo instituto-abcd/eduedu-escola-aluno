@@ -4,8 +4,11 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import { ImageTitle, TextBubble } from "~/components/question-components";
-import { CardOption } from "~/components/question-components/card-option";
+import {
+  ImageTitle,
+  TextBubble,
+  CardOption,
+} from "~/components/question-components";
 import { validString } from "~/utils/string";
 
 export function Model10({

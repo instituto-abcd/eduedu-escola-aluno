@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { OptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
-import { IconVolume } from "@tabler/icons-react";
+import { validString } from "~/utils/string";
 import {
   ImageTitle,
   TextBubble,
   TitleBubble,
+  CardOption,
 } from "~/components/question-components";
 
 export function Model10Prova({
@@ -23,6 +23,13 @@ export function Model10Prova({
     useQuestionHelper(question);
 
   const hideTextRule = getRule("options_hide_text")?.value === "true";
+
+  // Usado para extrair os títulos de texto verdadeiros
+  // uma vez que ID de questão auxiliar aparece como title type text
+  const regularTextTitles = textTitles.filter(
+    (title) =>
+      validString(title.description) && !title.placeholder.includes("ID")
+  );
 
   useEffect(() => {
     setAnswer(null);
@@ -39,7 +46,7 @@ export function Model10Prova({
   }, [answer]);
 
   return (
-    <div className="grow flex flex-col gap-5 size-full">
+    <div className="grow flex flex-col gap-5 size-full max-h-[80vh]">
       {hasAudioTitle && (
         <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
@@ -47,30 +54,32 @@ export function Model10Prova({
       )}
 
       {textTitles.map((title, inx) => (
-        <TitleBubble
+        <p
           key={inx}
-          text={title.description}
+          dangerouslySetInnerHTML={{ __html: title.description }}
+          className={"text-text text-center text-xl md:text-2xl xl:text-4xl"}
         />
       ))}
 
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 lg:h-[80vh] size-full grow">
-        {imageTitles.length === 0 &&
-          textTitles
-            .filter(
-              (title) => title.description && !title.placeholder.includes("ID")
-            )
-            .map((title, inx) => (
-              <TextBubble
-                key={inx}
-                text={title.description ?? ""}
-              />
-            ))}
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full">
+        {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
+          <div className="lg:w-1/2 max-w-[600px] lg:h-full lg:max-h-[400px]">
+            {imageTitles.length === 0 &&
+              regularTextTitles.map((title, inx) => (
+                <TextBubble
+                  key={inx}
+                  text={title.description ?? ""}
+                />
+              ))}
 
-        <ImageTitle titles={imageTitles} />
+            <ImageTitle titles={imageTitles} />
+          </div>
+        )}
 
-        <div className="grid grid-cols-2 grid-rows-2 gap-5 lg:h-full">
+        <div className="grid grid-cols-2 gap-5 lg:w-[50%] lg:aspect-square content-center justify-items-stretch">
           {question.options.map((option, inx) => (
-            <OptionButton
+            <CardOption
+              className="lg:odd:ml-auto"
               key={inx}
               onClick={() =>
                 setAnswer({
@@ -80,7 +89,7 @@ export function Model10Prova({
                     : undefined,
                 })
               }
-              data-selected={
+              selected={
                 JSON.stringify(answer) ===
                 JSON.stringify({
                   ...option,
@@ -90,27 +99,8 @@ export function Model10Prova({
                 })
               }
               option={option}
-            >
-              {(!option.image_url || !hideTextRule) && (
-                <>{option.description}</>
-              )}
-
-              {option.image_url && (
-                <img
-                  src={option.image_url}
-                  alt={option.description}
-                  width={100}
-                  style={{
-                    maxHeight: 110,
-                    objectFit: "contain",
-                    marginInline: "auto",
-                  }}
-                />
-              )}
-              {!option.image_url && option.sound_url && !option.description && (
-                <IconVolume size={80} />
-              )}
-            </OptionButton>
+              properties={[hideTextRule ? null : "text", "image", "audio"]}
+            />
           ))}
         </div>
       </div>

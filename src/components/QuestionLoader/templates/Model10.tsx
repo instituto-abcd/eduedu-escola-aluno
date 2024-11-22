@@ -76,6 +76,7 @@ export function Model10({
         <div className="grid grid-cols-2 gap-5 lg:w-[50%] lg:aspect-square content-center justify-items-stretch">
           {question.options.map((option, inx) => (
             <CardOption
+              className="lg:odd:ml-auto"
               key={inx}
               onClick={() =>
                 setAnswer({

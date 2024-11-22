@@ -13,7 +13,10 @@ type Props = VariantProps<typeof button> & {
   debug?: DebugProps;
   properties: ("text" | "image" | "audio" | null)[];
   selected: boolean;
-} & Pick<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "onClick">;
+} & Pick<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "disabled" | "onClick" | "className"
+>;
 
 const button = cva(
   [
@@ -43,6 +46,7 @@ export function CardOption({
   properties,
   disabled,
   onClick,
+  className,
   ...props
 }: Props) {
   const canDebug = useDebugInfo((s) => s.answer);
@@ -65,7 +69,7 @@ export function CardOption({
 
   return (
     <button
-      className={button({ ...props })}
+      className={button({ ...props, className })}
       onClick={onClickHandler}
       disabled={disabled || isPlaying}
     >

@@ -89,7 +89,7 @@ export function Model32({
         )}
       </div>
 
-      <div className="w-full md:w-5/6 my-auto">
+      <div className="w-full my-auto">
         <Title
           color="dark.3"
           size={boardW(24)}

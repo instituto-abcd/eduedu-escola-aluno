@@ -225,6 +225,7 @@ export function Model32({
                   option={option}
                   aspectSquare={false}
                   fullHeight={false}
+                  classHeight="h-auto min-h-14"
                   style={{
                     width: "100%",
                     wordWrap: "break-word",
@@ -233,7 +234,7 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="h-14 w-full"
+                  className="max-h-36 w-full"
                 >
                   {option.description}
                 </TextOptionButton>

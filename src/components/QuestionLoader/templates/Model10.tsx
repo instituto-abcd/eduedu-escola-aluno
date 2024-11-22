@@ -2,15 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { OptionButton } from "~/components/OptionButton";
-import { IconVolume } from "@tabler/icons-react";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import {
-  ImageTitle,
-  TextBubble,
-  TitleBubble,
-} from "~/components/question-components";
+import { ImageTitle, TextBubble } from "~/components/question-components";
 import { CardOption } from "~/components/question-components/card-option";
 import { validString } from "~/utils/string";
 
@@ -48,7 +42,7 @@ export function Model10({
   );
 
   return (
-    <div className="grow flex flex-col gap-5 size-full">
+    <div className="grow flex flex-col gap-5 size-full max-h-[80vh]">
       {hasAudioTitle && (
         <AudioContainer question={question}>
           {auxQuestion && <ReadButton question={auxQuestion} />}
@@ -79,7 +73,7 @@ export function Model10({
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-5 lg:w-[50%]">
+        <div className="grid grid-cols-2 gap-5 lg:w-[50%] lg:aspect-square content-center justify-items-stretch">
           {question.options.map((option, inx) => (
             <CardOption
               key={inx}

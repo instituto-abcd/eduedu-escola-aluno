@@ -98,7 +98,7 @@ export function QuestionLoader({
 
   return (
     <div
-      className="grow h-screen flex flex-col items-center bg-white p-3 md:p-8"
+      className="grow h-screen flex flex-col items-center bg-white p-3 xl:p-8"
       id="question-loader"
     >
       <ModelMapper commonProps={commonProps} />

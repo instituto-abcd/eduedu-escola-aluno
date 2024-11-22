@@ -25,7 +25,7 @@ const button = cva(
       shape: {
         contain: "size-full",
         square:
-          "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-w-full lg:max-h-[300px] aspect-square",
+          "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
       },
       selected: {
         true: "!bg-[#DFFEC5] border border-[#ACE655] !shadow-[0px_5px_0px_0px_#ACE655]",
@@ -109,7 +109,7 @@ function Text({
     <span
       className={cx(
         "text-text font-extrabold text-xl w-full",
-        "lg:text-[2.5cqw] lg:leading-[100%] lg:break-words",
+        "lg:text-[10cqw] lg:leading-[100%] lg:break-words",
         {
           ["lg:text-[10cqw] text-[8cqw] mt-1"]: neighborImg,
         }

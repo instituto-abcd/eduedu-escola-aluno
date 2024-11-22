@@ -20,7 +20,7 @@ type Props = VariantProps<typeof button> & {
 
 const button = cva(
   [
-    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none",
+    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden",
     "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
   ],
   {
@@ -73,19 +73,19 @@ export function CardOption({
       onClick={onClickHandler}
       disabled={disabled || isPlaying}
     >
-      <Image
-        show={showImg}
-        neighborText={showText}
-        disabled={disabled || isPlaying}
-        url={option.image_url!}
-      />
-
       <Text
         show={showText}
         neighborImg={showImg}
       >
         {option.description}
       </Text>
+
+      <Image
+        show={showImg}
+        neighborText={showText}
+        disabled={disabled || isPlaying}
+        url={option.image_url!}
+      />
 
       {!showImg && validString(option.sound_url) && !showText && (
         <IconVolume className="stroke-text size-[80%]" />
@@ -140,7 +140,7 @@ function Image({
   return (
     <img
       src={url}
-      className={cx("max-h-[90%] max-w-[90%] h-full w-auto", {
+      className={cx("max-h-[90%] max-w-[90%] h-full w-auto rounded-[25px]", {
         ["h-2/3"]: neighborText,
         ["grayscale"]: disabled,
       })}

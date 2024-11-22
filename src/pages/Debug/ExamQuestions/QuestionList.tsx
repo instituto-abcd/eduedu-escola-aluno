@@ -18,9 +18,20 @@ export function QuestionListPage() {
   const [filter, setFilter] = useState<string[]>([]);
 
   return (
-    <Stack mih="100vh" align="center" p="xl">
-      <Stack spacing={0} justify="center" align="center">
-        <Title color="dark.4" order={1}>
+    <Stack
+      mih="100vh"
+      align="center"
+      p="xl"
+    >
+      <Stack
+        spacing={0}
+        justify="center"
+        align="center"
+      >
+        <Title
+          color="dark.4"
+          order={1}
+        >
           Questões de Prova
         </Title>
         {data && <Text color="dark.4">Total de questões: {data.length}</Text>}
@@ -43,7 +54,7 @@ export function QuestionListPage() {
       <SimpleGrid cols={7}>
         {data
           ?.filter((q) =>
-            filter.length > 0 ? filter.includes(q.model_id) : true,
+            filter.length > 0 ? filter.includes(q.model_id) : true
           )
           .map((question) => (
             <Paper
@@ -57,14 +68,23 @@ export function QuestionListPage() {
               state={{ question }}
             >
               <Stack align="center">
-                <Group w="100%" position="apart">
-                  <Text color="dark.3" weight={700}>
+                <Group
+                  w="100%"
+                  position="apart"
+                >
+                  <Text
+                    color="dark.3"
+                    weight={700}
+                  >
                     {question.model_id}
                   </Text>
                   <Badge size="xs">{question.axis_code ?? "N/A"}</Badge>
                 </Group>
 
-                <Badge fullWidth color="grape">
+                <Badge
+                  fullWidth
+                  color="grape"
+                >
                   ID: {question.id ?? "N/A"}
                 </Badge>
                 <Table fontSize={12}>
@@ -76,10 +96,6 @@ export function QuestionListPage() {
                     <tr>
                       <td>Resposta ordenada</td>
                       <td>{question.orderedAnswer ? "✅" : "❌"}</td>
-                    </tr>
-                    <tr>
-                      <td>Nível</td>
-                      <td>{question.level}</td>
                     </tr>
                     <tr>
                       <td>Títulos</td>

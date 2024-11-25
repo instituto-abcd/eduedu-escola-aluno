@@ -107,11 +107,11 @@ export function Model32({
           {(hasImageTitle || hasTextTitle) && (
             <div className="w-full flex justify-center items-center">
               <ScrollArea
-                mah={boardW(400)}
+                mah={boardW(700)}
                 w="100%"
                 pr={20}
                 className={`${classes.scroll} flex flex-col items-center justify-center text-center`}
-                type="always"
+                type="auto"
                 ref={enunciationScrollRef}
               >
                 {enunciationScrollIndicator && <FloatingButton />}
@@ -184,7 +184,7 @@ export function Model32({
           )}
 
           <ScrollArea
-            mah={boardW(470)}
+            mah={boardW(450)}
             w="90%"
             pr={20}
             className={classes.scroll}
@@ -234,7 +234,7 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="max-h-36 w-full"
+                  className="max-h-36 w-full p-1"
                 >
                   {option.description}
                 </TextOptionButton>

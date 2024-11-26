@@ -11,19 +11,19 @@ const useStyles = createStyles((theme) => {
   return {
     container: {
       img: {
-        width: "400px !important",
+        width: "419px !important",
 
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "400px !important",
+          width: "419px !important",
         },
         [`@media (max-width: ${theme.breakpoints.sm})`]: {
-          width: "250px !important",
+          width: "336px !important",
         },
       },
       svg: {
-        width: "350px !important",
+        width: "200px !important",
         [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "350px !important",
+          width: "200px !important",
         },
         [`@media (max-width: ${theme.breakpoints.sm})`]: {
           width: "200px !important",

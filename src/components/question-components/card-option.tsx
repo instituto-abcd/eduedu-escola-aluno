@@ -26,7 +26,7 @@ const button = cva(
   {
     variants: {
       shape: {
-        contain: "size-full  min-h-[193px]",
+        contain: "size-full min-h-[160px] sm:min-h-[180px]",
         square:
           "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
       },

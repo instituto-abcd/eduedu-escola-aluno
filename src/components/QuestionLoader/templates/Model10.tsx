@@ -4,11 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import {
-  ImageTitle,
-  TextBubble,
-  CardOption,
-} from "~/components/question-components";
+import { ImageTitle, CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
 import { cx } from "~/utils/cx";
 import { useMediaQuery } from "@mantine/hooks";
@@ -57,7 +53,7 @@ export function Model10({
         </AudioContainer>
       )}
 
-      <div className="flex flex-col gap-5 size-full max-h-full">
+      <div className="flex flex-col size-full max-h-full">
         {imageTitles.length !== 0 &&
           regularTextTitles.map((title, inx) => (
             <div

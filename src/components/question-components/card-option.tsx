@@ -14,19 +14,19 @@ type Props = VariantProps<typeof button> & {
   properties: ("text" | "image" | "audio" | null)[];
   selected: boolean;
 } & Pick<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "disabled" | "onClick" | "className"
->;
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    "disabled" | "onClick" | "className"
+  >;
 
 const button = cva(
   [
-    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden",
+    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center justify-evenly cursor-pointer select-none overflow-hidden",
     "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
   ],
   {
     variants: {
       shape: {
-        contain: "size-full",
+        contain: "size-full min-h-[160px] sm:min-h-[180px]",
         square:
           "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
       },
@@ -112,10 +112,10 @@ function Text({
   return (
     <span
       className={cx(
-        "text-text font-extrabold text-xl w-full",
-        "lg:text-[10cqw] lg:leading-[100%] lg:break-words",
+        "text-text font-extrabold text-[16cqw] w-full",
+        "leading-[100%] break-words",
         {
-          ["lg:text-[10cqw] text-[8cqw] mt-1"]: neighborImg,
+          ["text-[12cqw] mt-1"]: neighborImg,
         }
       )}
     >
@@ -140,10 +140,13 @@ function Image({
   return (
     <img
       src={url}
-      className={cx("max-h-[90%] max-w-[90%] h-full w-auto rounded-[25px]", {
-        ["h-2/3"]: neighborText,
-        ["grayscale"]: disabled,
-      })}
+      className={cx(
+        "max-h-[90%] max-w-[90%] h-full md:h-[20cqh] xl:h-full w-auto rounded-[25px]",
+        {
+          ["!h-1/2"]: neighborText,
+          ["grayscale"]: disabled,
+        }
+      )}
     />
   );
 }

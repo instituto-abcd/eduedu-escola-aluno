@@ -68,7 +68,7 @@ export function Model24({
       <Stack
         my="auto"
         spacing={boardW(40)}
-        className="w-4/6 md:w-5/6 lg:w-full"
+        className="w-full md:w-5/6"
       >
         {isTypeComplete && (
           <Model24TypeComplete

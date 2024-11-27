@@ -1,6 +1,6 @@
 import { createStyles, Image, Stack, Title } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
-import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { Question, QuestionOption, QuestionTitle } from "~/api/exam";
 import { IconVolume } from "@tabler/icons-react";
 import { useMemo } from "react";
@@ -14,33 +14,37 @@ interface TypeSelectProps {
   setSingleAnswer: React.Dispatch<React.SetStateAction<QuestionOption | null>>;
 }
 
-const useStyles = createStyles(() => {
-  return {
-    container: {
-      img: {
-        objectFit: "contain",
-        maxWidth: "80%",
-        width: 295,
-        maxHeight: 300,
-      },
+type FlexBehavior = "flex-col" | "grid grid-cols-2" | "flex-row";
 
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        img: {
-          maxWidth: "90%",
-        },
-      },
+const useStyles = createStyles(() => ({
+  container: {
+    img: {
+      objectFit: "contain",
+      maxWidth: 371,
+      minWidth: 296,
     },
+  },
+  threeButtons: {
+    "button.option-group:last-of-type": {
+      gridColumn: "span 2",
+      width: "50%",
+      marginInline: "auto",
+    },
+  },
+  optionButton: {
+    width: "auto",
+    minWidth: "120px",
+    height: "auto",
+    minHeight: "150px",
+  },
+  descriptionButton: {
+    minWidth: "150px",
+    minHeight: "70px",
+  },
+}));
 
-    containerThreeButtons: {
-      "button.option-group:last-of-type": {
-        gridColumn: "span 2",
-        width: "50%",
-        marginLeft: "auto",
-        marginRight: "auto",
-      },
-    },
-  };
-});
+const MIN_BUTTON_OPTIONS = 3;
+const MIN_DESCRIPTION_LENGTH = 15;
 
 export const Model24TypeSelect = ({
   textTitles,
@@ -52,30 +56,26 @@ export const Model24TypeSelect = ({
 }: TypeSelectProps) => {
   const { classes } = useStyles();
 
-  const dynamicFlexBehavior = useMemo(() => {
-    const isGrid = question.options.length >= 3;
+  const dynamicFlexBehavior = useMemo<FlexBehavior>(() => {
+    const hasLongDescription = question.options.some(
+      (q) => q?.description?.length >= MIN_DESCRIPTION_LENGTH
+    );
+    const isGrid = question.options.length >= MIN_BUTTON_OPTIONS;
 
-    if (isGrid) {
-      return question.options.some((q) => q?.description?.length >= 10)
-        ? "flex-col"
-        : "grid grid-cols-2";
-    }
-
-    return question.options.some((q) => q?.description?.length >= 10)
-      ? "flex-col"
-      : "flex-row";
-  }, [question]);
+    if (!isGrid) return hasLongDescription ? "flex-col" : "flex-row";
+    return hasLongDescription ? "flex-col" : "grid grid-cols-2";
+  }, [question.options]);
 
   return (
     <div className="w-full">
       {textTitles
-        .filter((title) => title.description && title.description.length > 0)
+        .filter((title) => title.description?.length > 0)
         .map((title) => (
           <Title
+            key={title.description}
             dangerouslySetInnerHTML={{
               __html: title.description.replace(/_+/g, dashes),
             }}
-            key={title.description}
             size={boardW(40)}
             weight={500}
             color="dark.3"
@@ -89,9 +89,11 @@ export const Model24TypeSelect = ({
         {imageTitles.map(
           (title) =>
             title.file_url && (
-              <Stack className={`${classes.container} w-[70%]`}>
+              <Stack
+                key={title.file_url}
+                className={`${classes.container} lg:w-[70%] w-full`}
+              >
                 <Image
-                  key={title.file_url}
                   src={title.file_url}
                   alt={title.placeholder}
                   styles={{
@@ -106,35 +108,31 @@ export const Model24TypeSelect = ({
         )}
 
         <div
-          className={`flex w-full lg:w-3/6 ${dynamicFlexBehavior} ${
+          className={`flex w-full ${dynamicFlexBehavior} ${
             question.options.length === 3
-              ? classes.containerThreeButtons
+              ? classes.threeButtons
               : classes.container
-          } items-center justify-center w-full gap-4 `}
+          } items-center justify-center gap-4`}
         >
-          {question.options.map((option, inx) => (
+          {question.options.map((option, idx) => (
             <OptionButton
-              key={inx}
+              key={idx}
               option={option}
               onClick={() => setSingleAnswer(option)}
               data-selected={
                 JSON.stringify(singleAnswer) === JSON.stringify(option)
               }
-              style={{
-                width: "auto",
-                minWidth: option.description ? "150px" : "120px",
-                height: "auto",
-                minHeight: option.description ? "70px" : "150px",
-              }}
-              className={`flex-1 w-full lg:max-w-48 min-h-16 max-h-32 option-group `}
+              className={`flex-1 w-full min-h-16 max-h-32 option-group ${
+                option.description
+                  ? classes.descriptionButton
+                  : classes.optionButton
+              }`}
             >
               {option.description}
               {option.image_url && (
                 <img
                   src={option.image_url}
-                  style={{
-                    height: boardW(170),
-                  }}
+                  style={{ height: boardW(170) }}
                 />
               )}
               {option.sound_url && !option.image_url && (

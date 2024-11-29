@@ -65,14 +65,14 @@ export function ModelView() {
         <Stack
           style={{
             position: "fixed",
-            bottom: 60,
-            left: 20,
+            bottom: 20,
+            left: 10,
             zIndex: 999,
           }}
           id="debugger"
         >
           <QuestionInfo
-            question={data[currentQuestion]}
+            questions={data}
             next={handleNextQuestion}
             previous={handlePreviousQuestion}
             current={currentQuestion}

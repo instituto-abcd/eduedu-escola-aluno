@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AppRoutes } from "./routes";
 import { useDebugInfo } from "./stores/debug-info";
@@ -25,7 +24,6 @@ function App() {
       <ThemeProvider>
         <AppRoutes />
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

@@ -9,24 +9,25 @@ import {
   Group,
   NumberInput,
   Progress,
+  Select,
   Stack,
   Table,
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAdjustments } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Question } from "~/api/exam";
 
 export function QuestionInfo({
-  question,
+  questions,
   next,
   previous,
   current,
   total,
   onQuestionChange,
 }: {
-  question: Question;
+  questions: Question[];
   next: () => void;
   previous: () => void;
   current: number;
@@ -36,17 +37,38 @@ export function QuestionInfo({
   const [opened, handlers] = useDisclosure(false);
   const progress = (current / (total - 1)) * 100;
   const [jumper, setJumper] = useState<number>();
+  const question = questions[current];
+
+  const [value, setValue] = useState<string | null>(current.toString());
+
+  useEffect(() => {
+    setValue(current.toString());
+  }, [current]);
 
   return (
     <>
-      <Drawer opened={opened} onClose={handlers.close}>
-        <Stack spacing="xs" align="center">
-          <Text color="dark.4" weight={700} align="center">
+      <Drawer
+        opened={opened}
+        onClose={handlers.close}
+      >
+        <Stack
+          spacing="xs"
+          align="center"
+        >
+          <Text
+            color="dark.4"
+            weight={700}
+            align="center"
+          >
             {question.model_id}
           </Text>
           <CopyButton value={question.id.toString()}>
             {({ copied, copy }) => (
-              <Button color={copied ? "teal" : "blue"} onClick={copy} size="xs">
+              <Button
+                color={copied ? "teal" : "blue"}
+                onClick={copy}
+                size="xs"
+              >
                 {copied ? "Copiado" : "Copiar ID da Questão"}
               </Button>
             )}
@@ -79,14 +101,33 @@ export function QuestionInfo({
           >
             Logar objeto
           </Anchor>
-          <Stack align="center" w="100%" spacing={4} my="md">
-            <Text color="dimmed" align="center" size="xs" weight={600}>
+          <Stack
+            align="center"
+            w="100%"
+            spacing={4}
+            my="md"
+          >
+            <Text
+              color="dimmed"
+              align="center"
+              size="xs"
+              weight={600}
+            >
               Planeta: {question.planetTitle}
             </Text>
-            <Text weight={600} color="dark.3">
+            <Text
+              weight={600}
+              color="dark.3"
+            >
               {current} / {total - 1}
             </Text>
-            <Progress value={progress} w="100%" striped color="teal" animate />
+            <Progress
+              value={progress}
+              w="100%"
+              striped
+              color="teal"
+              animate
+            />
           </Stack>
 
           <Group>
@@ -112,9 +153,33 @@ export function QuestionInfo({
               Pular
             </Button>
           </Group>
+          <Stack align="flex-end">
+            <Select
+              data={questions.map((q, inx) => ({
+                label: `${inx} — ${q.model_id}`,
+                value: inx.toString(),
+              }))}
+              label="Navegar questões"
+              value={value}
+              onChange={setValue}
+              searchable
+            />
+            <Button
+              onClick={() => value && onQuestionChange(+value)}
+              size="sm"
+              compact
+              color="teal"
+              fullWidth
+            >
+              Go
+            </Button>
+          </Stack>
         </Stack>
       </Drawer>
-      <Stack spacing={8}>
+      <Group
+        position="center"
+        spacing={8}
+      >
         <ActionIcon
           variant="filled"
           color="blue"
@@ -123,16 +188,23 @@ export function QuestionInfo({
         >
           <IconAdjustments size={20} />
         </ActionIcon>
-        <Group position="center" spacing={8}>
-          <Anchor onClick={previous} align="center" size="xs">
-            Anterior
-          </Anchor>
-          <Divider orientation="vertical" />
-          <Anchor onClick={next} align="center" size="xs">
-            Próximo
-          </Anchor>
-        </Group>
-      </Stack>
+        <Divider orientation="vertical" />
+        <Anchor
+          onClick={previous}
+          align="center"
+          size="xs"
+        >
+          Anterior
+        </Anchor>
+        <Divider orientation="vertical" />
+        <Anchor
+          onClick={next}
+          align="center"
+          size="xs"
+        >
+          Próximo
+        </Anchor>
+      </Group>
     </>
   );
 }

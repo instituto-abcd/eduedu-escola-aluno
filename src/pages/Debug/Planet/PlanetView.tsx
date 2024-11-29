@@ -4,7 +4,6 @@ import { Navigate, useLocation } from "react-router-dom";
 import { Planet } from "~/api/student";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { QuestionInfo } from "../components/QuestionInfo";
-import { QuestionNavigator } from "../components/QuestionNavigator";
 
 export function PlanetView() {
   const location = useLocation();
@@ -36,24 +35,19 @@ export function PlanetView() {
       <Stack
         style={{
           position: "fixed",
-          bottom: 60,
-          left: 20,
+          bottom: 20,
+          left: 10,
           zIndex: 999,
         }}
         id="debugger"
       >
         <QuestionInfo
-          question={currentQuestion}
+          questions={planet.questions}
           next={handleAnswer}
           previous={() => (index - 1 <= 0 ? null : setIndex(0))}
           current={index + 1}
           total={planet.questions.length}
           onQuestionChange={(i) => setIndex(i)}
-        />
-        <QuestionNavigator
-          questions={planet.questions}
-          current={index}
-          onNavigate={(i) => setIndex(i)}
         />
       </Stack>
     </>

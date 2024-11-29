@@ -67,7 +67,7 @@ export function Model10({
         <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full grow">
           {/* Content container */}
           {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
-            <div className="sm:size-full max-w-[700px] lg:w-1/2 flex flex-col justify-center items-center">
+            <div className="sm:size-full lg:w-1/2 flex flex-col justify-center items-center">
               {imageTitles.length === 0 &&
                 regularTextTitles.map((title, inx) => (
                   <TextTitle

@@ -7,8 +7,6 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 const theme: MantineThemeOverride = {
-  fontFamily: "Inter, sans-serif",
-
   components: {
     TextStyles,
   },
@@ -25,11 +23,7 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
     <DndProvider backend={HTML5Backend}>
-      <MantineProvider
-        withNormalizeCSS
-        withGlobalStyles
-        theme={theme}
-      >
+      <MantineProvider theme={theme}>
         <ModalsProvider>
           <Notifications position="top-center" />
           {children}

@@ -107,6 +107,8 @@ function Text({
   neighborImg: boolean;
   children: string;
 }) {
+  const fullSentence =
+    typeof children === "string" ? children.length > 20 : false;
   if (!show) return null;
 
   return (
@@ -116,6 +118,7 @@ function Text({
         "leading-[100%] break-words",
         {
           ["text-[12cqw] mt-1"]: neighborImg,
+          ["text-[10cqw]"]: fullSentence,
         }
       )}
     >

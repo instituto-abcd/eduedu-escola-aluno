@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -9,6 +11,9 @@ export default {
       xl: "1280px",
     },
     extend: {
+      fontFamily: {
+        sans: ["Nunito Sans Variable", ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         background: "#FFF",
         surface: "#F8F6F2",

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
+    "@fontsource-variable/nunito-sans": "^5.1.0",
     "@mantine/carousel": "^6.0.17",
     "@mantine/core": "^6.0.16",
     "@mantine/hooks": "^6.0.16",

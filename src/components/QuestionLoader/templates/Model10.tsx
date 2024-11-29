@@ -8,6 +8,7 @@ import { ImageTitle, CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
 import { cx } from "~/utils/cx";
 import { useMediaQuery } from "@mantine/hooks";
+import { TextTitle } from "~/components/question-components/TextTitle";
 
 export function Model10({
   question,
@@ -53,7 +54,7 @@ export function Model10({
         </AudioContainer>
       )}
 
-      <div className="flex flex-col size-full max-h-full">
+      <div className="flex flex-col size-full">
         {imageTitles.length !== 0 &&
           regularTextTitles.map((title, inx) => (
             <div
@@ -69,12 +70,9 @@ export function Model10({
             <div className="sm:size-full max-w-[700px] lg:w-1/2 flex flex-col justify-center items-center">
               {imageTitles.length === 0 &&
                 regularTextTitles.map((title, inx) => (
-                  <div
-                    className="text-text font-bold text-lg text-center md:text-2xl"
+                  <TextTitle
+                    text={title.description}
                     key={inx}
-                    dangerouslySetInnerHTML={{
-                      __html: title.description ?? "",
-                    }}
                   />
                 ))}
 
@@ -91,7 +89,7 @@ export function Model10({
               // TABLET VERT
               "md:aspect-auto",
               // TABLET HORZ
-              "lg:w-[50%] lg:max-h-[600px] lg:h-auto lg:aspect-square lg:justify-items-center lg:items-center"
+              "lg:w-[50%] lg:max-h-[450px] lg:h-auto lg:aspect-square lg:justify-items-center lg:items-center"
             )}
           >
             {question.options.map((option, inx) => (

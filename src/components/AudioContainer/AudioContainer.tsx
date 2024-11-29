@@ -26,6 +26,7 @@ export const AudioContainer = ({
     const shouldPlayCheck = isEnunciationTitle
       ? shouldPlay
       : shouldPlay === false;
+
     const props = {
       ref: isEnunciationTitle ? mainAudioRef : auxAudioRef,
       autoPlay: shouldPlayCheck ? (shouldPlayAuxiliar ? true : false) : false,

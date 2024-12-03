@@ -8,6 +8,7 @@ import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 import { AudioInterface } from "~/sounds";
+import { ScreenInfo } from "../Debug/components/ScreenInfo";
 
 export function ExamPage() {
   const navigate = useNavigate();
@@ -59,6 +60,10 @@ export function ExamPage() {
           <StagingQuestionInfo question={currentQuestion} />
         </Stack>
       )}
+
+      <div className="fixed bottom-4 left-6">
+        <ScreenInfo />
+      </div>
     </>
   );
 }

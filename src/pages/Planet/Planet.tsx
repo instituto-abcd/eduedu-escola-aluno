@@ -1,20 +1,21 @@
-import { Stack } from '@mantine/core';
-import { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Question } from '~/api/exam';
-import { usePlanetGetFirstQuestion } from '~/api/planet';
-import { SimplifiedPlanet } from '~/api/student';
-import { QuestionLoader } from '~/components/QuestionLoader';
-import { PATH } from '~/constants/path';
-import { useExamProgress } from '~/stores/exam-progress';
-import { StagingQuestionInfo } from '../Debug/components/StagingQuestionInfo';
-import { AudioInterface } from '~/sounds';
+import { Stack } from "@mantine/core";
+import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Question } from "~/api/exam";
+import { usePlanetGetFirstQuestion } from "~/api/planet";
+import { SimplifiedPlanet } from "~/api/student";
+import { QuestionLoader } from "~/components/QuestionLoader";
+import { PATH } from "~/constants/path";
+import { useExamProgress } from "~/stores/exam-progress";
+import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
+import { AudioInterface } from "~/sounds";
+import { ScreenInfo } from "../Debug/components/ScreenInfo";
 
 export function PlanetPage() {
   const location = useLocation();
   const params = useParams();
   const planet: SimplifiedPlanet = location.state?.planet;
-  const planetId = planet?.planetId ?? params.planetId ?? '--ID_MISSING--';
+  const planetId = planet?.planetId ?? params.planetId ?? "--ID_MISSING--";
 
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ export function PlanetPage() {
         },
     skipFeedback?: boolean
   ) {
-    if ('planetCompleted' in answer) {
+    if ("planetCompleted" in answer) {
       navigate(`${PATH.DASHBOARD}?planet-completed=${planetId}`);
     } else {
       setCurrentQuestion(answer as Question);
@@ -49,7 +50,7 @@ export function PlanetPage() {
     /* Handle Feedback Sound */
     if (skipFeedback) return;
 
-    if ('previousQuestionIsCorrect' in answer) {
+    if ("previousQuestionIsCorrect" in answer) {
       if (answer.previousQuestionIsCorrect === true) {
         AudioInterface.feedback.positive.play();
       }
@@ -74,7 +75,7 @@ export function PlanetPage() {
 
       {currentQuestion && showStagingInfo && (
         <Stack
-          style={{ position: 'fixed', bottom: 70, left: 30, zIndex: 999 }}
+          style={{ position: "fixed", bottom: 70, left: 30, zIndex: 999 }}
           id="debugger"
         >
           <StagingQuestionInfo
@@ -82,6 +83,9 @@ export function PlanetPage() {
           />
         </Stack>
       )}
+      <div className="fixed bottom-4 left-6">
+        <ScreenInfo />
+      </div>
     </>
   );
 }

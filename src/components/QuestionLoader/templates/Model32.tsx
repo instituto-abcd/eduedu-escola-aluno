@@ -65,6 +65,8 @@ export function Model32({
   const { enunciationScrollRef, enunciationScrollIndicator } =
     useEnunciationScrollIndicator(question);
 
+  const [maxHeightScroll, setMaxHeightScroll] = useState(650);
+
   useEffect(() => {
     setAnswer(null);
   }, [question]);

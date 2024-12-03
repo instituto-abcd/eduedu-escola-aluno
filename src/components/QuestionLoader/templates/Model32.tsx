@@ -81,6 +81,17 @@ export function Model32({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  useLayoutEffect(() => {
+    const getMaxHeightScroll = (width: number): number => {
+      if (width >= BREAKPOINT.DESKTOP) return 500;
+      if (width >= BREAKPOINT.TABLET_HORZ) return 550;
+      if (width >= BREAKPOINT.TABLET_VERT) return 500;
+      return 200;
+    };
+
+    setMaxHeightScroll(getMaxHeightScroll(window.innerWidth));
+  }, []);
+
   return (
     <>
       <div className="md:min-h-14 md:self-start">
@@ -189,7 +200,7 @@ export function Model32({
           )}
 
           <ScrollArea
-            mah={boardW(450)}
+            mah={maxHeightScroll}
             w="90%"
             pr={20}
             className={classes.scroll}

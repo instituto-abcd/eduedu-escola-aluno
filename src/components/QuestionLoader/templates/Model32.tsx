@@ -6,17 +6,17 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { TextOptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
-import { boardW } from "~/constants/dimensions";
+import { boardW, BREAKPOINT } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
 import { FloatingButton } from "~/components/FloatingButton";
 import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
 import { TEXT_PLACEHOLDERS } from "~/constants/text-placeholders";
+import { TextOptionButton } from "~/components/OptionButton";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -207,7 +207,7 @@ export function Model32({
             type="always"
           >
             <Stack
-              pb={5}
+              pb={10}
               className="w-full"
             >
               <Text
@@ -247,7 +247,6 @@ export function Model32({
                     wordWrap: "break-word",
                     wordBreak: "break-word",
                     textAlign: "center",
-                    fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
                   className="max-h-36 w-full p-1 text-2xl"

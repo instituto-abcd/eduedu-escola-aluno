@@ -122,7 +122,10 @@ export function Model32({
                     <Image
                       src={title.file_url}
                       key={title.file_url}
-                      width={boardW(300)}
+                      width={'auto'}
+                      style={{
+                        maxWidth: boardW(550)
+                      }}
                       m="auto"
                     />
                   ))}

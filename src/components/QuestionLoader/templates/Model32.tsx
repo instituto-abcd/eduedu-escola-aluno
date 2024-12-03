@@ -147,7 +147,7 @@ export function Model32({
                                 (!title.placeholder && title.description)
                             )?.description ?? "",
                         }}
-                        className={classes.typography}
+                        className={`${classes.typography} text-[3cqw] lg:text-2xl`}
                       />
                     )}
                     {!question?.planet_id && (
@@ -179,7 +179,7 @@ export function Model32({
                                 )
                             )?.description ?? "",
                         }}
-                        className={classes.typography}
+                        className={`${classes.typography} text-[5cqw] md:text-[3cqw]`}
                       />
                     )}
                   </Stack>
@@ -239,7 +239,7 @@ export function Model32({
                     fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="max-h-36 w-full p-1"
+                  className="max-h-36 w-full p-1 text-2xl"
                 >
                   {option.description}
                 </TextOptionButton>

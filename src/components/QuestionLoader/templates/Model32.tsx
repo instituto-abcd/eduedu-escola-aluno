@@ -6,17 +6,17 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
-import { TextOptionButton } from "~/components/OptionButton";
 import { ReadButton } from "~/components/ReadButton";
-import { boardW } from "~/constants/dimensions";
+import { boardW, BREAKPOINT } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioContainer } from "~/components/AudioContainer";
 import { FloatingButton } from "~/components/FloatingButton";
 import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
 import { TEXT_PLACEHOLDERS } from "~/constants/text-placeholders";
+import { TextOptionButton } from "~/components/OptionButton";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -65,6 +65,8 @@ export function Model32({
   const { enunciationScrollRef, enunciationScrollIndicator } =
     useEnunciationScrollIndicator(question);
 
+  const [maxHeightScroll, setMaxHeightScroll] = useState(650);
+
   useEffect(() => {
     setAnswer(null);
   }, [question]);
@@ -78,6 +80,17 @@ export function Model32({
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  useLayoutEffect(() => {
+    const getMaxHeightScroll = (width: number): number => {
+      if (width >= BREAKPOINT.DESKTOP) return 500;
+      if (width >= BREAKPOINT.TABLET_HORZ) return 550;
+      if (width >= BREAKPOINT.TABLET_VERT) return 500;
+      return 200;
+    };
+
+    setMaxHeightScroll(getMaxHeightScroll(window.innerWidth));
+  }, []);
 
   return (
     <>
@@ -120,7 +133,10 @@ export function Model32({
                     <Image
                       src={title.file_url}
                       key={title.file_url}
-                      width={boardW(300)}
+                      width={'auto'}
+                      style={{
+                        maxWidth: boardW(550)
+                      }}
                       m="auto"
                     />
                   ))}
@@ -142,7 +158,7 @@ export function Model32({
                                 (!title.placeholder && title.description)
                             )?.description ?? "",
                         }}
-                        className={classes.typography}
+                        className={`${classes.typography} text-[3cqw] lg:text-2xl`}
                       />
                     )}
                     {!question?.planet_id && (
@@ -174,7 +190,7 @@ export function Model32({
                                 )
                             )?.description ?? "",
                         }}
-                        className={classes.typography}
+                        className={`${classes.typography} text-[5cqw] md:text-[3cqw]`}
                       />
                     )}
                   </Stack>
@@ -184,14 +200,14 @@ export function Model32({
           )}
 
           <ScrollArea
-            mah={boardW(450)}
+            mah={maxHeightScroll}
             w="90%"
             pr={20}
             className={classes.scroll}
             type="always"
           >
             <Stack
-              pb={5}
+              pb={10}
               className="w-full"
             >
               <Text
@@ -231,10 +247,9 @@ export function Model32({
                     wordWrap: "break-word",
                     wordBreak: "break-word",
                     textAlign: "center",
-                    fontSize: boardW(20),
                   }}
                   debug={{ size: 10 }}
-                  className="max-h-36 w-full p-1"
+                  className="max-h-36 w-full p-1 text-2xl"
                 >
                   {option.description}
                 </TextOptionButton>

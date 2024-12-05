@@ -1,25 +1,25 @@
 import { Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import { useDrag } from "react-dnd";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
 import { DebugProps } from "../Debug";
 import { cx } from "~/utils/cx";
+import { useId } from "react";
+import { useDraggable } from "@dnd-kit/core";
 
-type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
+type Props<T> = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   item: T;
-  itemType?: string;
   text?: string | null;
   textClasses?: string;
   sound?: string | null;
   image?: string | null;
-  disabled?: boolean;
   onClear?: () => void;
   debug?: DebugProps;
   noPaddingRule?: boolean | false;
   size?: number;
+  id: string | number;
 };
 
 export function DraggableCard<T>({
@@ -30,23 +30,16 @@ export function DraggableCard<T>({
   image,
   hidden,
   onClear,
-  disabled,
   textClasses,
-  itemType = "ANSWER_CARD",
   noPaddingRule,
   size,
   ...props
 }: Props<T>) {
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: itemType,
-      item: () => item,
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-    }),
-    [item]
-  );
+  const id = useId();
+  const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
+    id,
+    data: { option: item },
+  });
 
   const { sound, isPlaying } = useCreateSound({
     src: _sound ?? "",
@@ -64,6 +57,7 @@ export function DraggableCard<T>({
   return (
     <div
       {...props}
+      id={props.id.toString()}
       className={cx(
         "rounded-[20px] md:rounded-[45px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative",
         "cursor-grab overflow-hidden p-4 h-[190px] sm:h-[192px]",
@@ -78,9 +72,9 @@ export function DraggableCard<T>({
         },
         props.className
       )}
-      ref={disabled ? null : drag}
-      onDragStart={onClick}
-      onClickCapture={onClick}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
     >
       {image && (
         <img

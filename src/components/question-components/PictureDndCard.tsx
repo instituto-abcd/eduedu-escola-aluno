@@ -1,8 +1,8 @@
-import { useDrag } from "react-dnd";
 import { DebugProps } from "../Debug";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { cx } from "~/utils/cx";
 import { IconX } from "@tabler/icons-react";
+import { useDraggable } from "@dnd-kit/core";
 
 type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   item: T;
@@ -14,9 +14,11 @@ type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
   debug?: DebugProps;
   withSurface?: boolean;
   aspectRatio?: string;
+  id: string | number;
 };
 
 export function PictureDndCard<T>({
+  id,
   item,
   sound: _sound,
   debug,
@@ -24,20 +26,12 @@ export function PictureDndCard<T>({
   hidden,
   onClear,
   disabled,
-  itemType = "ANSWER_CARD",
   withSurface = false,
   ...props
 }: Props<T>) {
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: itemType,
-      item: () => item,
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [item]
-  );
+  const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
+    id,
+  });
 
   const { sound, isPlaying } = useCreateSound({
     src: _sound ?? "",
@@ -61,9 +55,9 @@ export function PictureDndCard<T>({
           ["bg-[#F8F6F2] rounded-[20px] h-[192px] w-[190px]"]: withSurface,
         }
       )}
-      ref={disabled ? null : drag}
-      onDragStart={onClick}
-      onClickCapture={onClick}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
     >
       <img
         src={image ?? ""}

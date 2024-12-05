@@ -10,6 +10,7 @@ import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
 import { PictureDndSlot } from "~/components/question-components";
 import { PictureDndCard } from "~/components/question-components";
+import { DragOverlay, DndContext, DragStartEvent } from "@dnd-kit/core";
 
 export function Model2({
   question,
@@ -20,7 +21,7 @@ export function Model2({
     question.options.map(() => null)
   );
 
-  const handleDrop = useCallback(function (
+  const handleDrop = useCallback(function(
     item: QuestionOption | null,
     index: number
   ) {
@@ -83,8 +84,22 @@ export function Model2({
   const cardSize =
     question.options.length > 3 ? question.options.length : undefined;
 
+  /* Drag Handlers */
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function onDragStart(e: DragStartEvent) {
+    setActiveDrag(e.active.data.current.option as QuestionOption);
+  }
+
+  function onDragEnd(e: DragStartEvent) {
+    setActiveDrag(null);
+  }
+
   return (
-    <>
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
       {hasAudioTitle && (
         <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
@@ -124,11 +139,11 @@ export function Model2({
                 size={cardSize}
                 replaceWith={
                   <DraggableCard
+                    id={inx}
                     item={slot}
                     image={slot?.image_url}
                     text={slot?.description}
                     sound={slot?.sound_url}
-                    disabled
                     onClear={() => handleDrop(null, inx)}
                     debug={{ skipDebug: true }}
                   />
@@ -152,6 +167,7 @@ export function Model2({
                 total={question.options.length}
                 replaceWith={
                   <PictureDndCard
+                    id={inx}
                     item={slot}
                     image={slot?.image_url ?? ""}
                     sound={slot?.sound_url}
@@ -164,12 +180,14 @@ export function Model2({
             ))}
           </SimpleGrid>
         )}
+
         <SimpleGrid
           cols={question.options.length}
           className="gap-4 xl:h-[40vh] xl:w-auto"
         >
-          {question.options.map((item) => (
+          {question.options.map((item, inx) => (
             <DraggableCard
+              id={inx}
               item={item}
               key={item.position}
               size={cardSize}
@@ -184,6 +202,20 @@ export function Model2({
           ))}
         </SimpleGrid>
       </div>
-    </>
+
+      <DragOverlay>
+        {activeDrag ? (
+          <DraggableCard
+            id={123}
+            item={activeDrag}
+            size={cardSize}
+            image={activeDrag.image_url}
+            text={activeDrag.description}
+            sound={activeDrag.sound_url}
+            debug={{ skipDebug: true }}
+          />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

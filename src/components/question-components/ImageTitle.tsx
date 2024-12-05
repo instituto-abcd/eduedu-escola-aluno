@@ -17,12 +17,7 @@ export function ImageTitle({
   if (!titles.length) return null;
 
   return (
-    <div
-      className={cx(
-        "flex justify-center items-center h-full",
-        containerClasses
-      )}
-    >
+    <div className={cx("flex justify-center items-center", containerClasses)}>
       {titles.map((title) => (
         <img
           src={title.file_url!}
@@ -30,7 +25,7 @@ export function ImageTitle({
           key={title.file_url}
           height={height}
           className={cx(
-            "object-contain max-w-[90%] w-[295px] max-h-[300px]",
+            "object-contain max-w-[90%] w-[295px] max-h-[200px]",
             "lg:max-w-[400px] lg:max-h-[400px] lg:h-full lg:w-auto",
             imgClasses
           )}

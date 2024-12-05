@@ -7,9 +7,10 @@ import { AudioContainer } from "~/components/AudioContainer";
 import { ImageTitle, TitleBubble } from "~/components/question-components";
 import { VideoTitle } from "~/components/question-components/VideoTitle";
 import { CardOption } from "~/components/question-components/card-option";
-import { useMediaQuery } from "@mantine/hooks";
 import { cx } from "~/utils/cx";
 import { validString } from "~/utils/string";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { useMediaQuery } from "@mantine/hooks";
 
 export function Model5({
   question,
@@ -79,12 +80,14 @@ export function Model5({
   // uma vez que ID de questão auxiliar aparece como title type text
   const regularTextTitles = textTitles.filter(
     (title) =>
-      validString(title.description) && !title.placeholder.includes("ID")
+      validString(title.description) && !title.placeholder?.includes("ID")
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
   return (
     <>
@@ -94,13 +97,13 @@ export function Model5({
         </AudioContainer>
       )}
 
-      <div className="flex flex-col items-center size-full my-auto lg:flex-row">
+      <div className="flex flex-col items-center justify-between size-full my-auto lg:flex-row py-2">
         {/* Titles */}
-        <div className="size-full flex flex-col items-center lg:justify-center lg:min-w-[50%] lg:h-full">
+        <div className="my-auto flex flex-col items-center lg:justify-center lg:min-w-[50%] lg:h-full">
           {!hasVideo &&
             hasText &&
             regularTextTitles.map((title, inx) => (
-              <TitleBubble
+              <TextTitle
                 text={title.description}
                 key={inx}
               />
@@ -111,8 +114,13 @@ export function Model5({
         </div>
 
         {/* Options */}
-        <div className="size-full grow flex flex-col items-center justify-center">
-          <GridContainer rows={question.options.length / 2}>
+        <div
+          className={cx(
+            "size-full grow flex flex-col items-center justify-center max-h-[400px] ",
+            {}
+          )}
+        >
+          <GridContainer qtyItems={question.options.length}>
             {question.options.map((option, inx) => (
               <CardOption
                 key={inx}
@@ -120,7 +128,13 @@ export function Model5({
                 selected={getSelectedState(option)}
                 option={option}
                 properties={["image", "text"]}
-                shape="contain"
+                shape={
+                  isSmallScreen
+                    ? question.options.length > 4
+                      ? "square"
+                      : "contain"
+                    : "contain"
+                }
               />
             ))}
           </GridContainer>
@@ -131,16 +145,22 @@ export function Model5({
 }
 
 type GridContainerProps = React.HTMLProps<HTMLDivElement> & {
-  rows?: number;
+  qtyItems?: number;
 };
 
-function GridContainer({ rows = 2, className, ...props }: GridContainerProps) {
+function GridContainer({
+  qtyItems = 4,
+  className,
+  ...props
+}: GridContainerProps) {
   return (
     <div
       className={cx(
-        "grid grid-cols-2 w-full h-auto max-h-[400px] justify-items-center items-center gap-3",
+        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 max-h-[400px] py-2",
+        "",
         {
-          ["aspect-square"]: rows % 2 === 0,
+          ["lg:aspect-square"]: qtyItems === 4,
+          ["md:grid-cols-3 md:grid-rows-2"]: qtyItems > 4 && qtyItems <= 6,
         },
         className
       )}

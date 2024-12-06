@@ -84,7 +84,8 @@ export function VideoPlayer({ className, ...props }: Props) {
           {...props}
           ref={ref}
           className={classes.video}
-          style={{ ...props.style }}
+          style={{ ...props.style, objectFit: "contain" }}
+          disablePictureInPicture
           onLoadedData={() => setIsLoadingData(false)}
           onPlay={(e) => {
             props.onPlay?.(e);

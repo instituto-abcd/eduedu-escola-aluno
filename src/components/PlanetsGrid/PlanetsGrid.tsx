@@ -1,13 +1,14 @@
 import { Carousel, Embla } from "@mantine/carousel";
 import { createStyles, Group, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
+import { useGetPlanetTrack } from "~/api/student";
 import { useGridSlide } from "~/hooks/useGridSlide";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { MediaQueryKey } from "~/constants/dimensions";
 import { PlanetCard } from "../PlanetCard/PlanetCard";
 import { Header } from "~/pages/Login/components/Header";
 import { ViewMode } from "../ViewModeToggle";
+import { useUnlockPlanets } from "~/stores/unlock-planets";
 
 type Props = {
   visible: boolean;
@@ -15,11 +16,12 @@ type Props = {
 };
 
 export function PlanetsGrid({ visible, setViewMode }: Props) {
-  const [planets, setPlanets] = useState<SimplifiedPlanet[]>([]);
-  useGetPlanetTrack({
-    onSuccess(data) {
-      setPlanets(data.planetTrack);
-    },
+  const { unlockAll, unlockLimit } = useUnlockPlanets();
+
+  const { data } = useGetPlanetTrack(undefined, {
+    usePlanetAvailability: !unlockLimit,
+    hideLastPlanets: !unlockAll,
+    canExecuteAnyPlanet: unlockAll,
   });
 
   const breakpoint = useCurrentBreakpoint();
@@ -31,7 +33,7 @@ export function PlanetsGrid({ visible, setViewMode }: Props) {
   };
 
   const gridSlides = useGridSlide({
-    items: planets,
+    items: data?.planetTrack ?? [],
     layout: gridLayoutMap[breakpoint],
   });
 
@@ -57,12 +59,20 @@ export function PlanetsGrid({ visible, setViewMode }: Props) {
         className={classes.carousel}
         orientation={breakpoint === "MOBILE" ? "vertical" : "horizontal"}
         align="start"
+        pb={150}
       >
         {gridSlides.map((sl, inx) => (
           <Carousel.Slide key={inx}>
-            <Group position="center" noWrap={breakpoint === "MOBILE"}>
+            <Group
+              position="center"
+              noWrap={breakpoint === "MOBILE"}
+            >
               {sl.map((planet, i) => (
-                <PlanetCard planet={planet} key={i} size="small" />
+                <PlanetCard
+                  planet={planet}
+                  key={i}
+                  size="small"
+                />
               ))}
             </Group>
           </Carousel.Slide>

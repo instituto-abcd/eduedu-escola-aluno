@@ -62,6 +62,9 @@ export function VideoPlayer({ className, ...props }: Props) {
   }
 
   useEffect(() => {
+    if(ref.current) {
+      ref.current.disablePictureInPicture = true;
+    }
     return () => {
       if (audioStatus.isPlaying) {
         audioStatus.setPlaying(false);

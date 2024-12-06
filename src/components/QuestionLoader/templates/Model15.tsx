@@ -1,7 +1,6 @@
 import { Group } from "@mantine/core";
 import { useEffect } from "react";
 import { VideoPlayer } from "~/components/VideoPlayer";
-import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
@@ -19,7 +18,6 @@ export function Model15({ question, onConditionsChange }: ModelProps) {
           src={title.file_url ?? ""}
           key={title.file_url}
           autoPlay
-          style={{ height: boardW(500) }}
         />
       ))}
     </Group>

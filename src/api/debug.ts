@@ -48,9 +48,9 @@ class DebugAPI extends API {
 }
 
 export function useDebugPlanets(
-  options?: QueryOptions<Planet[], [typeof KEY.PLANETS]>,
+  options?: QueryOptions<Planet[], [typeof KEY.PLANETS]>
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return DebugAPI.planets();
   }, []);
 
@@ -58,9 +58,9 @@ export function useDebugPlanets(
 }
 
 export function useDebugQuestions(
-  options?: QueryOptions<Question[], [typeof KEY.QUESTIONS]>,
+  options?: QueryOptions<Question[], [typeof KEY.QUESTIONS]>
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return DebugAPI.examQuestions();
   }, []);
 
@@ -69,9 +69,9 @@ export function useDebugQuestions(
 
 export function useDebugModelQuestions(
   modelId: string,
-  options?: QueryOptions<Question[], [typeof KEY.MODEL_QUESTION, string]>,
+  options?: QueryOptions<Question[], [typeof KEY.MODEL_QUESTION, string]>
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return DebugAPI.modelQuestions(modelId);
   }, []);
 
@@ -79,9 +79,9 @@ export function useDebugModelQuestions(
 }
 
 export function useDebugModelList(
-  options?: QueryOptions<string[], [typeof KEY.MODEL_LIST]>,
+  options?: QueryOptions<string[], [typeof KEY.MODEL_LIST]>
 ) {
-  const handler = useCallback(function() {
+  const handler = useCallback(function () {
     return DebugAPI.modelList();
   }, []);
 

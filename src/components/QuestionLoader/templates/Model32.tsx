@@ -249,7 +249,7 @@ export function Model32({
                     textAlign: "center",
                   }}
                   debug={{ size: 10 }}
-                  className="max-h-36 w-full p-1 text-2xl"
+                  className="h-auto lg:max-h-36 w-full py-2 px-2 text-2xl"
                 >
                   {option.description}
                 </TextOptionButton>

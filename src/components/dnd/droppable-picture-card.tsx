@@ -1,51 +1,40 @@
-import { useDrop } from "react-dnd";
+import { useDroppable } from "@dnd-kit/core";
 import { QuestionOption } from "~/api/exam";
 import { cx } from "~/utils/cx";
 
-type Props<T> = {
-  onDrop: (item: T | null) => void;
-  accept?: string | string[];
-  item: T | null;
+type Props = {
+  optionItem: QuestionOption | null;
   replaceWith?: React.ReactNode;
   index: number;
   total: number;
-} & Omit<
-  React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-  "onDrop"
->;
+  id: number | string;
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "onDrop" | "id">;
 
-export function PictureDndSlot<T = QuestionOption>({
-  item,
+export function DroppablePictureCard({
+  optionItem,
   index,
   total,
-  onDrop,
   className,
   replaceWith,
-  accept = "ANSWER_CARD",
+  id,
   ...props
-}: Props<T>) {
-  const [, drop] = useDrop(
-    () => ({
-      accept,
-      drop: onDrop,
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    []
-  );
+}: Props) {
+  const { setNodeRef, isOver } = useDroppable({ id });
 
-  if (item !== null && replaceWith) return replaceWith;
+  if (optionItem !== null && replaceWith) return replaceWith;
+
   return (
     <div
       {...props}
-      ref={drop}
+      ref={setNodeRef}
       className={cx(
         "border-dashed border-black/60 border-2 w-[30vw] md:w-[25vw] md:max-w-[200px] max-w-[140px] h-[190px]",
         "xl:max-w-none xl:w-auto xl:h-full aspect-[14/19]",
+        "lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px]",
         {
           ["rounded-bl-[45px] rounded-tl-[45px]"]: index == 0,
           ["rounded-br-[45px] rounded-tr-[45px]"]: index == total - 1,
+          ["border-green-300"]: isOver,
         }
       )}
     />

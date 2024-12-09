@@ -1,37 +1,27 @@
-import { useDrop } from "react-dnd";
+import { useDroppable } from "@dnd-kit/core";
+import { useEffect, useId } from "react";
 import { QuestionOption } from "~/api/exam";
 import { cx } from "~/utils/cx";
 
 type Props<T> = {
   onDrop: (item: T | null) => void;
-  accept?: string | string[];
   item: T | null;
   replaceWith?: React.ReactNode;
   size?: number;
-} & Omit<
-  React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-  "onDrop"
->;
+  id: number | string;
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "onDrop" | "id">;
 
 export function DraggableCardSlot<T = QuestionOption>({
   item,
   size,
   onDrop,
+  id,
   className,
   replaceWith,
-  accept = "ANSWER_CARD",
   ...props
 }: Props<T>) {
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept,
-      drop: onDrop,
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    []
-  );
+  const { setNodeRef, isOver, over } = useDroppable({ id });
+  console.log("over", over);
 
   if (item !== null && replaceWith) return replaceWith;
 
@@ -48,7 +38,7 @@ export function DraggableCardSlot<T = QuestionOption>({
         },
         className
       )}
-      ref={drop}
+      ref={setNodeRef}
     />
   );
 }

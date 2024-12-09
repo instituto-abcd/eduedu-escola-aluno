@@ -1,43 +1,37 @@
-import { useDrag } from "react-dnd";
-import { DebugProps } from "../Debug";
+import { IconX } from "@tabler/icons-react";
+import { QuestionOption } from "~/api/exam";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { cx } from "~/utils/cx";
-import { IconX } from "@tabler/icons-react";
+import { useDraggable } from "@dnd-kit/core";
 
-type Props<T> = React.HTMLAttributes<HTMLDivElement> & {
-  item: T;
-  itemType?: string;
+type Props = {
+  optionItem: QuestionOption;
+  replaceWith?: React.ReactNode;
+  index: number;
+  total: number;
+  id: number;
+  disabled?: boolean;
   sound?: string | null;
   image: string | null;
-  disabled?: boolean;
   onClear?: () => void;
-  debug?: DebugProps;
-  withSurface?: boolean;
   aspectRatio?: string;
-};
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "onDrop" | "id">;
 
-export function PictureDndCard<T>({
-  item,
+export function DraggablePictureCard({
+  id,
+  optionItem,
   sound: _sound,
-  debug,
   image,
   hidden,
   onClear,
   disabled,
-  itemType = "ANSWER_CARD",
-  withSurface = false,
   ...props
-}: Props<T>) {
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: itemType,
-      item: () => item,
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [item]
-  );
+}: Props) {
+  const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
+    id,
+    data: { option: optionItem },
+    disabled,
+  });
 
   const { sound, isPlaying } = useCreateSound({
     src: _sound ?? "",
@@ -58,12 +52,12 @@ export function PictureDndCard<T>({
         {
           ["pointer-events-none"]: isPlaying,
           ["opacity-20 -scale-50"]: isDragging,
-          ["bg-[#F8F6F2] rounded-[20px] h-[192px] w-[190px]"]: withSurface,
+          ["bg-[#F8F6F2] rounded-[20px] h-[192px] w-[190px]"]: false, //withSurface,
         }
       )}
-      ref={disabled ? null : drag}
-      onDragStart={onClick}
-      onClickCapture={onClick}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
     >
       <img
         src={image ?? ""}

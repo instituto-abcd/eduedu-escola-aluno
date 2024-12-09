@@ -6,11 +6,10 @@ import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
 import { DebugProps } from "../Debug";
 import { cx } from "~/utils/cx";
-import { useId } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
-type Props<T> = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
-  item: T;
+type Props = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
+  optionItem: QuestionOption;
   text?: string | null;
   textClasses?: string;
   sound?: string | null;
@@ -20,10 +19,11 @@ type Props<T> = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   noPaddingRule?: boolean | false;
   size?: number;
   id: string | number;
+  disabled?: boolean;
 };
 
-export function DraggableCard<T>({
-  item,
+export function DraggableCard({
+  optionItem,
   text,
   sound: _sound,
   debug,
@@ -33,12 +33,14 @@ export function DraggableCard<T>({
   textClasses,
   noPaddingRule,
   size,
+  id,
+  disabled,
   ...props
-}: Props<T>) {
-  const id = useId();
+}: Props) {
   const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
     id,
-    data: { option: item },
+    data: { option: optionItem },
+    disabled,
   });
 
   const { sound, isPlaying } = useCreateSound({
@@ -57,11 +59,11 @@ export function DraggableCard<T>({
   return (
     <div
       {...props}
-      id={props.id.toString()}
       className={cx(
         "rounded-[20px] md:rounded-[45px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative",
         "cursor-grab overflow-hidden p-4 h-[190px] sm:h-[192px]",
         "xl:max-w-none xl:w-full xl:h-auto aspect-square",
+        "lg:max-h-[250px] lg:max-w-[250px]",
         {
           ["w-[105px] md:w-[190px]"]: !size,
           [`w-[calc(max-content/${size})]`]: !!size,
@@ -114,12 +116,12 @@ export function DraggableCard<T>({
           <IconX className="size-5 xl:size-9" />
         </button>
       )}
-      {canDebug && !debug?.skipDebug && item && (
+      {canDebug && !debug?.skipDebug && optionItem && (
         <DebugDiv
-          position={+(item as unknown as QuestionOption).position}
+          position={+(optionItem as unknown as QuestionOption).position}
           debug={debug}
         >
-          {(item as unknown as QuestionOption).isCorrect}
+          {(optionItem as unknown as QuestionOption).isCorrect}
         </DebugDiv>
       )}
     </div>

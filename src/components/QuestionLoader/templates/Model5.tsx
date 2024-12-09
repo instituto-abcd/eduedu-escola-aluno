@@ -4,7 +4,7 @@ import { ModelProps } from ".";
 import { QuestionOption } from "~/api/exam";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import { ImageTitle, TitleBubble } from "~/components/question-components";
+import { ImageTitle } from "~/components/question-components";
 import { VideoTitle } from "~/components/question-components/VideoTitle";
 import { CardOption } from "~/components/question-components/card-option";
 import { cx } from "~/utils/cx";
@@ -97,9 +97,13 @@ export function Model5({
         </AudioContainer>
       )}
 
-      <div className="flex flex-col items-center justify-between size-full my-auto lg:flex-row py-2">
+      <div className="flex flex-col items-center justify-between size-full my-auto lg:flex-row py-2 max-h-[84vh]">
         {/* Titles */}
-        <div className="my-auto flex flex-col items-center lg:justify-center lg:min-w-[50%] lg:h-full">
+        <div
+          className={cx(
+            "my-auto flex flex-col items-center lg:justify-center lg:min-w-[50%] lg:h-full"
+          )}
+        >
           {!hasVideo &&
             hasText &&
             regularTextTitles.map((title, inx) => (
@@ -117,7 +121,13 @@ export function Model5({
         <div
           className={cx(
             "size-full grow flex flex-col items-center justify-center max-h-[400px] ",
-            {}
+            {
+              ["overflow-y-auto"]:
+                question.options.length >= 6 &&
+                regularTextTitles.length > 0 &&
+                (hasAudioTitle || hasSupportText) &&
+                (imageTitles.length > 0 || videoTitles.length > 0),
+            }
           )}
         >
           <GridContainer qtyItems={question.options.length}>
@@ -157,10 +167,10 @@ function GridContainer({
     <div
       className={cx(
         "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 max-h-[400px] py-2",
-        "",
         {
           ["lg:aspect-square"]: qtyItems === 4,
-          ["md:grid-cols-3 md:grid-rows-2"]: qtyItems > 4 && qtyItems <= 6,
+          ["md:grid-cols-3 md:grid-rows-2 h-full md:h-auto"]:
+            qtyItems > 4 && qtyItems <= 6,
         },
         className
       )}

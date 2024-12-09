@@ -63,7 +63,7 @@ export function DraggableCard({
         "rounded-[20px] md:rounded-[45px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative",
         "cursor-grab overflow-hidden p-4 h-[190px] sm:h-[192px]",
         "xl:max-w-none xl:w-full xl:h-auto aspect-square",
-        "lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px]",
+        "lg:max-h-[250px] lg:max-w-[250px]",
         {
           ["w-[105px] md:w-[190px]"]: !size,
           [`w-[calc(max-content/${size})]`]: !!size,

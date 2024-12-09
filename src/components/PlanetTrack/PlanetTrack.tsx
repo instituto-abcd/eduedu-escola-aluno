@@ -11,6 +11,7 @@ import { useGridSlide } from "~/hooks/useGridSlide";
 import { MediaQueryKey } from "~/constants/dimensions";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { useToggle } from "@mantine/hooks";
+import { useUnlockPlanets } from "~/stores/unlock-planets";
 
 export type PlanetTrackRef = {
   embla?: Embla;
@@ -26,6 +27,8 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
     const [embla, setEmbla] = useState<Embla>();
     const [unlockLimit, toggleUnlockLimit] = useToggle();
     const [unlockAll, toggleUnlockAll] = useToggle();
+
+    const unlockStore = useUnlockPlanets();
 
     useImperativeHandle(ref, () => ({
       embla,
@@ -73,6 +76,16 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
 
     const { classes } = useStyles(visible);
 
+    const handleUnlockLimit = () => {
+      toggleUnlockLimit();
+      unlockStore.toggleUnlockLimit(true);
+    };
+
+    const handleUnlockAll = () => {
+      toggleUnlockAll();
+      unlockStore.toggleUnlockAll(true);
+    };
+
     if (!isLoading && track?.planetTrack.length === 0)
       return <NoTrackAvailable />;
 
@@ -118,7 +131,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
           {!unlockLimit && (
             <button
               className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-              onClick={() => toggleUnlockLimit()}
+              onClick={handleUnlockLimit}
             >
               Remover limite diário
             </button>
@@ -126,7 +139,7 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
           {!unlockAll && (
             <button
               className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-              onClick={() => toggleUnlockAll()}
+              onClick={handleUnlockAll}
             >
               Listar todos planetas
             </button>

@@ -20,7 +20,8 @@ const useStyles = createStyles({
     position: "relative",
   },
   video: {
-    maxWidth: "100%",
+    wdth: "100%",
+    height: "auto",
   },
   controls: {
     position: "absolute",
@@ -42,7 +43,39 @@ export function VideoPlayer({ className, ...props }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const { classes, cx } = useStyles();
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [videoDimensions, setVideoDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
   const audioStatus = useAudioStatus();
+
+  const handleLoadedMetadata = () => {
+    const video = ref.current;
+    if (video) {
+      const aspectRatio = video.videoWidth / video.videoHeight;
+
+      const isHorizontal = aspectRatio > 1;
+
+      const maxContainerWidth = 1024;
+      const maxContainerHeight = 600;
+
+      let containerWidth, containerHeight;
+
+      if (isHorizontal) {
+        containerWidth = maxContainerWidth;
+        containerHeight = maxContainerWidth / aspectRatio;
+      } else {
+        containerHeight = maxContainerHeight;
+        containerWidth = maxContainerHeight * aspectRatio;
+      }
+
+      setVideoDimensions({
+        width: containerWidth,
+        height: containerHeight,
+      });
+    }
+  };
 
   function play() {
     if (!audioStatus.isPlaying) {
@@ -81,8 +114,10 @@ export function VideoPlayer({ className, ...props }: Props) {
           {...props}
           ref={ref}
           className={classes.video}
-          style={{ ...props.style }}
+          style={{ ...props.style, objectFit: "contain" }}
+          disablePictureInPicture
           onLoadedData={() => setIsLoadingData(false)}
+          onLoadedMetadata={handleLoadedMetadata}
           onPlay={(e) => {
             props.onPlay?.(e);
             audioStatus.setPlaying(true);
@@ -95,6 +130,8 @@ export function VideoPlayer({ className, ...props }: Props) {
             props.onEnded?.(e);
             audioStatus.setPlaying(false);
           }}
+          width={videoDimensions.width}
+          height={videoDimensions.height}
         ></video>
 
         <div className={classes.controls}>

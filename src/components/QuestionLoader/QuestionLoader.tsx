@@ -98,7 +98,7 @@ export function QuestionLoader({
 
   return (
     <div
-      className="grow h-screen flex flex-col items-center bg-white p-3 xl:p-8"
+      className="grow h-auto md:h-screen flex flex-col items-center bg-white p-3 xl:p-8 pb-20"
       id="question-loader"
     >
       <ModelMapper commonProps={commonProps} />
@@ -106,7 +106,7 @@ export function QuestionLoader({
       <ButtonContinue
         disabled={continueDisabled}
         onClick={submitAnswer}
-        className="mt-auto md:self-end"
+        className="mt-5 md:mt-auto md:self-end"
       />
     </div>
   );

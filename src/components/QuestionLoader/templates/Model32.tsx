@@ -18,6 +18,7 @@ import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndic
 import { TEXT_PLACEHOLDERS } from "~/constants/text-placeholders";
 import { TextOptionButton } from "~/components/OptionButton";
 import { cx } from "~/utils/cx";
+import { FadedScrollerIndicator } from "~/components/FadedScrollerIndicator";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -134,9 +135,9 @@ export function Model32({
                     <Image
                       src={title.file_url}
                       key={title.file_url}
-                      width={'auto'}
+                      width={"auto"}
                       style={{
-                        maxWidth: boardW(550)
+                        maxWidth: boardW(550),
                       }}
                       m="auto"
                     />
@@ -259,6 +260,7 @@ export function Model32({
           </ScrollArea>
         </div>
       </div>
+      <FadedScrollerIndicator />
     </>
   );
 }

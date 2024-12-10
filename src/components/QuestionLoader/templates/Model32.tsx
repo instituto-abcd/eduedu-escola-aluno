@@ -17,6 +17,7 @@ import { FloatingButton } from "~/components/FloatingButton";
 import { useEnunciationScrollIndicator } from "~/hooks/useEnunciationScrollIndicator";
 import { TEXT_PLACEHOLDERS } from "~/constants/text-placeholders";
 import { TextOptionButton } from "~/components/OptionButton";
+import { cx } from "~/utils/cx";
 
 const useStyles = createStyles((theme) => ({
   typography: {
@@ -65,7 +66,7 @@ export function Model32({
   const { enunciationScrollRef, enunciationScrollIndicator } =
     useEnunciationScrollIndicator(question);
 
-  const [maxHeightScroll, setMaxHeightScroll] = useState(650);
+  const [maxHeightScroll, setMaxHeightScroll] = useState("80vh");
 
   useEffect(() => {
     setAnswer(null);
@@ -82,11 +83,11 @@ export function Model32({
   }, [conditions]);
 
   useLayoutEffect(() => {
-    const getMaxHeightScroll = (width: number): number => {
-      if (width >= BREAKPOINT.DESKTOP) return 500;
-      if (width >= BREAKPOINT.TABLET_HORZ) return 550;
-      if (width >= BREAKPOINT.TABLET_VERT) return 500;
-      return 200;
+    const getMaxHeightScroll = (width: number): string => {
+      if (width >= BREAKPOINT.DESKTOP) return "100vh";
+      if (width >= BREAKPOINT.TABLET_HORZ) return "80vh";
+      if (width >= BREAKPOINT.TABLET_VERT) return "70vh";
+      return "100%";
     };
 
     setMaxHeightScroll(getMaxHeightScroll(window.innerWidth));
@@ -118,9 +119,9 @@ export function Model32({
 
         <div className="h-auto md:min-h-[370px] gap-4 w-auto flex flex-col md:flex-row justify-around items-center">
           {(hasImageTitle || hasTextTitle) && (
-            <div className="w-full flex justify-center items-center">
+            <div className="w-full flex justify-center items-center h-auto lg:h-[80vh]">
               <ScrollArea
-                mah={boardW(700)}
+                mah="100%"
                 w="100%"
                 pr={20}
                 className={`${classes.scroll} flex flex-col items-center justify-center text-center`}
@@ -158,7 +159,7 @@ export function Model32({
                                 (!title.placeholder && title.description)
                             )?.description ?? "",
                         }}
-                        className={`${classes.typography} text-[3cqw] lg:text-2xl`}
+                        className={`${classes.typography} text-2xl lg:text-3xl`}
                       />
                     )}
                     {!question?.planet_id && (
@@ -190,7 +191,7 @@ export function Model32({
                                 )
                             )?.description ?? "",
                         }}
-                        className={`${classes.typography} text-[5cqw] md:text-[3cqw]`}
+                        className={`${classes.typography} text-xl md:text-2xl`}
                       />
                     )}
                   </Stack>
@@ -203,7 +204,7 @@ export function Model32({
             mah={maxHeightScroll}
             w="90%"
             pr={20}
-            className={classes.scroll}
+            className={cx(classes.scroll)}
             type="always"
           >
             <Stack

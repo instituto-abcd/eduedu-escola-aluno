@@ -1,1 +1,1 @@
-export { VideoPlayer } from "./VideoPlayer";
+export { VideoPlayer, type VideoPlayerProps } from "./VideoPlayer";

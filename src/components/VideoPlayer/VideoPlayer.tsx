@@ -1,11 +1,4 @@
-import {
-  Button,
-  Group,
-  HoverCard,
-  Loader,
-  Table,
-  createStyles,
-} from "@mantine/core";
+import { Button, Group, HoverCard, Loader, Table } from "@mantine/core";
 import {
   IconPlayerPauseFilled,
   IconPlayerStopFilled,
@@ -14,41 +7,21 @@ import {
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useAudioStatus } from "~/stores/audio";
 import { useDebugInfo } from "~/stores/debug-info";
+import { cx } from "~/utils/cx";
 
-const useStyles = createStyles({
-  wrapper: {
-    position: "relative",
-  },
-  video: {
-    wdth: "100%",
-    height: "auto",
-  },
-  controls: {
-    position: "absolute",
-    inset: 0,
-    display: "grid",
-    placeItems: "center",
-    zIndex: 1,
-    color: "white",
-  },
-  icon: {
-    cursor: "pointer",
-    opacity: 0.9,
-  },
-});
+export type VideoPlayerProps = React.VideoHTMLAttributes<HTMLVideoElement>;
 
-type Props = React.VideoHTMLAttributes<HTMLVideoElement>;
-
-export function VideoPlayer({ className, ...props }: Props) {
+export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
   const ref = useRef<HTMLVideoElement>(null);
-  const { classes, cx } = useStyles();
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [videoDimensions, setVideoDimensions] = useState({
+  const [_, setVideoDimensions] = useState({
     width: 0,
     height: 0,
   });
 
   const audioStatus = useAudioStatus();
+  const isHorizontal =
+    ref.current && ref.current.videoWidth > ref.current.videoHeight;
 
   const handleLoadedMetadata = () => {
     const video = ref.current;
@@ -109,12 +82,18 @@ export function VideoPlayer({ className, ...props }: Props) {
       pause={pause}
       canPlay={!audioStatus.isPlaying}
     >
-      <div className={cx(className, classes.wrapper)}>
+      <div className="relative">
         <video
           {...props}
           ref={ref}
-          className={classes.video}
-          style={{ ...props.style, objectFit: "contain" }}
+          className={cx(
+            "w-full h-auto object-contain",
+            {
+              ["h-full w-auto"]: !isHorizontal,
+            },
+            className
+          )}
+          controls={false}
           disablePictureInPicture
           onLoadedData={() => setIsLoadingData(false)}
           onLoadedMetadata={handleLoadedMetadata}
@@ -130,16 +109,14 @@ export function VideoPlayer({ className, ...props }: Props) {
             props.onEnded?.(e);
             audioStatus.setPlaying(false);
           }}
-          width={videoDimensions.width}
-          height={videoDimensions.height}
         ></video>
 
-        <div className={classes.controls}>
+        <div className="absolute inset-0 grid place-items-center z-10 text-white">
           {isLoadingData && <Loader />}
           {!audioStatus.isPlaying && !isLoadingData && (
             <IconRotateClockwise
               size={100}
-              className={classes.icon}
+              className="pointer opacity-90"
               onClick={play}
             />
           )}

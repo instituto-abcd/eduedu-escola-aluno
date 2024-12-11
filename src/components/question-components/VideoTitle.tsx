@@ -1,7 +1,9 @@
 import { QuestionTitle } from "~/api/exam";
-import { VideoPlayer } from "../VideoPlayer";
+import { VideoPlayer, type VideoPlayerProps } from "../VideoPlayer";
 
-export function VideoTitle({ titles }: { titles: QuestionTitle[] }) {
+type Props = { titles: QuestionTitle[] } & Partial<VideoPlayerProps>;
+
+export function VideoTitle({ titles, ...props }: Props) {
   const t = titles.filter(
     (t) => typeof t.file_url === "string" && t.file_url !== ""
   );
@@ -14,6 +16,7 @@ export function VideoTitle({ titles }: { titles: QuestionTitle[] }) {
           src={t.file_url!}
           key={inx}
           autoPlay
+          {...props}
         />
       ))}
     </div>

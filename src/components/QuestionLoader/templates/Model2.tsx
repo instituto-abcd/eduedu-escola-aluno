@@ -23,6 +23,8 @@ import {
   DroppablePictureCard,
   DraggablePictureCard,
 } from "~/components/dnd";
+import { VideoTitle } from "~/components/question-components";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 export function Model2({
   question,
@@ -106,10 +108,17 @@ export function Model2({
   /* Drag Handlers */
   const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
 
+  const { sound } = useCreateSound({ src: activeDrag?.sound_url ?? "" });
+  useEffect(() => {
+    if (activeDrag && sound) {
+      sound.play();
+    }
+  }, [activeDrag, sound]);
+
   function onDragStart(e: DragStartEvent) {
     if (e.active.data.current) {
       const option: QuestionOption = e.active.data.current.option;
-      setActiveDrag(option);
+      setActiveDrag(() => option);
     }
   }
 
@@ -165,7 +174,6 @@ export function Model2({
           )}
         </div>
       )}
-
       <div className="my-auto flex flex-col items-center w-full gap-4 md:gap-9 max-h-[80vh]">
         {textTitles.map((title) => (
           <p
@@ -175,6 +183,13 @@ export function Model2({
             {title.description}
           </p>
         ))}
+
+        {question.model_id === "MODEL2-VIDEO" && (
+          <VideoTitle
+            titles={videoTitles}
+            className="max-h-[200px] lg:max-h-none w-full max-w-[400px]"
+          />
+        )}
 
         {!noPaddingRule && (
           <SimpleGrid
@@ -257,7 +272,7 @@ export function Model2({
       <DragOverlay>
         {activeDrag ? (
           <DraggableCard
-            id={321}
+            id={32145}
             optionItem={activeDrag}
             size={cardSize}
             image={activeDrag.image_url}

@@ -1,8 +1,9 @@
 import { IconX } from "@tabler/icons-react";
 import { QuestionOption } from "~/api/exam";
-import { useCreateSound } from "~/hooks/useCreateSound";
 import { cx } from "~/utils/cx";
 import { useDraggable } from "@dnd-kit/core";
+import { useEffect } from "react";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 type Props = {
   optionItem: QuestionOption;
@@ -15,6 +16,7 @@ type Props = {
   image: string | null;
   onClear?: () => void;
   aspectRatio?: string;
+  playSound?: boolean;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "onDrop" | "id">;
 
 export function DraggablePictureCard({
@@ -25,6 +27,7 @@ export function DraggablePictureCard({
   hidden,
   onClear,
   disabled,
+  playSound = false,
   ...props
 }: Props) {
   const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
@@ -33,15 +36,13 @@ export function DraggablePictureCard({
     disabled,
   });
 
-  const { sound, isPlaying } = useCreateSound({
-    src: _sound ?? "",
-    skipPlayStatus: true,
-  });
+  const { isPlaying, sound } = useCreateSound({ src: _sound ?? "" });
 
-  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (sound) sound.play();
-    props?.onClick?.(e);
-  }
+  useEffect(() => {
+    if (playSound && _sound && !isPlaying) {
+      sound.play();
+    }
+  }, [playSound]);
 
   return (
     <div
@@ -50,9 +51,8 @@ export function DraggablePictureCard({
         "relative aspect-video w-[30vw] md:w-[25vw] md:max-w-[200px] max-w-[140px]",
         "xl:max-w-none xl:w-full xl:h-auto aspect-[14/19]",
         {
-          ["pointer-events-none"]: isPlaying,
+          ["pointer-events-none"]: disabled,
           ["opacity-20 -scale-50"]: isDragging,
-          ["bg-[#F8F6F2] rounded-[20px] h-[192px] w-[190px]"]: false, //withSurface,
         }
       )}
       ref={setNodeRef}
@@ -66,7 +66,7 @@ export function DraggablePictureCard({
 
       {onClear && (
         <button
-          className="size-5 bg-red-500 text-white rounded-full grid place-items-center absolute top-0 inset-x-0 mx-auto"
+          className="size-5 bg-red-500 text-white rounded-full grid place-items-center absolute top-0 inset-x-0 mx-auto pointer-events-auto"
           onClick={onClear}
         >
           <IconX size={16} />

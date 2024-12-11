@@ -2,7 +2,6 @@ import { ModelProps } from "./templates";
 import { Model10 } from "./templates/Model10";
 import { Model11 } from "./templates/Model11";
 import { Model2 } from "./templates/Model2";
-import { Model2Video } from "./templates/Model2Video";
 import { Model32 } from "./templates/Model32";
 import { Model3 } from "./templates/Model3";
 import { Model4 } from "./templates/Model4";
@@ -45,7 +44,7 @@ export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
     case "MODEL2":
       return <Model2 {...commonProps} />;
     case "MODEL2-VIDEO":
-      return <Model2Video {...commonProps} />;
+      return <Model2 {...commonProps} />;
     case "MODEL3":
       return <Model3 {...commonProps} />;
     case "MODEL4":

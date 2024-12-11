@@ -1,6 +1,5 @@
 import { Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
 import { QuestionOption } from "~/api/exam";
@@ -43,16 +42,6 @@ export function DraggableCard({
     disabled,
   });
 
-  const { sound, isPlaying } = useCreateSound({
-    src: _sound ?? "",
-    skipPlayStatus: true,
-  });
-
-  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (sound) sound.play();
-    props?.onClick?.(e);
-  }
-
   /* debug */
   const canDebug = useDebugInfo((s) => s.answer);
 
@@ -68,7 +57,7 @@ export function DraggableCard({
           ["w-[105px] md:w-[190px]"]: !size,
           [`w-[calc(max-content/${size})]`]: !!size,
           ["opacity-40 cursor-grabbing"]: isDragging,
-          ["pointer-events-none"]: isPlaying || hidden,
+          ["pointer-events-none"]: disabled || hidden,
           ["opacity-10"]: hidden,
           ["p-0"]: noPaddingRule,
         },
@@ -109,7 +98,7 @@ export function DraggableCard({
         <button
           className={cx(
             "bg-red-500 text-white rounded-full grid place-items-center",
-            "size-5 xl:size-12 absolute top-0 inset-x-0 mx-auto"
+            "size-5 xl:size-12 absolute top-0 inset-x-0 mx-auto pointer-events-auto"
           )}
           onClick={onClear}
         >

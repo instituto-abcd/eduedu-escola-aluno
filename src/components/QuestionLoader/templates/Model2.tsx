@@ -208,10 +208,7 @@ export function Model2({
         )}
 
         {noPaddingRule && (
-          <SimpleGrid
-            cols={question.options.length}
-            className="place-items-center grid gap-0 md:gap-0 justify-center xl:h-[40vh] xl:w-auto"
-          >
+          <div className="place-items-center grid grid-cols-3 gap-0 lg:h-[40vh] w-fit">
             {answers.map((slot, inx) => (
               <DroppablePictureCard
                 key={inx}
@@ -233,12 +230,12 @@ export function Model2({
                 }
               />
             ))}
-          </SimpleGrid>
+          </div>
         )}
 
         <SimpleGrid
           cols={question.options.length}
-          className="gap-4 xl:h-[40vh] xl:w-auto"
+          className="place-items-center lg:min-w-[600px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
         >
           {question.options.map((item, inx) =>
             !!answers.find((slot) => slot?.position === item.position) ? (

@@ -30,7 +30,7 @@ export function DroppablePictureCard({
       className={cx(
         "border-dashed border-black/60 border-2 w-[30vw] md:w-[25vw] md:max-w-[200px] max-w-[140px] h-[190px]",
         "xl:max-w-none xl:w-auto xl:h-full aspect-[14/19]",
-        "lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px]",
+        "md:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px]",
         {
           ["rounded-bl-[45px] rounded-tl-[45px]"]: index == 0,
           ["rounded-br-[45px] rounded-tr-[45px]"]: index == total - 1,

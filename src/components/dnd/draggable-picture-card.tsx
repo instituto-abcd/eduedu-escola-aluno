@@ -61,7 +61,7 @@ export function DraggablePictureCard({
     >
       <img
         src={image ?? ""}
-        className={"object-cover select-none min-w-full"}
+        className={"object-cover select-none min-w-full max-h-[300px]"}
       />
 
       {onClear && (

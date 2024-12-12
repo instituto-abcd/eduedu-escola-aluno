@@ -50,7 +50,7 @@ export function DraggableCard({
       {...props}
       className={cx(
         "rounded-[20px] md:rounded-[45px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative",
-        "cursor-grab overflow-hidden p-4 h-[190px] sm:h-[192px]",
+        "cursor-grab overflow-hidden p-1 md:p-4 h-[190px] sm:h-[192px]",
         "xl:max-w-none xl:w-full xl:h-auto aspect-square",
         "lg:max-h-[250px] lg:max-w-[250px]",
         {
@@ -75,7 +75,7 @@ export function DraggableCard({
             {
               ["max-h-[auto] mx-0 w-full overflow-hidden p-0 rounded-0"]:
                 noPaddingRule,
-              ["max-h-full mx-auto w-auto overflow-auto p-6 rounded-[20px] md:rounded-[45px]"]:
+              ["max-h-full mx-auto w-auto overflow-auto p-2 rounded-[20px] md:rounded-[45px]"]:
                 !noPaddingRule,
             }
           )}

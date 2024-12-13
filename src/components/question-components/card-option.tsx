@@ -14,9 +14,9 @@ type Props = VariantProps<typeof button> & {
   properties: ("text" | "image" | "audio" | null)[];
   selected: boolean;
 } & Pick<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    "disabled" | "onClick" | "className"
-  >;
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "disabled" | "onClick" | "className"
+>;
 
 const button = cva(
   [
@@ -114,11 +114,10 @@ function Text({
   return (
     <span
       className={cx(
-        "text-text font-extrabold text-[16cqw] w-full",
+        "text-text font-extrabold text-[10cqw] w-full",
         "leading-[100%] break-words",
         {
-          ["text-[12cqw] mt-1"]: neighborImg,
-          ["text-[10cqw]"]: fullSentence,
+          ["mt-1"]: neighborImg,
         }
       )}
     >

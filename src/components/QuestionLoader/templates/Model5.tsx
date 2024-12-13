@@ -167,6 +167,7 @@ function GridContainer({
     <div
       className={cx(
         "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 max-h-[400px] py-2",
+        "[&>button:nth-child(odd)]:ml-auto [&>button:nth-child(even)]:mr-auto",
         {
           ["lg:aspect-square"]: qtyItems === 4,
           ["md:grid-cols-3 md:grid-rows-2 h-full md:h-auto"]:

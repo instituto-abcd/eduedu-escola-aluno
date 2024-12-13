@@ -168,7 +168,7 @@ export const Model24TypeSelect = ({
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
                   }
-                  className={`flex-1 w-full min-h-16 max-h-32 option-group ${
+                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${
                     option.description
                       ? classes.descriptionButton
                       : classes.optionButton

@@ -144,6 +144,7 @@ export const Model24TypeSelect = ({
                 weight={500}
                 color="dark.3"
                 align="center"
+                className="text-3xl"
               />
             ))}
         </div>

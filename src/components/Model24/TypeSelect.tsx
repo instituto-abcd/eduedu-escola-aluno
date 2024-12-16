@@ -144,6 +144,7 @@ export const Model24TypeSelect = ({
                 weight={500}
                 color="dark.3"
                 align="center"
+                className="text-3xl"
               />
             ))}
         </div>
@@ -167,7 +168,7 @@ export const Model24TypeSelect = ({
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
                   }
-                  className={`flex-1 w-full min-h-16 max-h-32 option-group ${
+                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${
                     option.description
                       ? classes.descriptionButton
                       : classes.optionButton
@@ -177,7 +178,7 @@ export const Model24TypeSelect = ({
                   {option.image_url && (
                     <img
                       src={option.image_url}
-                      style={{ height: boardW(170) }}
+                      className="size-24 lg:size-28"
                     />
                   )}
                   {option.sound_url && !option.image_url && (

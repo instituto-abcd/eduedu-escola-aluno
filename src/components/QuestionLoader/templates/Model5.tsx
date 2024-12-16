@@ -138,13 +138,7 @@ export function Model5({
                 selected={getSelectedState(option)}
                 option={option}
                 properties={["image", "text"]}
-                shape={
-                  isSmallScreen
-                    ? question.options.length > 4
-                      ? "square"
-                      : "contain"
-                    : "contain"
-                }
+                shape={isSmallScreen ? "square" : "contain"}
               />
             ))}
           </GridContainer>

@@ -178,7 +178,7 @@ export const Model24TypeSelect = ({
                   {option.image_url && (
                     <img
                       src={option.image_url}
-                      style={{ height: boardW(170) }}
+                      className="size-24 lg:size-28"
                     />
                   )}
                   {option.sound_url && !option.image_url && (

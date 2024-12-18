@@ -1,20 +1,52 @@
-[![STAGING - CI/CD Pipeline](https://github.com/instituto-abcd/eduedu-escola-aluno/actions/workflows/gcp.staging.yml/badge.svg)](https://github.com/instituto-abcd/eduedu-escola-aluno/actions/workflows/gcp.staging.yml)
+# EduEdu Escola - Portal Aluno
 
-[![React Site](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/)
+## Instruções de uso e desenvolvimento
 
----
+### Instalação
 
-## Gestão de Branches
+- No termiral rodar o comando:
 
-Fluxo utilizado: **Git Flow**
+```sh
+npm install
 
-![git-flow](https://i.imgur.com/Wk7LfaW.png)
+```
 
----
+- Criar arquivo `.env` com as variáveis
 
-## Arquitetura
+```sh
+VITE_API_URL=
+VITE_ADMIN_URL=
+```
 
-Diagramas arquiteturais (Modelo C4) :point_right:
-https://instituto-abcd.github.io/eduedu-escola-docs/
+Os valores das variáveis dependem de em qual modo o projeto irá rodar.
 
----
+Em desenvolvimento: usar URL do container em dev.
+
+```sh
+VITE_API_URL=https://dev-eduedu-escola-backend-3djofcpyaq-uc.a.run.app/
+VITE_ADMIN_URL=https://dev-eduedu-escola-admin-3djofcpyaq-uc.a.run.app/
+```
+
+Em modo local: necessário instalação correta do ambiente em docker.
+
+```sh
+VITE_API_URL=http://localhost:3000/
+VITE_ADMIN_URL=http://localhost:5174/
+```
+
+Em modo staging: usar a URL do container em staging.
+
+```sh
+VITE_API_URL=https://eduedu-escola-backend-3djofcpyaq-uc.a.run.app/
+VITE_ADMIN_URL=https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/
+```
+
+### Rodar o projeto (em modo de desenvolvimento)
+
+- No terminal rodar o comando:
+
+```sh
+npm run dev
+```
+
+- Abrir no navegador a url http://localhost:5173/

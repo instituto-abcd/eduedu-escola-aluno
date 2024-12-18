@@ -37,12 +37,11 @@ export function DraggablePictureCard({
   });
 
   const { isPlaying, sound } = useCreateSound({ src: _sound ?? "" });
-
-  useEffect(() => {
-    if (playSound && _sound && !isPlaying) {
+  function play() {
+    if (_sound && !isPlaying) {
       sound.play();
     }
-  }, [playSound]);
+  }
 
   return (
     <div
@@ -58,12 +57,12 @@ export function DraggablePictureCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
+      onFocus={play}
     >
       <img
         src={image ?? ""}
         className={"object-cover select-none min-w-full max-h-[300px]"}
       />
-
       {onClear && (
         <button
           className="size-5 bg-red-500 text-white rounded-full grid place-items-center absolute top-0 inset-x-0 mx-auto pointer-events-auto"

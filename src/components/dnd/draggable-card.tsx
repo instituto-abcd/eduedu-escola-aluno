@@ -6,6 +6,7 @@ import { QuestionOption } from "~/api/exam";
 import { DebugProps } from "../Debug";
 import { cx } from "~/utils/cx";
 import { useDraggable } from "@dnd-kit/core";
+import { useCreateSound } from "~/hooks/useCreateSound";
 
 type Props = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   optionItem: QuestionOption;
@@ -42,6 +43,13 @@ export function DraggableCard({
     disabled,
   });
 
+  const { isPlaying, sound } = useCreateSound({ src: _sound ?? "" });
+  function play() {
+    if (_sound && !isPlaying) {
+      sound.play();
+    }
+  }
+
   /* debug */
   const canDebug = useDebugInfo((s) => s.answer);
 
@@ -66,6 +74,7 @@ export function DraggableCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
+      onFocus={play}
     >
       {image && (
         <img
@@ -81,7 +90,6 @@ export function DraggableCard({
           )}
         />
       )}
-
       {text && !image && (
         <Text
           className={cx(
@@ -93,7 +101,6 @@ export function DraggableCard({
           {text}
         </Text>
       )}
-
       {onClear && (
         <button
           className={cx(

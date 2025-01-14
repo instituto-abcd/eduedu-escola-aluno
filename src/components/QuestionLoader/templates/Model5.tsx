@@ -139,6 +139,7 @@ export function Model5({
                 option={option}
                 properties={["image", "text"]}
                 shape={isSmallScreen ? "square" : "contain"}
+                className="max-h-[50%]"
               />
             ))}
           </GridContainer>
@@ -161,11 +162,10 @@ function GridContainer({
     <div
       className={cx(
         "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 max-h-[400px] py-2",
-        "[&>button:nth-child(odd)]:ml-auto [&>button:nth-child(even)]:mr-auto",
+        "[&>button:nth-child(odd)]:ml-auto [&>button:nth-child(even)]:mr-auto grid-rows-2",
         {
           ["lg:aspect-square"]: qtyItems === 4,
-          ["md:grid-cols-3 md:grid-rows-2 h-full md:h-auto"]:
-            qtyItems > 4 && qtyItems <= 6,
+          ["md:grid-cols-3 h-full md:h-auto"]: qtyItems > 4 && qtyItems <= 6,
         },
         className
       )}

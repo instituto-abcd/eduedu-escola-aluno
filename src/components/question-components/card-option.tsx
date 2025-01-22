@@ -99,18 +99,12 @@ export function CardOption({
 }
 
 function Text({
-  show,
   children,
   neighborImg,
 }: {
-  show: boolean;
   neighborImg: boolean;
   children: string;
 }) {
-  const fullSentence =
-    typeof children === "string" ? children.length > 20 : false;
-  if (!show) return null;
-
   return (
     <span
       className={cx(

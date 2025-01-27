@@ -1,4 +1,3 @@
-import { Group } from "@mantine/core";
 import { useEffect } from "react";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -12,14 +11,15 @@ export function Model15({ question, onConditionsChange }: ModelProps) {
   }, []);
 
   return (
-    <Group my="auto">
+    <div className="size-full overflow-hidden">
       {videoTitles.map((title) => (
         <VideoPlayer
           src={title.file_url ?? ""}
           key={title.file_url}
           autoPlay
+          className="rounded-xl"
         />
       ))}
-    </Group>
+    </div>
   );
 }

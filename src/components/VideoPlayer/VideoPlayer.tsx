@@ -14,41 +14,10 @@ export type VideoPlayerProps = React.VideoHTMLAttributes<HTMLVideoElement>;
 export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
   const ref = useRef<HTMLVideoElement>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [_, setVideoDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
 
   const audioStatus = useAudioStatus();
   const isHorizontal =
     ref.current && ref.current.videoWidth > ref.current.videoHeight;
-
-  const handleLoadedMetadata = () => {
-    const video = ref.current;
-    if (video) {
-      const aspectRatio = video.videoWidth / video.videoHeight;
-
-      const isHorizontal = aspectRatio > 1;
-
-      const maxContainerWidth = 1024;
-      const maxContainerHeight = 600;
-
-      let containerWidth, containerHeight;
-
-      if (isHorizontal) {
-        containerWidth = maxContainerWidth;
-        containerHeight = maxContainerWidth / aspectRatio;
-      } else {
-        containerHeight = maxContainerHeight;
-        containerWidth = maxContainerHeight * aspectRatio;
-      }
-
-      setVideoDimensions({
-        width: containerWidth,
-        height: containerHeight,
-      });
-    }
-  };
 
   function play() {
     if (!audioStatus.isPlaying) {
@@ -76,56 +45,49 @@ export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
   }, []);
 
   return (
-    <Debug
-      isPlaying={audioStatus.isPlaying}
-      stop={stop}
-      pause={pause}
-      canPlay={!audioStatus.isPlaying}
-    >
-      <div className="relative">
-        <video
-          {...props}
-          ref={ref}
-          className={cx(
-            "w-full h-auto object-contain",
-            {
-              ["h-full w-auto"]: !isHorizontal,
-            },
-            className
-          )}
-          controls={false}
-          disablePictureInPicture
-          onLoadedData={() => setIsLoadingData(false)}
-          onLoadedMetadata={handleLoadedMetadata}
-          onPlay={(e) => {
-            props.onPlay?.(e);
-            audioStatus.setPlaying(true);
-          }}
-          onPause={(e) => {
-            props.onPause?.(e);
-            audioStatus.setPlaying(false);
-          }}
-          onEnded={(e) => {
-            props.onEnded?.(e);
-            audioStatus.setPlaying(false);
-          }}
-        ></video>
+    <div className="relative size-full flex flex-col items-center">
+      <video
+        {...props}
+        ref={ref}
+        className={cx(
+          "w-full h-auto",
+          {
+            ["w-auto h-full"]: !isHorizontal,
+          },
+          className
+        )}
+        controls={false}
+        disablePictureInPicture
+        onLoadedData={() => setIsLoadingData(false)}
+        onPlay={(e) => {
+          props.onPlay?.(e);
+          audioStatus.setPlaying(true);
+        }}
+        onPause={(e) => {
+          props.onPause?.(e);
+          audioStatus.setPlaying(false);
+        }}
+        onEnded={(e) => {
+          props.onEnded?.(e);
+          audioStatus.setPlaying(false);
+        }}
+      ></video>
 
-        <div className="absolute inset-0 grid place-items-center z-10 text-white">
-          {isLoadingData && <Loader />}
-          {!audioStatus.isPlaying && !isLoadingData && (
-            <IconRotateClockwise
-              size={100}
-              className="pointer opacity-90"
-              onClick={play}
-            />
-          )}
-        </div>
+      <div className="absolute inset-0 grid place-items-center z-10 text-white">
+        {isLoadingData && <Loader />}
+        {!audioStatus.isPlaying && !isLoadingData && (
+          <IconRotateClockwise
+            size={100}
+            className="pointer opacity-90 stroke-blue-300"
+            onClick={play}
+          />
+        )}
       </div>
-    </Debug>
+    </div>
   );
 }
 
+// TODO: add debuger
 function Debug({
   children,
   isPlaying,

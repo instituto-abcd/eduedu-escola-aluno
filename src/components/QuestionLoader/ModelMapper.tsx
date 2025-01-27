@@ -36,7 +36,6 @@ import { QORD3x2 } from "./templates/QORD3x2";
 import { Model8Prova } from "./templates/Model8Prova";
 import { Model35 } from "./templates/Model35";
 import { Model34 } from "./templates/Model34";
-import { Model18Prova } from "./templates/Model18Prova";
 import { Model11Prova } from "./templates/Model11Prova";
 
 export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
@@ -76,7 +75,7 @@ export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
     case "MODEL18":
       return <Model18 {...commonProps} />;
     case "MODEL18-PROVA":
-      return <Model18Prova {...commonProps} />;
+      return <Model18 {...commonProps} />;
     case "MODEL19":
       return <Model19 {...commonProps} />;
     case "MODEL20":

@@ -31,12 +31,14 @@ export function DraggableLetter({
     <div
       {...props}
       className={cx(
-        "rounded-[45px] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center p-5 w-full bg-surface relative select-none",
+        "rounded-[45px] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center",
+        "w-full bg-surface relative select-none p-5 md:p-0 md:aspect-square",
         {
           ["opacity-40 cursor-grabbing"]: isDragging,
           ["pointer-events-none"]: disabled || hidden,
           ["opacity-10"]: hidden,
-          ["aria-disabled:max-w-[70px] aria-disabled:rounded-[25px]"]: dropped,
+          ["aria-disabled:max-w-[70px] md:aria-disabled:max-w-[100px] aria-disabled:rounded-[25px]"]:
+            dropped,
         },
         className
       )}
@@ -44,7 +46,9 @@ export function DraggableLetter({
       {...attributes}
       {...listeners}
     >
-      <p className="text-2xl text-text font-black">{optionItem.description}</p>
+      <p className="text-3xl md:text-5xl text-text font-black">
+        {optionItem.description}
+      </p>
 
       {onClear && (
         <button

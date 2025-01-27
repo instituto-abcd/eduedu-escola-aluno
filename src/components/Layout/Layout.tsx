@@ -14,13 +14,19 @@ export function Layout() {
 
   const [inView, headerHandler] = useDisclosure(false);
 
-  function handleHeaderTrigger(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) {
-    if (e.clientY <= 10) {
-      headerHandler.open();
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (e.clientY <= 10) {
+        headerHandler.open();
+      }
     }
-  }
+
+    window.addEventListener("mousemove", handler);
+
+    return () => {
+      window.removeEventListener("mousemove", handler);
+    };
+  }, []);
 
   /* Queries que alteram o estado do LoadingOverlay */
   const isFetching = useIsFetching(queryKeyLoadingState);
@@ -36,10 +42,16 @@ export function Layout() {
   const isLoading = useStore($loading);
 
   return (
-    <Stack className={classes.shell} onMouseMove={handleHeaderTrigger}>
-      <Navbar inView={inView} onMouseLeave={headerHandler.close} />
+    <Stack className={classes.shell}>
+      <Navbar
+        inView={inView}
+        onMouseLeave={headerHandler.close}
+      />
       <Outlet />
-      <LoadingOverlay visible={isLoading} className={classes.loader} />
+      <LoadingOverlay
+        visible={isLoading}
+        className={classes.loader}
+      />
       <AwardSubscriber />
     </Stack>
   );

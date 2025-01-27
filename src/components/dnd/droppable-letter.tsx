@@ -21,7 +21,7 @@ export function DroppableLetter({
       {...props}
       className={cx(
         "rounded-[20px] transition-all bg-[#DADADA]",
-        "w-full max-w-[70px] aspect-square",
+        "w-full max-w-[70px] md:max-w-[100px] aspect-square",
         {
           ["bg-green-300"]: isOver,
         },

@@ -137,7 +137,7 @@ export function Model18({
 
       <div className="flex flex-col lg:flex-row items-center justify-evenly grow size-full">
         {/* Enunciado textual (opcional) */}
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full items-center justify-center">
           {textAboveQuestion && (
             <TextTitle text={textAboveQuestion.description} />
           )}
@@ -146,7 +146,7 @@ export function Model18({
           <ImageTitle titles={imageTitles} />
         </div>
 
-        <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center justify-evenly lg:justify-center gap-4 lg:gap-20 w-full h-full">
           {/* Texto a ser completado */}
           <div className="flex items-center justify-center gap-1 md:gap-3 w-full">
             {slots.map((slot, inx) => {

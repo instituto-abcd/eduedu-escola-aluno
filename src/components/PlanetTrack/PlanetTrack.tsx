@@ -18,137 +18,133 @@ export type PlanetTrackRef = {
   track?: SimplifiedPlanet[];
 };
 
-type Props = {
-  visible: boolean;
-};
+type Props = {};
 
-export const PlanetTrack = forwardRef<PlanetTrackRef, Props>(
-  ({ visible }, ref) => {
-    const [embla, setEmbla] = useState<Embla>();
-    const [unlockLimit, toggleUnlockLimit] = useToggle();
-    const [unlockAll, toggleUnlockAll] = useToggle();
+export const PlanetTrack = forwardRef<PlanetTrackRef, Props>((_, ref) => {
+  const [embla, setEmbla] = useState<Embla>();
+  const [unlockLimit, toggleUnlockLimit] = useToggle();
+  const [unlockAll, toggleUnlockAll] = useToggle();
 
-    const unlockStore = useUnlockPlanets();
+  const unlockStore = useUnlockPlanets();
 
-    useImperativeHandle(ref, () => ({
-      embla,
-      track: track?.planetTrack,
-    }));
+  useImperativeHandle(ref, () => ({
+    embla,
+    track: track?.planetTrack,
+  }));
 
-    const { data: track, isLoading } = useGetPlanetTrack(undefined, {
-      usePlanetAvailability: !unlockLimit,
-      hideLastPlanets: !unlockAll,
-      canExecuteAnyPlanet: unlockAll,
-    });
-    const breakpoint = useCurrentBreakpoint();
+  const { data: track, isLoading } = useGetPlanetTrack(undefined, {
+    usePlanetAvailability: !unlockLimit,
+    hideLastPlanets: !unlockAll,
+    canExecuteAnyPlanet: unlockAll,
+  });
+  const breakpoint = useCurrentBreakpoint();
 
-    const gridSlides = useGridSlide({
-      items: track?.planetTrack ?? [],
-      layout: [1, 2],
-    });
+  const gridSlides = useGridSlide({
+    items: track?.planetTrack ?? [],
+    layout: [1, 2],
+  });
 
-    const carouselProps: Record<MediaQueryKey, CarouselProps> = {
-      MOBILE: {
-        align: "start",
-        orientation: "vertical",
-      },
-      TABLET_VERT: {
-        orientation: "horizontal",
-        align: "center",
-        slideSize: "33%",
-        styles: { slide: { marginBlock: "auto" } },
-      },
-      TABLET_HORZ: {
-        orientation: "horizontal",
-        align: "center",
-        slideSize: "33%",
-        styles: { slide: { marginBlock: "auto" } },
-      },
-      DESKTOP: {
-        orientation: "horizontal",
-        align: "center",
-        slideSize: "33%",
-        styles: { slide: { marginBlock: "auto" } },
-      },
-    };
+  const carouselProps: Record<MediaQueryKey, CarouselProps> = {
+    MOBILE: {
+      align: "start",
+      orientation: "vertical",
+    },
+    TABLET_VERT: {
+      orientation: "horizontal",
+      align: "center",
+      slideSize: "33%",
+      styles: { slide: { marginBlock: "auto" } },
+    },
+    TABLET_HORZ: {
+      orientation: "horizontal",
+      align: "center",
+      slideSize: "33%",
+      styles: { slide: { marginBlock: "auto" } },
+    },
+    DESKTOP: {
+      orientation: "horizontal",
+      align: "center",
+      slideSize: "33%",
+      styles: { slide: { marginBlock: "auto" } },
+    },
+  };
 
-    const [activeSlide, setActiveSlide] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
 
-    const { classes } = useStyles(visible);
+  const { classes } = useStyles();
 
-    const handleUnlockLimit = () => {
-      toggleUnlockLimit();
-      unlockStore.toggleUnlockLimit(true);
-    };
+  const handleUnlockLimit = () => {
+    toggleUnlockLimit();
+    unlockStore.toggleUnlockLimit(true);
+  };
 
-    const handleUnlockAll = () => {
-      toggleUnlockAll();
-      unlockStore.toggleUnlockAll(true);
-    };
+  const handleUnlockAll = () => {
+    toggleUnlockAll();
+    unlockStore.toggleUnlockAll(true);
+  };
 
-    if (!isLoading && track?.planetTrack.length === 0)
-      return <NoTrackAvailable />;
+  if (!isLoading && track?.planetTrack.length === 0)
+    return <NoTrackAvailable />;
 
-    return (
-      <Stack
-        spacing={40}
-        className={classes.container}
+  return (
+    <Stack
+      spacing={40}
+      className={classes.container}
+    >
+      <Carousel
+        getEmblaApi={setEmbla}
+        withControls={false}
+        className={classes.carousel}
+        onSlideChange={setActiveSlide}
+        {...carouselProps[breakpoint]}
       >
-        <Carousel
-          getEmblaApi={setEmbla}
-          withControls={false}
-          className={classes.carousel}
-          onSlideChange={setActiveSlide}
-          {...carouselProps[breakpoint]}
-        >
-          {breakpoint === "MOBILE"
-            ? gridSlides.map((items, inx) => (
-                <Carousel.Slide key={inx}>
-                  <Group position="center">
-                    {items.map((planet, i) => (
-                      <PlanetCard
-                        planet={planet}
-                        key={i}
-                        size={"small"}
-                      />
-                    ))}
-                  </Group>
-                </Carousel.Slide>
-              ))
-            : track?.planetTrack?.map((planet, i) => (
-                <Carousel.Slide key={i}>
-                  <Group position="center">
+        {breakpoint === "MOBILE"
+          ? gridSlides.map((items, inx) => (
+              <Carousel.Slide key={inx}>
+                <Group position="center">
+                  {items.map((planet, i) => (
                     <PlanetCard
                       planet={planet}
-                      size={activeSlide === i ? "large" : "medium"}
+                      key={i}
+                      size={"small"}
                     />
-                  </Group>
-                </Carousel.Slide>
-              ))}
-        </Carousel>
+                  ))}
+                </Group>
+              </Carousel.Slide>
+            ))
+          : track?.planetTrack?.map((planet, i) => (
+              <Carousel.Slide key={i}>
+                <Group position="center">
+                  <PlanetCard
+                    planet={planet}
+                    size={activeSlide === i ? "large" : "medium"}
+                  />
+                </Group>
+              </Carousel.Slide>
+            ))}
+      </Carousel>
 
-        <div className="absolute bottom-4 inset-x-0 mx-auto flex gap-4 w-fit">
-          {!unlockLimit && (
-            <button
-              className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-              onClick={handleUnlockLimit}
-            >
-              Remover limite diário
-            </button>
-          )}
-          {!unlockAll && (
-            <button
-              className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-              onClick={handleUnlockAll}
-            >
-              Listar todos planetas
-            </button>
-          )}
-        </div>
-      </Stack>
-    );
-  }
-);
+      <div className="absolute bottom-4 inset-x-0 mx-auto flex gap-4 w-fit">
+        {!unlockLimit && (
+          <button
+            className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
+            onClick={handleUnlockLimit}
+          >
+            Remover limite diário
+          </button>
+        )}
+        {!unlockAll && (
+          <button
+            className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
+            onClick={handleUnlockAll}
+          >
+            Listar todos planetas
+          </button>
+        )}
+      </div>
+    </Stack>
+  );
+});
 
 function NoTrackAvailable() {
   const { sound } = useCreateSound({ src: fimProvaAudio, autoPlay: false });
@@ -181,11 +177,10 @@ function NoTrackAvailable() {
   );
 }
 
-const useStyles = createStyles((_, visible: boolean) => ({
+const useStyles = createStyles((_) => ({
   carousel: {
     maxHeight: "90vh",
     marginTop: 20,
-    display: visible ? "block" : "none",
     marginBlock: "auto",
     position: "relative",
   },

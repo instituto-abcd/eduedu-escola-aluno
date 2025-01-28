@@ -86,18 +86,19 @@ export function DashboardPage() {
           style={{ height: "100%", maxHeight: "calc(100vh - 200px)" }}
           justify="center"
         >
-          <PlanetTrack
-            visible={viewMode === "planets"}
-            ref={trackRef}
-          />
-          <AwardsGrid visible={viewMode === "awards"} />
-          <PlanetsGrid
-            visible={viewMode === "list"}
-            setViewMode={setViewMode}
-          />
+          {viewMode === "planets" && <PlanetTrack ref={trackRef} />}
+
+          {viewMode === "awards" && <AwardsGrid />}
+
+          {viewMode === "list" && (
+            <PlanetsGrid
+              ref={trackRef}
+              setViewMode={setViewMode}
+            />
+          )}
         </Stack>
       </Stack>
-      {viewMode === "planets" && (
+      {["planets", "list"].includes(viewMode) && (
         <div className={classes.controls}>
           <ArrowDownBtn
             width={80}

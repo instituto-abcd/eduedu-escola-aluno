@@ -9,11 +9,7 @@ import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { MediaQueryKey } from "~/constants/dimensions";
 import { AwardModal } from "../AwardDisplay/AwardModal";
 
-type Props = {
-  visible: boolean;
-};
-
-export function AwardsGrid({ visible }: Props) {
+export function AwardsGrid() {
   const [awards, setAwards] = useState<AwardImage[]>(AWARDS_IMAGES);
   useGetStudentAwards({
     onSuccess: (data) => {
@@ -54,10 +50,13 @@ export function AwardsGrid({ visible }: Props) {
     setSelectedAward(undefined);
   }
 
-  const { classes } = useStyles(visible);
+  const { classes } = useStyles();
 
   return (
-    <Stack spacing={40} style={{ maxHeight: "calc(100vh - 200px)" }}>
+    <Stack
+      spacing={40}
+      style={{ maxHeight: "calc(100vh - 200px)" }}
+    >
       <Carousel
         getEmblaApi={setEmbla}
         withControls={false}
@@ -67,7 +66,10 @@ export function AwardsGrid({ visible }: Props) {
       >
         {gridSlides.map((sl, inx) => (
           <Carousel.Slide key={inx}>
-            <Group position="center" noWrap={breakpoint === "MOBILE"}>
+            <Group
+              position="center"
+              noWrap={breakpoint === "MOBILE"}
+            >
               {sl.map((award, i) => (
                 <AwardDisplay
                   award={award}
@@ -90,11 +92,10 @@ export function AwardsGrid({ visible }: Props) {
   );
 }
 
-const useStyles = createStyles((_, visible: boolean) => ({
+const useStyles = createStyles((_) => ({
   carousel: {
     maxHeight: "90vh",
     marginTop: 20,
-    display: visible ? "block" : "none",
     marginBlock: "auto",
   },
 }));

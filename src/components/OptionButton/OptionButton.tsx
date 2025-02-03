@@ -47,7 +47,7 @@ export function OptionButton({
         "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none",
         "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px]",
         "data-[selected=true]:bg-[#DFFEC5] data-[selected=true]:border border-[#ACE655] data-[selected=true]:shadow-[0px_5px_0px_0px_#ACE655]",
-        "w-[138px] lg:w-full",
+        "w-[138px] lg:w-full overflow-hidden",
         "text-text font-extrabold text-xl lg:text-2xl xl:text-[2.5cqw] xl:leading-[100%] xl:break-words",
         {
           ["lg:aspect-square"]: aspectSquare === true,

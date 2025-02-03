@@ -9,13 +9,14 @@ import {
 import { OptionButton } from "../OptionButton";
 import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
 import { Question, QuestionTitle } from "~/api/exam";
+import { ImageTitle } from "../question-components";
 
 interface TypeCompleteProps {
   textTitles: QuestionTitle[];
   imageTitles: QuestionTitle[];
   question: Question;
   answer: number;
-  setAnswer: React.Dispatch<React.SetStateAction<number>>
+  setAnswer: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const useStyles = createStyles(() => {
@@ -67,19 +68,20 @@ export const Model24TypeComplete = ({
     >
       {textTitles.find((title) => title.placeholder.includes("completar"))
         ?.description && (
-        <Title
-          dangerouslySetInnerHTML={{
-            __html:
-              textTitles.find((title) =>
-                title.placeholder.includes("completar")
-              )?.description ?? "",
-          }}
-          size={boardW(24)}
-          weight={500}
-          color="dark.3"
-          align="center"
-        />
-      )}
+          <Title
+            dangerouslySetInnerHTML={{
+              __html:
+                textTitles.find((title) =>
+                  title.placeholder.includes("completar")
+                )?.description ?? "",
+            }}
+            size={boardW(24)}
+            weight={500}
+            color="dark.3"
+            align="center"
+          />
+        )}
+      <ImageTitle titles={imageTitles} />
 
       {imageTitles.map(
         (title) =>
@@ -98,7 +100,6 @@ export const Model24TypeComplete = ({
             </Stack>
           )
       )}
-
       <SimpleGrid
         mb={20}
         cols={2}

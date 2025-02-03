@@ -5,6 +5,7 @@ import { Question, QuestionOption, QuestionTitle } from "~/api/exam";
 import { IconVolume } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { FadedScrollerIndicator } from "../FadedScrollerIndicator";
+import { ImageTitle } from "../question-components";
 
 interface TypeSelectProps {
   textTitles: QuestionTitle[];
@@ -91,29 +92,9 @@ export const Model24TypeSelect = ({
       <div className="grid gap-4 md:grid-cols-[1fr_1fr] md:grid-rows-[auto_auto_auto]">
         <div className="order-2 md:order-1 md:row-span-3 flex items-center justify-center">
           <div className="w-full flex items-center justify-center">
-            {imageTitles.map(
-              (title) =>
-                title.file_url && (
-                  <Stack
-                    key={title.file_url}
-                    className={`${classes.container} lg:w-[70%] w-full`}
-                  >
-                    <Image
-                      src={title.file_url}
-                      alt={title.placeholder}
-                      styles={{
-                        image: {
-                          marginInline: "auto",
-                          objectFit: "contain",
-                        },
-                      }}
-                    />
-                  </Stack>
-                )
-            )}
+            <ImageTitle titles={imageTitles} />
           </div>
         </div>
-
         <div className="order-1 md:order-2 pr-4">
           {transformedTextTitles.statements
             .filter((title) => title.description?.length > 0)
@@ -130,7 +111,6 @@ export const Model24TypeSelect = ({
               />
             ))}
         </div>
-
         <div className="order-3 md:order-3 ">
           {transformedTextTitles.rules
             .filter((title) => title.description?.length > 0)
@@ -154,11 +134,10 @@ export const Model24TypeSelect = ({
             className={`flex flex-col md:flex-row items-center justify-center w-full gap-4 mt-4 ${classes.container}`}
           >
             <div
-              className={`flex w-full ${dynamicFlexBehavior} ${
-                question.options.length === 3
+              className={`flex w-full ${dynamicFlexBehavior} ${question.options.length === 3
                   ? classes.threeButtons
                   : classes.container
-              } items-center justify-center gap-4`}
+                } items-center justify-center gap-4`}
             >
               {question.options.map((option, idx) => (
                 <OptionButton
@@ -168,11 +147,10 @@ export const Model24TypeSelect = ({
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
                   }
-                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${
-                    option.description
+                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${option.description
                       ? classes.descriptionButton
                       : classes.optionButton
-                  }`}
+                    }`}
                 >
                   {option.description}
                   {option.image_url && (

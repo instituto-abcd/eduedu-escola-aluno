@@ -24,7 +24,12 @@ import {
   DraggablePictureCard,
 } from "~/components/dnd";
 import { VideoTitle } from "~/components/question-components";
-import { useCreateSound } from "~/hooks/useCreateSound";
+import { v4 as uuid } from "uuid";
+
+type OptionWithSound = QuestionOption & {
+  id: string;
+  sound: Howl;
+};
 
 export function Model2({
   question,
@@ -108,16 +113,12 @@ export function Model2({
   /* Drag Handlers */
   const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
 
-  const { sound } = useCreateSound({ src: activeDrag?.sound_url ?? "" });
-  useEffect(() => {
-    if (activeDrag && sound) {
-      sound.play();
-    }
-  }, [activeDrag, sound]);
-
   function onDragStart(e: DragStartEvent) {
     if (e.active.data.current) {
-      const option: QuestionOption = e.active.data.current.option;
+      const option: OptionWithSound = e.active.data.current.option;
+      if (!option.sound.playing()) {
+        option.sound.play();
+      }
       setActiveDrag(() => option);
     }
   }
@@ -152,6 +153,20 @@ export function Model2({
   }
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const optionsWithIds = useMemo(
+    () =>
+      question.options.map((option) => ({
+        ...option,
+        id: uuid(),
+        sound: new Howl({
+          src: [option.sound_url ?? ""],
+          html5: true,
+          format: ["mp3"],
+          loop: false,
+        }),
+      })),
+    [question]
+  );
 
   return (
     <DndContext
@@ -237,7 +252,7 @@ export function Model2({
           cols={question.options.length}
           className="place-items-center lg:min-w-[600px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
         >
-          {question.options.map((item, inx) =>
+          {optionsWithIds.map((item, inx) =>
             !!answers.find((slot) => slot?.position === item.position) ? (
               <DraggableCard
                 id={Math.random() * 30}
@@ -252,7 +267,7 @@ export function Model2({
               />
             ) : (
               <DraggableCard
-                id={+item.position}
+                id={item.id}
                 key={inx}
                 optionItem={item}
                 size={cardSize}

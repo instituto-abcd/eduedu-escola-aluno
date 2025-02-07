@@ -90,12 +90,12 @@ export const Model24TypeSelect = ({
   return (
     <div className="w-full">
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr] md:grid-rows-[auto_auto_auto]">
-        <div className="order-2 md:order-1 md:row-span-3 flex items-center justify-center">
+        <div className="order-2 md:row-span-3 flex items-center justify-center">
           <div className="w-full flex items-center justify-center">
             <ImageTitle titles={imageTitles} />
           </div>
         </div>
-        <div className="order-1 md:order-2 pr-4">
+        <div className="order-1 pr-4">
           {transformedTextTitles.statements
             .filter((title) => title.description?.length > 0)
             .map((title) => (

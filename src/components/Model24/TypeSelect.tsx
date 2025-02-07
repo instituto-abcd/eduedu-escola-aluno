@@ -95,7 +95,7 @@ export const Model24TypeSelect = ({
             <ImageTitle titles={imageTitles} />
           </div>
         </div>
-        <div className="order-1 pr-4">
+        <div className="order-1 lg:col-span-2 pr-4">
           {transformedTextTitles.statements
             .filter((title) => title.description?.length > 0)
             .map((title) => (

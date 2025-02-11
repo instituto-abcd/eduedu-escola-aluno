@@ -28,7 +28,7 @@ import { v4 as uuid } from "uuid";
 
 type OptionWithSound = QuestionOption & {
   id: string;
-  sound: Howl;
+  sound?: Howl;
 };
 
 export function Model2({
@@ -40,11 +40,18 @@ export function Model2({
     question.options.map(() => null)
   );
 
-  function handleDrop(option: QuestionOption | null, targetIndex: number) {
+  function handleDrop(option: OptionWithSound | null, targetIndex: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
+        let opt: QuestionOption | null = null;
+        if (option) {
+          const { id: _id, sound: _sound, ..._option } = option;
+          opt = _option;
+        }
+
+        /* @ts-ignore */
         draft[targetIndex] = option
-          ? { ...option, positionAnswer: targetIndex }
+          ? { ...opt, positionAnswer: targetIndex }
           : null;
       })
     );
@@ -116,8 +123,8 @@ export function Model2({
   function onDragStart(e: DragStartEvent) {
     if (e.active.data.current) {
       const option: OptionWithSound = e.active.data.current.option;
-      if (!option.sound.playing()) {
-        option.sound.play();
+      if (!option.sound?.playing()) {
+        option.sound?.play();
       }
       setActiveDrag(() => option);
     }
@@ -128,7 +135,7 @@ export function Model2({
     if (e.over) {
       const targetIndex = Number(e.over.id);
       const option = (e.active.data.current?.option as QuestionOption) ?? null;
-      handleDrop(option, targetIndex);
+      handleDrop(option as OptionWithSound, targetIndex);
     }
   }
 

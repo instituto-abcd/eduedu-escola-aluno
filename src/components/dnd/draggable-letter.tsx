@@ -9,6 +9,7 @@ type Props = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   disabled?: boolean;
   id: number | string;
   dropped?: boolean;
+  compact?: boolean;
 };
 
 export function DraggableLetter({
@@ -19,6 +20,7 @@ export function DraggableLetter({
   className,
   id,
   dropped,
+  compact,
   ...props
 }: Props) {
   const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
@@ -39,6 +41,8 @@ export function DraggableLetter({
           ["opacity-10"]: hidden,
           ["aria-disabled:max-w-[70px] md:aria-disabled:max-w-[100px] aria-disabled:rounded-[25px]"]:
             dropped,
+          ["aria-disabled:max-w-[50px] aria-disabled:rounded-[12px] p-2 md:p-5 md:aria-disabled:rounded-[25px] md:aria-disabled:max-w-[100px]"]:
+            compact,
         },
         className
       )}
@@ -54,7 +58,10 @@ export function DraggableLetter({
         <button
           className={cx(
             "bg-red-500 text-white rounded-full grid place-items-center",
-            "size-5 xl:size-9 absolute top-0 xl:-top-1/3 inset-x-0 mx-auto pointer-events-auto"
+            "size-5 xl:size-9 absolute top-0 xl:-top-1/3 inset-x-0 mx-auto pointer-events-auto",
+            {
+              ["-top-4"]: compact,
+            }
           )}
           onClick={onClear}
         >

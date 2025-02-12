@@ -175,6 +175,7 @@ export function Model18({
                         disabled
                         onClear={() => handleClear(inx)}
                         dropped
+                        compact={slots.length > 4}
                       />
                     )
                   }

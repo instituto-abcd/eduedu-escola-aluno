@@ -33,7 +33,10 @@ export function Model18({
   const text = useMemo(
     () =>
       textTitles.filter(
-        (title) => title.description && title.description.length > 0
+        (title) =>
+          title.description &&
+          title.description.length > 0 &&
+          title.description.includes("_")
       )[0].description,
     [question]
   );

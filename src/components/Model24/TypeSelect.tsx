@@ -1,10 +1,9 @@
-import { createStyles, Image, Stack, Title } from "@mantine/core";
+import { createStyles, Title } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { Question, QuestionOption, QuestionTitle } from "~/api/exam";
 import { IconVolume } from "@tabler/icons-react";
 import { useMemo } from "react";
-import { FadedScrollerIndicator } from "../FadedScrollerIndicator";
 import { ImageTitle } from "../question-components";
 
 interface TypeSelectProps {
@@ -89,7 +88,7 @@ export const Model24TypeSelect = ({
 
   return (
     <div className="w-full">
-      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] md:grid-rows-[auto_auto_auto]">
+      <div className="grid gap-4 md:gap-12 lg:grid-cols-[1fr_1fr] md:grid-rows-[auto_auto_auto]">
         <div className="order-2 md:row-span-3 flex items-center justify-center">
           <div className="w-full flex items-center justify-center">
             <ImageTitle titles={imageTitles} />

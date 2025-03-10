@@ -1,47 +1,37 @@
-import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
-import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { DraggableLetters } from "~/components/DraggableLetters/DraggableLetters";
-import { TextOptionButton } from "~/components/OptionButton";
-import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-
-const REGULAR_TEXT_FONTSIZE = boardW(40);
-const SLOT_WIDTH = boardW(50);
-const SLOT_HEIGHT = boardW(70);
-const OPTION_FONTSIZE = boardW(32);
-
-const useStyles = createStyles({
-  slot: {
-    width: SLOT_WIDTH,
-    height: SLOT_HEIGHT,
-  },
-
-  option: {
-    width: "auto",
-    paddingBlock: boardW(10),
-    fontSize: OPTION_FONTSIZE,
-  },
-});
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { AudioContainer } from "~/components/AudioContainer";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { ImageTitle } from "~/components/question-components";
+import { DraggableLetter, DroppableLetter } from "~/components/dnd";
+import { cx } from "~/utils/cx";
+import { v4 as uuid } from "uuid";
 
 export function Model11Prova({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes } = useStyles();
   const {
     getRule,
 
     textTitles,
+    imageTitles,
 
-    audioTitles,
     hasAudioTitle,
-    audioTitleAutoplay,
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<Array<QuestionOption | null>>([null]);
@@ -108,7 +98,7 @@ export function Model11Prova({
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answer.filter((item) => item !== null) );
+    onAnswerChange(answer.filter((item) => item !== null));
   }, [answer]);
 
   const conditions = useMemo(() => [!answer.includes(null)], [answer]);
@@ -117,145 +107,148 @@ export function Model11Prova({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  /* debug */
-  const overwrite = (option: QuestionOption) =>
-    question.options.map((q) => q.isCorrect).every((bool) => !bool)
-      ? getRule("answers")?.value === option.description
-      : undefined;
+  /* Drag Handlers */
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option = e.active.data.current.option;
+      setActiveDrag(() => option);
+    }
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const targetIndex = Number(e.over.id);
+      const option = (e.active.data.current?.option as QuestionOption) ?? null;
+      handleAnswer(option, targetIndex);
+    }
+  }
+
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  /* Remapped options */
+  const optionsWithIds = useMemo(
+    () =>
+      question.options.map((option) => ({
+        ...option,
+        id: uuid(),
+      })),
+    [question]
+  );
+
+  /* Elements */
+
+  const segments = useMemo(() => {
+    const arr = transformString(textToComplete.description.split("/")[1]);
+
+    return arr.map((seg, inx) => {
+      if (typeof seg === "string") {
+        return (
+          <p
+            key={inx}
+            className="text-text font-black leading-none text-4xl"
+          >
+            {seg}
+          </p>
+        );
+      } else
+        return (
+          <DroppableLetter
+            id={seg}
+            key={inx}
+            size={2}
+            replaceWith={
+              !!answer[seg] && (
+                <DraggableLetter
+                  optionItem={answer[seg]}
+                  id={seg}
+                  disabled
+                  compact
+                  onClear={() => handleAnswer(null, seg)}
+                />
+              )
+            }
+          />
+        );
+    });
+  }, [textToComplete, answer]);
 
   return (
-    <>
-      {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              src={title.file_url ?? ""}
-              autoPlay={audioTitleAutoplay(inx)}
-              key={inx}
-            />
-          ))}
-        </Group>
-      )}
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
+      {hasAudioTitle && <AudioContainer question={question} />}
 
-      <Stack my="auto" align="center" spacing={boardW(40)}>
-        {hasTitle && (
-          <Title color="dark.3" size={boardW(24)}>
-            {questionTitle}
-          </Title>
-        )}
-        <Group w="100%" noWrap position="center" spacing={boardW(100)}>
-          <Stack align="center" spacing={boardW(60)}>
-            <Group spacing={0}>
-              {textToComplete &&
-                textToComplete.description
-                  .split("/")
-                  .filter((w) => w.includes("_"))[0]
-                  .split(/_+/g)
-                  .map((w, inx, arr) => {
-                    const notLastFragment = arr.length !== inx + 1;
-                    const isLastFragment = arr.length === 1 && w.endsWith(" ");
-                    const isFirstFragment =
-                      arr.length === 1 && w.startsWith(" ");
-                    const canRenderLast =
-                      (isLastFragment || notLastFragment) && !isFirstFragment;
-                    const canRenderFirst = isFirstFragment && !isLastFragment;
-                    /*
-                     *  [isFirstFragment] O slot deve aparecer no começo da frase. Exemplo: "__ palavra"
-                     *  [isLastFragment] O slot deve aparecer no final da frase. Exemplo: "palavra __"
-                     *  [notLastFragment] O slot deve aparecer entre as palavras. Exemplo: "palavra _ palavra _ palavra"
-                     */
-                    const isMultipleAnswer = arr.length > 2;
-                    const handleDrop = (item: QuestionOption | null) =>
-                      handleAnswer(item, isMultipleAnswer ? inx : undefined);
-                    const handleClear = () =>
-                      handleAnswer(null, isMultipleAnswer ? inx : undefined);
-                    return (
-                      <Fragment key={w}>
-                        {canRenderFirst && (
-                          <DragLetterSlot
-                            onDrop={handleDrop}
-                            option={answer[inx] ?? null}
-                            onClear={handleClear}
-                            className={classes.slot}
-                            style={{
-                              width: "auto",
-                              minHeight: SLOT_HEIGHT,
-                              fontSize: REGULAR_TEXT_FONTSIZE,
-                            }}
-                          />
-                        )}
-                        {w.split(" ").map((frag, inx) => (
-                          <Text
-                            color="dark.3"
-                            size={REGULAR_TEXT_FONTSIZE}
-                            weight={700}
-                            p={0}
-                            my={2.5}
-                            mx={2.5}
-                            key={inx}
-                          >
-                            {frag}
-                          </Text>
-                        ))}
-                        {canRenderLast && (
-                          <DragLetterSlot
-                            onDrop={handleDrop}
-                            option={answer[inx] ?? null}
-                            onClear={handleClear}
-                            className={classes.slot}
-                            style={{
-                              width: "auto",
-                              minHeight: SLOT_HEIGHT,
-                              fontSize: REGULAR_TEXT_FONTSIZE,
-                            }}
-                          />
-                        )}
-                      </Fragment>
-                    );
-                  })}
-            </Group>
-            <Group align="center" position="center">
-              {question.options.map((option, inx) =>
-                question.axis_code === "LC" ? (
-                  /* Vamos assumir que o eixo LC (leitura e compreensao de texto)
-                   *  contempla alternativas em texto longo,
-                   *  já as demais apenas 1 palavra ou poucas letas
-                   */
-                  <TextOptionButton key={inx} option={option}>
-                    {option.description}
-                  </TextOptionButton>
-                ) : (
-                  <DraggableLetters
-                    option={option}
-                    key={inx}
-                    className={classes.option}
-                    hidden={
-                      !shouldRepeatAnswer &&
-                      answer.some(
-                        (item) =>
-                          JSON.stringify({
-                            ...item,
-                            positionAnswer: undefined,
-                          }) ===
-                          JSON.stringify({
-                            ...option,
-                            positionAnswer: undefined,
-                          })
-                      )
-                    }
-                    debug={{
-                      overwriteIsCorrect: overwrite(option),
-                      outside: true,
-                    }}
-                  >
-                    {option.description}
-                  </DraggableLetters>
-                )
-              )}
-            </Group>
-          </Stack>
-        </Group>
-      </Stack>
-    </>
+      {/* Enunciado */}
+      {hasTitle && <TextTitle text={questionTitle} />}
+
+      <div className="flex flex-col lg:flex-row items-center justify-evenly gap-6 size-full">
+        <ImageTitle titles={imageTitles} />
+
+        <div className="flex flex-col gap-6 items-center lg:max-w-[50vw]">
+          {/* Text to complete */}
+          <div className="p-4 flex items-center justify-center gap-2 flex-wrap w-full max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
+            {...segments}
+          </div>
+
+          {/* Alternativas */}
+          <div
+            className={cx("grid grid-cols-2 gap-5", {
+              ["md:grid-cols-3"]: optionsWithIds.length % 2 !== 0,
+            })}
+          >
+            {optionsWithIds.map((option) => (
+              <DraggableLetter
+                optionItem={option}
+                id={option.id}
+                key={option.id}
+                className={cx({
+                  ["last:col-span-2 md:last:col-span-1 last:w-min"]:
+                    optionsWithIds.length % 2 !== 0,
+                })}
+                hidden={
+                  !shouldRepeatAnswer &&
+                  answer.some(
+                    (item) =>
+                      (item as QuestionOption & { id: string })?.id ===
+                      option.id
+                  )
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <DragOverlay>
+        <DraggableLetter
+          optionItem={activeDrag!}
+          id={542321}
+        />
+      </DragOverlay>
+    </DndContext>
   );
+}
+
+/*
+ * Helper for splitting strings
+ * ex (question id "0b47b82c-5cc6-4a68-9657-d87c2143399c"):
+ * "te _ oura" -> ["te", 0, "oura"]
+ * 0 is the position of the slot (underscore) related to other slots
+ */
+
+function transformString(input: string): (string | number)[] {
+  let underscoreIndex = 0;
+  return input
+    .split(/(_+)/)
+    .filter(Boolean)
+    .flatMap<string | number>((segment) =>
+      segment.startsWith("_")
+        ? [underscoreIndex++]
+        : segment.trim().split(/\s+/)
+    );
 }

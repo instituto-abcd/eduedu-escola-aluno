@@ -137,22 +137,27 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   );
 
   return (
-    <>
+    <Group className="flex flex-col flex-1 w-full">
       {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              key={inx}
-              src={title.file_url!}
-              autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
+        <Group className="flex flex-col md:flex-row items-center w-full">
+          <Group className="md:absolute">
+            {audioTitles.map((title, inx) => (
+              <AudioButton
+                key={inx}
+                src={title.file_url!}
+                autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
+              />
+            ))}
+          </Group>
+          <Group className="flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
+            <IconButton
+              className=""
+              variant="gray"
+              icon={rubberIcon}
+              onClick={cleanUp}
+              disabled={false}
             />
-          ))}
-          <IconButton
-            variant="gray"
-            icon={rubberIcon}
-            onClick={cleanUp}
-            disabled={false}
-          />
+          </Group>
         </Group>
       )}
 
@@ -191,6 +196,6 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
           />
         )}
       </Group>
-    </>
+    </Group>
   );
 }

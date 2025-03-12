@@ -142,6 +142,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         <Group>
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               key={inx}
               src={title.file_url!}
               autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}

@@ -48,6 +48,7 @@ export function Header({ question, auxQuestion }: Props) {
     <div className="flex gap-6 w-full">
       {audio.map((props, inx) => (
         <AudioButton
+              index={inx}
           key={inx}
           {...props}
         />

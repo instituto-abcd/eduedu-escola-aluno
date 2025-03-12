@@ -60,6 +60,7 @@ export function Model4({
         <Group mx="auto">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               key={title.position}
               src={title.file_url ?? ""}
               autoPlay={audioTitleAutoplay(inx)}

@@ -108,6 +108,7 @@ export function Model13({
         <div className="flex flex-row justify-center md:justify-start items-center w-full">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url!}

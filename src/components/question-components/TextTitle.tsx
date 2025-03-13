@@ -12,7 +12,7 @@ export function TextTitle({ text, className, ...props }: Props) {
     <p
       dangerouslySetInnerHTML={{ __html: text }}
       className={cx(
-        "text-text text-center text-xl md:text-2xl xl:text-4xl",
+        "text-text text-center text-xl md:text-2xl xl:text-4xl max-w-screen-md",
         className
       )}
       {...props}

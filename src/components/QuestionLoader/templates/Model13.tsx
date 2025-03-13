@@ -1,63 +1,43 @@
-import { Group, Text, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
-import { useDrop } from "react-dnd";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
-import { CardStack } from "~/components/CardStack";
-import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioInterface } from "~/sounds";
-
-const useStyles = createStyles((theme, isOver: boolean) => ({
-  slot: {
-    width: lousaWidth * 0.17,
-    height: lousaWidth * 0.2,
-    borderColor: isOver ? theme.colors.green[4] : theme.colors.gray[6],
-    borderWidth: isOver ? 3 : 1,
-    borderStyle: "solid",
-    backgroundColor: "#F4F4F4",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBlock: "1rem",
-    borderRadius: 16,
-  },
-  optionImage: {
-    maxWidth: "100%",
-    maxHeight: "100%",
-    inset: 0,
-    marginBlock: "auto",
-  },
-}));
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { DroppableContents } from "~/components/dnd/droppable-contents";
+import {
+  DraggableStack,
+  DraggableStackItem,
+} from "~/components/dnd/draggable-stack";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model13({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const {
-    audioTitles,
-    textTitles,
-    getRule,
-    audioTitleAutoplay,
-    hasAudioTitle,
-    getTitlesOfType,
-  } = useQuestionHelper(question);
-
   const [options, setOptions] = useState<QuestionOption[]>(question.options);
+  const { imageTitles, textTitles, getRule, hasAudioTitle } =
+    useQuestionHelper(question);
+
+  /* Answer */
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function onDrop(
-    item: QuestionOption | null,
-    index: number,
-    title: QuestionTitle
-  ) {
+  function handleAnswer(item: QuestionOption, title: QuestionTitle) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft.push({ ...item, positionAnswer: index + 1 } as QuestionOption);
+        draft.push(item);
       })
     );
 
@@ -71,12 +51,10 @@ export function Model13({
       })
     );
 
-    handleFeedback(title, item!);
+    handleFeedbackSound(title, item);
   }
-  const showOptionsText = getRule("showOptionsText");
-  const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
 
-  function handleFeedback(title: QuestionTitle, option: QuestionOption) {
+  function handleFeedbackSound(title: QuestionTitle, option: QuestionOption) {
     if (+title.position === +option.position) {
       AudioInterface.feedback.positive.play();
     } else {
@@ -84,6 +62,39 @@ export function Model13({
     }
   }
 
+  /* Rules */
+  const showOptionsText = getRule("showOptionsText");
+  const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
+
+  /* Targets */
+  const targetTitles = imageTitles.filter(
+    (title) => title.file_url || title.description?.length > 0
+  );
+
+  /* Drag Handlers */
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option = e.active.data.current.option;
+      setActiveDrag(() => option);
+    }
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const titleId = Number(e.over.id);
+      const title = targetTitles.find(({ position }) => position === titleId);
+
+      const option = e.active.data.current?.option as QuestionOption;
+      handleAnswer(option, title!);
+    }
+  }
+
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  /* Conditions (continue) */
   useEffect(() => {
     setAnswers([]);
     setOptions(question.options);
@@ -103,97 +114,57 @@ export function Model13({
   }, [conditions]);
 
   return (
-    <>
-      {hasAudioTitle && (
-        <div className="flex flex-row justify-center md:justify-start items-center w-full">
-          {audioTitles.map((title, inx) => (
-            <AudioButton
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
+      {/* Audio tracks */}
+      {hasAudioTitle && <AudioContainer question={question} />}
+
+      {/* Question Title */}
+      {textTitles.map((title) => (
+        <TextTitle text={title.description} />
+      ))}
+
+      {/* Main content container*/}
+      <div className="flex flex-col size-full max-w-screen-lg justify-evenly items-center gap-4 lg:flex-row">
+        {/* Top (left) row (targets) */}
+        <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
+          {targetTitles.slice(0, 2).map((target, inx) => (
+            <DroppableContents
               key={inx}
-              autoPlay={audioTitleAutoplay(inx)}
-              src={title.file_url!}
+              id={target.position}
+              text={target.description}
+              image={target.file_url ?? undefined}
             />
           ))}
         </div>
-      )}
 
-      {textTitles.map((title) => (
-        <Text
-          key={title.description}
-          w="80%"
-          size={boardW(24)}
-          weight={500}
-          color="dark.3"
-        >
-          {title.description}
-        </Text>
-      ))}
+        {/* Card stacks (draggable, question option) */}
+        <div className="flex-none justify-center basis-1/2 w-full">
+          <DraggableStack options={options} />
+        </div>
 
-      <Group my="auto">
-        {getTitlesOfType("IMAGE")
-          .filter((title) => title.file_url || title.description?.length > 0)
-          .map((slot, inx) => (
-            <SlotCard
-              image={slot.file_url}
-              description={slot.description}
-              onDrop={(option) => onDrop(option, inx, slot)}
+        {/* Bottom (right) row (targets) */}
+        <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
+          {targetTitles.slice(2, 4).map((target, inx) => (
+            <DroppableContents
               key={inx}
+              id={target.position}
+              text={target.description}
+              image={target.file_url ?? undefined}
             />
           ))}
-      </Group>
+        </div>
+      </div>
 
-      <CardStack
-        options={options}
-        cardProps={{
-          imageOnly: !imageOnly,
-          debug: { debugProperty: "position" },
-        }}
-      />
-    </>
-  );
-}
-
-function SlotCard({
-  description,
-  image,
-  onDrop,
-}: {
-  description?: string;
-  image?: string | null;
-  onDrop: (item: QuestionOption | null) => void;
-}) {
-  const [collectedProps, drop] = useDrop(
-    () => ({
-      accept: "ANSWER_CARD",
-      drop: onDrop,
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    []
-  );
-
-  const { classes } = useStyles(collectedProps.isOver);
-
-  return (
-    <div
-      className={classes.slot}
-      ref={drop}
-    >
-      {image && (
-        <img
-          src={image}
-          height={boardW(150)}
-          className={classes.optionImage}
+      <DragOverlay>
+        <DraggableStackItem
+          optionItem={activeDrag!}
+          id={542321}
         />
-      )}
-      <Text
-        size={image ? boardW(20) : boardW(30)}
-        weight={600}
-        color="gray.7"
-        align="center"
-      >
-        {description}
-      </Text>
-    </div>
+      </DragOverlay>
+    </DndContext>
   );
 }

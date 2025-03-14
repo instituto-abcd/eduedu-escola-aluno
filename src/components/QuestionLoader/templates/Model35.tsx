@@ -128,7 +128,10 @@ export function Model35({
   return (
     <>
       {hasAudioTitle && (
-        <Group mx="auto" h="50px">
+        <Group
+          mx="auto"
+          h="50px"
+        >
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
@@ -141,12 +144,24 @@ export function Model35({
       )}
 
       {textTitles && (
-        <Text color="dark.3" size={boardW(22)} mt={20}>
-          {textTitles.find((text) => text.placeholder.includes("Enunciado"))?.description}
+        <Text
+          color="dark.3"
+          size={boardW(22)}
+          mt={20}
+        >
+          {
+            textTitles.find((text) => text.placeholder.includes("Enunciado"))
+              ?.description
+          }
         </Text>
       )}
 
-      <Stack my="auto" spacing={10} justify="center" align="center">
+      <Stack
+        my="auto"
+        spacing={10}
+        justify="center"
+        align="center"
+      >
         {imageTitles[0] && (
           <img
             src={imageTitles[0].file_url!}
@@ -157,7 +172,10 @@ export function Model35({
         )}
 
         {fillRule && (
-          <Group noWrap spacing={10}>
+          <Group
+            noWrap
+            spacing={10}
+          >
             {slots &&
               slots.map((slot, inx) => (
                 <input

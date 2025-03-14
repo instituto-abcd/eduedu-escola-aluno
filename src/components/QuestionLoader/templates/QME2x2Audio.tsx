@@ -118,8 +118,9 @@ export function QME2x2Audio({
             (title) =>
               title.classification === QuestionTitleClassification.ENUNCIADO
           )
-          .map((title) => (
+          .map((title, inx) => (
             <AudioButton
+              index={inx}
               src={title.file_url ?? ""}
               key={title.file_url}
               ref={enunciado}

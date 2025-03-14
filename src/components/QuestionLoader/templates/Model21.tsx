@@ -33,6 +33,7 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
+                index={inx}
                 key={inx}
                 src={title.file_url!}
                 autoPlay={autoPlay}

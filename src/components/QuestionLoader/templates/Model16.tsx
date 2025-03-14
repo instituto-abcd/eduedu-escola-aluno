@@ -1,13 +1,12 @@
 import { Group } from "@mantine/core";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
-import { boardW, lousaWidth } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { IconButton } from "~/components/EduButton";
-import { RubberIcon } from "~/assets/icons/Rubber";
+import { ButtonErase } from "~/components/Buttons";
 
 export function Model16({ question, onConditionsChange }: ModelProps) {
   const {
@@ -131,18 +130,15 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     }
   };
 
-  const rubberIcon = useMemo(
-    () => <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />,
-    [],
-  );
 
   return (
     <Group className="flex flex-col flex-1 w-full">
       {hasAudioTitle && (
         <Group className="flex flex-col md:flex-row items-center w-full">
-          <Group className="md:absolute">
+          <Group className="md:absolute z-10">
             {audioTitles.map((title, inx) => (
               <AudioButton
+                index={inx}
                 key={inx}
                 src={title.file_url!}
                 autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
@@ -150,10 +146,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
             ))}
           </Group>
           <Group className="flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
-            <IconButton
-              className=""
-              variant="gray"
-              icon={rubberIcon}
+            <ButtonErase
               onClick={cleanUp}
               disabled={false}
             />

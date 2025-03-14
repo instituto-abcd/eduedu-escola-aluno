@@ -85,6 +85,7 @@ export function Model26({
         <Group mx="auto" h="50px">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               src={title.file_url ?? ""}
               autoPlay={audioTitleAutoplay(inx)}
               key={title.file_url}

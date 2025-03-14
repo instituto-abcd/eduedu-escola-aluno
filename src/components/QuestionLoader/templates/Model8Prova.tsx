@@ -47,7 +47,8 @@ export function Model8Prova({
       {hasAudioTitle && (
         <Group>
           {audioTitles.map((title, inx) => (
-            <AudioButton key={inx} src={title.file_url ?? ""} autoPlay />
+            <AudioButton
+              index={inx} key={inx} src={title.file_url ?? ""} autoPlay />
           ))}
         </Group>
       )}

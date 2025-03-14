@@ -66,6 +66,7 @@ export function Model22({
             .filter((title) => title.file_url)
             .map((title, inx) => (
               <AudioButton
+                index={inx}
                 src={title.file_url!}
                 key={inx}
                 autoPlay={audioTitleAutoplay(inx)}

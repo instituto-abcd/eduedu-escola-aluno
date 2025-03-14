@@ -24,6 +24,7 @@ export function Model30({ question, onConditionsChange }: ModelProps) {
             .filter((title) => !!title.file_url)
             .map((title, inx) => (
               <AudioButton
+                index={inx}
                 src={title.file_url!}
                 autoPlay={audioTitleAutoplay(inx)}
                 key={title.file_url}

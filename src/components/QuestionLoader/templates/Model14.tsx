@@ -80,6 +80,7 @@ export function Model14({
         <Group mx="auto">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               ref={mainAudioRef}
               src={title.file_url!}
               key={inx}

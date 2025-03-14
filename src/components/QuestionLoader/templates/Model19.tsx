@@ -125,6 +125,7 @@ export function Model19({
         <Group mx="auto" h="50px">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               src={title.file_url!}
               key={title.file_url}
               autoPlay={audioTitleAutoplay(inx)}

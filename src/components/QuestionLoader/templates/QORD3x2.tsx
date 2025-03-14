@@ -86,6 +86,7 @@ export function QORD3x2({
         <Group mx="auto">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url ?? ""}
               key={title.file_url}

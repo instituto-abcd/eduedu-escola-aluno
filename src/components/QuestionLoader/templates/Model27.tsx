@@ -42,6 +42,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         {audioTitles.map((title, inx) => (
           <Box key={inx} hidden>
             <AudioButton
+              index={inx}
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title?.file_url ?? ""}
@@ -50,6 +51,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         ))}
         {currentSlide?.sound_url && (
           <AudioButton
+            index={0} // hardcode devido ao funcionamento com options ao inves de titles
             key={currentSlide?.sound_id}
             autoPlay={false}
             src={currentSlide?.sound_url ?? ""}

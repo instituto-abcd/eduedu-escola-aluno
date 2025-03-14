@@ -72,8 +72,9 @@ export function Model18Prova({
   return (
     <>
       <Group mx="auto">
-        {audioTitles.map((title) => (
+        {audioTitles.map((title, inx) => (
           <AudioButton
+            index={inx}
             src={title.file_url ?? ""}
             key={title.file_name}
             autoPlay

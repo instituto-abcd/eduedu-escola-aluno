@@ -1,13 +1,12 @@
 import { Group } from "@mantine/core";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
 import { AudioButton } from "~/components/AudioButton";
-import { boardW, lousaWidth } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { IconButton } from "~/components/EduButton";
-import { RubberIcon } from "~/assets/icons/Rubber";
+import { ButtonErase } from "~/components/Buttons";
 
 export function Model16({ question, onConditionsChange }: ModelProps) {
   const {
@@ -131,10 +130,6 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     }
   };
 
-  const rubberIcon = useMemo(
-    () => <RubberIcon width={lousaWidth * 0.05} height={lousaWidth * 0.05} />,
-    [],
-  );
 
   return (
     <>
@@ -142,14 +137,13 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         <Group>
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               key={inx}
               src={title.file_url!}
               autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
             />
           ))}
-          <IconButton
-            variant="gray"
-            icon={rubberIcon}
+          <ButtonErase
             onClick={cleanUp}
             disabled={false}
           />

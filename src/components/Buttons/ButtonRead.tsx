@@ -65,10 +65,10 @@ function _ButtonRead({ children: _, size = 50, ...props }: Props) {
             y2={-0.743}
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#FFB800" />
+            <stop stopColor="#4dcefe" />
             <stop
               offset={1}
-              stopColor="#FFD400"
+              stopColor="#4dcefe"
             />
           </linearGradient>
         </defs>

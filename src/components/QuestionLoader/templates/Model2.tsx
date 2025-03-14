@@ -111,7 +111,7 @@ export function Model2({
   }, [conditions]);
 
   const auxVideo = videoTitles.find(
-    (title) => title.description && title.description.includes("Botão")
+    (title, index) => index >= 1
   );
 
   const cardSize =
@@ -185,6 +185,7 @@ export function Model2({
         <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
+              index={inx}
               key={inx}
               autoPlay={audioTitleAutoplay(inx)}
               src={title.file_url!}

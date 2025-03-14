@@ -52,6 +52,7 @@ export const AudioContainer = ({
         const props = buildAudioProps(title);
         return (
           <AudioButton
+            index={inx}
             key={inx}
             src={title.file_url ?? ""}
             {...props}

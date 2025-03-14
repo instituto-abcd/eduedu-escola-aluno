@@ -2,8 +2,8 @@ import { useCreateSound } from "~/hooks/useCreateSound";
 import { Button, HoverCard, Table } from "@mantine/core";
 import { useDebugInfo } from "~/stores/debug-info";
 import { IconPlayerStopFilled } from "@tabler/icons-react";
-import { forwardRef, useImperativeHandle } from "react";
-import { ButtonListen } from "../Buttons";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { ButtonListen, ButtonReplay } from "../Buttons";
 
 export type AudioButtonRef = HTMLDivElement & {
   sound: ReturnType<typeof useCreateSound>["sound"];
@@ -12,9 +12,10 @@ export type AudioButtonRef = HTMLDivElement & {
 type Props = {
   autoPlay?: boolean;
   src: string;
+  index?: number;
 };
 
-export const AudioButton = forwardRef(({ src, autoPlay }: Props, ref) => {
+export const AudioButton = forwardRef(({ src, autoPlay, index }: Props, ref) => {
   const { sound, isPlaying } = useCreateSound({
     src,
     autoPlay,
@@ -26,7 +27,7 @@ export const AudioButton = forwardRef(({ src, autoPlay }: Props, ref) => {
 
   const debug = useDebugInfo((s) => s.AudioButton);
 
-  const button = <ButtonListen onClick={sound.play} disabled={isPlaying} />;
+  const button = index === undefined || index>=1 ? <ButtonReplay onClick={sound.play} disabled={isPlaying} /> : <ButtonListen onClick={sound.play} disabled={isPlaying} />;
 
   const debugbutton = (
     <HoverCard width={200} shadow="md" position="top-end">

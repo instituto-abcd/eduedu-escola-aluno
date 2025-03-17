@@ -57,7 +57,7 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
         />
       )}
 
-      <div className="flex flex-col gap-4 md:flex-row items-center justify-center md:justify-evenly w-full mt-auto">
+      <div className="flex flex-col gap-4 md:flex-row items-center justify-center md:justify-evenly size-full mt-auto">
         {hasTextOrImage && (
           <div className="">
             {illustration && (

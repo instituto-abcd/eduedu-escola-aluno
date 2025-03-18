@@ -138,9 +138,9 @@ export function Model35({
   }, [question]);
 
   return (
-    <>
+    <div className="flex flex-col flex-1 justify-center items-center w-full ml-1">
       {hasAudioTitle && (
-        <div className="flex mx-auto h-[50px]">
+        <div className="flex mx-auto h-[50px] lg:absolute lg:top-4 lg:left-4 z-10">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
@@ -153,7 +153,7 @@ export function Model35({
       )}
 
       {textTitles && (
-        <p className="text-gray-800 text-lg mt-5">
+        <p className="text-gray-800 text-lg mt-5 px-4 text-center">
           {
             textTitles.find((text) => text.placeholder.includes("Enunciado"))
               ?.description
@@ -161,42 +161,54 @@ export function Model35({
         </p>
       )}
 
-      <div className="flex flex-col items-center my-auto space-y-2">
-        {imageTitles[0] && (
-          <img
-            src={imageTitles[0].file_url!}
-            alt="Question Illustration"
-            className="max-w-[180px] h-auto"
-          />
-        )}
+      <div className="flex flex-col items-center my-auto space-y-4 w-full">
+        <div
+          className="flex w-full items-center justify-center"
+          style={{ flexDirection: fillRule ? "column" : "row" }}
+        >
+          {imageTitles[0] && (
+            <img
+              src={imageTitles[0].file_url!}
+              alt="Question Illustration"
+              className="max-w-[180px] md:max-w-[240px] h-auto"
+            />
+          )}
 
-        {fillRule ? (
-          <div className="flex space-x-2">
-            {slots.map((slot, inx) => (
-              <input
-                key={inx}
-                maxLength={1}
-                className="w-16 h-16 text-gray-700 text-2xl font-semibold border border-gray-500 rounded-lg text-center uppercase bg-gray-200"
-                onChange={(e) => handleInput(e, inx)}
-                onKeyDown={handleBackspace}
-                value={slot.letter}
-                disabled={slot.fixed}
-              />
-            ))}
-          </div>
-        ) : (
-          <textarea
-            value={answer}
-            maxLength={100}
-            onChange={(e) => setAnswer(e.target.value)}
-            className="w-[418px] h-[212px] bg-gray-100 border border-gray-600 p-2 rounded-md resize-none"
+          {fillRule ? (
+            <div className="flex no-wrap justify-center gap-2 px-4 w-full max-w-2xl mx-auto">
+              {slots.map((slot, inx) => (
+                <input
+                  key={inx}
+                  maxLength={1}
+                  className=" w-[8%] max-w-[60px] h-12 md:h-16 text-lg md:text-2xl font-semibold border-2 border-gray-300 rounded-lg text-center uppercase bg-gray-200 focus:border-blue-500 focus:outline-none"
+                  style={{
+                    fontSize: "clamp(1rem, 3vw, 1.5rem)",
+                    flex: "1 0 auto",
+                  }}
+                  onChange={(e) => handleInput(e, inx)}
+                  onKeyDown={handleBackspace}
+                  value={slot.letter}
+                  disabled={slot.fixed}
+                />
+              ))}
+            </div>
+          ) : (
+            <textarea
+              value={answer}
+              maxLength={100}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="w-[150px] md:w-[300px] h-[140px] md:h-[212px] bg-gray-100 border-2 border-gray-300 p-2 rounded-3xl resize-none focus:outline-none focus:border-blue-500"
+            />
+          )}
+        </div>
+
+        <div className="w-full px-2">
+          <VirtualKeyboard
+            handleVirtualInput={handleVirtualInput}
+            handleVirtualBackspace={handleVirtualBackspace}
           />
-        )}
-        <VirtualKeyboard
-          handleVirtualInput={handleVirtualInput}
-          handleVirtualBackspace={handleVirtualBackspace}
-        />
+        </div>
       </div>
-    </>
+    </div>
   );
 }

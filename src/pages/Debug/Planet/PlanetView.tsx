@@ -45,7 +45,7 @@ export function PlanetView() {
           questions={planet.questions}
           next={handleAnswer}
           previous={() => (index - 1 <= 0 ? null : setIndex(0))}
-          current={index + 1}
+          current={index}
           total={planet.questions.length}
           onQuestionChange={(i) => setIndex(i)}
         />

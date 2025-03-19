@@ -1,4 +1,5 @@
 import { Button, Group, HoverCard, Loader, Table } from "@mantine/core";
+import { useTimeout } from "@mantine/hooks";
 import {
   IconPlayerPauseFilled,
   IconPlayerStopFilled,
@@ -11,7 +12,11 @@ import { cx } from "~/utils/cx";
 
 export type VideoPlayerProps = React.VideoHTMLAttributes<HTMLVideoElement>;
 
-export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
+export function VideoPlayer({
+  className,
+  autoPlay,
+  ...props
+}: VideoPlayerProps) {
   const ref = useRef<HTMLVideoElement>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
@@ -20,9 +25,7 @@ export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
     ref.current && ref.current.videoWidth > ref.current.videoHeight;
 
   function play() {
-    if (!audioStatus.isPlaying) {
-      void ref.current?.play();
-    }
+    void ref.current?.play();
   }
 
   function stop() {
@@ -43,6 +46,9 @@ export function VideoPlayer({ className, ...props }: VideoPlayerProps) {
       }
     };
   }, []);
+
+  /* Manually handle autoplay */
+  useTimeout(() => play(), 350, { autoInvoke: !!autoPlay });
 
   return (
     <div className="relative size-full flex flex-col items-center">

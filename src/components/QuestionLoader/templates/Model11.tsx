@@ -20,6 +20,8 @@ import { ImageTitle } from "~/components/question-components";
 import { v4 as uuid } from "uuid";
 import { cx } from "~/utils/cx";
 
+// TODO: possibly use nRows rule for word splitting
+
 export function Model11({
   question,
   onAnswerChange,
@@ -148,7 +150,6 @@ export function Model11({
           <DroppableLetter
             id={seg}
             key={inx}
-            size={1}
             replaceWith={
               !!answer[seg] && (
                 <DraggableLetter
@@ -191,7 +192,7 @@ export function Model11({
       <div className="flex flex-col lg:flex-row items-center justify-evenly gap-6 size-full">
         <ImageTitle titles={imageTitles} />
 
-        <div className="flex flex-col gap-6 items-center lg:max-w-[50vw]">
+        <div className="flex flex-col gap-6 items-center w-full lg:max-w-[50vw]">
           {/* Text to complete */}
           <div className="p-4 flex items-center justify-center gap-2 flex-wrap w-full max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
             {...segments}

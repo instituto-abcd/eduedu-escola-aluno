@@ -54,8 +54,8 @@ export function Model11({
   const questionTitle = textTitles.filter((title) => {
     const conditions = [
       !title.placeholder?.startsWith("Texto a ser preenchido") ||
-        !title.placeholder?.includes("preenchido") ||
-        !title.placeholder?.includes("preencher"),
+      !title.placeholder?.includes("preenchido") ||
+      !title.placeholder?.includes("preencher"),
       title.description !== "",
     ];
 
@@ -89,11 +89,11 @@ export function Model11({
 
   const slotsQty = textToComplete
     ? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-        1 <=
+      1 <=
       0
       ? 1
       : textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-        1
+      1
     : 1;
 
   useEffect(() => {
@@ -140,7 +140,7 @@ export function Model11({
         return (
           <p
             key={inx}
-            className="text-text font-black leading-none text-4xl"
+            className="text-text font-black leading-none text-2xl md:text-4xl"
           >
             {seg}
           </p>

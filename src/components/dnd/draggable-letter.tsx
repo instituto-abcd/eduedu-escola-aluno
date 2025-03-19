@@ -50,7 +50,9 @@ export function DraggableLetter({
       {...attributes}
       {...listeners}
     >
-      <p className="text-3xl  text-text font-black">{optionItem.description}</p>
+      <p className="text-xl md:text-3xl text-text font-black">
+        {optionItem.description}
+      </p>
 
       {onClear && (
         <button

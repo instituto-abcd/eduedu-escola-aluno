@@ -23,12 +23,11 @@ export function DroppableLetter({
       {...props}
       className={cx(
         "rounded-[20px] transition-all bg-[#DADADA]",
-        "w-full max-w-[70px] md:max-w-[200px] md:h-[50px] aspect-square",
+        "w-full max-w-[70px] md:max-w-[200px] md:h-[50px] h-[48px]",
         {
           ["bg-green-300"]: isOver,
           ["rounded-xl"]: size && size < 3,
         },
-        size && `w-auto !min-w-[${36 * (size ?? 1)}px] h-[36px] max-w-none`,
         className
       )}
       ref={setNodeRef}

@@ -20,8 +20,6 @@ import { ImageTitle } from "~/components/question-components";
 import { v4 as uuid } from "uuid";
 import { cx } from "~/utils/cx";
 
-// TODO: espaço entre os splits quando for texto (idx 3, 11)
-
 export function Model11({
   question,
   onAnswerChange,
@@ -150,7 +148,7 @@ export function Model11({
           <DroppableLetter
             id={seg}
             key={inx}
-            size={2}
+            size={1}
             replaceWith={
               !!answer[seg] && (
                 <DraggableLetter

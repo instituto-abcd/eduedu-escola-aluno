@@ -140,7 +140,7 @@ export function Model35({
   return (
     <div className="flex flex-col flex-1 justify-center items-center w-full border border-red-600">
       {hasAudioTitle && (
-        <div className="flex mx-auto h-[50px] lg:absolute lg:top-4 lg:left-4 z-10">
+        <div className="flex mx-auto h-[50px] lg:absolute lg:top-6 lg:left-6 z-10">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}

@@ -1,259 +1,256 @@
-import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useMemo, useState } from "react";
-import { useDrop } from "react-dnd";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { DraggableCard } from "~/components/DraggableCard";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { boardW } from "~/constants/dimensions";
+import { Image } from "@mantine/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  DraggableCardSquare,
+  DroppablePictureCardSquare,
+  DraggablePictureCardSquare,
+} from "~/components/dnd";
+import { v4 as uuid } from "uuid";
 
-const useStyles = createStyles((theme) => ({
-  slot: {
-    width: boardW(240),
-    height: boardW(148),
-    borderRadius: 16,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: theme.colors.gray[6],
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    position: 'relative',
-  },
-  wideButton: {
-    width: boardW(240),
-    height: boardW(148),
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    boxShadow: "0 4px 0 0 #228BE6",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#228BE6",
-    padding: 16,
-    display: "grid",
-    placeItems: "center",
-    position: "relative",
-  },
-  text: {
-    fontSize: "1.1rem",
-    fontWeight: 400,
-    color: theme.colors.gray[7],
-    textAlign: "center",
-  },
-  floatingSlot: {
-    position: 'absolute',
-    bottom: -50,
-    width: boardW(100),
-    height: boardW(100),
-    zIndex: 99
-  }
-}));
+type OptionWithSound = QuestionOption & {
+  id: string;
+  sound?: Howl;
+};
 
 export function Model25({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, textTitles, getTitlesOfType } = useQuestionHelper(question);
-  const targetTitles = getTitlesOfType("IMAGE");
-  const targets = targetTitles.some((t) => !!t.file_url)
-    ? targetTitles
-    : targetTitles.slice(-3);
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>(
+    question.options.map(() => null)
+  );
 
-  const { classes } = useStyles();
+  const {
+    audioTitles,
+    hasAudioTitle,
+    audioTitleAutoplay,
+    textTitles,
+    getRule,
+    imageTitles,
+  } = useQuestionHelper(question);
 
-  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
-    null,
-    null,
-    null,
-  ]);
+  const auxAutoPlayRule = getRule("auxAutoPlay");
+  const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
 
-  function onDrop(option: QuestionOption | null, inx: number) {
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxRef = useRef<AudioButtonRef>(null);
+
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function handleDrop(option: OptionWithSound | null, targetIndex: number) {
     setAnswers((state) =>
       produce(state, (draft) => {
-        draft[inx] = option?.position != null ? option : null;
+        let opt: QuestionOption | null = null;
+        if (option) {
+          const { id: _id, sound: _sound, ..._option } = option;
+          opt = _option;
+        }
+
+        /* @ts-ignore */
+        draft[targetIndex] = option
+          ? { ...opt, positionAnswer: targetIndex }
+          : null;
       })
     );
   }
 
-  function hideOption(option: QuestionOption) {
-    return !!answers.find((op) => op?.position === option.position);
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option: OptionWithSound = e.active.data.current.option;
+      if (!option.sound?.playing()) {
+        option.sound?.play();
+      }
+      setActiveDrag(() => option);
+    }
   }
 
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const targetIndex = Number(e.over.id);
+      const option = (e.active.data.current?.option as QuestionOption) ?? null;
+      handleDrop(option as OptionWithSound, targetIndex);
+    }
+  }
+
+  function handleClearAnswer(optionIndex: number) {
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft[optionIndex] = null;
+      })
+    );
+  }
+
+  const conditions = useMemo(
+    () => [answers.every((answer) => answer !== null)],
+    [answers]
+  );
+
+  const optionsWithIds = useMemo(
+    () =>
+      question.options.map((option) => ({
+        ...option,
+        id: uuid(),
+        sound: new Howl({
+          src: [option.sound_url ?? ""],
+          html5: true,
+          format: ["mp3"],
+          loop: false,
+        }),
+      })),
+    [question]
+  );
+
   useEffect(() => {
-    setAnswers([null, null, null]);
+    if (mainAudioRef.current && auxRef.current) {
+      if (shouldPlayAux) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxRef.current?.sound.play();
+        });
+      }
+    }
+  }, [mainAudioRef, auxRef]);
+
+  useEffect(() => {
+    setAnswers(question.options.map(() => null));
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(
-      answers.filter((answer) => answer !== null) 
-    );
+    onAnswerChange(answers.filter((answer) => answer !== null));
   }, [answers]);
-
-  const conditions = useMemo(
-    () => [answers.every((ans) => ans !== null)],
-    [answers]
-  );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
   return (
-    <>
-      {audioTitles.filter((title) => title.file_url) && (
-        <Group mx="auto">
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
+      {hasAudioTitle && (
+        <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
-              src={title.file_url!}
-              key={title.file_url}
-              autoPlay={inx === 0}
-            />
-          ))}
-        </Group>
-      )}
-
-      {textTitles.map((text) => (
-        <Title
-          color="dark.3"
-          size={boardW(22)}
-          my={12}
-          dangerouslySetInnerHTML={{ __html: text.description }}
-        />
-      ))}
-
-      <Stack my="auto">
-        <Group mb={35}>
-          {targets.map((title, inx) => (
-            <SlotCard
               key={inx}
-              title={title}
-              onDrop={(option) =>
-                title
-                  ? onDrop(
-                      {
-                        ...(option as QuestionOption),
-                        positionAnswer: inx,
-                      },
-                      inx
-                    )
-                  : onDrop(null, inx)
-              }
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+              ref={inx === 1 ? auxRef : mainAudioRef}
             />
           ))}
-        </Group>
-        <Group>
-          {question.options.map((option, inx) =>
-            !option.image_url && option.description ? (
-              <DraggableCard<QuestionOption>
+        </div>
+      )}
+      <div className="flex flex-col items-center justify-evenly flex-1">
+        <div>
+          {textTitles.map((title) => (
+            <p
+              key={title.description}
+              className="text-center text-zinc-600 text-2xl font-medium"
+            >
+              {title.description}
+            </p>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-1 place-content-center place-items-center sm:gap-2 h-fit w-full">
+          {answers.map((slot, inx) => (
+            <div className="flex flex-col items-center max-h-[40vh] md:max-h-[50vh] aspect-[2/3]">
+              <div className="flex items-center w-full max-w-[350px] min-h-[125px] aspect-[2/3] rounded-[20px] md:rounded-[45px] border-2 border-[#4c494140]">
+                <div>
+                  <Image
+                    key={imageTitles[inx].file_url}
+                    src={imageTitles[inx].file_url}
+                    alt={imageTitles[inx].placeholder}
+                  />
+                </div>
+              </div>
+              <DroppablePictureCardSquare
                 key={inx}
-                className={classes.wideButton}
-                item={option}
-                hidden={hideOption(option)}
-                text={answers.some((answer) => answer?.position === option.position) ? null : option.description}
-                textClasses={classes.text}
-                sound={option.sound_url}
+                optionItem={slot}
+                index={inx}
+                total={question.options.length}
+                id={inx}
+                replaceWith={
+                  <DraggablePictureCardSquare
+                    id={slot ? +slot.position : inx}
+                    index={inx}
+                    total={question.options.length}
+                    optionItem={slot!}
+                    image={slot?.image_url ?? null}
+                    sound={slot?.sound_url ?? null}
+                    onClear={() => handleClearAnswer(inx)}
+                    disabled
+                  />
+                }
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 place-content-center place-items-center w-full max-w-1/2 max-h-[20vh]">
+          {optionsWithIds.map((item, inx) =>
+            !!answers.find((slot) => slot?.position === item.position) ? (
+              <DraggableCardSquare
+                id={Math.random() * 30}
+                key={inx}
+                optionItem={item}
+                size={3}
+                image={item.image_url}
+                text={item.description}
+                sound={item.sound_url}
+                hidden
+                debug={{ skipDebug: true }}
               />
             ) : (
-              <DraggableCard<QuestionOption>
+              <DraggableCardSquare
+                id={item.id}
                 key={inx}
-                className={classes.wideButton}
-                item={option}
-                image={
-                  answers.some((answer) => answer?.position === option.position)
-                    ? null
-                    : option.image_url
-                }
-                hidden={hideOption(option)}
-                sound={option.sound_url}
+                optionItem={item}
+                size={3}
+                image={item.image_url}
+                text={item.description}
+                sound={item.sound_url}
                 debug={{ debugProperty: "position" }}
-                disabled={answers.some(
-                  (answer) => answer?.position === option.position
-                )}
               />
             )
           )}
-        </Group>
-      </Stack>
-    </>
-  );
-}
-
-function SlotCard({
-  title,
-  onDrop,
-}: {
-  title: QuestionTitle;
-  onDrop: (item: QuestionOption | null) => void;
-}) {
-  const [droppedOption, setDroppedOption] = useState<QuestionOption | null>(
-    null
-  );
-
-  const [, drop] = useDrop(
-    () => ({
-      accept: "ANSWER_CARD",
-      drop: (item: QuestionOption | null) => {
-        onDrop(item);
-        setDroppedOption(item);
-      },
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    []
-  );
-
-  useEffect(() => {
-    setDroppedOption(null);
-  }, [title]);
-
-  const { classes, cx } = useStyles();
-
-  return (
-    <div className={classes.slot} ref={drop}>
-      {title.file_url && (
-        <img
-          src={title.file_url}
-          alt={title.description}
-          width={100}
-          style={{
-            maxHeight: "100%",
-            objectFit: "contain",
-            marginInline: "auto",
-            inset: 0,
-            marginBlock: "auto",
-          }}
-        />
-      )}
-      {droppedOption && (
-        <DraggableCard
-          disabled
-          className={cx(classes.wideButton, classes.floatingSlot)}
-          textClasses={classes.text}
-          item={droppedOption}
-          image={droppedOption.image_url}
-          text={droppedOption.description}
-          onClear={() => {
-            setDroppedOption(null), onDrop(null);
-          }}
-        />
-      )}
-      {!title.file_url && title.description && (
-        <Text
-          size={boardW(16)}
-          weight={600}
-          color="blue.6"
-          align="center"
-          p={4}
-        >
-          {title.description}
-        </Text>
-      )}
-    </div>
+        </div>
+        <DragOverlay>
+          {activeDrag ? (
+            <DraggableCardSquare
+              id={32145}
+              optionItem={activeDrag}
+              size={3}
+              image={activeDrag.image_url}
+              text={activeDrag.description}
+              sound={activeDrag.sound_url}
+              debug={{ skipDebug: true }}
+              disabled
+            />
+          ) : null}
+        </DragOverlay>
+      </div>
+    </DndContext>
   );
 }

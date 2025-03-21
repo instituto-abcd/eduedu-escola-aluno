@@ -138,7 +138,7 @@ export function Model35({
   }, [question]);
 
   return (
-    <div className="flex flex-col flex-1 justify-center items-center w-full ml-1">
+    <div className="flex flex-col flex-1 justify-center items-center w-full border border-red-600">
       {hasAudioTitle && (
         <div className="flex mx-auto h-[50px] lg:absolute lg:top-4 lg:left-4 z-10">
           {audioTitles.map((title, inx) => (
@@ -161,21 +161,23 @@ export function Model35({
         </p>
       )}
 
-      <div className="flex flex-col items-center my-auto space-y-4 w-full">
+      <div className="flex flex-1 flex-col items-center justify-evenly my-auto space-y-4 w-full border border-red-600">
         <div
-          className="flex w-full items-center justify-center"
+          className="flex w-full items-center justify-center border border-red-600"
           style={{ flexDirection: fillRule ? "column" : "row" }}
         >
           {imageTitles[0] && (
-            <img
-              src={imageTitles[0].file_url!}
-              alt="Question Illustration"
-              className="max-w-[180px] md:max-w-[240px] h-auto"
-            />
+            <div className="flex justify-center w-full md:w-1/3 lg:w-1/4 px-4 mb-4 md:mb-0 min-w-[150px] border border-red-600">
+              <img
+                src={imageTitles[0].file_url!}
+                alt="Question Illustration"
+                className="object-contain md:h-[15vh] lg:h-[10vh] min-h-[20vh] max-h-[250px] w-auto mx-auto border border-red-600"
+              />
+            </div>
           )}
 
           {fillRule ? (
-            <div className="flex no-wrap justify-center gap-2 px-4 w-full max-w-2xl mx-auto">
+            <div className="flex no-wrap justify-center gap-2 px-4 w-full max-w-2xl mx-auto border border-red-600">
               {slots.map((slot, inx) => (
                 <input
                   key={inx}

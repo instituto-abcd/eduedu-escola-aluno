@@ -1,14 +1,11 @@
-import { Group, Stack, Text, Title, createStyles } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { useDrop } from "react-dnd";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { SimpleGrid, Image } from "@mantine/core";
-import { boardW } from "~/constants/dimensions";
+import { Image } from "@mantine/core";
 import {
   DndContext,
   DragEndEvent,
@@ -20,7 +17,6 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
-  DroppableCard,
   DraggableCardSquare,
   DroppablePictureCardSquare,
   DraggablePictureCardSquare,
@@ -47,7 +43,6 @@ export function Model25({
     audioTitleAutoplay,
     textTitles,
     getRule,
-    videoTitles,
     imageTitles,
   } = useQuestionHelper(question);
 
@@ -134,10 +129,6 @@ export function Model25({
       }
     }
   }, [mainAudioRef, auxRef]);
-
-  useEffect(() => {
-    console.log(optionsWithIds);
-  }, [question]);
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));

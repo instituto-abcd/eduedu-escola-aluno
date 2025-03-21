@@ -47,20 +47,38 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
       let prevX = 0;
       let prevY = 0;
 
-      canvas.addEventListener("mousedown", (e) => {
+      const getCanvasCoordinates = (e: MouseEvent | TouchEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        if (e instanceof TouchEvent) {
+          return {
+            x: e.touches[0].clientX - rect.left,
+            y: e.touches[0].clientY - rect.top,
+          };
+        } else {
+          return {
+            x: (e as MouseEvent).offsetX,
+            y: (e as MouseEvent).offsetY,
+          };
+        }
+      };
+
+      const handleStart = (e: MouseEvent | TouchEvent) => {
         if (!isCompletedLottie) return;
+        e.preventDefault();
         isDrawing = true;
         setControlDrawing(true);
-        prevX = e.offsetX;
-        prevY = e.offsetY;
-      });
+        const coords = getCanvasCoordinates(e);
+        prevX = coords.x;
+        prevY = coords.y;
+      };
 
-      canvas.addEventListener("mousemove", (e) => {
-        if (!isCompletedLottie) return;
-        if (!isDrawing) return;
+      const handleMove = (e: MouseEvent | TouchEvent) => {
+        if (!isCompletedLottie || !isDrawing) return;
+        e.preventDefault();
 
-        const x = e.offsetX;
-        const y = e.offsetY;
+        const coords = getCanvasCoordinates(e);
+        const x = coords.x;
+        const y = coords.y;
 
         ctx.lineWidth = 40;
         ctx.lineCap = "round";
@@ -74,17 +92,34 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
 
         prevX = x;
         prevY = y;
-      });
+      };
 
-      canvas.addEventListener("mouseup", () => {
+      const handleEnd = () => {
         isDrawing = false;
         setControlDrawing(false);
-      });
+      };
 
-      canvas.addEventListener("mouseleave", () => {
-        isDrawing = false;
-        setControlDrawing(false);
-      });
+      canvas.addEventListener("mousedown", handleStart);
+      canvas.addEventListener("mousemove", handleMove);
+      canvas.addEventListener("mouseup", handleEnd);
+      canvas.addEventListener("mouseleave", handleEnd);
+
+      canvas.addEventListener("touchstart", handleStart);
+      canvas.addEventListener("touchmove", handleMove);
+      canvas.addEventListener("touchend", handleEnd);
+      canvas.addEventListener("touchcancel", handleEnd);
+
+      return () => {
+        canvas.removeEventListener("mousedown", handleStart);
+        canvas.removeEventListener("mousemove", handleMove);
+        canvas.removeEventListener("mouseup", handleEnd);
+        canvas.removeEventListener("mouseleave", handleEnd);
+
+        canvas.removeEventListener("touchstart", handleStart);
+        canvas.removeEventListener("touchmove", handleMove);
+        canvas.removeEventListener("touchend", handleEnd);
+        canvas.removeEventListener("touchcancel", handleEnd);
+      };
     }
   }, [canvasRef, isCompletedLottie]);
 
@@ -104,7 +139,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         ?.getImageData(0, 0, currentCanvas.width, currentCanvas.height)
         .data.some((channel) => channel !== 0);
       onConditionsChange(
-        !isAllColorChannelsZero && isCompletedLottie ? [] : [false],
+        !isAllColorChannelsZero && isCompletedLottie ? [] : [false]
       );
       return;
     }
@@ -114,7 +149,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
 
   const updateDataWithoutFillLayer = useCallback(() => {
     const outlineLayer = data?.layers.filter(
-      (layer) => !layer.nm.includes("fill"),
+      (layer) => !layer.nm.includes("fill")
     );
     const updatedData = outlineLayer ? { ...data, layers: outlineLayer } : data;
     setModifiedData(updatedData);
@@ -130,7 +165,6 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     }
   };
 
-
   return (
     <Group className="flex flex-col flex-1 w-full">
       {hasAudioTitle && (
@@ -145,7 +179,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
               />
             ))}
           </Group>
-          <Group className="flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
+          <Group className="z-10 flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
             <ButtonErase
               onClick={cleanUp}
               disabled={false}

@@ -7,6 +7,7 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { ButtonErase } from "~/components/Buttons";
+import { Image } from "@mantine/core";
 
 export function Model16({ question, onConditionsChange }: ModelProps) {
   const {
@@ -15,6 +16,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
     audioTitleAutoplay,
     hasAudioTitle,
     getRule,
+    imageTitles,
   } = useQuestionHelper(question);
 
   const { data } = useDownloadLottieFile(lottieTitles[0]?.file_id || "", {
@@ -80,7 +82,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
         const x = coords.x;
         const y = coords.y;
 
-        ctx.lineWidth = 40;
+        ctx.lineWidth = 30;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.strokeStyle = "#4CB9E7";
@@ -196,7 +198,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
       >
         <canvas ref={canvasRef} />
 
-        {modifiedData && (
+        {modifiedData && !isCompletedLottie && (
           <Lottie
             options={{
               loop: false,
@@ -220,6 +222,20 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
                 callback: () => updateDataWithoutFillLayer(),
               },
             ]}
+          />
+        )}
+
+        {imageTitles[0] && (isCompletedLottie || skipLottie) && (
+          <Image
+            key={imageTitles[0].file_id}
+            src={imageTitles[0].file_url}
+            alt={imageTitles[0].placeholder}
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              zIndex: -1,
+            }}
           />
         )}
       </Group>

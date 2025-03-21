@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
@@ -51,6 +51,8 @@ export function Model35({
 
   const [slots, setSlots] =
     useState<{ letter: string; fixed: boolean }[]>(slotMap);
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>, index: number) {
     const { value } = e.target;
@@ -116,6 +118,17 @@ export function Model35({
       }
     }
   }
+
+  useEffect(() => {
+    const firstEmptyIndex = slots.findIndex(
+      (slot) => !slot.fixed && slot.letter === ""
+    );
+
+    if (firstEmptyIndex !== -1 && inputRefs.current[firstEmptyIndex]) {
+      inputRefs.current[firstEmptyIndex]?.focus();
+    }
+  }, [slots]);
+
   useEffect(() => {
     setAnswer(slots.map((slot) => slot.letter.toUpperCase()).join(""));
   }, [slots]);
@@ -181,6 +194,7 @@ export function Model35({
               {slots.map((slot, inx) => (
                 <input
                   key={inx}
+                  ref={(el) => (inputRefs.current[inx] = el)}
                   maxLength={1}
                   className=" w-[8%] max-w-[60px] h-12 md:h-16 text-lg md:text-2xl font-semibold border-2 border-gray-300 rounded-lg text-center uppercase bg-gray-200 focus:border-blue-500 focus:outline-none"
                   style={{

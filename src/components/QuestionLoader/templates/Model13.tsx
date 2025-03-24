@@ -163,6 +163,7 @@ export function Model13({
         <DraggableStackItem
           optionItem={activeDrag!}
           id={542321}
+          small
         />
       </DragOverlay>
     </DndContext>

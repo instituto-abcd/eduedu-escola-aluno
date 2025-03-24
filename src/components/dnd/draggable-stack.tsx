@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   optionItem: QuestionOption;
   imageOnly?: boolean;
+  small?: boolean;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "onDrop" | "id">;
 
 export function DraggableStackItem({
@@ -20,6 +21,7 @@ export function DraggableStackItem({
   className,
   disabled,
   imageOnly,
+  small,
   ...props
 }: Props) {
   const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
@@ -35,6 +37,7 @@ export function DraggableStackItem({
         "flex flex-col items-center justify-center gap-1 select-none",
         {
           ["opacity-0 pointer-events-none"]: isDragging,
+          ["w-[150px]"]: small,
         },
         className
       )}
@@ -50,7 +53,11 @@ export function DraggableStackItem({
         />
       )}
       {!imageOnly && validString(optionItem.description) && (
-        <p className="font-bold text-text text-5xl text-center">
+        <p
+          className={cx("font-bold text-text text-5xl text-center", {
+            ["text-2xl"]: small,
+          })}
+        >
           {optionItem.description}
         </p>
       )}

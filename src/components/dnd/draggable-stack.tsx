@@ -53,13 +53,12 @@ export function DraggableStackItem({
         />
       )}
       {!imageOnly && validString(optionItem.description) && (
-        <p
+        <div
           className={cx("font-bold text-text text-5xl text-center", {
             ["text-2xl"]: small,
           })}
-        >
-          {optionItem.description}
-        </p>
+          dangerouslySetInnerHTML={{ __html: optionItem.description }}
+        />
       )}
     </div>
   );

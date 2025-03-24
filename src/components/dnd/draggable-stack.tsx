@@ -63,10 +63,10 @@ export function DraggableStack({
   imageOnly,
 }: {
   options: QuestionOption[];
-  imageOnly: boolean;
+  imageOnly?: boolean;
 }) {
   return (
-    <div className="relative max-w-[400px] size-full mx-auto">
+    <div className="relative max-w-[300px] md:max-w-[400px] size-full mx-auto">
       {options.map((op, index) => (
         <DraggableStackItem
           key={index}

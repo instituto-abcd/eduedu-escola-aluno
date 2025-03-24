@@ -131,7 +131,7 @@ export function Model13({
       <div className="flex flex-col size-full max-w-screen-lg justify-evenly items-center gap-4 lg:flex-row">
         {/* Top (left) row (targets) */}
         <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
-          {targetTitles.slice(0, 2).map((target, inx) => (
+          {targetTitles.slice(2, 4).map((target, inx) => (
             <DroppableContents
               key={inx}
               id={target.position}
@@ -148,7 +148,7 @@ export function Model13({
 
         {/* Bottom (right) row (targets) */}
         <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
-          {targetTitles.slice(2, 4).map((target, inx) => (
+          {targetTitles.slice(0, 2).map((target, inx) => (
             <DroppableContents
               key={inx}
               id={target.position}

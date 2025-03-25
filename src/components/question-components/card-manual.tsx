@@ -1,18 +1,16 @@
 import { cva, VariantProps } from "class-variance-authority";
-import { QuestionOption } from "~/api/exam";
-import { useDebugInfo } from "~/stores/debug-info";
-import { DebugProps } from "../Debug";
-import { DebugDiv } from "../Debug/DebugDiv";
 import { cx } from "~/utils/cx";
-import { validString } from "~/utils/string";
-import { useCreateSound } from "~/hooks/useCreateSound";
-import { IconVolume } from "@tabler/icons-react";
+
+/**
+ * Variação do `CardOption` que pode ser montado
+ * sem passar obrigatóriamente um objeto QuestionOption
+ */
 
 type Props = VariantProps<typeof button> & {
-  option: QuestionOption;
-  debug?: DebugProps;
-  properties: ("text" | "image" | "audio" | null)[];
   selected: boolean;
+  image?: string;
+  text?: string;
+  sound?: string;
 } & Pick<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   "disabled" | "onClick" | "className"
@@ -26,7 +24,7 @@ const button = cva(
   {
     variants: {
       shape: {
-        contain: "size-full min-h-[160px] sm:min-h-[180px]",
+        contain: "size-full",
         square:
           "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
       },
@@ -40,54 +38,29 @@ const button = cva(
   }
 );
 
-export function CardOption({
-  option,
-  debug,
-  properties,
-  disabled,
-  onClick,
+export function CardManual({
+  image,
+  text,
+  sound: _, // TODO: add sound if needed
+  disabled = false,
   className,
   ...props
 }: Props) {
-  const canDebug = useDebugInfo((s) => s.answer);
-
-  const showImg = properties.includes("image") && validString(option.image_url);
-  const showText =
-    properties.includes("text") && validString(option.description);
-
-  const { sound, isPlaying } = useCreateSound({
-    src: option?.sound_url ?? "",
-    skipPlayStatus: true,
-  });
-
-  function onClickHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    if (!disabled && !isPlaying) {
-      sound.play();
-    }
-    onClick?.(e);
-  }
-
   return (
     <button
       className={button({ ...props, className })}
-      onClick={onClickHandler}
-      disabled={disabled || isPlaying}
+      disabled={disabled}
+      {...props}
     >
-      <Text neighborImg={showImg}>{option.description}</Text>
+      {text && <Text neighborImg={!!image}>{text}</Text>}
 
-      <Image
-        show={showImg}
-        neighborText={showText}
-        disabled={disabled || isPlaying}
-        url={option.image_url!}
-      />
-
-      {!showImg && validString(option.sound_url) && !showText && (
-        <IconVolume className="stroke-text size-[80%]" />
-      )}
-
-      {canDebug && !debug?.skipDebug && (
-        <DebugDiv debug={debug}>{option.isCorrect}</DebugDiv>
+      {image && (
+        <Image
+          show={true}
+          neighborText={!!text}
+          disabled={disabled}
+          url={image}
+        />
       )}
     </button>
   );
@@ -107,6 +80,7 @@ function Text({
         "leading-[100%] break-words",
         {
           ["mt-1"]: neighborImg,
+          ["text-[30cqw]"]: !neighborImg,
         }
       )}
     >

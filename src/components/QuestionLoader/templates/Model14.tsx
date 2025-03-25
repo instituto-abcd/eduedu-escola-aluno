@@ -1,13 +1,13 @@
-import { Group, Stack } from "@mantine/core";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { QuestionOption } from "~/api/exam";
+import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { TextOptionButton } from "~/components/OptionButton";
-import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
-import { IconMessageCircle2 } from "@tabler/icons-react";
+import { AudioContainer } from "~/components/AudioContainer";
+import { ImageTitle } from "~/components/question-components";
+import { CardManual } from "~/components/question-components/card-manual";
 
 export function Model14({
   question,
@@ -60,84 +60,49 @@ export function Model14({
     } as QuestionOption);
   };
 
-  const audioTitles = question.titles
-    .filter((title) => title.type === "AUDIO")
-    .filter((title) => title.file_id)
-    .sort((a, b) => a.position - b.position);
-
-  const hasAudioTitle = useMemo(
-    () => audioTitles.some((title) => title.file_id),
-    [audioTitles],
-  );
-
   const shouldAuxAutoPlay =
     (!!mainAudioRef && !audioTitleAutoplay(0)) ||
     (!getRule("autoplay") && !mainAudioRef.current?.sound.playing);
 
+  /* Map option to IMAGE title */
+  const imgTitles = question.options.map((op) => ({
+    file_url: op.image_url,
+    description: op.description,
+  })) as QuestionTitle[];
+
   return (
     <>
-      {hasAudioTitle && (
-        <Group mx="auto">
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              index={inx}
-              ref={mainAudioRef}
-              src={title.file_url!}
-              key={inx}
-              autoPlay={audioTitleAutoplay(inx)}
-            />
-          ))}
-          {hasAux && (
-            <AudioButton
-              id={question.id + ""}
-              ref={auxAudioRef}
-              src={question.options[0].sound_url!}
-              variant="yellow"
-              autoPlay={shouldAuxAutoPlay}
-              icon={<IconMessageCircle2 size={30} />}
-            />
-          )}
-        </Group>
-      )}
-
-      <Group w="100%" my="auto" position="center" spacing={boardW(120)}>
-        {question.options.map(
-          (option) =>
-            option.image_url && (
-              <img
-                width={boardW(280)}
-                style={{ maxHeight: boardW(280) }}
-                src={option.image_url}
-                key={option.image_url}
-              />
-            ),
+      <AudioContainer question={question}>
+        {hasAux && (
+          <AudioButton
+            ref={auxAudioRef}
+            src={question.options[0].sound_url!}
+            autoPlay={shouldAuxAutoPlay}
+          />
         )}
+      </AudioContainer>
 
-        <Stack w="45%">
+      <div className="flex flex-col justify-evenly items-center size-full">
+        <ImageTitle titles={imgTitles} />
+
+        <div className="flex gap-2 w-full h-[120px]">
           {Array(circleSize)
             .fill(null)
             .map((_, inx) => (
-              <TextOptionButton
+              <CardManual
+                shape="contain"
                 onClick={() => handleOnClick(inx)}
+                text={(inx + 1).toString()}
                 key={inx}
-                data-selected={
+                selected={
                   typeof answer?.position === "number"
                     ? +answer.position >= inx
                     : false
                 }
-                style={{
-                  width: boardW(100),
-                  height: boardW(100),
-                  borderRadius: "50%",
-                  alignSelf: "center",
-                }}
-                debug={{ skipDebug: true }}
-              >
-                {inx + 1}
-              </TextOptionButton>
+              />
             ))}
-        </Stack>
-      </Group>
+        </div>
+      </div>
     </>
   );
 }

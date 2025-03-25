@@ -21,20 +21,27 @@ import {
 } from "~/components/dnd/draggable-stack";
 import { TextTitle } from "~/components/question-components/TextTitle";
 import { AudioContainer } from "~/components/AudioContainer";
+import { validString } from "~/utils/string";
+import { v4 as uuid } from "uuid";
+
+type OptionWithSound = QuestionOption & {
+  id: string;
+  sound?: Howl;
+};
 
 export function Model13({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const [options, setOptions] = useState<QuestionOption[]>(question.options);
-  const { imageTitles, textTitles, getRule, hasAudioTitle } =
-    useQuestionHelper(question);
+  /* Map options with sound */
+  const [options, setOptions] = useState<OptionWithSound[]>([]);
+  const { textTitles, getRule, hasAudioTitle } = useQuestionHelper(question);
 
   /* Answer */
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function handleAnswer(item: QuestionOption, title: QuestionTitle) {
+  function handleAnswer(item: OptionWithSound, title: QuestionTitle) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft.push(item);
@@ -43,9 +50,7 @@ export function Model13({
 
     setOptions((state) =>
       produce(state, (draft) => {
-        const index = draft.findIndex(
-          (opt) => JSON.stringify(opt) === JSON.stringify(item)
-        );
+        const index = draft.findIndex((opt) => opt.id === item.id);
 
         draft.splice(index, 1);
       })
@@ -67,8 +72,10 @@ export function Model13({
   const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
 
   /* Targets */
-  const targetTitles = imageTitles.filter(
-    (title) => title.file_url || title.description?.length > 0
+  const targetTitles = question.titles.filter(
+    (title) =>
+      title.type === "IMAGE" &&
+      (title.file_url || validString(title.description))
   );
 
   /* Drag Handlers */
@@ -76,7 +83,10 @@ export function Model13({
 
   function onDragStart(e: DragStartEvent) {
     if (e.active.data.current) {
-      const option = e.active.data.current.option;
+      const option: OptionWithSound = e.active.data.current.option;
+      if (option.sound && !option.sound.playing()) {
+        option.sound.play();
+      }
       setActiveDrag(() => option);
     }
   }
@@ -87,7 +97,7 @@ export function Model13({
       const titleId = Number(e.over.id);
       const title = targetTitles.find(({ position }) => position === titleId);
 
-      const option = e.active.data.current?.option as QuestionOption;
+      const option = e.active.data.current?.option as OptionWithSound;
       handleAnswer(option, title!);
     }
   }
@@ -97,7 +107,18 @@ export function Model13({
   /* Conditions (continue) */
   useEffect(() => {
     setAnswers([]);
-    setOptions(question.options);
+    setOptions(
+      question.options.map((option) => ({
+        ...option,
+        id: uuid(),
+        sound: new Howl({
+          src: [option.sound_url ?? ""],
+          html5: true,
+          format: ["mp3"],
+          loop: false,
+        }),
+      }))
+    );
   }, [question]);
 
   useEffect(() => {

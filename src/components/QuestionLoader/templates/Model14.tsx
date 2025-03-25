@@ -85,7 +85,7 @@ export function Model14({
       <div className="flex flex-col justify-evenly items-center size-full">
         <ImageTitle titles={imgTitles} />
 
-        <div className="flex gap-2 w-full h-[120px]">
+        <div className="flex gap-2 w-full h-[120px] max-w-3xl">
           {Array(circleSize)
             .fill(null)
             .map((_, inx) => (

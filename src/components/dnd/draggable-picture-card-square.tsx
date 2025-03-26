@@ -51,7 +51,8 @@ export function DraggablePictureCardSquare({
         {
           ["pointer-events-none"]: disabled,
           ["opacity-20 -scale-50"]: isDragging,
-        }
+        },
+        props.className
       )}
       ref={setNodeRef}
       {...attributes}
@@ -60,7 +61,7 @@ export function DraggablePictureCardSquare({
     >
       <img
         src={image ?? ""}
-        className={"object-cover select-none min-w-full max-h-[300px]"}
+        className={"object-fill select-none min-w-full max-h-[80px]"}
       />
       {onClear && (
         <button

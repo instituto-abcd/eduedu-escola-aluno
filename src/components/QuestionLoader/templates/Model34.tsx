@@ -201,6 +201,8 @@ export function Model34({
                 sound={item.sound_url}
                 hidden
                 debug={{ skipDebug: true }}
+                disabled={mainAudioRef.current?.sound.playing()}
+                className="lg:max-h-[125px]"
               />
             ) : (
               <DraggableCardSquare
@@ -212,6 +214,7 @@ export function Model34({
                 text={item.description}
                 sound={item.sound_url}
                 debug={{ debugProperty: "isCorrect" }}
+                disabled={mainAudioRef.current?.sound.playing()}
                 className="lg:max-h-[125px]"
               />
             )

@@ -221,6 +221,7 @@ export function Model25({
                 sound={item.sound_url}
                 hidden
                 debug={{ skipDebug: true }}
+                disabled={mainAudioRef.current?.sound.playing()}
               />
             ) : (
               <DraggableCardSquare
@@ -232,6 +233,7 @@ export function Model25({
                 text={item.description}
                 sound={item.sound_url}
                 debug={{ debugProperty: "position" }}
+                disabled={mainAudioRef.current?.sound.playing()}
               />
             )
           )}

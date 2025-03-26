@@ -5,7 +5,6 @@ import { AudioButton } from "~/components/AudioButton";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { Image } from "@mantine/core";
 import {
   DndContext,
   DragEndEvent,
@@ -43,8 +42,10 @@ export function Model25({
     audioTitleAutoplay,
     textTitles,
     getRule,
-    imageTitles,
+    getTitlesOfType,
   } = useQuestionHelper(question);
+
+  const imageTitles = getTitlesOfType("IMAGE");
 
   const auxAutoPlayRule = getRule("auxAutoPlay");
   const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
@@ -142,6 +143,10 @@ export function Model25({
     onConditionsChange(conditions);
   }, [conditions]);
 
+  useEffect(() => {
+    console.log(imageTitles);
+  }, [imageTitles]);
+
   return (
     <DndContext
       onDragStart={onDragStart}
@@ -173,16 +178,23 @@ export function Model25({
           ))}
         </div>
 
-        <div className="grid grid-cols-3 gap-1 place-content-center place-items-center sm:gap-2 h-fit w-full">
+        <div className="grid grid-cols-3 gap-1 place-content-center place-items-center sm:gap-2 h-fit w-full ">
           {answers.map((slot, inx) => (
-            <div className="flex flex-col items-center max-h-[40vh] md:max-h-[50vh] aspect-[2/3]">
+            <div className="flex flex-col items-center h-full max-h-[40vh] md:max-h-[50vh] aspect-[2/4]">
               <div className="flex items-center w-full max-w-[350px] min-h-[125px] aspect-[2/3] rounded-[20px] md:rounded-[45px] border-2 border-[#4c494140]">
                 <div>
-                  <Image
-                    key={imageTitles[inx].file_url}
-                    src={imageTitles[inx].file_url}
-                    alt={imageTitles[inx].placeholder}
-                  />
+                  {imageTitles[inx]?.file_url ? (
+                    <img
+                      key={imageTitles[inx]?.file_url}
+                      src={imageTitles[inx]?.file_url}
+                      alt={imageTitles[inx]?.placeholder}
+                      className="w-full px-8 min-h-[125px] h-[200px] md:h-[350px] object-scale-down"
+                    />
+                  ) : (
+                    <span className="flex p-1 text-center w-full text-[#757575]">
+                      {imageTitles[inx]?.description}
+                    </span>
+                  )}
                 </div>
               </div>
               <DroppablePictureCardSquare

@@ -22,6 +22,7 @@ export function Model35({
   } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<string>("");
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     onAnswerChange([
@@ -120,6 +121,12 @@ export function Model35({
   }
 
   useEffect(() => {
+    const mobileRegex =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+    setIsMobile(mobileRegex.test(navigator.userAgent));
+  }, []);
+
+  useEffect(() => {
     const firstEmptyIndex = slots.findIndex(
       (slot) => !slot.fixed && slot.letter === ""
     );
@@ -205,6 +212,7 @@ export function Model35({
                   onKeyDown={handleBackspace}
                   value={slot.letter}
                   disabled={slot.fixed}
+                  readOnly={isMobile}
                 />
               ))}
             </div>
@@ -214,6 +222,7 @@ export function Model35({
               maxLength={100}
               onChange={(e) => setAnswer(e.target.value)}
               className="w-[150px] md:w-[300px] h-[140px] md:h-[212px] bg-gray-100 border-2 border-gray-300 p-2 rounded-3xl resize-none focus:outline-none focus:border-blue-500"
+              readOnly={isMobile}
             />
           )}
         </div>

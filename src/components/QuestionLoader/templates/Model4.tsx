@@ -1,29 +1,16 @@
-import { Group, Image, Stack, Text, Title, createStyles } from "@mantine/core";
+import { Group, Image, Text, Title } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton } from "~/components/OptionButton";
-import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-
-const useStyles = createStyles({
-  title: {
-    fontSize: boardW(25),
-    fontWeight: 'normal',
-
-    "*": {
-      fontSize: boardW(25),
-    },
-  },
-});
 
 export function Model4({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes } = useStyles();
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
   const {
     audioTitles,
@@ -57,60 +44,61 @@ export function Model4({
   return (
     <>
       {hasAudioTitle && (
-        <Group mx="auto">
+        <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
-              key={title.position}
-              src={title.file_url ?? ""}
+              key={inx}
               autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
             />
           ))}
-        </Group>
+        </div>
       )}
 
-      <Stack my="auto" align="center" spacing={(lousaWidth * 5) / 100}>
-        <Group noWrap spacing={20} align="center" position="center">
+      <div className="h-full w-full flex flex-col items-center justify-evenly">
+        <Group
+          noWrap
+          spacing={20}
+          align="center"
+          position="center"
+        >
           {textTitles.map((title) => (
             <Title
               key={title.description}
               dangerouslySetInnerHTML={{ __html: title.description }}
-              align="center"
               color="dark.3"
-              w={imageTitles.length > 0 ? "50%" : undefined}
-              className={classes.title}
+              className="text-xl text-center font-semibold"
             />
           ))}
           {imageTitles.map((title) => (
-            <Image
-              mx="auto"
-              src={title.file_url}
-              alt={title.description}
-              width={(lousaWidth * 15) / 100}
-              key={title.file_url}
-              style={{ flexGrow: 1 }}
-              styles={{ image: { marginInline: "auto" } }}
-            />
+            <div className="max-h-[150px]">
+              <Image
+                src={title.file_url}
+                alt={title.description}
+                key={title.file_url}
+                className="max-h-[150px] max-w-[150px] min-h-[150px] min-w-[150px]"
+              />
+            </div>
           ))}
         </Group>
 
-        <Group>
+        <div className="flex w-full md:w-2/3 lg:w-full flex-wrap justify-center items-center">
           {question.options.map((option, inx) => (
             <OptionButton
               key={inx}
               data-selected={JSON.stringify(option) === JSON.stringify(answer)}
               onClick={() => setAnswer(option)}
               option={option}
+              className="h-[125px] w-[125px] md:w-[200px] md:h-[200px] lg:w-[200px] lg:h-[200px] m-4 flex items-center justify-center"
             >
               {option.image_url && (
                 <>
                   <img
                     src={option.image_url}
                     alt={option.description}
-                    height={boardW(130)}
                     width="auto"
                     style={{
-                      maxHeight: 120,
                       maxWidth: "100%",
                       objectFit: "contain",
                       marginInline: "auto",
@@ -121,7 +109,11 @@ export function Model4({
                   {!isExam &&
                     showOptionsText &&
                     hasDescription(option.description) && (
-                      <Text size={14} color="gray.7" weight={600}>
+                      <Text
+                        size={14}
+                        color="gray.7"
+                        weight={600}
+                      >
                         {option.description}
                       </Text>
                     )}
@@ -132,8 +124,8 @@ export function Model4({
               )}
             </OptionButton>
           ))}
-        </Group>
-      </Stack>
+        </div>
+      </div>
     </>
   );
 }

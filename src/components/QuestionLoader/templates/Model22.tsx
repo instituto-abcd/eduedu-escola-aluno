@@ -1,38 +1,18 @@
-import { Group, Stack, Title, Image, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
-import { TextOptionButton } from "~/components/OptionButton";
 import { QuestionOption } from "~/api/exam";
 import { useEffect, useMemo, useState } from "react";
-import { boardW } from "~/constants/dimensions";
-
-const useStyles = createStyles((theme) => ({
-  group: {
-    backgroundColor: theme.colors.gray[1],
-    borderRadius: 16,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: theme.colors.gray[6],
-    paddingInline: 45,
-    paddingBlock: 25,
-    maxWidth: boardW(800),
-  },
-  title: {
-    fontSize: boardW(30),
-  },
-}));
+import { ImageTitle } from "~/components/question-components";
+import { CardManual } from "~/components/question-components/card-manual";
+import { AudioContainer } from "~/components/AudioContainer";
+import { TextTitle } from "~/components/question-components/TextTitle";
 
 export function Model22({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, audioTitleAutoplay, textTitles, imageTitles } =
-    useQuestionHelper(question);
-  const hasAudio = audioTitles.some((title) => title.file_url);
-
-  const { classes } = useStyles();
+  const { textTitles, imageTitles } = useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption>();
 
@@ -60,59 +40,32 @@ export function Model22({
 
   return (
     <>
-      <Group mx="auto" h="50px">
-        {hasAudio &&
-          audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                index={inx}
-                src={title.file_url!}
+      <AudioContainer question={question} />
+
+      <div className="size-full flex flex-col items-center justify-evenly">
+        {textTitles.map((title, inx) => (
+          <TextTitle
+            text={title.description}
+            key={inx}
+          />
+        ))}
+
+        <ImageTitle titles={imageTitles} />
+
+        <div className="w-full h-auto flex flex-wrap items-center justify-center gap-4 px-10 max-w-4xl">
+          {question.options
+            .sort((a, b) => +a.position - +b.position)
+            .map((option, inx) => (
+              <CardManual
                 key={inx}
-                autoPlay={audioTitleAutoplay(inx)}
+                selected={option.description === answer?.description}
+                text={option.description}
+                onClick={() => handleAnswer(option)}
+                shape="pill"
               />
             ))}
-      </Group>
-
-      <Stack align="center" spacing={boardW(20)} my="auto">
-        {textTitles.map((title) => (
-          <Title
-            key={title.description}
-            dangerouslySetInnerHTML={{ __html: title.description }}
-            align="center"
-            color="dark.3"
-            className={classes.title}
-          />
-        ))}
-        {imageTitles.map((title) => (
-          <Image
-            mx="auto"
-            src={title.file_url}
-            alt={title.description}
-            height={boardW(200)}
-            width="auto"
-            key={title.file_url}
-            style={{ flexGrow: 1 }}
-            styles={{ image: { marginInline: "auto" } }}
-          />
-        ))}
-        <Group align="center" className={classes.group} position="center">
-          {question.options.map((option, inx) => (
-            <TextOptionButton
-              key={inx}
-              onClick={() => handleAnswer(option)}
-              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
-              style={{
-                fontSize: boardW(24),
-              }}
-              option={option}
-              debug={{ size: 10 }}
-            >
-              {option.description}
-            </TextOptionButton>
-          ))}
-        </Group>
-      </Stack>
+        </div>
+      </div>
     </>
   );
 }

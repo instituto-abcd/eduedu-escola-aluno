@@ -12,13 +12,13 @@ type Props = VariantProps<typeof button> & {
   text?: string;
   sound?: string;
 } & Pick<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "disabled" | "onClick" | "className"
->;
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    "disabled" | "onClick" | "className"
+  >;
 
 const button = cva(
   [
-    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center justify-evenly cursor-pointer select-none overflow-hidden",
+    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-evenly cursor-pointer select-none overflow-hidden",
     "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
   ],
   {
@@ -27,6 +27,7 @@ const button = cva(
         contain: "size-full",
         square:
           "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
+        pill: "whitespace-normal w-auto px-3 py-1 min-w-fit [container-type:normal]",
       },
       selected: {
         true: "!bg-[#DFFEC5] border border-[#ACE655] !shadow-[0px_5px_0px_0px_#ACE655]",
@@ -52,7 +53,14 @@ export function CardManual({
       disabled={disabled}
       {...props}
     >
-      {text && <Text neighborImg={!!image}>{text}</Text>}
+      {text && (
+        <Text
+          pill={props.shape === "pill"}
+          neighborImg={!!image}
+        >
+          {text}
+        </Text>
+      )}
 
       {image && (
         <Image
@@ -69,23 +77,26 @@ export function CardManual({
 function Text({
   children,
   neighborImg,
+  pill,
 }: {
   neighborImg: boolean;
   children: string;
+  pill: boolean;
 }) {
   return (
-    <span
+    <div
       className={cx(
-        "text-text font-extrabold text-[10cqw] w-full",
-        "leading-[100%] break-words",
+        "text-text font-extrabold text-[10cqw] flex-1",
+        "leading-[100%] break-words whitespace-nowrap min-w-max",
         {
           ["mt-1"]: neighborImg,
-          ["text-[30cqw]"]: !neighborImg,
+          ["text-[30cqw]"]: !neighborImg && !pill,
+          ["text-xl md:text-2xl xl:text-4xl"]: pill,
         }
       )}
     >
       {children}
-    </span>
+    </div>
   );
 }
 

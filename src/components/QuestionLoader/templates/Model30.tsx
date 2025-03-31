@@ -1,8 +1,7 @@
-import { Group, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { lousaHeight } from "~/constants/dimensions";
 import { useTimeout } from "@mantine/hooks";
 import { useEffect } from "react";
 
@@ -19,18 +18,16 @@ export function Model30({ question, onConditionsChange }: ModelProps) {
   return (
     <>
       {hasAudioTitle && (
-        <Group mx="auto" h="50px">
-          {audioTitles
-            .filter((title) => !!title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                index={inx}
-                src={title.file_url!}
-                autoPlay={audioTitleAutoplay(inx)}
-                key={title.file_url}
-              />
-            ))}
-        </Group>
+        <div className="flex gap-4 lg:self-start">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              index={inx}
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
+        </div>
       )}
 
       <Stack my="auto">
@@ -38,8 +35,7 @@ export function Model30({ question, onConditionsChange }: ModelProps) {
           <>
             <img
               src={imageTitles[0].file_url ?? ""}
-              width="auto"
-              height={(lousaHeight * 55) / 100}
+              className="h-[50vh] max-w-screen"
             />
 
             {/* Alguns estão vindo sem file_url,

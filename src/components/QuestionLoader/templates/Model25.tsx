@@ -143,10 +143,6 @@ export function Model25({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  useEffect(() => {
-    console.log(imageTitles);
-  }, [imageTitles]);
-
   return (
     <DndContext
       onDragStart={onDragStart}

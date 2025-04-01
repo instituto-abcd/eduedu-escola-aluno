@@ -27,21 +27,13 @@ export function ReadButton({ question }: Props) {
         onClose={onClose}
         title="Questão de apoio"
       >
-        <Stack
-          spacing={lousaWidth * 0.045}
-          align="center"
-          h="100%"
-          w="100%"
-          style={{ position: "relative" }}
-        >
-          <ModelMapper
-            commonProps={{
-              question,
-              onAnswerChange: () => { },
-              onConditionsChange: () => { },
-            }}
-          />
-        </Stack>
+        <ModelMapper
+          commonProps={{
+            question,
+            onAnswerChange: () => {},
+            onConditionsChange: () => {},
+          }}
+        />
       </Modal>
     </>
   );

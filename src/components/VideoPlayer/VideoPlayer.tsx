@@ -47,8 +47,14 @@ export function VideoPlayer({
     };
   }, []);
 
-  /* Manually handle autoplay */
+  /* Programatically invoke autoplay */
   useTimeout(() => play(), 350, { autoInvoke: !!autoPlay });
+
+  useEffect(() => {
+    return () => {
+      audioStatus.setPlaying(false);
+    };
+  }, []);
 
   return (
     <div className="relative size-full flex flex-col items-center">

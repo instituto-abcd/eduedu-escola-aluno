@@ -41,7 +41,10 @@ export function Model13({
   /* Answer */
   const [answers, setAnswers] = useState<QuestionOption[]>([]);
 
-  function handleAnswer(item: OptionWithSound, title: QuestionTitle) {
+  function handleAnswer(
+    { sound: _, ...item }: OptionWithSound,
+    title: QuestionTitle
+  ) {
     setAnswers((state) =>
       produce(state, (draft) => {
         draft.push(item);
@@ -69,7 +72,7 @@ export function Model13({
 
   /* Rules */
   const showOptionsText = getRule("showOptionsText");
-  const imageOnly = showOptionsText ? showOptionsText.value === "true" : false;
+  const imageOnly = !(showOptionsText?.value === "true");
 
   /* Targets */
   const targetTitles = question.titles.filter(
@@ -164,7 +167,10 @@ export function Model13({
 
         {/* Card stacks (draggable, question option) */}
         <div className="flex-none justify-center basis-1/2 w-full">
-          <DraggableStack options={options} />
+          <DraggableStack
+            options={options}
+            imageOnly={imageOnly}
+          />
         </div>
 
         {/* Bottom (right) row (targets) */}

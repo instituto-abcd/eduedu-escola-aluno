@@ -8,6 +8,7 @@ import { ModelProps } from "./templates";
 import { useAudioStatus } from "~/stores/audio";
 import { modelIsAutoAdvance } from "~/constants";
 import { ButtonContinue } from "../Buttons";
+import { cx } from "~/utils/cx";
 // import { Header } from "../question-components/Header";
 
 type QuestionLoaderProps = {
@@ -96,6 +97,10 @@ export function QuestionLoader({
     submitAnswer();
   }, [continueDisabled]);
 
+  /* Blacklist for models that hide the continue button */
+  const continueBlacklist = ["MODEL13"];
+  const hideContinue = continueBlacklist.includes(question.model_id);
+
   return (
     <div
       className="grow h-screen flex flex-col items-center bg-white p-3 xl:p-8"
@@ -106,7 +111,9 @@ export function QuestionLoader({
       <ButtonContinue
         disabled={continueDisabled}
         onClick={submitAnswer}
-        className="mt-5 md:mt-auto md:self-end"
+        className={cx("mt-5 md:mt-auto md:self-end", {
+          ["hidden"]: hideContinue,
+        })}
       />
     </div>
   );

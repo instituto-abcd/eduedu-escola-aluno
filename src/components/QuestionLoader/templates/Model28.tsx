@@ -1,101 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Stack,
-  Group,
-  SimpleGrid,
-  Text,
-  createStyles,
-  getStylesRef,
-} from "@mantine/core";
 import { QuestionOption } from "~/api/exam";
-import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { AudioButton } from "~/components/AudioButton";
-import whiteLogo from "~/assets/logos/eduedu-branca.svg";
 import { produce } from "immer";
 import { useTimeout } from "@mantine/hooks";
 import { ModelProps } from ".";
 import { AudioInterface } from "~/sounds";
 import { useCreateSound } from "~/hooks/useCreateSound";
-
-const useStyles = createStyles({
-  card: {
-    perspective: 1000,
-    width: boardW(190),
-    height: boardW(205),
-    borderRadius: 8,
-
-    img: {
-      width: "100%",
-      maxWidth: boardW(140),
-      height: "auto",
-      maxHeight: boardW(140),
-      objectFit: "contain",
-    },
-
-    [`&[data-flipped=true] .${getStylesRef("inner")}`]: {
-      transform: "rotateY(180deg)",
-    },
-
-    [`&[data-feedback=correct] .${getStylesRef("feedback")}`]: {
-      backgroundColor: "#DFFEC5",
-      opacity: 0.3,
-    },
-
-    [`&[data-feedback=wrong] .${getStylesRef("feedback")}`]: {
-      backgroundColor: "#FF6B6B",
-      opacity: 0.3,
-    },
-  },
-
-  cardInner: {
-    ref: getStylesRef("inner"),
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    textAlign: "center",
-    transition: "transform 0.6s",
-    transitionDelay: "0.1s",
-    transformStyle: "preserve-3d",
-    borderRadius: 8,
-    border: "1px solid #228BE6",
-    backgroundColor: "#fff",
-    cursor: "pointer",
-    boxShadow: "0px 5px 0px 0px #228BE6",
-  },
-
-  cardFront: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    backfaceVisibility: "hidden",
-  },
-
-  cardBack: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    backfaceVisibility: "hidden",
-    transform: "rotateY(180deg)",
-  },
-
-  answerFeedback: {
-    ref: getStylesRef("feedback"),
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    opacity: 0,
-    zIndex: 99,
-    pointerEvents: "none",
-    transition: "all 0.3s ease-in",
-    transitionDelay: "0.5s",
-    borderRadius: 8,
-  },
-});
+import { cx } from "~/utils/cx";
+import logo from "~/assets/logos/eduedu-azul.svg";
+import { AudioContainer } from "~/components/AudioContainer";
 
 export function Model28({ question, onConditionsChange }: ModelProps) {
-  const { hasAudioTitle, audioTitles, audioTitleAutoplay } =
-    useQuestionHelper(question);
+  const { hasAudioTitle } = useQuestionHelper(question);
 
   const [flipped, setFlipped] = useState<
     [QuestionOption | null, QuestionOption | null]
@@ -175,36 +91,27 @@ export function Model28({ question, onConditionsChange }: ModelProps) {
 
   return (
     <>
-      {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              index={inx}
+      {hasAudioTitle && <AudioContainer question={question} />}
+
+      <div className="size-full flex flex-col items-center justify-center">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 lg:gap-x-20 gap-y-12">
+          {question.options.map((option, inx) => (
+            <FlippableCard
+              option={option}
+              onFlipCard={handleCardFlipped}
+              isFlipped={isCardFlipped(option)}
               key={inx}
-              src={title.file_url!}
-              autoPlay={audioTitleAutoplay(inx)}
+              feedback={
+                flipped.some(
+                  (opt) => JSON.stringify(opt) === JSON.stringify(option)
+                )
+                  ? feedback
+                  : null
+              }
             />
           ))}
-        </Group>
-      )}
-
-      <SimpleGrid cols={3} m="auto" spacing={boardW(20)}>
-        {question.options.map((option, inx) => (
-          <FlippableCard
-            option={option}
-            onFlipCard={handleCardFlipped}
-            isFlipped={isCardFlipped(option)}
-            key={inx}
-            feedback={
-              flipped.some(
-                (opt) => JSON.stringify(opt) === JSON.stringify(option)
-              )
-                ? feedback
-                : null
-            }
-          />
-        ))}
-      </SimpleGrid>
+        </div>
+      </div>
     </>
   );
 }
@@ -222,8 +129,6 @@ function FlippableCard({
   isFlipped,
   feedback,
 }: FlippableCardProps) {
-  const { classes } = useStyles();
-
   const { sound } = useCreateSound({
     src: option.sound_url ?? "",
     autoPlay: false,
@@ -231,41 +136,61 @@ function FlippableCard({
 
   return (
     <div
-      className={classes.card}
+      className={cx(
+        "[perspective:1000px] bg-surface w-[157px] md:w-[250px] h-[131px] md:h-[208px] rounded-lg shadow-card",
+        "transition-all delay-100 duration-500",
+        {
+          ["bg-green-300 bg-opacity-30"]: feedback === "correct",
+          ["bg-red-300 bg-opacity-30"]: feedback === "wrong",
+        }
+      )}
       onClick={() => {
         onFlipCard(option);
         sound?.play();
       }}
-      data-flipped={isFlipped}
-      data-feedback={feedback === null ? undefined : feedback}
     >
-      <div className={classes.answerFeedback} />
-      <div className={classes.cardInner}>
+      <div
+        className={cx(
+          "relative size-full [transform-style:preserve-3d]",
+          "cursor-pointer transition-transform duration-500 delay-100",
+          {
+            ["[transform:rotateY(180deg)]"]: isFlipped,
+          }
+        )}
+      >
         {/* Front */}
-        <Stack
-          className={classes.cardFront}
-          align="center"
-          justify="center"
-          bg="blue.1"
+
+        <div
+          className={cx(
+            "absolute size-full [backface-visibility:hidden]",
+            "flex flex-col items-center justify-center"
+          )}
         >
-          <img src={whiteLogo} width={boardW(103)} />
-        </Stack>
+          <img
+            src={logo}
+            className="w-2/3"
+          />
+        </div>
 
         {/* Back */}
-        <Stack
-          align="center"
-          justify="center"
-          spacing={10}
-          h="100%"
-          className={classes.cardBack}
-        >
-          <img src={option.image_url ?? ""} />
-          {option.description && (
-            <Text weight={600} size={boardW(20)} color="gray.7">
-              {option.description}
-            </Text>
+
+        <div
+          className={cx(
+            "flex flex-col items-center justify-center gap-3 size-full delay-150 duration-500",
+            "absolute size-full [backface-visibility:hidden] [transform:rotateY(180deg)]",
+            {}
           )}
-        </Stack>
+        >
+          {option.description && (
+            <p className="font-extrabold text-text text-2xl md:text-3xl">
+              {option.description}
+            </p>
+          )}
+          <img
+            src={option.image_url ?? ""}
+            className="aspect-square object-cover w-[79px] md:w-[140px]"
+          />
+        </div>
       </div>
     </div>
   );

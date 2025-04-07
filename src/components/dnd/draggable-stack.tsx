@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { QuestionOption } from "~/api/exam";
+import { useAudioStatus } from "~/stores/audio";
 import { cx } from "~/utils/cx";
 import { validString } from "~/utils/string";
 
@@ -29,6 +30,7 @@ export function DraggableStackItem({
     data: { option: optionItem },
     disabled,
   });
+
   return (
     <div
       {...props}
@@ -38,6 +40,7 @@ export function DraggableStackItem({
         {
           ["opacity-0 pointer-events-none"]: isDragging,
           ["w-[150px]"]: small,
+          ["pointer-events-none grayscale"]: disabled,
         },
         className
       )}
@@ -49,7 +52,7 @@ export function DraggableStackItem({
         <img
           src={optionItem.image_url!}
           alt={optionItem.description}
-          className="h-2/3"
+          className="h-2/3 select-none"
         />
       )}
       {!imageOnly && validString(optionItem.description) && (
@@ -71,6 +74,8 @@ export function DraggableStack({
   options: QuestionOption[];
   imageOnly?: boolean;
 }) {
+  const { isPlaying } = useAudioStatus();
+
   return (
     <div className="relative max-w-[300px] md:max-w-[400px] size-full mx-auto">
       {options.map((op, index) => (
@@ -81,6 +86,7 @@ export function DraggableStack({
           className="absolute inset-0 my-auto"
           style={{ zIndex: index }}
           imageOnly={imageOnly}
+          disabled={isPlaying}
         />
       ))}
     </div>

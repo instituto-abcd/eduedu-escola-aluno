@@ -1,26 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { boardW } from "~/constants/dimensions";
-import { Group, Box, SimpleGrid, createStyles } from "@mantine/core";
+import { AudioButton } from "~/components/AudioButton";
+import { Text, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { QuestionOption } from "~/api/exam";
 import { ModelProps } from ".";
-
-const useStyles = createStyles({
-  option: {
-    width: boardW(130),
-    height: boardW(130),
-  },
-});
 
 export function Model3({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes } = useStyles();
-  const { videoTitles } = useQuestionHelper(question);
+  const {
+    videoTitles,
+    textTitles,
+    hasAudioTitle,
+    audioTitles,
+    audioTitleAutoplay,
+  } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
   useEffect(() => {
@@ -39,52 +37,63 @@ export function Model3({
 
   return (
     <>
-      <Group m="auto" spacing={boardW(50)}>
-        <Box maw={boardW(400)}>
-          <VideoPlayer
-            src={videoTitles[0]?.file_url ?? ""}
-            autoPlay
-            style={{ height: boardW(240) }}
-            key={question.id}
-          />
-        </Box>
-        <Box maw={boardW(550)}>
-          <SimpleGrid cols={2}>
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={inx}
-                onClick={() => setAnswer(option)}
-                data-selected={
-                  JSON.stringify(answer) === JSON.stringify(option)
-                }
-                className={classes.option}
-                option={option}
-              >
-                {option.image_url && (
+      {hasAudioTitle && (
+        <div className="flex gap-4 lg:self-start">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              index={inx}
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
+        </div>
+      )}
+      {textTitles.map((title) => (
+        <Title
+          key={title.description}
+          dangerouslySetInnerHTML={{ __html: title.description }}
+          color="dark.3"
+          className="text-xl text-center font-semibold"
+        />
+      ))}
+      <div className="h-full w-full flex flex-wrap items-center justify-center">
+        {videoTitles[0]?.file_url && (
+          <div className="max-w-[500px] w-full md:w-1/2">
+            <VideoPlayer
+              src={videoTitles[0].file_url}
+              autoPlay
+              key={question.id}
+            />
+          </div>
+        )}
+
+        <div className="flex w-full max-w-[500px] max-h-[500px] overflow-auto lg:w-1/2 flex-wrap justify-center items-center">
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={inx}
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              onClick={() => setAnswer(option)}
+              option={option}
+              className="h-[40%] w-[40%] rounded-[15%] lg:w-[200px] lg:h-[200px] m-[5%] md:m-4 flex items-center justify-center"
+            >
+              {option.image_url && (
+                <>
                   <img
                     src={option.image_url}
                     alt={option.description}
-                    height={105}
-                    width="auto"
-                    style={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      objectFit: "cover",
-                      marginInline: "auto",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                      position: "absolute",
-                      inset: 0,
-                      marginBlock: "auto",
-                    }}
+                    className="pointer-events-none select-none mx-auto object-contain max-w-[60%]"
                   />
-                )}
-                {option.description}
-              </OptionButton>
-            ))}
-          </SimpleGrid>
-        </Box>
-      </Group>
+                  {option.description}
+                </>
+              )}
+              {!option.image_url && (
+                <Text size={"2vh"}>{option.description}</Text>
+              )}
+            </OptionButton>
+          ))}
+        </div>
+      </div>
     </>
   );
 }

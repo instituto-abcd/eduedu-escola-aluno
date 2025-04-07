@@ -97,14 +97,7 @@ export function Model4({
                   <img
                     src={option.image_url}
                     alt={option.description}
-                    width="auto"
-                    style={{
-                      maxWidth: "100%",
-                      objectFit: "contain",
-                      marginInline: "auto",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    }}
+                    className="pointer-events-none select-none mx-auto object-contain max-w-[60%]"
                   />
                   {!isExam &&
                     showOptionsText &&

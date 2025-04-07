@@ -80,7 +80,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
           </BasicButton>
         )}
 
-        <div className="flex flex-1 h-[60%] md:h-[90%] flex-col justify-center items-center m-4">
+        <div className="flex md:flex-1 h-[60%] md:h-[90%] flex-col justify-center items-center m-4">
           {currentSlide?.image_url && (
             <img
               src={currentSlide.image_url}
@@ -123,7 +123,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         )}
 
         {question.options.length > 1 && (
-          <div className="md:hidden flex w-full justify-evenly">
+          <div className="md:hidden flex flex-1 pt-2 w-full justify-evenly">
             <BasicButton
               disabled={
                 slideIndex === 0 || mainAudioRef.current?.sound.playing()

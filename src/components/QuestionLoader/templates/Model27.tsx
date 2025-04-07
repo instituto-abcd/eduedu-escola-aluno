@@ -85,7 +85,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
             <img
               src={currentSlide.image_url}
               alt={currentSlide.description}
-              className="w-[75%] md:w-1/2 md:max-h-[50%] p-4"
+              className="w-[75%] md:w-1/2 md:max-h-[70%] p-4"
             />
           )}
 

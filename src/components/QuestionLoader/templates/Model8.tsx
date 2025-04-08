@@ -1,43 +1,18 @@
-import {
-  Center,
-  Group,
-  Image,
-  Stack,
-  Title,
-  createStyles,
-} from "@mantine/core";
+import { Title } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { TextOptionButton } from "~/components/OptionButton";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-
-const useStyles = createStyles({
-  button: {
-    wordBreak: "keep-all",
-    width: "100%",
-    height: "fit-content",
-    padding: boardW(20),
-  },
-});
+import { BasicOptionButton } from "~/components/BasicOptionButton";
 
 export function Model8({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const {
-    imageTitles,
-    videoTitles,
-    textTitles,
-    audioTitles,
-    audioTitleAutoplay,
-  } = useQuestionHelper(question);
-
-  const { classes } = useStyles();
+  const { textTitles, audioTitles, audioTitleAutoplay, hasAudioTitle } =
+    useQuestionHelper(question);
 
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
@@ -57,72 +32,45 @@ export function Model8({
 
   return (
     <>
-      {audioTitles.some((title) => title.file_url !== null) && (
-        <Group>
+      {hasAudioTitle && (
+        <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
               key={inx}
-              src={title.file_url ?? ""}
               autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
             />
           ))}
-        </Group>
+        </div>
       )}
 
-      <Group w="100%" my="auto" align="center" position="center" noWrap>
+      <div className="w-full h-full flex flex-col lg:flex-row items-center justify-evenly">
         {textTitles.map((title, inx) => (
           <Title
             color="dark.3"
-            size="2.5vh"
+            size="1.3rem"
             align="center"
             key={inx}
             dangerouslySetInnerHTML={{ __html: title.description }}
-            w="100%"
+            className="w-full lg:w-1/2"
           />
         ))}
 
-        {videoTitles.map((title, inx) => (
-          <Center w="100%" key={inx}>
-            <VideoPlayer
-              src={title.file_url ?? ""}
-              key={title.file_url}
-              autoPlay
-            />
-          </Center>
-        ))}
-
-        {imageTitles.map((title) => (
-          <Center w="100%">
-            <Image
-              src={title.file_url}
-              alt={title.description}
-              width={"100%"}
-              key={title.file_url}
-            />
-          </Center>
-        ))}
-
-        <Stack
-          spacing={lousaWidth * 0.025}
-          justify="center"
-          w="100%"
-          px={boardW(20)}
-        >
+        <div className="w-full lg:w-1/2 flex flex-col items-center">
           {question.options.map((option, inx) => (
-            <TextOptionButton
+            <BasicOptionButton
               key={inx}
               onClick={() => setAnswer(option)}
-              data-selected={JSON.stringify(answer) === JSON.stringify(option)}
               option={option}
-              className={classes.button}
-              debug={{ size: 12 }}
+              data-selected={JSON.stringify(option) === JSON.stringify(answer)}
+              className="text-[1.3rem] p-4 my-2 w-[80%]"
             >
               {option.description}
-            </TextOptionButton>
+            </BasicOptionButton>
           ))}
-        </Stack>
-      </Group>
+        </div>
+      </div>
     </>
   );
 }

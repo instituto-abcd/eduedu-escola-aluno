@@ -98,7 +98,7 @@ export function QuestionLoader({
   }, [continueDisabled]);
 
   /* Blacklist for models that hide the continue button */
-  const continueBlacklist = ["MODEL13"];
+  const continueBlacklist = ["MODEL13", "MODEL12"];
   const hideContinue = continueBlacklist.includes(question.model_id);
 
   return (

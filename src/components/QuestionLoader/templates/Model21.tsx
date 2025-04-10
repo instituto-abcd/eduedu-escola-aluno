@@ -1,4 +1,4 @@
-import { Group, ScrollArea, Stack, Text, Title } from "@mantine/core";
+import { ScrollArea, Text, Title } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
@@ -7,11 +7,8 @@ import { useEffect } from "react";
 import { useTimeout } from "@mantine/hooks";
 
 export function Model21({ question, onConditionsChange }: ModelProps) {
-  const { audioTitles, textTitles, hasAudioTitle } =
+  const { audioTitles, textTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
-  const autoPlay =
-    question.rules.find((rule) => rule.name === "autoplay")?.value === "true" ??
-    false;
 
   const title =
     textTitles.find((title) => title.position === 1)?.description ?? "";
@@ -28,35 +25,40 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
   return (
     <>
       {hasAudioTitle && (
-        <Group>
-          {audioTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <AudioButton
-                index={inx}
-                key={inx}
-                src={title.file_url!}
-                autoPlay={autoPlay}
-              />
-            ))}
-        </Group>
+        <div className="flex gap-4 lg:self-start">
+          {audioTitles.map((title, inx) => (
+            <AudioButton
+              index={inx}
+              key={inx}
+              autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+            />
+          ))}
+        </div>
       )}
 
-      <Stack my="auto">
+      <div className="w-[90%] h-full max-w-full flex flex-col justify-evenly items-center">
         {title !== "" && (
-          <Title color="dark.3" size={boardW(30)}>
+          <Title
+            color="dark.3"
+            size={boardW(30)}
+            className="text-center text-2xl"
+          >
             {title}
           </Title>
         )}
 
-        <ScrollArea maw={boardW(800)} mah={boardW(360)} type="always" px={20}>
+        <ScrollArea
+          type="always"
+          className="px-10 max-h-[80%]"
+        >
           <Text
             dangerouslySetInnerHTML={{ __html: statement }}
             color="dark.3"
-            size={boardW(20)}
+            className="text-center text-xl"
           />
         </ScrollArea>
-      </Stack>
+      </div>
     </>
   );
 }

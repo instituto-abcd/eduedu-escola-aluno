@@ -51,7 +51,6 @@ export function Model12({
 
     const { id, sound, ...cleanOption } = option;
 
-    console.log({ cleanOption });
     setAnswers((state) => [
       ...state,
       {
@@ -80,7 +79,6 @@ export function Model12({
   function onDragEnd(e: DragEndEvent) {
     if (e.over && e.active.data.current) {
       const option = e.active.data.current.option as OptionWithSound;
-      console.log(e.active);
       handleDrop(option, e.over.id);
       setActiveDrag(null);
     }
@@ -103,7 +101,6 @@ export function Model12({
 
   function handleFeedback(position: UniqueIdentifier, option: QuestionOption) {
     if (position === "left" && option.isCorrect === false) {
-      console.log("aaaa");
       AudioInterface.feedback.positive.play();
     } else if (position === "right" && option.isCorrect === true) {
       AudioInterface.feedback.positive.play();

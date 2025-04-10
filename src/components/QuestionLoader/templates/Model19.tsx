@@ -1,23 +1,32 @@
-import { Group, Stack, createStyles } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { CardStack } from "~/components/CardStack";
-import { DraggableCard, DraggableCardSlot } from "~/components/DraggableCard";
 import { QuestionOption } from "~/api/exam";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
 import { ReadButton } from "~/components/ReadButton";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import { v4 as uuid } from "uuid";
+import {
+  DraggablePictureCardBasic,
+  DroppablePictureCardBasic,
+} from "~/components/dnd";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { cx } from "~/utils/cx";
 
-const useStyles = createStyles({
-  slot: {
-    color: "#495057",
-    fontSize: 50,
-    fontWeight: 600,
-    display: "grid",
-    placeItems: "center",
-  },
-});
+type OptionWithSound = QuestionOption & {
+  id: string;
+  sound?: Howl;
+};
 
 export function Model19({
   question,
@@ -25,19 +34,13 @@ export function Model19({
   onConditionsChange,
   auxQuestion,
 }: ModelProps) {
-  const { classes } = useStyles();
-
   const { audioTitles, hasAudioTitle, audioTitleAutoplay } =
     useQuestionHelper(question);
 
-  const [options, setOptions] = useState<QuestionOption[]>([]);
+  const mainAudioRef = useRef<AudioButtonRef>(null);
   const [answers, setAnswers] = useState<Array<QuestionOption | null>>([]);
-  const descRule = question.rules.find(
-    (rule) => rule.name === "show_option_desc"
-  );
-  const showOptionsDesc = Boolean(
-    descRule === undefined ? true : descRule.value === "false" ? false : true
-  );
+  const [stack, setStack] = useState<OptionWithSound[]>([]);
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
 
   const targetLettersRule = question.rules.find(
     (rule) => rule.name === "show_targets_letters"
@@ -52,14 +55,30 @@ export function Model19({
 
   const lettersTitle = question.titles.find((title) => title.type === "TEXT");
   const targetLetters = lettersTitle?.description.split(" ") ?? [];
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  const optionsWithIds = useMemo(
+    () =>
+      question.options.map((option) => ({
+        ...option,
+        id: uuid(),
+        sound: new Howl({
+          src: [option.sound_url ?? ""],
+          html5: true,
+          format: ["mp3"],
+          loop: false,
+        }),
+      })),
+    [question]
+  );
 
   useEffect(() => {
-    setOptions(question.options);
+    setStack(optionsWithIds);
     setAnswers(question.options.map(() => null));
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answers.filter((ans) => ans !== null) );
+    onAnswerChange(answers.filter((ans) => ans !== null));
   }, [answers]);
 
   const conditions = useMemo(
@@ -71,105 +90,164 @@ export function Model19({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const handleDrop = useCallback(
-    (item: QuestionOption | null, index: number) => {
-      setAnswers((prevAnswers) =>
-        produce(prevAnswers, (draft) => {
-          if (
-            draft[index] === null &&
-            !draft.some((ans) => ans?.image_id === item?.image_id)
-          ) {
-            draft[index] = item;
-          }
-        })
-      );
+  function handleDrop(option: OptionWithSound | null, targetIndex: number) {
+    if (!option) return;
 
-      setOptions((prevOptions) =>
-        produce(prevOptions, (draft) => {
-          if (item) {
-            const itemIndex = draft.findIndex(
-              (opt) => opt.image_id === item.image_id
-            );
-            if (itemIndex !== -1) {
-              draft.splice(itemIndex, 1);
-            }
-          }
-        })
-      );
-    },
-    []
-  );
+    const { id, sound, ...cleanOption } = option;
 
-  const handleClear = useCallback(
-    (item: QuestionOption | null, index: number) => {
-      setAnswers((prevAnswers) =>
-        produce(prevAnswers, (draft) => {
-          draft[index] = null;
-        })
-      );
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft[targetIndex] = option
+          ? { ...cleanOption, positionAnswer: targetIndex }
+          : null;
+      })
+    );
+    setStack(
+      stack.filter((item) => {
+        const { id, sound, ...cleanItem } = item;
 
-      setOptions((prevOptions) =>
-        produce(prevOptions, (draft) => {
-          if (item && !draft.some((opt) => opt.image_id === item.image_id)) {
-            draft.push(item);
-          }
-        })
-      );
-    },
-    []
-  );
+        return JSON.stringify(cleanItem) !== JSON.stringify(cleanOption);
+      })
+    );
+  }
+
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option: OptionWithSound = e.active.data.current.option;
+      if (!option.sound?.playing()) {
+        option.sound?.play();
+      }
+      setActiveDrag(() => option);
+    }
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const targetIndex = Number(e.over.id);
+      const option = (e.active.data.current?.option as QuestionOption) ?? null;
+      handleDrop(option as OptionWithSound, targetIndex);
+    }
+  }
+
+  function handleClearAnswer(optionIndex: number) {
+    const removedAnswer = answers[optionIndex];
+    if (!removedAnswer) return;
+
+    setAnswers(
+      produce(answers, (draft) => {
+        draft[optionIndex] = null;
+      })
+    );
+
+    const { positionAnswer, ...cleanAnswer } = removedAnswer;
+
+    const fullOption = optionsWithIds.find((opt) => {
+      const { id, sound, ...cleanOpt } = opt;
+      return JSON.stringify(cleanOpt) === JSON.stringify(cleanAnswer);
+    });
+
+    if (fullOption) {
+      setStack((prevStack) => [fullOption, ...prevStack]);
+    }
+  }
 
   return (
-    <>
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
       {hasAudioTitle && (
-        <Group mx="auto" h="50px">
+        <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
-              src={title.file_url!}
-              key={title.file_url}
+              key={inx}
               autoPlay={audioTitleAutoplay(inx)}
+              src={title.file_url!}
+              ref={mainAudioRef}
             />
           ))}
           {auxQuestion && <ReadButton question={auxQuestion} />}
-        </Group>
+        </div>
       )}
 
-      <Stack align="center" spacing={50} my="auto">
-        <CardStack
-          options={options}
-          cardProps={{
-            variant: "square",
-            imageOnly: !showOptionsDesc,
-            debug: {
-              debugProperty: "position",
-            },
-          }}
-        />
-
-        <Group>
+      <div className="w-full h-full flex flex-col justify-evenly items-center">
+        <div className="w-full flex flex-wrap justify-center items-center ">
           {answers.map((answer, inx) => (
-            <DraggableCardSlot
-              item={answer}
+            <DroppablePictureCardBasic
+              id={inx}
               key={inx}
-              onDrop={(item) => handleDrop(item, inx)}
-              className={classes.slot}
+              optionItem={answer}
+              className={cx(
+                "flex m-[2%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square text-3xl bg-[#4c494120]",
+                {
+                  ["last:w-[64%] last:max-w-none last:aspect-[2/1] md:last:aspect-square md:last:max-w-[150px] md:last:w-[16%] lg:last:w-[15%]"]:
+                    inx % 2 === 0,
+                }
+              )}
               replaceWith={
-                <DraggableCard
-                  item={null}
-                  key={inx}
-                  image={answers[inx]?.image_url}
-                  text={answers[inx] ? answers[inx]?.description : null}
-                  disabled
-                  onClear={() => handleClear(answer, inx)}
-                />
+                answer && (
+                  <DraggablePictureCardBasic
+                    id={+answer.position}
+                    key={+answer.position}
+                    optionItem={answer}
+                    image={answer.image_url}
+                    sound={answer.sound_url}
+                    onClear={() => handleClearAnswer(inx)}
+                    disabled
+                    debug={{
+                      skipDebug: true,
+                    }}
+                    className={cx(
+                      "flex m-[2%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square md:aspect-square text-3xl bg-[#4c494120]",
+                      {
+                        ["last:w-[64%] last:max-w-none last:aspect-[2/1] md:last:aspect-square md:last:max-w-[150px] md:last:w-[16%] lg:last:w-[15%]"]:
+                          inx % 2 === 0,
+                      }
+                    )}
+                  />
+                )
               }
             >
               {showTargetLetters ? targetLetters[inx] : undefined}
-            </DraggableCardSlot>
+            </DroppablePictureCardBasic>
           ))}
-        </Group>
-      </Stack>
-    </>
+
+          <DragOverlay className="">
+            {activeDrag && (
+              <DraggablePictureCardBasic
+                id={32145}
+                optionItem={activeDrag}
+                image={activeDrag.image_url}
+                text={activeDrag.description}
+                sound={activeDrag.sound_url}
+                debug={{ skipDebug: true }}
+                disabled
+              />
+            )}
+          </DragOverlay>
+        </div>
+
+        <div className="flex w-full flex-col items-center justify-center">
+          <div className="flex w-[25vh] md:w-[60vh] h-full items-center justify-center">
+            {stack[0] && (
+              <DraggablePictureCardBasic
+                id={stack[0].id}
+                key={stack[0].id}
+                optionItem={stack[0]}
+                image={stack[0].image_url}
+                sound={stack[0].sound_url}
+                disabled={mainAudioRef.current?.sound.playing()}
+                debug={{
+                  debugProperty: "position",
+                }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </DndContext>
   );
 }

@@ -58,14 +58,14 @@ export function DraggableLetter({
         <button
           className={cx(
             "bg-red-500 text-white rounded-full grid place-items-center",
-            "size-5 xl:size-7 absolute top-0 inset-x-0 mx-auto pointer-events-auto",
+            "size-4 xl:size-7 absolute -top-1 inset-x-0 mx-auto pointer-events-auto",
             {
               ["-top-1 left-auto"]: compact,
             }
           )}
           onClick={onClear}
         >
-          <IconX className="size-5 xl:size-7" />
+          <IconX className="size-4 xl:size-7" />
         </button>
       )}
     </div>

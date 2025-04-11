@@ -3,19 +3,22 @@ import { AudioButton } from "../AudioButton";
 import { IconMessageCircle2, IconRotateClockwise } from "@tabler/icons-react";
 import { useAuxiliarAudio } from "~/hooks/useAuxiliarAudio";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ReactNode } from "react";
+import { ReactNode, RefObject } from "react";
 import { Question, QuestionTitle } from "~/api/exam";
+import { AudioButtonRef } from "../AudioButton/AudioButton";
 
 type Props = {
   question: Question;
   hasPrimaryIcon?: boolean;
   children?: ReactNode;
+  audioRef?: RefObject<AudioButtonRef>;
 };
 
 export const AudioContainer = ({
   question,
   hasPrimaryIcon = true,
   children,
+  audioRef,
 }: Props) => {
   const { audioTitles } = useQuestionHelper(question);
   const { shouldPlay, shouldPlayAuxiliar, mainAudioRef, auxAudioRef } =
@@ -56,6 +59,7 @@ export const AudioContainer = ({
             key={inx}
             src={title.file_url ?? ""}
             {...props}
+            ref={audioRef}
           />
         );
       })}

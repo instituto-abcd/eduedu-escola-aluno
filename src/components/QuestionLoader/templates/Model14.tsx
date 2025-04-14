@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption, QuestionTitle } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { TextOptionButton } from "~/components/OptionButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
@@ -72,7 +71,10 @@ export function Model14({
 
   return (
     <>
-      <AudioContainer question={question}>
+      <AudioContainer
+        question={question}
+        audioRef={mainAudioRef}
+      >
         {hasAux && (
           <AudioButton
             ref={auxAudioRef}

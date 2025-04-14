@@ -86,7 +86,7 @@ function Text({
   return (
     <div
       className={cx(
-        "text-text font-extrabold text-[10cqw] flex-1",
+        "text-text font-extrabold text-[10cqw]",
         "leading-[100%] break-words whitespace-nowrap min-w-max",
         {
           ["mt-1"]: neighborImg,

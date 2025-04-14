@@ -177,8 +177,7 @@ function FlippableCard({
         <div
           className={cx(
             "flex flex-col items-center justify-center gap-3 size-full delay-150 duration-500",
-            "absolute size-full [backface-visibility:hidden] [transform:rotateY(180deg)]",
-            {}
+            "absolute size-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
           )}
         >
           {option.description && (
@@ -186,10 +185,13 @@ function FlippableCard({
               {option.description}
             </p>
           )}
-          <img
-            src={option.image_url ?? ""}
-            className="aspect-square object-cover w-[79px] md:w-[140px]"
-          />
+
+          {option.image_url && (
+            <img
+              src={option.image_url}
+              className="aspect-square object-cover w-[79px] md:w-[140px]"
+            />
+          )}
         </div>
       </div>
     </div>

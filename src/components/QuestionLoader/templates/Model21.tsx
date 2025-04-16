@@ -23,7 +23,7 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
   }, [question]);
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center">
       {hasAudioTitle && (
         <div className="flex gap-4 lg:self-start">
           {audioTitles.map((title, inx) => (
@@ -59,6 +59,6 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
           />
         </ScrollArea>
       </div>
-    </>
+    </div>
   );
 }

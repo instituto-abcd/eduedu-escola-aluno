@@ -117,19 +117,19 @@ export function Model31({
       onDragEnd={onDragEnd}
       sensors={sensors}
     >
-      <div className="flex flex-col items-center justify-evenly w-full h-full p-4 border border-red-600">
+      <div className="flex flex-col items-center justify-evenly w-full h-full p-4">
         <Title
           color="dark.3"
-          className="flex items-center justify-center w-full text-lg font-semibold text-center border border-red-600"
+          className="flex items-center justify-center w-full text-lg font-semibold text-center"
         >
           {statement}
         </Title>
-        <div className="flex flex-col lg:flex-row items-center justify-center w-full h-[60%] lg:h-[50%] border border-red-600">
+        <div className="flex flex-col lg:flex-row items-center justify-center w-full h-[60%] lg:h-[50%]">
           {imageTitles
             .filter((title) => title.file_url)
             .map((imageTitle, inx) => (
               <div
-                className="flex items-center flex-row lg:flex-col h-1/3 lg:h-full w-full border border-red-600 p-4"
+                className="flex items-center flex-row lg:flex-col h-1/3 lg:h-full w-full p-4"
                 key={inx}
               >
                 <img

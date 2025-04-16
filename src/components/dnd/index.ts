@@ -8,4 +8,5 @@ export { DroppablePictureCardSquare } from "./droppable-picture-card-square";
 export { DraggablePictureCardSquare } from "./draggable-picture-card-square";
 export { DraggablePictureCardBasic } from "./draggable-picture-card-basic";
 export { DroppablePictureCardBasic } from "./droppable-picture-card-basic";
+export { DraggableCardBasic } from "./draggable-card-basic";
 export { DraggableCardSquare } from "./draggable-card-square";

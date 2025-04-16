@@ -174,19 +174,13 @@ export function Model19({
       )}
 
       <div className="w-full h-full flex flex-col justify-evenly items-center">
-        <div className="w-full flex flex-wrap justify-center items-center ">
+        <div className="w-full flex flex-nowrap justify-center items-center">
           {answers.map((answer, inx) => (
             <DroppablePictureCardBasic
               id={inx}
               key={inx}
               optionItem={answer}
-              className={cx(
-                "flex m-[2%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square text-3xl bg-[#4c494120]",
-                {
-                  ["last:w-[64%] last:max-w-none last:aspect-[2/1] md:last:aspect-square md:last:max-w-[150px] md:last:w-[16%] lg:last:w-[15%]"]:
-                    inx % 2 === 0,
-                }
-              )}
+              className="flex m-[1%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square text-3xl bg-[#4c494120]"
               replaceWith={
                 answer && (
                   <DraggablePictureCardBasic
@@ -200,13 +194,7 @@ export function Model19({
                     debug={{
                       skipDebug: true,
                     }}
-                    className={cx(
-                      "flex m-[2%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square md:aspect-square text-3xl bg-[#4c494120]",
-                      {
-                        ["last:w-[64%] last:max-w-none last:aspect-[2/1] md:last:aspect-square md:last:max-w-[150px] md:last:w-[16%] lg:last:w-[15%]"]:
-                          inx % 2 === 0,
-                      }
-                    )}
+                    className="flex m-[1%] md:mx-[1vw] max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[30%] md:w-[16%] lg:w-[15%] aspect-square text-3xl bg-[#4c494120]"
                   />
                 )
               }

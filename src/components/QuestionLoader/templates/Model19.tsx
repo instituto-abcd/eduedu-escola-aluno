@@ -212,6 +212,7 @@ export function Model19({
                 text={activeDrag.description}
                 sound={activeDrag.sound_url}
                 debug={{ skipDebug: true }}
+                className="flex max-w-[150px] max-h-[150px] items-center justify-center rounded-[20px] w-[40%] md:w-[16%] lg:w-[15%] aspect-square text-3xl bg-[#4c494120]"
                 disabled
               />
             )}

@@ -48,7 +48,7 @@ export function DraggableCardSquare({
     <div
       {...props}
       className={cx(
-        "rounded-[20px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative",
+        "rounded-[20px] bg-[#F8F6F2] shadow-[0px_8px_0px_0px_#4c494166] grid place-items-center relative container-inline",
         "cursor-grab overflow-hidden p-1 md:p-4 aspect-square w-full max-w-[90px] min-w-[64px] md:min-w-[96px] md:max-w-[128px] lg:min-w-[160px] h-auto max-h-[90px] md:max-h-[128px] lg:max-h-[150px] lg:max-w-[150px]",
         {
           ["opacity-40 cursor-grabbing"]: isDragging,
@@ -62,30 +62,31 @@ export function DraggableCardSquare({
       {...attributes}
       {...listeners}
     >
+      {text && (
+        <p
+          className={cx(
+            "font-bold text-text select-none pointer-events-none",
+            "text-3xl xl:text-[70px] xl:leading-[100%]",
+            textClasses
+          )}
+        >
+          {text}
+        </p>
+      )}
       {image && (
         <img
           src={image}
           className={cx(
-            "pointer-events-none select-none max-w-full object-cover absolute inset-0 my-auto",
+            "pointer-events-none select-none max-w-full object-cover my-auto",
             {
               ["max-h-[auto] mx-0 w-full overflow-hidden p-0 rounded-0"]:
                 noPaddingRule,
               ["max-h-full mx-auto w-auto overflow-auto p-2 rounded-[20px] md:rounded-[45px]"]:
                 !noPaddingRule,
+              "max-h-[12cqh]": text
             }
           )}
         />
-      )}
-      {text && !image && (
-        <Text
-          className={cx(
-            "font-bold text-[#228BE6] select-none pointer-events-none",
-            "text-4xl xl:text-[70px] xl:leading-[100%]",
-            textClasses
-          )}
-        >
-          {text}
-        </Text>
       )}
       {onClear && (
         <button

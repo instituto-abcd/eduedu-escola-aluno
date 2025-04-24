@@ -4,7 +4,7 @@ import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { ReadButton } from "~/components/ReadButton";
 import { AudioContainer } from "~/components/AudioContainer";
-import { ImageTitle, CardOption } from "~/components/question-components";
+import { CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
 import { cx } from "~/utils/cx";
 import { useMediaQuery } from "@mantine/hooks";
@@ -76,7 +76,17 @@ export function Model10({
                   />
                 ))}
 
-              <ImageTitle titles={imageTitles} />
+              <div className="flex justify-center items-center">
+                {imageTitles.map((title) => (
+                  <img
+                    src={title.file_url!}
+                    alt={title.description}
+                    key={title.file_url}
+                    height={300}
+                    className="object-contain max-w-[90%] w-[295px] max-h-[200px] lg:max-w-[400px] lg:max-h-[400px] lg:h-full lg:w-full lg:min-h-[300px] lg:min-w-[300px]"
+                  />
+                ))}
+              </div>
             </div>
           )}
 

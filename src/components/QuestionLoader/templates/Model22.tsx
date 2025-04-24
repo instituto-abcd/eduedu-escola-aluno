@@ -1,11 +1,13 @@
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { QuestionOption } from "~/api/exam";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ImageTitle } from "~/components/question-components";
 import { CardManual } from "~/components/question-components/card-manual";
 import { AudioContainer } from "~/components/AudioContainer";
 import { TextTitle } from "~/components/question-components/TextTitle";
+
+type SelectedOption = { index: number; description: string };
 
 export function Model22({
   question,
@@ -14,25 +16,43 @@ export function Model22({
 }: ModelProps) {
   const { textTitles, imageTitles } = useQuestionHelper(question);
 
-  const [answer, setAnswer] = useState<QuestionOption>();
+  const [selected, setSelected] = useState<SelectedOption[]>([]);
+  const optionsRef = useRef<QuestionOption[]>([]);
 
-  function handleAnswer(option: QuestionOption) {
-    if (JSON.stringify(answer) === JSON.stringify(option)) {
-      setAnswer(undefined);
-    } else {
-      setAnswer(option);
-    }
+  function isOptionSelected(index: number, description: string) {
+    return selected.some(
+      (sel) => sel.index === index && sel.description === description
+    );
+  }
+
+  function handleAnswer(option: QuestionOption, index: number) {
+    const alreadySelected = isOptionSelected(index, option.description);
+
+    const newSelected = alreadySelected
+      ? selected.filter(
+          (sel) =>
+            !(sel.index === index && sel.description === option.description)
+        )
+      : [...selected, { index, description: option.description }];
+
+    setSelected(newSelected);
   }
 
   useEffect(() => {
-    setAnswer(undefined);
+    setSelected([]);
+    optionsRef.current = question.options.sort(
+      (a, b) => +a.position - +b.position
+    );
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(answer ? [answer] : []);
-  }, [answer]);
+    const selectedOptions = selected.map(
+      (sel) => optionsRef.current[sel.index]
+    );
+    onAnswerChange(selectedOptions);
+  }, [selected]);
 
-  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+  const conditions = useMemo(() => [selected.length > 0], [selected]);
 
   useEffect(() => {
     onConditionsChange(conditions);
@@ -53,17 +73,15 @@ export function Model22({
         <ImageTitle titles={imageTitles} />
 
         <div className="w-full h-auto flex flex-wrap items-center justify-center gap-4 px-10 max-w-4xl">
-          {question.options
-            .sort((a, b) => +a.position - +b.position)
-            .map((option, inx) => (
-              <CardManual
-                key={inx}
-                selected={option.description === answer?.description}
-                text={option.description}
-                onClick={() => handleAnswer(option)}
-                shape="pill"
-              />
-            ))}
+          {optionsRef.current.map((option, inx) => (
+            <CardManual
+              key={inx}
+              selected={isOptionSelected(inx, option.description)}
+              text={option.description}
+              onClick={() => handleAnswer(option, inx)}
+              shape="pill"
+            />
+          ))}
         </div>
       </div>
     </>

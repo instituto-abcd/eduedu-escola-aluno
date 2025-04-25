@@ -99,6 +99,10 @@ export function Model31({
   }, [question]);
 
   useEffect(() => {
+    setStack(options);
+  }, [options]);
+
+  useEffect(() => {
     onAnswerChange(answers.filter((ans) => ans !== null));
   }, [answers]);
 

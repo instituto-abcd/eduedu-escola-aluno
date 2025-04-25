@@ -1,259 +1,193 @@
 import bgFog from "~/assets/bg-fog.png";
-import { createStyles } from "@mantine/core";
-import { MEDIA_QUERY } from "~/constants/dimensions";
-import { Student, useStudentGetAll, useStudentReserve } from "~/api/student";
+import type { MEDIA_QUERY } from "~/constants/dimensions";
+import {
+	type Student,
+	useStudentGetAll,
+	useStudentReserve,
+} from "~/api/student";
 import { useStudent } from "~/stores/student";
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel, type Embla } from "@mantine/carousel";
 import { useEffect, useState } from "react";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
-import { useCarouselState } from "~/hooks/useCarouselState";
 import { StudentConfirmation } from "./components/StudentConfirmation";
 import { Header } from "./components/Header";
 import { LetterGrid } from "./components/LetterGrid";
 import { useGridSlide } from "~/hooks/useGridSlide";
-
-const useStyles = createStyles(
-  (_, props: { canScrollPrev: boolean; canScrollNext: boolean }) => ({
-    bg: {
-      width: "100vw",
-      height: "100vh",
-      maxHeight: "100vh",
-      overflow: "clip",
-      backgroundImage: `url("${bgFog}")`,
-      backgroundPosition: "center",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: 20,
-      padding: 16,
-    },
-
-    carouselContainer: {
-      paddingBlock: 50,
-      width: "100%",
-      height: "calc(100% - 50px)",
-      position: "relative",
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        paddingBlock: 80,
-        height: "calc(100% - 80px)",
-      },
-    },
-
-    carousel: {
-      height: 308,
-      width: "100%",
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        height: "100%",
-      },
-    },
-
-    control: {
-      width: 40,
-      height: 40,
-      position: "absolute",
-      inset: 0,
-      zIndex: 10,
-      margin: "auto",
-
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        width: 70,
-        height: 70,
-      },
-    },
-    control_t: {
-      display: props.canScrollPrev ? "block" : "none",
-      rotate: "180deg",
-      marginTop: 0,
-      top: 0,
-    },
-    control_b: {
-      display: props.canScrollNext ? "block" : "none",
-      marginBottom: 0,
-      position: "fixed",
-      bottom: 20,
-    },
-
-    studentGrid: {
-      width: "100%",
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      gridTemplateRows: "repeat(4, 1fr)",
-      gridAutoFlow: "column",
-      rowGap: 18,
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gridTemplateRows: "masonry",
-        columnGap: 16,
-      },
-      [`@media ${MEDIA_QUERY.TABLET_HORZ}`]: {
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gridTemplateRows: "repeat(6, min-content)",
-      },
-    },
-
-    studentButton: {
-      cursor: "pointer",
-      userSelect: "none",
-      width: "100%",
-      maxHeight: "min-content",
-      backgroundColor: "#fff",
-      border: "1px solid #228BE6",
-      color: "#228BE6",
-      fontSize: 20,
-      fontWeight: 600,
-      padding: "10px 14px",
-      borderRadius: 16,
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      alignSelf: "start",
-    },
-  }),
-);
+import { cx } from "~/utils/cx";
+import { useCarouselState } from "~/hooks/useCarouselState";
+import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 
 type Props = { onNext: () => void; onBack: () => void };
 
 // TODO: reserved student confirmation
 
 export function StudentSelection({ onNext, onBack }: Props) {
-  const studentState = useStudent();
-  const [carouselHandler, setHandler] = useState<Embla>();
-  const carouselState = useCarouselState(carouselHandler);
-  const { classes, cx } = useStyles(carouselState);
-  const [selected, setSelected] = useState<string>();
+	const studentState = useStudent();
+	const [carouselHandler, setHandler] = useState<Embla>();
+	const [selected, setSelected] = useState<string>();
+	const carouselState = useCarouselState(carouselHandler);
 
-  const { data: students } = useStudentGetAll(
-    {
-      schoolClassId: studentState.schoolClassId,
-      initialLetter: selected,
-      "page-size": 9999,
-    },
-    {
-      enabled: !!selected,
-    },
-  );
+	const { data: students } = useStudentGetAll(
+		{
+			schoolClassId: studentState.schoolClassId,
+			initialLetter: selected,
+			"page-size": 9999,
+		},
+		{
+			enabled: !!selected,
+		},
+	);
 
-  // Quantidade de alunos para mostrar, baseado nas dimensões de tela
-  // [ columns, rows ]
-  const [limit, setLimit] = useState<[number, number]>(
-    scrollQtyBreakpoint["MOBILE"],
-  );
+	// Quantidade de alunos para mostrar, baseado nas dimensões de tela
+	// [ columns, rows ]
+	const [limit, setLimit] = useState<[number, number]>(
+		scrollQtyBreakpoint.MOBILE,
+	);
 
-  // Effect para atualizar o formato do grid de acordo com a tela
-  useEffect(() => {
-    const updateBreakpoint = () => {
-      if (window.innerWidth < 768) {
-        setLimit(scrollQtyBreakpoint["MOBILE"]);
-      } else if (window.innerWidth >= 768 && window.innerWidth < 1024) {
-        setLimit(scrollQtyBreakpoint["TABLET_VERT"]);
-      } else {
-        setLimit(scrollQtyBreakpoint["TABLET_HORZ"]);
-      }
-    };
+	const bp = useCurrentBreakpoint();
 
-    updateBreakpoint();
-    window.addEventListener("resize", updateBreakpoint);
+	// Effect para atualizar o formato do grid de acordo com a tela
+	useEffect(() => {
+		const updateBreakpoint = () => {
+			if (window.innerWidth < 768) {
+				setLimit(scrollQtyBreakpoint.MOBILE);
+			} else if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+				setLimit(scrollQtyBreakpoint.TABLET_VERT);
+			} else {
+				setLimit(scrollQtyBreakpoint.TABLET_HORZ);
+			}
+		};
 
-    return () => {
-      window.removeEventListener("resize", updateBreakpoint);
-    };
-  }, []);
+		updateBreakpoint();
+		window.addEventListener("resize", updateBreakpoint);
 
-  useEffect(() => {
-    if (carouselHandler) {
-      carouselHandler.reInit();
-    }
-  }, [limit]);
+		return () => {
+			window.removeEventListener("resize", updateBreakpoint);
+		};
+	}, []);
 
-  // Dividir alunos em arrays aninhados para mostrar
-  // multiplos alunos em 1 único slide de carrosel
-  const slides = useGridSlide({ items: students?.items ?? [], layout: limit });
+	useEffect(() => {
+		if (carouselHandler) {
+			carouselHandler.reInit();
+		}
+	}, [limit]);
 
-  function handleLetterSelect(l: string) {
-    if (selected === l) {
-      setSelected(undefined);
-      return;
-    }
+	// Dividir alunos em arrays aninhados para mostrar
+	// multiplos alunos em 1 único slide de carrosel
+	const slides = useGridSlide({ items: students?.items ?? [], layout: limit });
 
-    setSelected(l);
-  }
+	function handleLetterSelect(l: string) {
+		if (selected === l) {
+			setSelected(undefined);
+			return;
+		}
 
-  const { mutate: reserve } = useStudentReserve({
-    onSuccess: () => {
-      studentState.update({ reserved: true });
-      onNext();
-    },
-  });
+		setSelected(l);
+	}
 
-  function handleSelection(a: boolean) {
-    if (!a || !confirmation) {
-      setConfirmation(undefined);
-      return;
-    }
-    studentState.update(confirmation);
-    reserve({ studentId: confirmation.id, reserved: true });
-  }
+	const { mutate: reserve } = useStudentReserve({
+		onSuccess: () => {
+			studentState.update({ reserved: true });
+			onNext();
+		},
+	});
 
-  const [confirmation, setConfirmation] = useState<Student>();
-  function confirm(s: Student) {
-    setConfirmation(s);
-  }
+	function handleSelection(a: boolean) {
+		if (!a || !confirmation) {
+			setConfirmation(undefined);
+			return;
+		}
+		studentState.update(confirmation);
+		reserve({ studentId: confirmation.id, reserved: true });
+	}
 
-  return (
-    <div className={classes.bg}>
-      <Header transparent title="Qual o seu nome?" onClose={onBack} />
-      <LetterGrid onSelect={handleLetterSelect} selected={selected} />
+	const [confirmation, setConfirmation] = useState<Student>();
+	function confirm(s: Student) {
+		setConfirmation(s);
+	}
 
-      <div className={classes.carouselContainer}>
-        <Carousel
-          orientation="vertical"
-          slideGap={18}
-          classNames={{
-            viewport: classes.carousel,
-            container: classes.carousel,
-            root: classes.carousel,
-          }}
-          slidesToScroll={1}
-          withControls={false}
-          containScroll="trimSnaps"
-          getEmblaApi={setHandler}
-        >
-          {slides.map((slide, index) => (
-            <Carousel.Slide key={index} className={classes.studentGrid}>
-              {slide.map((st) => (
-                <div
-                  key={st.id}
-                  className={classes.studentButton}
-                  onClick={() => confirm(st)}
-                >
-                  {st.name}
-                </div>
-              ))}
-            </Carousel.Slide>
-          ))}
-        </Carousel>
-        <ArrowDownBtn
-          className={cx([classes.control, classes.control_t])}
-          onClick={() => carouselHandler?.scrollPrev()}
-        />
-        <ArrowDownBtn
-          className={cx([classes.control, classes.control_b])}
-          onClick={() => carouselHandler?.scrollNext()}
-        />
-      </div>
-      <StudentConfirmation
-        student={confirmation}
-        acceptCb={(accepted) => handleSelection(accepted)}
-      />
-    </div>
-  );
+	/* carousel height */
+	const carouselHeight = bp === "MOBILE" ? 200 : 300;
+
+	return (
+		<div
+			className="w-screen h-screen max-h-screen overflow-clip flex flex-col items-center justify-between gap-5 p-4"
+			style={{ backgroundImage: `url("${bgFog}")` }}
+		>
+			<Header transparent title="Qual o seu nome?" onClose={onBack} />
+			<LetterGrid onSelect={handleLetterSelect} selected={selected} />
+
+			<div className="flex flex-col items-center gap-2 max-h-[300px]">
+				<Carousel
+					orientation="vertical"
+					withControls={false}
+					getEmblaApi={setHandler}
+					slideSize="100%"
+					height={carouselHeight}
+					containScroll="trimSnaps"
+					align="start"
+					slidesToScroll={1}
+					classNames={{}}
+				>
+					{slides.map((slide) => {
+						return (
+							<Carousel.Slide
+								key={slide[0].id}
+								className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 h-min"
+							>
+								{slide.map((st) => (
+									<div
+										key={st.id}
+										className={cx(
+											"cursor-pointer select-none w-full max-h-min bg-white text-[#228BE6] self-start overflow-hidden",
+											"border-[#228BE6] border text-[#228BE6] text-xl font-semibold py-2 md:py-3 px-4 rounded-2xl text-ellipsis whitespace-nowrap",
+										)}
+										onClick={() => confirm(st)}
+										onKeyDown={() => confirm(st)}
+									>
+										{st.name}
+									</div>
+								))}
+							</Carousel.Slide>
+						);
+					})}
+				</Carousel>
+			</div>
+
+			<div className="flex items-center w-min gap-4">
+				<ArrowDownBtn
+					className={cx(
+						"rotate-180 size-[40px] md:size-[60px] cursor-pointer transition-opacity",
+						{
+							"opacity-10": !carouselState.canScrollPrev,
+						},
+					)}
+					onClick={() => carouselHandler?.scrollPrev()}
+				/>
+
+				<ArrowDownBtn
+					className={cx(
+						"size-[40px] md:size-[60px] cursor-pointer transition-opacity",
+						{
+							"opacity-10": !carouselState.canScrollNext,
+						},
+					)}
+					onClick={() => carouselHandler?.scrollNext()}
+				/>
+			</div>
+
+			<StudentConfirmation
+				student={confirmation}
+				acceptCb={(accepted) => handleSelection(accepted)}
+			/>
+		</div>
+	);
 }
 
 const scrollQtyBreakpoint: Record<keyof typeof MEDIA_QUERY, [number, number]> =
-  {
-    MOBILE: [1, 4],
-    TABLET_VERT: [3, 6],
-    TABLET_HORZ: [4, 6],
-    DESKTOP: [4, 6],
-  };
+	{
+		MOBILE: [1, 4],
+		TABLET_VERT: [4, 3],
+		TABLET_HORZ: [4, 5],
+		DESKTOP: [4, 5],
+	};

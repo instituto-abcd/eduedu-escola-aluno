@@ -26,7 +26,7 @@ export function Model26({
 	const { hasAudioTitle, imageTitles, textTitles } =
 		useQuestionHelper(question);
 	const letterSlots = textTitles.find((title) =>
-		title?.description?.includes("__"),
+		title?.description?.includes("_"),
 	);
 
 	const isSlotsOnly = (title: string) =>

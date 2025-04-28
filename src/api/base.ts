@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 export class API {
-  static readonly api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-  });
+	static readonly api: AxiosInstance = axios.create({
+		baseURL: import.meta.env.VITE_API_URL + ":3000",
+	});
 }

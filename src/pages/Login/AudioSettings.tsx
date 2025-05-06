@@ -1,4 +1,3 @@
-import { createStyles } from "@mantine/core";
 import video_360_800 from "~/assets/video/setup_fone_360x800.mp4";
 import video_1024_640 from "~/assets/video/setup_fone_1024x640.mp4";
 import video_1024_768 from "~/assets/video/setup_fone_1024x768.mp4";
@@ -44,16 +43,18 @@ export function AudioSettings({ onNext, onBack }: Props) {
 
   return (
     <div
-      className="w-screen min-h-screen flex flex-col items-center justify-between pb-10"
+      className="grid grid-rows-[auto_1fr] h-screen max-w-screen max-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="w-full flex flex-col items-center">
+      {/* Container superior com header e sprites */}
+      <div className="flex flex-col justify-between">
         <Header
           title="Escute o vídeo e siga a instrução"
           onClose={onBack}
         />
-
-        <div className="flex justify-between items-center w-full mx-auto z-[55] h-[100px] px-[40px] my-[30px] [&_svg]:w-auto [&_svg]:h-full">
+        
+        <div className="flex justify-between items-center w-full mx-auto z-[55] 
+                        h-[80px] px-[40px] my-[10px] [&_svg]:w-auto [&_svg]:h-full">
           <Sprite id={0} />
           <Sprite
             id={7}
@@ -62,12 +63,15 @@ export function AudioSettings({ onNext, onBack }: Props) {
           <Sprite id={8} />
         </div>
       </div>
-      <video
-        className="w-[70%]"
-        src={videosDict[dimension]}
-        autoPlay
-        loop
-      />
+
+      <div className="grid min-h-0">
+        <video
+          className="w-full h-full object-contain max-h-[calc(100vh-160px)]"
+          src={videosDict[dimension]}
+          autoPlay
+          loop
+        />
+      </div>
     </div>
   );
 }

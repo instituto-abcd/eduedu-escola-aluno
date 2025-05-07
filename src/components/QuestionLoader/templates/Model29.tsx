@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { produce } from "immer";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import type { ModelProps } from ".";
@@ -44,17 +44,14 @@ export function Model29({
 		options.map(() => null),
 	);
 
-	const handleDrop = useCallback(function (
-		item: OptionWithId | null,
-		index: number,
-	) {
+	const handleDrop = (item: OptionWithId | null, index: number) => {
 		if (item === null) return;
 		setAnswers((state) =>
 			produce(state, (draft) => {
 				draft[index] = item;
 			}),
 		);
-	}, []);
+	};
 
 	function handleClear(index: number) {
 		setAnswers((state) =>
@@ -143,9 +140,9 @@ export function Model29({
 					</div>
 
 					<div className="grid grid-cols-2 size-full gap-4 max-h-[280px]">
-						{options.map((option) => (
+						{options.map((option, index) => (
 							<Draggable
-								id={option.id}
+								id={index}
 								key={option.id}
 								optionItem={option}
 								hidden={answers.some((ans) => ans?.id === option.id)}

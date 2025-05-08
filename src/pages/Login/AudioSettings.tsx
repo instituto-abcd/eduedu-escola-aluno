@@ -46,7 +46,6 @@ export function AudioSettings({ onNext, onBack }: Props) {
       className="grid grid-rows-[auto_1fr] h-screen max-w-screen max-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      {/* Container superior com header e sprites */}
       <div className="flex flex-col justify-between">
         <Header
           title="Escute o vídeo e siga a instrução"

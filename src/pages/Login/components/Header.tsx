@@ -20,14 +20,16 @@ const useStyles = createStyles({
     zIndex: 20,
 
     h1: {
-      fontSize: 20,
+      fontSize: 19,
       textAlign: "center",
+      paddingLeft: "32px",
     },
 
     [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
       paddingBlock: 22,
       h1: {
         fontSize: 30,
+        paddingLeft: 0,
       },
     },
   },

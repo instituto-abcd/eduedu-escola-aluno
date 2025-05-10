@@ -59,13 +59,13 @@ export function QME2x2Text({
   const title = "Leia o texto e responda à pergunta.";
   return (
     <>
-      <Stack my="auto" w={boardW(800)}>
+      <div className="flex flex-col flex-nowrap w-full h-full items-center justify-center">
         <Title color="dark.3" size={boardW(24)} mx="auto" pb={boardW(15)}>
           {title}
         </Title>
 
-        <Flex w="100%" gap={boardW(10)} m="auto">
-          <Box w="100%" maw={boardW(440)}>
+        <div className="flex flex-nowrap w-full items-center justify-center ">
+          <div className="flex flex-col w-[45%] h-full items-center justify-center">
             <ScrollArea w="100%" h={boardW(450)} pr={boardW(30)} type="always">
               <Stack align="center">
                 <Text
@@ -91,9 +91,10 @@ export function QME2x2Text({
                 ))}
               </Stack>
             </ScrollArea>
-          </Box>
+          </div>
 
-          <Box w="100%" maw={boardW(400)}>
+          <div className="flex flex-col w-[45%] h-full items-center justify-center">
+
             <ScrollArea w="100%" h={boardW(450)} type="always">
               <Stack align="center">
                 <Title
@@ -110,31 +111,31 @@ export function QME2x2Text({
                     )?.description
                   }
                 </Title>
-                <Group align="center" position="center">
-                  <Stack
-                    align="strech"
-                    style={{ marginBottom: "5px" }}
-                    w="100%"
+                <Group align="center" position="center" w={"80%"}>
+                  <div
+                    className="flex flex-wrap w-full h-full items-center justify-center"
                   >
                     {question.options.map((option) => (
-                      <TextOptionButton
-                        key={option.description}
-                        onClick={() => setAnswer(option)}
-                        data-selected={answer?.position === option.position}
-                        className={classes.button}
-                        option={option}
-                        debug={{ size: 10 }}
-                      >
-                        {option.description}
-                      </TextOptionButton>
+                      <div className="w-[40%] m-2">
+                        <TextOptionButton
+                          key={option.description}
+                          onClick={() => setAnswer(option)}
+                          data-selected={answer?.position === option.position}
+                          className={classes.button}
+                          option={option}
+                          debug={{ size: 10 }}
+                          >
+                          {option.description}
+                        </TextOptionButton>
+                      </div>
                     ))}
-                  </Stack>
+                  </div>
                 </Group>
               </Stack>
             </ScrollArea>
-          </Box>
-        </Flex>
-      </Stack>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

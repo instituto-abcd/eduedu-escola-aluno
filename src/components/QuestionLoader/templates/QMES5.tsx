@@ -46,7 +46,10 @@ export function QMES5({
 
   return (
     <>
-      <Group w="100%" m="auto">
+      <Group
+        w="100%"
+        m="auto"
+      >
         <Box
           h="100%"
           w="100%"
@@ -54,12 +57,21 @@ export function QMES5({
           style={{ display: "flex", justifyContent: "center" }}
         >
           <Box m="auto">
-            <VideoPlayer src={videoTitles[0]?.file_url ?? ""} autoPlay />
+            <VideoPlayer
+              src={videoTitles[0]?.file_url ?? ""}
+              autoPlay
+            />
           </Box>
         </Box>
 
-        <ScrollArea mah={boardW(510)}>
-          <SimpleGrid cols={2} spacing={20} style={{ marginBottom: "5px" }}>
+        <ScrollArea style={{ minWidth: "30%", minHeight: "30%" }}>
+          <SimpleGrid
+            cols={2}
+            spacing={20}
+            style={{
+              marginBottom: "5px",
+            }}
+          >
             {question.options.map((option, inx) => (
               <OptionButton
                 key={optionArrKey(option, inx)}

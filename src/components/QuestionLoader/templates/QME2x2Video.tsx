@@ -32,7 +32,7 @@ export function QME2x2Video({
 
   return (
     <>
-      <Group my="auto" spacing={boardW(80)} noWrap>
+      <div className="flex flex-nowrap w-full h-full items-center justify-center">
         <Box w="45%">
           <VideoPlayer
             src={videoTitles[0]?.file_url ?? ""}
@@ -69,7 +69,7 @@ export function QME2x2Video({
             </OptionButton>
           ))}
         </SimpleGrid>
-      </Group>
+      </div>
     </>
   );
 }

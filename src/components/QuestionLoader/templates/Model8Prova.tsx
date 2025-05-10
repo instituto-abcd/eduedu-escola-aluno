@@ -79,9 +79,10 @@ export function Model8Prova({
             ))}
 
           {showTextOptionExceptions.includes(question.id) && (
-            <Stack mx="auto" w="45%" spacing={20}>
+            <div className="flex flex-wrap min-w-[50%]">
               {question.options.map((option, inx) =>
                 showTextOptionExceptions.includes(question.id) ? (
+                  <div className="w-[40%] m-2">
                   <TextOptionButton
                     key={inx}
                     onClick={() => setAnswer(option)}
@@ -92,7 +93,7 @@ export function Model8Prova({
                   >
                     {showTextOptionExceptions.includes(question.id) && (
                       <Text
-                        size={boardW(22)}
+                        size={16}
                         color="blue.6"
                         weight={600}
                         style={{
@@ -104,6 +105,7 @@ export function Model8Prova({
                       </Text>
                     )}
                   </TextOptionButton>
+                  </div>
                 ) : (
                   <OptionButton
                     key={inx}
@@ -121,7 +123,7 @@ export function Model8Prova({
                   </OptionButton>
                 )
               )}
-            </Stack>
+            </div>
           )}
           {!showTextOptionExceptions.includes(question.id) && (
             <SimpleGrid cols={2} w="45%">

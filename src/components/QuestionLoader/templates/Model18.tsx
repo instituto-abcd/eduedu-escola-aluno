@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioContainer } from "~/components/AudioContainer";
-import { ReadButton } from "~/components/ReadButton";
 import {
   DndContext,
   DragEndEvent,
@@ -19,16 +17,19 @@ import { DraggableLetter, DroppableLetter } from "~/components/dnd";
 import { TextTitle } from "~/components/question-components/TextTitle";
 import { ImageTitle } from "~/components/question-components";
 import { v4 as uuid } from "uuid";
+import { AudioButton } from "~/components/AudioButton";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model18({
   question,
   onAnswerChange,
   onConditionsChange,
-  auxQuestion,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
-  const { imageTitles, textTitles, hasAudioTitle, supportText } =
+  const { imageTitles, textTitles, hasAudioTitle, supportText, audioTitles } =
     useQuestionHelper(question);
+    
+  const mainAudioRef = useRef<AudioButtonRef>(null);
 
   const text = useMemo(
     () =>
@@ -132,10 +133,16 @@ export function Model18({
       onDragEnd={onDragEnd}
     >
       {/* Enunciado em botões (header) */}
-      {(hasAudioTitle || hasSupportText) && (
-        <AudioContainer question={question}>
-          {auxQuestion && <ReadButton question={auxQuestion} />}
-        </AudioContainer>
+      {(hasAudioTitle ) && (
+        audioTitles.map((title, inx) => (
+          <AudioButton
+            index={inx}
+            src={title.file_url ?? ""}
+            key={title.file_name}
+            autoPlay={true}
+            ref={mainAudioRef}
+          />
+        ))
       )}
 
       <div className="flex flex-col lg:flex-row items-center justify-evenly grow size-full">

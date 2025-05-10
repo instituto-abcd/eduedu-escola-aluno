@@ -128,7 +128,11 @@ export function QME2x2Audio({
           ))}
       </Group>
 
-      <SimpleGrid cols={cols} w="fit-content" my="auto">
+      <SimpleGrid
+        cols={cols}
+        my="auto"
+        style={{ minWidth: "30%" }}
+      >
         {question.options.map((option, inx) => {
           const hasLabel =
             option.description !== null && option.description.length > 2;

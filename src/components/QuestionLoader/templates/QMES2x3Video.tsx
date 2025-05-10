@@ -52,13 +52,23 @@ export function QME2x3Video({
         spacing={((lousaHeight * 0.5) / 100).toString() + "vh"}
         my="auto"
         pt={((lousaHeight * 0.5) / 100).toString() + "vh"}
+        style={{ minWidth: "70%" }}
       >
         <Box maw={(lousaWidth * 50) / 100}>
-          <VideoPlayer src={videoTitles[0]?.file_url ?? ""} autoPlay />
+          <VideoPlayer
+            src={videoTitles[0]?.file_url ?? ""}
+            autoPlay
+          />
         </Box>
 
-        <Box maw={(lousaWidth * 50) / 100}>
-          <SimpleGrid cols={2} spacing={20}>
+        <Box
+          maw={(lousaWidth * 50) / 100}
+          style={{ minWidth: "30%" }}
+        >
+          <SimpleGrid
+            cols={2}
+            spacing={20}
+          >
             {question.options.map((option, inx) => (
               <OptionButton
                 key={optionArrKey(option, inx)}

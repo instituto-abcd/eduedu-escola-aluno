@@ -110,9 +110,7 @@ export function Model2({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const auxVideo = videoTitles.find(
-    (title, index) => index >= 1
-  );
+  const auxVideo = videoTitles.find((title, index) => index >= 1);
 
   const cardSize =
     question.options.length > 3 ? question.options.length : undefined;
@@ -210,14 +208,14 @@ export function Model2({
         {question.model_id === "MODEL2-VIDEO" && (
           <VideoTitle
             titles={videoTitles}
-            className="max-h-[200px] lg:max-h-none w-full max-w-[400px]"
+            className="max-h-[200px] w-full max-w-[400px]"
           />
         )}
 
         {!noPaddingRule && (
           <SimpleGrid
             cols={question.options.length}
-            className="xl:place-items-center grid xl:h-[40vh] xl:w-auto"
+            className="xl:place-items-center grid xl:h-[40vh] xl:w-auto max-w-[500px]"
           >
             {answers.map((slot, inx) => (
               <DroppableCard
@@ -225,6 +223,7 @@ export function Model2({
                 id={inx}
                 size={cardSize}
                 replaceWith={replaceSlotWithCard(slot, inx)}
+                style={{ maxWidth: "150px", maxHeight: "150px" }}
               />
             ))}
           </SimpleGrid>
@@ -258,7 +257,7 @@ export function Model2({
 
         <SimpleGrid
           cols={question.options.length}
-          className="place-items-center lg:min-w-[600px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
+          className="place-items-center max-w-[500px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
         >
           {optionsWithIds.map((item, inx) =>
             !!answers.find((slot) => slot?.position === item.position) ? (
@@ -283,6 +282,7 @@ export function Model2({
                 text={item.description}
                 sound={item.sound_url}
                 debug={{ debugProperty: "position" }}
+                style={{ maxWidth: "150px", maxHeight: "150px" }}
               />
             )
           )}
@@ -299,6 +299,7 @@ export function Model2({
             text={activeDrag.description}
             sound={activeDrag.sound_url}
             debug={{ skipDebug: true }}
+            style={{ maxWidth: "150px", maxHeight: "150px" }}
             disabled
           />
         ) : null}

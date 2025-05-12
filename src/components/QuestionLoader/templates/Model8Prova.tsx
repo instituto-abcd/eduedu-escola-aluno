@@ -1,176 +1,102 @@
-import {
-  Box,
-  Group,
-  Image,
-  SimpleGrid,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption } from "~/api/exam";
+import type { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { OptionButton, TextOptionButton } from "~/components/OptionButton";
-import { VideoPlayer } from "~/components/VideoPlayer";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
+import type { ModelProps } from ".";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { ImageTitle, VideoTitle } from "~/components/question-components";
 
 const showTextOptionExceptions = [35, 36, 79, 80, 87, 88];
 
 export function Model8Prova({
-  question,
-  onAnswerChange,
-  onConditionsChange,
+	question,
+	onAnswerChange,
+	onConditionsChange,
 }: ModelProps) {
-  const { audioTitles, textTitles, imageTitles, videoTitles, hasAudioTitle } =
-    useQuestionHelper(question);
-  const [answer, setAnswer] = useState<QuestionOption | null>(null);
+	const { audioTitles, textTitles, imageTitles, videoTitles, hasAudioTitle } =
+		useQuestionHelper(question);
+	const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
-  useEffect(() => {
-    setAnswer(null);
-  }, [question]);
+	const showAudioIndicatorOnly = !showTextOptionExceptions.includes(
+		question.id,
+	);
 
-  useEffect(() => {
-    onAnswerChange(answer ? [answer] : []);
-  }, [answer]);
+	useEffect(() => {
+		setAnswer(null);
+	}, [question]);
 
-  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+	useEffect(() => {
+		onAnswerChange(answer ? [answer] : []);
+	}, [answer]);
 
-  useEffect(() => {
-    onConditionsChange(conditions);
-  }, [conditions]);
+	const conditions = useMemo(() => [Boolean(answer)], [answer]);
 
-  return (
-    <>
-      {hasAudioTitle && (
-        <Group>
-          {audioTitles.map((title, inx) => (
-            <AudioButton
-              index={inx} key={inx} src={title.file_url ?? ""} autoPlay />
-          ))}
-        </Group>
-      )}
+	useEffect(() => {
+		onConditionsChange(conditions);
+	}, [conditions]);
 
-      <Stack my="auto" w="100%">
-        {textTitles.map((title, inx) => (
-          <Title color="dark.3" size="3vh" align="center" key={inx}>
-            {title.description}
-          </Title>
-        ))}
+	return (
+		<>
+			{hasAudioTitle &&
+				audioTitles.map((title, inx) => (
+					<AudioButton
+						index={inx}
+						key={inx}
+						src={title.file_url ?? ""}
+						autoPlay
+					/>
+				))}
 
-        <Group noWrap w="100%" spacing={boardW(40)} position="center">
-          {imageTitles.map((title, inx) => (
-            <Image
-              src={title.file_url}
-              alt={title.description}
-              key={inx}
-              width={boardW(500)}
-            />
-          ))}
+			<div className="flex flex-col md:flex-row size-full items-center justify-evenly">
+				<div className="flex flex-col items-center gap-4 max-w-[500px]">
+					{textTitles.map((title, inx) => (
+						<TextTitle text={title.description} key={inx} />
+					))}
 
-          {videoTitles
-            .filter((title) => title.file_url)
-            .map((title, inx) => (
-              <Box key={inx}>
-                <VideoPlayer src={title.file_url ?? ""} autoPlay />
-              </Box>
-            ))}
+					<ImageTitle titles={imageTitles} />
+					<VideoTitle titles={videoTitles} />
+				</div>
 
-          {showTextOptionExceptions.includes(question.id) && (
-            <div className="flex flex-wrap min-w-[50%]">
-              {question.options.map((option, inx) =>
-                showTextOptionExceptions.includes(question.id) ? (
-                  <div className="w-[40%] m-2">
-                  <TextOptionButton
-                    key={inx}
-                    onClick={() => setAnswer(option)}
-                    data-selected={answer?.position === option.position}
-                    style={{ width: "100%" }}
-                    option={option}
-                    debug={{ size: 12 }}
-                  >
-                    {showTextOptionExceptions.includes(question.id) && (
-                      <Text
-                        size={16}
-                        color="blue.6"
-                        weight={600}
-                        style={{
-                          wordWrap: "break-word",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {option.description}
-                      </Text>
-                    )}
-                  </TextOptionButton>
-                  </div>
-                ) : (
-                  <OptionButton
-                    key={inx}
-                    onClick={() => setAnswer(option)}
-                    data-selected={answer?.position === option.position}
-                    option={option}
-                    debug={{ size: 12 }}
-                  >
-                    <Stack justify="space-evenly">
-                      <IconVolume size={boardW(62)} />
-                      <Text color="dark.6" size={boardW(30)} weight={400}>
-                        {inx + 1}
-                      </Text>
-                    </Stack>
-                  </OptionButton>
-                )
-              )}
-            </div>
-          )}
-          {!showTextOptionExceptions.includes(question.id) && (
-            <SimpleGrid cols={2} w="45%">
-              {question.options.map((option, inx) =>
-                showTextOptionExceptions.includes(question.id) ? (
-                  <TextOptionButton
-                    key={inx}
-                    onClick={() => setAnswer(option)}
-                    data-selected={answer?.position === option.position}
-                    option={option}
-                    debug={{ size: 12 }}
-                  >
-                    {showTextOptionExceptions.includes(question.id) && (
-                      <Text
-                        size={boardW(22)}
-                        color="blue.6"
-                        weight={600}
-                        style={{
-                          wordWrap: "break-word",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {option.description}
-                      </Text>
-                    )}
-                  </TextOptionButton>
-                ) : (
-                  <OptionButton
-                    key={inx}
-                    onClick={() => setAnswer(option)}
-                    data-selected={answer?.position === option.position}
-                    option={option}
-                    debug={{ size: 12 }}
-                  >
-                    <Stack justify="space-evenly">
-                      <IconVolume size={boardW(62)} />
-                      <Text color="blue.6" size={boardW(30)} weight={600}>
-                        {inx + 1}
-                      </Text>
-                    </Stack>
-                  </OptionButton>
-                )
-              )}
-            </SimpleGrid>
-          )}
-        </Group>
-      </Stack>
-    </>
-  );
+				<div className="grid grid-cols-2 gap-4 min-w-[292px] max-w-screen-md">
+					{showAudioIndicatorOnly &&
+						question.options.map((option, inx) => (
+							<OptionButton
+								key={inx}
+								onClick={() => setAnswer(option)}
+								data-selected={answer?.position === option.position}
+								option={option}
+								debug={{ size: 12 }}
+							>
+								<IconVolume size={boardW(62)} />
+								<p className="text-text font-black text-xl">{inx + 1}</p>
+							</OptionButton>
+						))}
+
+					{!showAudioIndicatorOnly &&
+						question.options.map((option, inx) => (
+							<TextOptionButton
+								key={inx}
+								onClick={() => setAnswer(option)}
+								data-selected={answer?.position === option.position}
+								option={option}
+								debug={{ size: 12 }}
+							>
+								<p
+									className="text-text font-black text-base"
+									style={{
+										wordWrap: "break-word",
+										wordBreak: "break-word",
+									}}
+								>
+									{option.description}
+								</p>
+							</TextOptionButton>
+						))}
+				</div>
+			</div>
+		</>
+	);
 }

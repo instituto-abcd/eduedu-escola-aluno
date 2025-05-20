@@ -28,9 +28,9 @@ jobs:
       - name: Build Docker Image
         run: |-
           docker build \
-          --build-arg ARG_VITE_API_URL=$ARG_VITE_API_URL \
-          --build-arg ARG_VITE_ADMIN_URL=$ARG_VITE_ADMIN_URL \
-          --build-arg ARG_VITE_BUILD_MODE=development \
+          --build-arg API_URL=$ARG_VITE_API_URL \
+          --build-arg ADMIN_URL=$ARG_VITE_ADMIN_URL \
+          --build-arg BUILD_MODE=development \
           -t $IMAGE_NAME:latest .
       - name: Configure Docker Client
         run: |-

@@ -1,7 +1,8 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { type AxiosInstance } from "axios";
+import { env } from "~/env";
 
 export class API {
-  static readonly api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-  });
+	static readonly api: AxiosInstance = axios.create({
+		baseURL: env.VITE_API_URL,
+	});
 }

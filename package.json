@@ -20,6 +20,7 @@
     "@mantine/modals": "^6.0.16",
     "@mantine/notifications": "^6.0.16",
     "@nanostores/react": "^0.8.0",
+    "@t3-oss/env-core": "^0.13.4",
     "@tabler/icons-react": "^2.25.0",
     "@tanstack/react-query": "^4.29.23",
     "@tanstack/react-query-devtools": "^4.29.23",
@@ -28,6 +29,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.5.0",
     "embla-carousel-react": "8.0.0-rc11",
     "framer-motion": "^10.18.0",
     "howler": "^2.2.4",
@@ -43,7 +45,7 @@
     "tabler-icons-react": "^1.56.0",
     "tailwind-merge": "^2.5.4",
     "uuid": "^9.0.1",
-    "zod": "^3.21.4",
+    "zod": "^3.25.7",
     "zustand": "^4.3.9"
   },
   "devDependencies": {

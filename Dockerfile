@@ -4,6 +4,7 @@ WORKDIR /app
 ARG ARG_VITE_API_URL
 ARG ARG_VITE_ASSETS
 ARG ARG_VITE_APP_VERSION
+ARG ARG_VITE_BUILD_MODE=production
 
 ENV VITE_API_URL=${ARG_VITE_API_URL}
 ENV VITE_ASSETS=${ARG_VITE_ASSETS}
@@ -13,7 +14,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 COPY . .
 
 RUN npm install --legacy-peer-deps
-RUN npx vite build
+RUN npx vite build --mode $ARG_VITE_BUILD_MODE
 
 FROM nginx:1.16.0-alpine
 

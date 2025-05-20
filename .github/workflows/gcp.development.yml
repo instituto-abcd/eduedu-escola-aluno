@@ -13,8 +13,8 @@ jobs:
       PROJECT_ID: edueduescola-teste
       REGISTRY_PREFIX: us-east1-docker.pkg.dev
       REGISTRY_NAME: eduedu-escola-aluno-development
-      ARG_VITE_API_URL: ${{ secrets.ARG_VITE_API_URL }}
-      ARG_VITE_ADMIN_URL: ${{ secrets.ARG_VITE_ADMIN_URL }}
+      ARG_VITE_API_URL: ${{ vars.VITE_API_URL }}
+      ARG_VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
       NODE_OPTIONS: --max_old_space_size=4096
     steps:
       - name: Checkout

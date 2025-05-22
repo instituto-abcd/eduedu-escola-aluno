@@ -4,8 +4,10 @@
   "version": "1.0.12",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "local": "vite --mode offline",
+    "dev": "vite --mode development",
+    "qa": "vite --mode qa",
+    "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "check-deadcode": "ts-prune"

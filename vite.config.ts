@@ -7,13 +7,13 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [
 			react(),
-			// {
-			// 	name: "validate-env-vars",
-			// 	buildStart: () => {
-			// 		const env = loadEnv(mode, process.cwd(), "");
-			// 		envObjectSchema.parse(env);
-			// 	},
-			// },
+			{
+				name: "validate-env-vars",
+				buildStart: () => {
+					const env = loadEnv(mode, process.cwd(), "");
+					envObjectSchema.parse(env);
+				},
+			},
 		],
 		resolve: {
 			alias: {

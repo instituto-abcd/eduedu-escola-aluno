@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AppRoutes } from "./routes";
 import { useDebugInfo } from "./stores/debug-info";
+import { env } from "./env";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -12,11 +13,10 @@ const queryClient = new QueryClient({
 	},
 });
 
-// TODO: use new env
 useDebugInfo.setState({
-	AudioButton: import.meta.env.DEV,
-	VideoPlayer: import.meta.env.DEV,
-	answer: import.meta.env.DEV,
+	AudioButton: env.isDev,
+	VideoPlayer: env.isDev,
+	answer: env.isDev,
 });
 
 function App() {

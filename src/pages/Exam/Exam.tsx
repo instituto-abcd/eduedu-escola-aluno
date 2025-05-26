@@ -2,13 +2,14 @@ import { Stack } from "@mantine/core";
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
 import { useState } from "react";
-import { Question } from "~/api/exam";
+import type { Question } from "~/api/exam";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
 import { useExamProgress } from "~/stores/exam-progress";
 import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 import { AudioInterface } from "~/sounds";
 import { ScreenInfo } from "../Debug/components/ScreenInfo";
+import { env } from "~/env";
 
 export function ExamPage() {
 	const navigate = useNavigate();
@@ -43,8 +44,7 @@ export function ExamPage() {
 		}
 	}
 
-	// const showStagingInfo = !import.meta.env.PROD;
-	const showStagingInfo = false; // TODO: use new env
+	const showStagingInfo = env.isQA;
 
 	return (
 		<>

@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import type { QuestionOption } from "~/api/exam";
@@ -30,18 +29,8 @@ export function Model29({
 }: ModelProps) {
 	const { textTitles, hasAudioTitle } = useQuestionHelper(question);
 
-	/* Map id to options */
-	const options = useMemo(
-		() =>
-			question.options.map((option) => ({
-				...option,
-				id: uuid(),
-			})),
-		[question],
-	);
-
 	const [answers, setAnswers] = useState<Array<OptionWithId | null>>(
-		options.map(() => null),
+		question.options.map(() => null),
 	);
 
 	const handleDrop = (item: OptionWithId | null, index: number) => {
@@ -140,7 +129,7 @@ export function Model29({
 					</div>
 
 					<div className="grid grid-cols-2 size-full gap-4 max-h-[280px]">
-						{options.map((option, index) => (
+						{question.options.map((option, index) => (
 							<Draggable
 								id={index}
 								key={option.id}
@@ -154,7 +143,7 @@ export function Model29({
 
 			<DragOverlay>
 				{activeDrag && (
-					<Draggable optionItem={activeDrag} id={uuid()} overlay />
+					<Draggable optionItem={activeDrag} id={77112323} overlay />
 				)}
 			</DragOverlay>
 		</DndContext>

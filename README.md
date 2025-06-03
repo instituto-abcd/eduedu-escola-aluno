@@ -1,10 +1,8 @@
-
 # EduEdu Escola - Portal Aluno
 
 ## Gitflow
 
-![image](https://github.com/user-attachments/assets/ef55ff15-0c99-4a93-bf18-762dfc1f9860)
-
+![image](https://github.com/user-attachments/assets/6be6f745-4805-432c-a09d-01fc5643c7a3)
 
 ## Instruções de uso e desenvolvimento
 

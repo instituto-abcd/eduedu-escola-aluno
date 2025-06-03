@@ -11,6 +11,7 @@ import { SchoolGrade, SchoolPeriod } from "./school-class";
 import { useStudent } from "~/stores/student";
 import { Question, QuestionOption } from "./exam";
 import { useNewAward } from "~/stores/new-award";
+import { usePlanetsLimitStore } from "~/stores/planets.store";
 
 export type Student = {
 	id: string;
@@ -207,28 +208,24 @@ export function useGetPlanetTrack(
 		PlanetTrack,
 		[typeof KEY.PLANET_TRACK, PlanetTrackParams]
 	>,
-	params?: PlanetTrackParams,
 ) {
 	const studentId = useStudent((state) => state.id);
+	const params = usePlanetsLimitStore();
+	const { canExecuteAnyPlanet, usePlanetAvailability, hideLastPlanets } =
+		params;
 
 	const handler = useCallback(
-		function () {
-			return StudentAPI.getPlanetTrack(studentId, params);
-		},
-		[
-			params?.usePlanetAvailability,
-			params?.hideLastPlanets,
-			params?.canExecuteAnyPlanet,
-		],
+		() => StudentAPI.getPlanetTrack(studentId, params),
+		[usePlanetAvailability, hideLastPlanets, canExecuteAnyPlanet],
 	);
 
 	return useQuery(
 		[
 			KEY.PLANET_TRACK,
 			{
-				canExecuteAnyPlanet: params?.canExecuteAnyPlanet,
-				hideLastPlanets: params?.hideLastPlanets,
-				usePlanetAvailability: params?.usePlanetAvailability,
+				canExecuteAnyPlanet,
+				hideLastPlanets,
+				usePlanetAvailability,
 			},
 		],
 		handler,

@@ -16,8 +16,9 @@ const queryClient = new QueryClient({
 useDebugInfo.setState({
 	AudioButton: env.isDev,
 	VideoPlayer: env.isDev,
-	dimensions: env.isDev || env.isQA,
 	answer: env.isDev,
+	dimensions: env.isDev || env.isQA,
+	planetTrack: env.isDev || env.isQA,
 });
 
 function App() {

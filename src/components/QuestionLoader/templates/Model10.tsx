@@ -53,7 +53,6 @@ export function Model10({
           {auxQuestion && <ReadButton question={auxQuestion} />}
         </AudioContainer>
       )}
-
       <div className="flex flex-col size-full">
         {imageTitles.length !== 0 &&
           regularTextTitles.map((title, inx) => (

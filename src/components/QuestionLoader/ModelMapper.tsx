@@ -38,6 +38,7 @@ import { Model18Prova } from "./templates/Model18Prova";
 import { Model35 } from "./templates/Model35";
 import { Model34 } from "./templates/Model34";
 import { Model11Prova } from "./templates/Model11Prova";
+import { Model10Prova } from "./templates/Model10Prova";
 
 export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
   switch (commonProps.question.model_id) {
@@ -58,7 +59,7 @@ export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
     case "MODEL10":
       return <Model10 {...commonProps} />;
     case "MODEL10-PROVA":
-      return <Model10 {...commonProps} />;
+      return <Model10Prova {...commonProps} />;
     case "MODEL11":
       return <Model11 {...commonProps} />;
     case "MODEL11-PROVA":

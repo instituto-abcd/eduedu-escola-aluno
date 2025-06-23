@@ -1,25 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { ReadButton } from "~/components/ReadButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
-import { AudioContainer } from "~/components/AudioContainer";
+import { CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
-import {
-  ImageTitle,
-  TextBubble,
-  CardOption,
-} from "~/components/question-components";
+import { cx } from "~/utils/cx";
+import { useMediaQuery } from "@mantine/hooks";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { AudioButton } from "~/components/AudioButton";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model10Prova({
   question,
   onAnswerChange,
-  auxQuestion,
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, hasAudioTitle, getRule } =
+  const { imageTitles, textTitles, audioTitles, getRule, audioTitleAutoplay } =
     useQuestionHelper(question);
+
+  const conditions = useMemo(() => [Boolean(answer)], [answer]);
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+
+  useEffect(() => {
+    onConditionsChange(conditions);
+  }, [conditions]);
+
+  useEffect(() => {
+    onAnswerChange(answer ? [answer] : []);
+  }, [answer]);
+
+  useEffect(() => {
+    setAnswer(null);
+  }, [question]);
 
   const hideTextRule = getRule("options_hide_text")?.value === "true";
 
@@ -30,79 +43,97 @@ export function Model10Prova({
       validString(title.description) && !title.placeholder.includes("ID")
   );
 
-  useEffect(() => {
-    setAnswer(null);
-  }, [question]);
-
-  const conditions = useMemo(() => [Boolean(answer)], [answer]);
-
-  useEffect(() => {
-    onConditionsChange(conditions);
-  }, [conditions]);
-
-  useEffect(() => {
-    onAnswerChange(answer ? [answer] : []);
-  }, [answer]);
+  // Breakpoint
+  const isLg = useMediaQuery("(min-width: 1024px)");
 
   return (
-    <div className="grow flex flex-col gap-5 size-full max-h-[80vh]">
-      {hasAudioTitle && (
-        <AudioContainer question={question}>
-          {auxQuestion && <ReadButton question={auxQuestion} />}
-        </AudioContainer>
-      )}
-
-      {textTitles.map((title, inx) => (
-        <p
+    <>
+      {audioTitles.map((title, inx) => (
+        <AudioButton
+          index={inx}
           key={inx}
-          dangerouslySetInnerHTML={{ __html: title.description }}
-          className={"text-text text-center text-xl md:text-2xl xl:text-4xl"}
+          autoPlay={audioTitleAutoplay(inx)}
+          src={title.file_url!}
+          ref={mainAudioRef}
         />
       ))}
-
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full">
-        {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
-          <div className="lg:w-1/2 max-w-[600px] lg:h-full lg:max-h-[400px]">
-            {imageTitles.length === 0 &&
-              regularTextTitles.map((title, inx) => (
-                <TextBubble
-                  key={inx}
-                  text={title.description ?? ""}
-                />
-              ))}
-
-            <ImageTitle titles={imageTitles} />
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-5 lg:w-[50%] lg:aspect-square content-center justify-items-stretch">
-          {question.options.map((option, inx) => (
-            <CardOption
-              className="lg:odd:ml-auto"
+      <div className="flex flex-col size-full">
+        {imageTitles.length !== 0 &&
+          regularTextTitles.map((title, inx) => (
+            <div
+              className="text-text font-bold text-lg text-center md:text-2xl"
               key={inx}
-              onClick={() =>
-                setAnswer({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? +option.position
-                    : undefined,
-                })
-              }
-              selected={
-                JSON.stringify(answer) ===
-                JSON.stringify({
-                  ...option,
-                  positionAnswer: question.orderedAnswer
-                    ? option.position
-                    : undefined,
-                })
-              }
-              option={option}
-              properties={[hideTextRule ? null : "text", "image", "audio"]}
+              dangerouslySetInnerHTML={{ __html: title.description ?? "" }}
             />
           ))}
+
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full grow">
+          {/* Content container */}
+          {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
+            <div className="sm:size-full lg:w-1/2 flex flex-col justify-center items-center">
+              {imageTitles.length === 0 &&
+                regularTextTitles.map((title, inx) => (
+                  <TextTitle
+                    text={title.description}
+                    key={inx}
+                  />
+                ))}
+
+              <div className="flex justify-center items-center">
+                {imageTitles.map((title) => (
+                  <img
+                    src={title.file_url!}
+                    alt={title.description}
+                    key={title.file_url}
+                    height={300}
+                    className="object-contain max-w-[90%] w-[295px] max-h-[200px] lg:max-w-[400px] lg:max-h-[400px] lg:h-full lg:w-full lg:min-h-[300px] lg:min-w-[300px]"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Option container */}
+          <div
+            className={cx(
+              // BASE
+              "aspect-square w-full h-auto max-h-[400px] justify-items-center items-center grid grid-cols-2 grid-rows-2 gap-5 max-w-[700px]",
+              { ["grid-rows-3"]: question.options.length === 6 },
+              // TABLET VERT
+              "md:aspect-auto",
+              // TABLET HORZ
+              "lg:w-[50%] lg:max-h-[450px] lg:h-auto lg:aspect-square lg:justify-items-center lg:items-center"
+            )}
+          >
+            {question.options.map((option, inx) => (
+              <CardOption
+                shape={isLg ? "square" : "contain"}
+                className="lg:odd:ml-auto"
+                key={inx}
+                onClick={() =>
+                  setAnswer({
+                    ...option,
+                    positionAnswer: question.orderedAnswer
+                      ? +option.position
+                      : undefined,
+                  })
+                }
+                selected={
+                  JSON.stringify(answer) ===
+                  JSON.stringify({
+                    ...option,
+                    positionAnswer: question.orderedAnswer
+                      ? option.position
+                      : undefined,
+                  })
+                }
+                option={option}
+                properties={[hideTextRule ? null : "text", "image", "audio"]}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

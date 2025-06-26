@@ -10,6 +10,7 @@ type Props = Omit<React.HTMLAttributes<HTMLDivElement>, "id"> & {
   id: number | string;
   dropped?: boolean;
   compact?: boolean;
+  textClassName?: string;
 };
 
 export function DraggableLetter({
@@ -21,6 +22,7 @@ export function DraggableLetter({
   id,
   dropped,
   compact,
+  textClassName,
   ...props
 }: Props) {
   const { setNodeRef, isDragging, attributes, listeners } = useDraggable({
@@ -50,7 +52,13 @@ export function DraggableLetter({
       {...attributes}
       {...listeners}
     >
-      <p className="text-xl md:text-3xl text-text font-black">
+      <p
+        className={
+          textClassName
+            ? textClassName
+            : "text-xl md:text-3xl text-text font-black"
+        }
+      >
         {optionItem.description}
       </p>
 

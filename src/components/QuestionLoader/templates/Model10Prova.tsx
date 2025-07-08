@@ -1,26 +1,25 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { ReadButton } from "~/components/ReadButton";
+import { AudioContainer } from "~/components/AudioContainer";
 import { CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
 import { cx } from "~/utils/cx";
-import { useMediaQuery } from "@mantine/hooks";
 import { TextTitle } from "~/components/question-components/TextTitle";
-import { AudioButton } from "~/components/AudioButton";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 
 export function Model10Prova({
   question,
+  auxQuestion,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
-  const { imageTitles, textTitles, audioTitles, getRule, audioTitleAutoplay } =
+  const { imageTitles, textTitles, hasAudioTitle, getRule } =
     useQuestionHelper(question);
 
   const conditions = useMemo(() => [Boolean(answer)], [answer]);
-  const mainAudioRef = useRef<AudioButtonRef>(null);
 
   useEffect(() => {
     onConditionsChange(conditions);
@@ -43,20 +42,13 @@ export function Model10Prova({
       validString(title.description) && !title.placeholder.includes("ID")
   );
 
-  // Breakpoint
-  const isLg = useMediaQuery("(min-width: 1024px)");
-
   return (
     <>
-      {audioTitles.map((title, inx) => (
-        <AudioButton
-          index={inx}
-          key={inx}
-          autoPlay={audioTitleAutoplay(inx)}
-          src={title.file_url!}
-          ref={mainAudioRef}
-        />
-      ))}
+      {hasAudioTitle && (
+        <AudioContainer question={question}>
+          {auxQuestion && <ReadButton question={auxQuestion} />}
+        </AudioContainer>
+      )}
       <div className="flex flex-col size-full">
         {imageTitles.length !== 0 &&
           regularTextTitles.map((title, inx) => (
@@ -67,10 +59,10 @@ export function Model10Prova({
             />
           ))}
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full grow">
+        <div className="flex flex-col lg:flex-row items-center justify-evenly flex-1">
           {/* Content container */}
           {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
-            <div className="sm:size-full lg:w-1/2 flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center">
               {imageTitles.length === 0 &&
                 regularTextTitles.map((title, inx) => (
                   <TextTitle
@@ -97,7 +89,7 @@ export function Model10Prova({
           <div
             className={cx(
               // BASE
-              "aspect-square w-full h-auto max-h-[400px] justify-items-center items-center grid grid-cols-2 grid-rows-2 gap-5 max-w-[700px]",
+              "aspect-square w-full h-1/2 max-h-[400px] justify-items-center items-center grid grid-cols-2 gap-5 max-w-[700px]",
               { ["grid-rows-3"]: question.options.length === 6 },
               // TABLET VERT
               "md:aspect-auto",
@@ -107,9 +99,8 @@ export function Model10Prova({
           >
             {question.options.map((option, inx) => (
               <CardOption
-                shape={isLg ? "square" : "contain"}
-                className="lg:odd:ml-auto"
                 key={inx}
+                className="h-full"
                 onClick={() =>
                   setAnswer({
                     ...option,

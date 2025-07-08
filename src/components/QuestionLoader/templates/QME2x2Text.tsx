@@ -1,14 +1,3 @@
-import {
-  Box,
-  Flex,
-  Group,
-  Image,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-  createStyles,
-} from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
@@ -16,29 +5,11 @@ import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 
-const useStyles = createStyles((theme) => ({
-  typography: {
-    color: theme.colors.dark[3],
-    fontSize: boardW(24),
-    textAlign: "center",
-    b: {
-      fontWeight: 500,
-      fontSize: boardW(26),
-    },
-  },
-  button: {
-    width: "100%",
-    height: "fit-content",
-    padding: boardW(20),
-  },
-}));
-
 export function QME2x2Text({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes } = useStyles();
   const { textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
 
@@ -57,85 +28,93 @@ export function QME2x2Text({
   }, [conditions]);
 
   const title = "Leia o texto e responda à pergunta.";
+
   return (
-    <>
-      <div className="flex flex-col flex-nowrap w-full h-full items-center justify-center">
-        <Title color="dark.3" size={boardW(24)} mx="auto" pb={boardW(15)}>
-          {title}
-        </Title>
+    <div className="flex flex-col w-full h-full items-center justify-center">
+      <h1
+        className="text-gray-700 mx-auto pb-4"
+        style={{ fontSize: boardW(24), paddingBottom: boardW(15) }}
+      >
+        {title}
+      </h1>
 
-        <div className="flex flex-nowrap w-full items-center justify-center ">
-          <div className="flex flex-col w-[45%] h-full items-center justify-center">
-            <ScrollArea w="100%" h={boardW(450)} pr={boardW(30)} type="always">
-              <Stack align="center">
-                <Text
-                  className={classes.typography}
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      textTitles.find(
-                        (title) =>
-                          title.classification ===
-                          QuestionTitleClassification.HISTORIA
-                      )?.description ?? "",
-                  }}
-                />
-                {imageTitles.map((title) => (
-                  <Image
-                    src={title.file_url}
-                    alt={title.file_name}
-                    height={boardW(120)}
-                    width="auto"
-                    pt={boardW(20)}
-                    key={title.file_url}
-                  />
-                ))}
-              </Stack>
-            </ScrollArea>
-          </div>
-
-          <div className="flex flex-col w-[45%] h-full items-center justify-center">
-
-            <ScrollArea w="100%" h={boardW(450)} type="always">
-              <Stack align="center">
-                <Title
-                  align="center"
-                  color="dark.3"
-                  size={boardW(26)}
-                  weight={500}
-                >
-                  {
+      <div className="flex w-full items-center justify-center gap-4">
+        {/* Lado esquerdo: texto + imagens */}
+        <div className="flex flex-col w-5/12 h-full items-center justify-center">
+          <div
+            className="w-full pr-7 overflow-y-auto"
+            style={{ maxHeight: boardW(450) }}
+          >
+            <div className="flex flex-col items-center space-y-4">
+              <div
+                className="text-gray-700 text-center"
+                style={{ fontSize: boardW(24) }}
+                dangerouslySetInnerHTML={{
+                  __html:
                     textTitles.find(
                       (title) =>
                         title.classification ===
-                        QuestionTitleClassification.ENUNCIADO
-                    )?.description
-                  }
-                </Title>
-                <Group align="center" position="center" w={"80%"}>
+                        QuestionTitleClassification.HISTORIA
+                    )?.description ?? "",
+                }}
+              />
+              {imageTitles.map((title) => (
+                <img
+                  key={title.file_url}
+                  src={title.file_url}
+                  alt={title.file_name}
+                  style={{
+                    height: boardW(120),
+                    width: "auto",
+                    paddingTop: boardW(20),
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col w-5/12 h-full items-center justify-center">
+          <div
+            className="w-full overflow-y-auto"
+            style={{ maxHeight: boardW(450) }}
+          >
+            <div className="flex flex-col items-center space-y-4">
+              <h2
+                className="text-gray-700 text-center font-medium"
+                style={{ fontSize: boardW(26) }}
+              >
+                {
+                  textTitles.find(
+                    (title) =>
+                      title.classification ===
+                      QuestionTitleClassification.ENUNCIADO
+                  )?.description
+                }
+              </h2>
+              <div className="flex flex-wrap justify-center w-4/5 mx-auto gap-4">
+                {question.options.map((option) => (
                   <div
-                    className="flex flex-wrap w-full h-full items-center justify-center"
+                    key={option.description}
+                    className="w-5/12 m-2"
                   >
-                    {question.options.map((option) => (
-                      <div className="w-[40%] m-2">
-                        <TextOptionButton
-                          key={option.description}
-                          onClick={() => setAnswer(option)}
-                          data-selected={answer?.position === option.position}
-                          className={classes.button}
-                          option={option}
-                          debug={{ size: 10 }}
-                          >
-                          {option.description}
-                        </TextOptionButton>
-                      </div>
-                    ))}
+                    <TextOptionButton
+                      onClick={() => setAnswer(option)}
+                      data-selected={answer?.position === option.position}
+                      className="w-full h-auto"
+                      style={{ padding: boardW(20) }}
+                      option={option}
+                      debug={{ size: 10 }}
+                    >
+                      {option.description}
+                    </TextOptionButton>
                   </div>
-                </Group>
-              </Stack>
-            </ScrollArea>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

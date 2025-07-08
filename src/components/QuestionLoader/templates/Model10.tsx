@@ -7,7 +7,6 @@ import { AudioContainer } from "~/components/AudioContainer";
 import { CardOption } from "~/components/question-components";
 import { validString } from "~/utils/string";
 import { cx } from "~/utils/cx";
-import { useMediaQuery } from "@mantine/hooks";
 import { TextTitle } from "~/components/question-components/TextTitle";
 
 export function Model10({
@@ -43,9 +42,6 @@ export function Model10({
       validString(title.description) && !title.placeholder.includes("ID")
   );
 
-  // Breakpoint
-  const isLg = useMediaQuery("(min-width: 1024px)");
-
   return (
     <>
       {hasAudioTitle && (
@@ -63,10 +59,10 @@ export function Model10({
             />
           ))}
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-5 md:gap-9 size-full grow">
+        <div className="flex flex-col lg:flex-row items-center justify-evenly flex-1">
           {/* Content container */}
           {(imageTitles.length > 0 || regularTextTitles.length > 0) && (
-            <div className="sm:size-full lg:w-1/2 flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center">
               {imageTitles.length === 0 &&
                 regularTextTitles.map((title, inx) => (
                   <TextTitle
@@ -93,7 +89,7 @@ export function Model10({
           <div
             className={cx(
               // BASE
-              "aspect-square w-full h-auto max-h-[400px] justify-items-center items-center grid grid-cols-2 grid-rows-2 gap-5 max-w-[700px]",
+              "aspect-square w-full h-1/2 max-h-[400px] justify-items-center items-center grid grid-cols-2 gap-5 max-w-[700px]",
               { ["grid-rows-3"]: question.options.length === 6 },
               // TABLET VERT
               "md:aspect-auto",
@@ -103,9 +99,8 @@ export function Model10({
           >
             {question.options.map((option, inx) => (
               <CardOption
-                shape={isLg ? "square" : "contain"}
-                className="lg:odd:ml-auto"
                 key={inx}
+                className="h-full"
                 onClick={() =>
                   setAnswer({
                     ...option,

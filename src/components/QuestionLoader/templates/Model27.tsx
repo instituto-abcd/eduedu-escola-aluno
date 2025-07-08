@@ -1,4 +1,3 @@
-import { Box, Text, ScrollArea } from "@mantine/core";
 import { ModelProps } from ".";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
@@ -45,7 +44,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
     <>
       <div className="flex gap-4 lg:self-start">
         {audioTitles.map((title, inx) => (
-          <Box
+          <div
             key={inx}
             hidden
           >
@@ -56,7 +55,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
               src={title?.file_url ?? ""}
               ref={mainAudioRef}
             />
-          </Box>
+          </div>
         ))}
 
         {currentSlide?.sound_url && (
@@ -69,7 +68,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
         )}
       </div>
 
-      <div className="flex-col md:flex-row flex flex-1 max-h-[90%] w-screen md:w-[90%] justify-between items-center">
+      <div className="flex flex-col md:flex-row flex-1 max-h-[90%] w-screen md:w-[90%] justify-between items-center">
         {question.options.length > 1 && (
           <BasicButton
             disabled={slideIndex === 0 || mainAudioRef.current?.sound.playing()}
@@ -90,20 +89,10 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
           )}
 
           {currentSlide?.description && (
-            <ScrollArea
-              type="always"
-              style={{ overflow: "auto" }}
-            >
-              <Box className="max-h-[50%] p-4">
-                <Text
-                  m="auto"
-                  fz="lg"
-                  color="dark.3"
-                  align="center"
-                  dangerouslySetInnerHTML={{ __html: currentSlide.description }}
-                />
-              </Box>
-            </ScrollArea>
+            <div
+              className="max-h-[50%] p-4 overflow-auto"
+              dangerouslySetInnerHTML={{ __html: currentSlide.description }}
+            />
           )}
         </div>
 
@@ -111,7 +100,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
           <BasicButton
             onClick={nextSlide}
             disabled={
-              slideIndex + 1 == totalSlides ||
+              slideIndex + 1 === totalSlides ||
               mainAudioRef.current?.sound.playing()
                 ? true
                 : false
@@ -136,7 +125,7 @@ export function Model27({ question, onConditionsChange }: ModelProps) {
             <BasicButton
               onClick={nextSlide}
               disabled={
-                slideIndex + 1 == totalSlides ||
+                slideIndex + 1 === totalSlides ||
                 mainAudioRef.current?.sound.playing()
                   ? true
                   : false

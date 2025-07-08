@@ -1,4 +1,3 @@
-import { Box, Group, Image, SimpleGrid, Text } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
@@ -44,55 +43,56 @@ export function QME2x3Video({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  return (
-    <>
-      <Group
-        noWrap
-        grow
-        spacing={((lousaHeight * 0.5) / 100).toString() + "vh"}
-        my="auto"
-        pt={((lousaHeight * 0.5) / 100).toString() + "vh"}
-        style={{ minWidth: "70%" }}
-      >
-        <Box maw={(lousaWidth * 50) / 100}>
-          <VideoPlayer
-            src={videoTitles[0]?.file_url ?? ""}
-            autoPlay
-          />
-        </Box>
+  const spacingVh = (lousaHeight * 0.5) / 100;
 
-        <Box
-          maw={(lousaWidth * 50) / 100}
-          style={{ minWidth: "30%" }}
+  return (
+    <div
+      className="flex flex-nowrap my-auto pt-0"
+      style={{
+        minWidth: "70%",
+        paddingTop: `${spacingVh}vh`,
+        gap: `${spacingVh}vh`,
+      }}
+    >
+      <div style={{ maxWidth: `${(lousaWidth * 50) / 100}px`, flexGrow: 1 }}>
+        <VideoPlayer
+          src={videoTitles[0]?.file_url ?? ""}
+          autoPlay
+        />
+      </div>
+
+      <div
+        style={{ maxWidth: `${(lousaWidth * 50) / 100}px`, minWidth: "30%" }}
+      >
+        <div
+          className="grid grid-cols-2 gap-5"
+          style={{ gap: "20px" }}
         >
-          <SimpleGrid
-            cols={2}
-            spacing={20}
-          >
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={optionArrKey(option, inx)}
-                data-selected={
-                  !!selected.find((item) => item.position === option.position)
-                }
-                onClick={() => selectItem(option)}
-                option={option}
-              >
-                {option.image_url && (
-                  <Image
-                    src={option.image_url}
-                    alt={option.description}
-                    width="100%"
-                  />
-                )}
-                {!option.image_url && option.description && (
-                  <Text>{option.description}</Text>
-                )}
-              </OptionButton>
-            ))}
-          </SimpleGrid>
-        </Box>
-      </Group>
-    </>
+          {question.options.map((option, inx) => (
+            <OptionButton
+              key={optionArrKey(option, inx)}
+              data-selected={
+                !!selected.find((item) => item.position === option.position)
+              }
+              onClick={() => selectItem(option)}
+              option={option}
+            >
+              {option.image_url ? (
+                <img
+                  src={option.image_url}
+                  alt={option.description}
+                  className="w-full"
+                  style={{ objectFit: "contain" }}
+                />
+              ) : (
+                option.description && (
+                  <p className="text-gray-800">{option.description}</p>
+                )
+              )}
+            </OptionButton>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Group } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Lottie from "react-lottie";
 import { LottieLayers, useDownloadLottieFile } from "~/api/lottie";
@@ -168,10 +167,10 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
   };
 
   return (
-    <Group className="flex flex-col flex-1 w-full">
+    <div className="flex flex-col flex-1 w-full">
       {hasAudioTitle && (
-        <Group className="flex flex-col md:flex-row items-center w-full">
-          <Group className="md:absolute z-10">
+        <div className="flex flex-col md:flex-row items-center w-full">
+          <div className="md:absolute z-10">
             {audioTitles.map((title, inx) => (
               <AudioButton
                 index={inx}
@@ -180,21 +179,19 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
                 autoPlay={isCompletedLottie && audioTitleAutoplay(inx)}
               />
             ))}
-          </Group>
-          <Group className="z-10 flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
+          </div>
+          <div className="z-10 flex relative top-10 sm:top-20 md:top-auto md:flex-1 justify-center items-center">
             <ButtonErase
               onClick={cleanUp}
               disabled={false}
             />
-          </Group>
-        </Group>
+          </div>
+        </div>
       )}
 
-      <Group
-        position="apart"
-        spacing={137}
+      <div
+        className="flex justify-between"
         style={{ position: "relative", isolation: "isolate" }}
-        my="auto"
       >
         <canvas ref={canvasRef} />
 
@@ -238,7 +235,7 @@ export function Model16({ question, onConditionsChange }: ModelProps) {
             }}
           />
         )}
-      </Group>
-    </Group>
+      </div>
+    </div>
   );
 }

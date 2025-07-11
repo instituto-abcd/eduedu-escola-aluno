@@ -1,4 +1,3 @@
-import { Box, Container, Flex, Group } from "@mantine/core";
 import { useStudent } from "~/stores/student";
 
 const VERSION: string = import.meta.env.VITE_APP_VERSION;
@@ -6,19 +5,17 @@ const VERSION: string = import.meta.env.VITE_APP_VERSION;
 export function Footer() {
   const schoolName = useStudent((s) => s.schoolClassName);
   return (
-    <Box
-      style={{ backgroundColor: "#509BCA", color: "#fff", padding: "12px 0" }}
-    >
-      <Container>
-        <Flex justify="space-between">
+    <div className="bg-[#509BCA] text-white py-3">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
           <b>{schoolName}</b>
-          <Group spacing={12}>
+          <div className="flex items-center gap-3">
             <span>Desenvolvido por EduEdu+</span>
             &mdash;
             <span>{VERSION ? `Versão ${VERSION}` : "v1.0.0"}</span>
-          </Group>
-        </Flex>
-      </Container>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

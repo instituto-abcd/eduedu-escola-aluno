@@ -1,4 +1,4 @@
-import { Group, Slider, Stack, createStyles } from "@mantine/core";
+import { Slider, createStyles } from "@mantine/core";
 import {
   IconRotateClockwise,
   IconPlayerPlayFilled,
@@ -73,8 +73,8 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
   }));
 
   return (
-    <Stack align="center" spacing="xl">
-      <Group>
+    <div className="flex flex-col items-center gap-8">
+      <div className="flex items-center gap-2">
         <IconButton
           icon={
             <IconRotateClockwise
@@ -112,7 +112,7 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
           }
           onClick={forward}
         />
-      </Group>
+      </div>
       <Slider
         value={currentTime}
         onChange={(e) => {
@@ -146,6 +146,6 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
           return formatted;
         }}
       />
-    </Stack>
+    </div>
   );
 });

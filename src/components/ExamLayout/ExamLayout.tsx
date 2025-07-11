@@ -1,13 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { useExamProgress } from "~/stores/exam-progress";
-import { createStyles, Stack } from "@mantine/core";
 import { Navbar } from "~/components/Navbar/Navbar";
 import { useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 
 export function ExamLayout() {
-  const { classes } = useStyles();
-
   // Progressbar handlers
   const examProgress = useExamProgress();
   useEffect(() => {
@@ -19,7 +16,7 @@ export function ExamLayout() {
   // Navbar - header handlers
   const [inView, headerHandler] = useDisclosure(false);
   function handleHeaderTrigger(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {
     if (e.clientY <= 10) {
       headerHandler.open();
@@ -27,8 +24,14 @@ export function ExamLayout() {
   }
 
   return (
-    <Stack className={classes.container} onMouseMove={handleHeaderTrigger}>
-      <Navbar inView={inView} onMouseLeave={headerHandler.close} />
+    <div
+      className="flex flex-col h-screen w-screen bg-[#AFCBE0] items-center"
+      onMouseMove={handleHeaderTrigger}
+    >
+      <Navbar
+        inView={inView}
+        onMouseLeave={headerHandler.close}
+      />
       {/*
         <Progress
           value={examProgress.value}
@@ -49,15 +52,6 @@ export function ExamLayout() {
          TODO: definir se continuará a ser usado a barra de progresso
       */}
       <Outlet />
-    </Stack>
+    </div>
   );
 }
-
-const useStyles = createStyles({
-  container: {
-    height: "100vh",
-    width: "100vw",
-    backgroundColor: "#AFCBE0",
-    alignItems: "center",
-  },
-});

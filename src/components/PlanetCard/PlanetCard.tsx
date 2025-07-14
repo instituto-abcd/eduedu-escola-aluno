@@ -1,4 +1,4 @@
-import { Rating, Stack, createStyles } from "@mantine/core";
+import { Rating, createStyles } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { SimplifiedPlanet } from "~/api/student";
 import { ButtonPlay, ButtonReplay } from "../Buttons";
@@ -151,11 +151,15 @@ export function PlanetCard({ planet, size }: PlanetCardProps) {
 
   return (
     <div className={getClass("container")}>
-      <Stack
+      <div
         className={getClass("wrapper")}
-        align="center"
-        justify={size === "small" ? "end" : "space-between"}
-        spacing={6}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: size === "small" ? "flex-end" : "space-between",
+          gap: "6px",
+        }}
       >
         <img
           src={planet.planetAvatar}
@@ -189,7 +193,7 @@ export function PlanetCard({ planet, size }: PlanetCardProps) {
             className={getClass("button")}
           />
         )}
-      </Stack>
+      </div>
     </div>
   );
 }

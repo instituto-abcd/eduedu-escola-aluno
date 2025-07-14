@@ -1,13 +1,9 @@
-import { Button, Box, Stack, createStyles, Text } from "@mantine/core";
+import { Button, createStyles } from "@mantine/core";
 import { IconLockOpen } from "@tabler/icons-react";
 import { Student } from "~/api/student";
 
 const useStyles = createStyles(
   (_, { selected, reserved }: { selected: boolean; reserved: boolean }) => ({
-    card: {
-      position: "relative",
-      width: "100%",
-    },
     lock: {
       position: "absolute",
       top: 10,
@@ -57,7 +53,7 @@ export function StudentGridCard({
   }
 
   return (
-    <Box className={classes.card}>
+    <div className="relative w-full">
       {student.reserved && (
         <IconLockOpen
           color="#228BE6"
@@ -72,22 +68,23 @@ export function StudentGridCard({
         classNames={{ root: classes.buttonRoot }}
         styles={{ inner: { maxWidth: "100%" } }}
       >
-        <Stack w="100%">
-          <Text
-            size="lg"
-            color={student.reserved ? "gray.5" : "blue.6"}
-            style={{ lineHeight: 1, whiteSpace: "pre-wrap" }}
+        <div className="flex flex-col w-full">
+          <div
+            className={`text-lg leading-none whitespace-pre-wrap ${
+              student.reserved ? "text-gray-500" : "text-blue-600"
+            }`}
           >
             {student.name}
-          </Text>
-          <Text
-            fz="md"
-            c={student.reserved ? "gray.5" : "gray.7"}
+          </div>
+          <div
+            className={`text-base ${
+              student.reserved ? "text-gray-500" : "text-gray-700"
+            }`}
           >
             {student.registry}
-          </Text>
-        </Stack>
+          </div>
+        </div>
       </Button>
-    </Box>
+    </div>
   );
 }

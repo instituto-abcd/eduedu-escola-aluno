@@ -1,4 +1,3 @@
-import { Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
@@ -68,7 +67,7 @@ export function DraggablePictureCardBasic({
         />
       )}
       {text && !image && (
-        <Text
+        <span
           className={cx(
             "font-bold text-[#228BE6] select-none pointer-events-none",
             "text-4xl xl:text-[70px] xl:leading-[100%]",
@@ -76,7 +75,7 @@ export function DraggablePictureCardBasic({
           )}
         >
           {text}
-        </Text>
+        </span>
       )}
       {onClear && (
         <button

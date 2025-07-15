@@ -1,4 +1,4 @@
-import { createStyles, LoadingOverlay, Stack } from "@mantine/core";
+import { createStyles, LoadingOverlay } from "@mantine/core";
 import { Navbar } from "~/components/Navbar";
 import { Outlet } from "react-router-dom";
 import { AwardSubscriber } from "../AwardSubscriber";
@@ -42,7 +42,7 @@ export function Layout() {
   const isLoading = useStore($loading);
 
   return (
-    <Stack className={classes.shell}>
+    <div className="relative min-w-screen min-h-screen">
       <Navbar
         inView={inView}
         onMouseLeave={headerHandler.close}
@@ -53,16 +53,11 @@ export function Layout() {
         className={classes.loader}
       />
       <AwardSubscriber />
-    </Stack>
+    </div>
   );
 }
 
 const useStyles = createStyles({
-  shell: {
-    position: "relative",
-    minWidth: "100vw",
-    minHeight: "100vh",
-  },
   loader: {
     minWidth: "100vw",
     minHeight: "100vh",

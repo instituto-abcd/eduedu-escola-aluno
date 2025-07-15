@@ -1,10 +1,8 @@
-import { ScrollArea, Text, Title } from "@mantine/core";
 import { AudioButton } from "~/components/AudioButton";
 import { boardW } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { useEffect } from "react";
-import { useTimeout } from "@mantine/hooks";
 
 export function Model21({ question, onConditionsChange }: ModelProps) {
   const { audioTitles, textTitles, hasAudioTitle, audioTitleAutoplay } =
@@ -16,10 +14,12 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
   const statement =
     textTitles.find((title) => title.position === 2)?.description ?? "";
 
-  const { start } = useTimeout(() => onConditionsChange([true]), 1000);
-
   useEffect(() => {
-    start();
+    const timer = setTimeout(() => {
+      onConditionsChange([]);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [question]);
 
   return (
@@ -39,25 +39,20 @@ export function Model21({ question, onConditionsChange }: ModelProps) {
 
       <div className="w-[90%] h-full max-w-full flex flex-col justify-evenly items-center">
         {title !== "" && (
-          <Title
-            color="dark.3"
-            size={boardW(30)}
-            className="text-center text-2xl"
+          <h2
+            className="text-center text-zinc-700 font-semibold text-2xl"
+            style={{ fontSize: boardW(30) }}
           >
             {title}
-          </Title>
+          </h2>
         )}
 
-        <ScrollArea
-          type="always"
-          className="px-10 max-h-[80%]"
-        >
-          <Text
+        <div className="overflow-y-auto px-10 max-h-[80%] w-full">
+          <p
+            className="text-center text-xl text-zinc-700"
             dangerouslySetInnerHTML={{ __html: statement }}
-            color="dark.3"
-            className="text-center text-xl"
           />
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );

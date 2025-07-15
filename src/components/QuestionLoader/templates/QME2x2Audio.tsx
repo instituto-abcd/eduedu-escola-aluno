@@ -1,4 +1,3 @@
-import { Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconVolume } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionOption, QuestionTitleClassification } from "~/api/exam";
@@ -112,7 +111,7 @@ export function QME2x2Audio({
           />
         ))}
 
-      <Group>
+      <div className="flex flex-wrap gap-2 mb-4">
         {audioTitles
           .filter(
             (title) =>
@@ -126,12 +125,14 @@ export function QME2x2Audio({
               ref={enunciado}
             />
           ))}
-      </Group>
+      </div>
 
-      <SimpleGrid
-        cols={cols}
-        my="auto"
-        style={{ minWidth: "30%" }}
+      <div
+        className={`grid gap-4 my-auto`}
+        style={{
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          minWidth: "30%",
+        }}
       >
         {question.options.map((option, inx) => {
           const hasLabel =
@@ -143,20 +144,22 @@ export function QME2x2Audio({
               onClick={() => setAnswer(option)}
               data-selected={answer?.position === option.position}
             >
-              <Stack justify="space-evenly">
+              <div className="flex flex-col justify-evenly items-center">
                 {!hasLabel && <IconVolume size={boardW(70)} />}
-                <Text
-                  size={hasLabel ? boardW(20) : boardW(30)}
-                  weight={hasLabel ? 400 : 600}
-                  style={{ wordBreak: "break-word" }}
+                <p
+                  className="break-words"
+                  style={{
+                    fontSize: hasLabel ? boardW(20) : boardW(30),
+                    fontWeight: hasLabel ? 400 : 600,
+                  }}
                 >
                   {hasLabel ? option.description : inx + 1}
-                </Text>
-              </Stack>
+                </p>
+              </div>
             </OptionButton>
           );
         })}
-      </SimpleGrid>
+      </div>
     </>
   );
 }

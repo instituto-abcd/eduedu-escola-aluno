@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { Text, Title } from "@mantine/core";
 import { OptionButton } from "~/components/OptionButton";
 import { VideoPlayer } from "~/components/VideoPlayer";
 import { QuestionOption } from "~/api/exam";
@@ -49,14 +48,15 @@ export function Model3({
           ))}
         </div>
       )}
+
       {textTitles.map((title) => (
-        <Title
+        <h2
           key={title.description}
           dangerouslySetInnerHTML={{ __html: title.description }}
-          color="dark.3"
-          className="text-xl text-center font-semibold"
+          className="text-xl text-center font-semibold text-zinc-700"
         />
       ))}
+
       <div className="h-full w-full flex flex-wrap items-center justify-center">
         {videoTitles[0]?.file_url && (
           <div className="max-w-[500px] w-full md:w-1/2">
@@ -77,7 +77,7 @@ export function Model3({
               option={option}
               className="h-[40%] w-[40%] rounded-[15%] lg:w-[200px] lg:h-[200px] m-[5%] md:m-4 flex items-center justify-center"
             >
-              {option.image_url && (
+              {option.image_url ? (
                 <>
                   <img
                     src={option.image_url}
@@ -86,9 +86,8 @@ export function Model3({
                   />
                   {option.description}
                 </>
-              )}
-              {!option.image_url && (
-                <Text size={"2vh"}>{option.description}</Text>
+              ) : (
+                <p className="text-[2vh] text-zinc-700">{option.description}</p>
               )}
             </OptionButton>
           ))}

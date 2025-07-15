@@ -3,7 +3,6 @@ import {
   Divider,
   Group,
   Radio,
-  Stack,
   Title,
   createStyles,
   Textarea,
@@ -59,7 +58,7 @@ export function SchoolClassSelect() {
 
   return (
     <Container py={24}>
-      <Stack>
+      <div className="flex flex-col">
         <Title>
           Tamanho de tela: {dimensions[screenMode].w}x{dimensions[screenMode].h}
         </Title>
@@ -94,7 +93,7 @@ export function SchoolClassSelect() {
             ))}
           </div>
         )}
-      </Stack>
+      </div>
     </Container>
   );
 }
@@ -203,14 +202,14 @@ function ScreenModeSelect({
       onChange={onChange}
       label="Modo de tela"
     >
-      <Stack spacing="xs">
+      <div className="flex flex-col gap-2">
         {Object.keys(screenModes).map((mode) => (
           <Radio
             value={mode}
             label={screenModes[mode as ScreenMode]}
           />
         ))}
-      </Stack>
+      </div>
     </Radio.Group>
   );
 }

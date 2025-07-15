@@ -7,7 +7,6 @@ import {
   Modal,
   Notification,
   Rating,
-  Stack,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useSearchParams } from "react-router-dom";
@@ -58,10 +57,7 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
       radius="md"
       centered
     >
-      <Stack
-        align="center"
-        spacing="xl"
-      >
+      <div className="flex flex-col items-center gap-8">
         {error && (
           <>
             <Image
@@ -119,7 +115,7 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
             </Button>
           </>
         )}
-      </Stack>
+      </div>
     </Modal>
   );
 }

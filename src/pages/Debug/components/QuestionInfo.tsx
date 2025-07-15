@@ -10,7 +10,6 @@ import {
   NumberInput,
   Progress,
   Select,
-  Stack,
   Table,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -50,10 +49,7 @@ export function QuestionInfo({
         opened={opened}
         onClose={handlers.close}
       >
-        <Stack
-          spacing="xs"
-          align="center"
-        >
+        <div className="flex flex-col items-center gap-2">
           <span className="text-gray-600 font-bold text-center">
             {question.model_id}
           </span>
@@ -96,12 +92,7 @@ export function QuestionInfo({
           >
             Logar objeto
           </Anchor>
-          <Stack
-            align="center"
-            w="100%"
-            spacing={4}
-            my="md"
-          >
+          <div className="flex flex-col items-center w-full gap-1 my-4">
             <span className="text-gray-500 text-center text-xs font-semibold">
               Planeta: {question.planetTitle}
             </span>
@@ -115,7 +106,7 @@ export function QuestionInfo({
               color="teal"
               animate
             />
-          </Stack>
+          </div>
 
           <Group>
             <NumberInput
@@ -140,7 +131,7 @@ export function QuestionInfo({
               Pular
             </Button>
           </Group>
-          <Stack align="flex-end">
+          <div className="flex flex-col items-end">
             <Select
               data={questions.map((q, inx) => ({
                 label: `${inx} — ${q.model_id}`,
@@ -160,8 +151,8 @@ export function QuestionInfo({
             >
               Go
             </Button>
-          </Stack>
-        </Stack>
+          </div>
+        </div>
       </Drawer>
       <Group
         position="center"

@@ -1,4 +1,4 @@
-import { createStyles, Modal, ModalProps, Stack, Title } from "@mantine/core";
+import { createStyles, Modal, ModalProps, Title } from "@mantine/core";
 import { AwardImage } from "~/constants/awards";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import Lottie from "react-lottie";
@@ -22,12 +22,7 @@ export function AwardModal({ award, ...props }: Props) {
       radius={30}
       centered
     >
-      <Stack
-        align="center"
-        justify="center"
-        spacing={10}
-        py={20}
-      >
+      <div className="flex flex-col items-center justify-center gap-2.5 py-5">
         <Lottie
           options={{
             loop: false,
@@ -43,7 +38,7 @@ export function AwardModal({ award, ...props }: Props) {
         />
         <Title className={classes.title}>{award.name}</Title>
         <span className={classes.description}>{award.description}</span>
-      </Stack>
+      </div>
     </Modal>
   );
 }

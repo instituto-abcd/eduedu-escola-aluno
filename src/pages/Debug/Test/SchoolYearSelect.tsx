@@ -4,7 +4,6 @@ import {
   Group,
   NumberInput,
   Radio,
-  Stack,
 } from "@mantine/core";
 import { useState } from "react";
 
@@ -136,14 +135,14 @@ function ScreenModeSelect({
       onChange={onChange}
       label="Modo de tela"
     >
-      <Stack spacing="xs">
+      <div className="flex flex-col gap-2">
         {Object.keys(screenModes).map((mode) => (
           <Radio
             value={mode}
             label={screenModes[mode as ScreenMode]}
           />
         ))}
-      </Stack>
+      </div>
     </Radio.Group>
   );
 }

@@ -1,4 +1,4 @@
-import { Anchor, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Anchor, SimpleGrid, Title } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useDebugModelList } from "~/api/debug";
 
@@ -6,15 +6,8 @@ export function ModelsList() {
   const { data } = useDebugModelList({ initialData: [] });
 
   return (
-    <Stack
-      mih="100vh"
-      align="center"
-      p="xl"
-    >
-      <Stack
-        spacing={0}
-        justify="center"
-      >
+    <div className="flex flex-col items-center min-h-screen p-8">
+      <div className="flex flex-col justify-center">
         <Title
           color="dark.4"
           order={1}
@@ -24,7 +17,7 @@ export function ModelsList() {
         {data && (
           <span className="text-gray-600">Total de modelos: {data.length}</span>
         )}
-      </Stack>
+      </div>
 
       <SimpleGrid cols={8}>
         {data?.map((modelId) => (
@@ -38,6 +31,6 @@ export function ModelsList() {
           </Anchor>
         ))}
       </SimpleGrid>
-    </Stack>
+    </div>
   );
 }

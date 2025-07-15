@@ -1,4 +1,4 @@
-import { Button, CopyButton, Paper, Stack, Table, Text } from "@mantine/core";
+import { Button, CopyButton, Paper, Stack, Table } from "@mantine/core";
 import { useOs, useViewportSize } from "@mantine/hooks";
 import { IconCircleCheck, IconCopy } from "@tabler/icons-react";
 import { Question } from "~/api/exam";
@@ -40,13 +40,25 @@ ${import.meta.env.MODE} - ${packageJson.version}
 `;
 
   return (
-    <Paper p="sm" withBorder shadow="md" style={{ minWidth: 160 }}>
-      <Stack spacing="xs" align="center" justify="center">
-        <Text color="dimmed" size={12} weight={700}>
+    <Paper
+      p="sm"
+      withBorder
+      shadow="md"
+      style={{ minWidth: 160 }}
+    >
+      <Stack
+        spacing="xs"
+        align="center"
+        justify="center"
+      >
+        <span className="text-gray-500 text-xs font-bold">
           Dados da Questão
-        </Text>
+        </span>
 
-        <Table fontSize={12} withBorder>
+        <Table
+          fontSize={12}
+          withBorder
+        >
           <tbody>
             <tr>
               <td>Modelo</td>

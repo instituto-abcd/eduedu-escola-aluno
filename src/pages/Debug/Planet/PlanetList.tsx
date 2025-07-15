@@ -1,4 +1,4 @@
-import { Badge, Image, Paper, SimpleGrid, Text, Title } from "@mantine/core";
+import { Badge, Image, Paper, SimpleGrid, Title } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useDebugPlanets } from "~/api/debug";
 
@@ -14,7 +14,11 @@ export function PlanetList() {
         >
           Planetas
         </Title>
-        {data && <Text color="dark.4">Total de planetas: {data.length}</Text>}
+        {data && (
+          <span className="text-gray-600">
+            Total de planetas: {data.length}
+          </span>
+        )}
       </div>
 
       <SimpleGrid cols={7}>
@@ -31,12 +35,7 @@ export function PlanetList() {
           >
             <div className="flex flex-col items-center">
               <div className="flex w-full justify-between items-center">
-                <Text
-                  color="dark.3"
-                  weight={700}
-                >
-                  {planet.title}
-                </Text>
+                <span className="text-gray-700 font-bold">{planet.title}</span>
                 <Badge>{planet.axis_code ?? "N/A"}</Badge>
               </div>
               <Image
@@ -57,12 +56,9 @@ export function PlanetList() {
                 >
                   {planet.status ?? "N/A"}
                 </Badge>
-                <Text
-                  color="dimmed"
-                  size={12}
-                >
+                <span className="text-gray-500 text-xs">
                   Questões: {planet.questions.length}
-                </Text>
+                </span>
               </div>
             </div>
           </Paper>

@@ -12,7 +12,6 @@ import {
   Select,
   Stack,
   Table,
-  Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAdjustments } from "@tabler/icons-react";
@@ -55,13 +54,9 @@ export function QuestionInfo({
           spacing="xs"
           align="center"
         >
-          <Text
-            color="dark.4"
-            weight={700}
-            align="center"
-          >
+          <span className="text-gray-600 font-bold text-center">
             {question.model_id}
-          </Text>
+          </span>
           <CopyButton value={question.id.toString()}>
             {({ copied, copy }) => (
               <Button
@@ -107,20 +102,12 @@ export function QuestionInfo({
             spacing={4}
             my="md"
           >
-            <Text
-              color="dimmed"
-              align="center"
-              size="xs"
-              weight={600}
-            >
+            <span className="text-gray-500 text-center text-xs font-semibold">
               Planeta: {question.planetTitle}
-            </Text>
-            <Text
-              weight={600}
-              color="dark.3"
-            >
+            </span>
+            <span className="font-semibold text-gray-700">
               {current} / {total - 1}
-            </Text>
+            </span>
             <Progress
               value={progress}
               w="100%"

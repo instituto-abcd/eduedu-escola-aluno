@@ -2,7 +2,6 @@ import {
   Title,
   SimpleGrid,
   Paper,
-  Text,
   Badge,
   Table,
   MultiSelect,
@@ -24,7 +23,11 @@ export function QuestionListPage() {
         >
           Questões de Prova
         </Title>
-        {data && <Text color="dark.4">Total de questões: {data.length}</Text>}
+        {data && (
+          <span className="text-gray-600">
+            Total de questões: {data.length}
+          </span>
+        )}
       </div>
 
       {data && (
@@ -59,12 +62,9 @@ export function QuestionListPage() {
             >
               <div className="flex flex-col items-center">
                 <div className="flex w-full justify-between items-center">
-                  <Text
-                    color="dark.3"
-                    weight={700}
-                  >
+                  <span className="text-gray-700 font-bold">
                     {question.model_id}
-                  </Text>
+                  </span>
                   <Badge size="xs">{question.axis_code ?? "N/A"}</Badge>
                 </div>
 

@@ -49,10 +49,10 @@ export function QMES5({
         autoPlay
       />
 
-      <div className="flex flex-wrap items-center justify-center md:max-w-[600px] max-w-[550px]">
+      <div className="flex flex-wrap items-center justify-center xl:max-w-[800px] md:max-w-[600px] max-w-[550px]">
         {question.options.map((option, inx) => (
           <div
-            className="m-4 flex items-center justify-center md:w-[160px] md:h-[160px] w-[120px] h-[90px]"
+            className="m-4 flex items-center justify-center xl:w-[220px] xl:h-[220px] md:w-[160px] md:h-[160px] w-[120px] h-[90px]"
             key={optionArrKey(option, inx)}
           >
             <OptionButton

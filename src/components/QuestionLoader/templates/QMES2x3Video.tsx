@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { VideoTitle } from "~/components/question-components";
 
 export function QME2x3Video({
   question,
@@ -43,39 +42,27 @@ export function QME2x3Video({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const spacingVh = (lousaHeight * 0.5) / 100;
-
   return (
-    <div
-      className="flex flex-nowrap my-auto pt-0"
-      style={{
-        minWidth: "70%",
-        paddingTop: `${spacingVh}vh`,
-        gap: `${spacingVh}vh`,
-      }}
-    >
-      <div style={{ maxWidth: `${(lousaWidth * 50) / 100}px`, flexGrow: 1 }}>
-        <VideoPlayer
-          src={videoTitles[0]?.file_url ?? ""}
-          autoPlay
-        />
-      </div>
+    <div className="size-full flex flex-col lg:flex-row items-center justify-evenly p-4">
+      <VideoTitle
+        titles={videoTitles}
+        autoPlay
+        className="max-w-[400px] lg:max-w-[600px]"
+      />
 
-      <div
-        style={{ maxWidth: `${(lousaWidth * 50) / 100}px`, minWidth: "30%" }}
-      >
-        <div
-          className="grid grid-cols-2 gap-5"
-          style={{ gap: "20px" }}
-        >
-          {question.options.map((option, inx) => (
+      <div className="grid grid-cols-3 gap-4">
+        {question.options.map((option, inx) => (
+          <div
+            className="flex items-center justify-center xl:w-[220px] xl:h-[220px]  md:w-[150px] md:h-[150px] w-[100px] h-[100px]"
+            key={optionArrKey(option, inx)}
+          >
             <OptionButton
-              key={optionArrKey(option, inx)}
               data-selected={
                 !!selected.find((item) => item.position === option.position)
               }
               onClick={() => selectItem(option)}
               option={option}
+              className="w-full h-full"
             >
               {option.image_url ? (
                 <img
@@ -90,8 +77,8 @@ export function QME2x3Video({
                 )
               )}
             </OptionButton>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export function QME2x2Video({
       <div className="grid grid-cols-2 gap-4">
         {question.options.map((option) => (
           <div
-            className="flex items-center justify-center md:w-[200px] md:h-[200px] w-[120px] h-[120px]"
+            className="flex items-center justify-center xl:w-[220px] xl:h-[220px] md:w-[200px] md:h-[200px] w-[120px] h-[120px]"
             key={option.position}
           >
             <OptionButton

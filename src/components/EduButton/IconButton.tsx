@@ -71,7 +71,10 @@ export function IconButton({
 
   const { classes, cx } = useStyles(palette[variant]);
   return (
-    <button {...props} className={cx(classes.button, props.className)}>
+    <button
+      {...props}
+      className={cx(classes.button, props.className)}
+    >
       {icon}
     </button>
   );

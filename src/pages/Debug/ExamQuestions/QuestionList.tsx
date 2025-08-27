@@ -2,9 +2,6 @@ import {
   Title,
   SimpleGrid,
   Paper,
-  Group,
-  Stack,
-  Text,
   Badge,
   Table,
   MultiSelect,
@@ -18,27 +15,23 @@ export function QuestionListPage() {
   const [filter, setFilter] = useState<string[]>([]);
 
   return (
-    <Stack
-      mih="100vh"
-      align="center"
-      p="xl"
-    >
-      <Stack
-        spacing={0}
-        justify="center"
-        align="center"
-      >
+    <div className="min-h-screen flex flex-col items-center p-8">
+      <div className="flex flex-col gap-0 justify-center items-center">
         <Title
           color="dark.4"
           order={1}
         >
           Questões de Prova
         </Title>
-        {data && <Text color="dark.4">Total de questões: {data.length}</Text>}
-      </Stack>
+        {data && (
+          <span className="text-gray-600">
+            Total de questões: {data.length}
+          </span>
+        )}
+      </div>
 
       {data && (
-        <Group my="xl">
+        <div className="my-8">
           <MultiSelect
             data={[...new Set(data.map((q) => q.model_id))].map((id) => ({
               value: id,
@@ -48,7 +41,7 @@ export function QuestionListPage() {
             value={filter}
             onChange={setFilter}
           />
-        </Group>
+        </div>
       )}
 
       <SimpleGrid cols={7}>
@@ -67,19 +60,13 @@ export function QuestionListPage() {
               to={question.id.toString()}
               state={{ question }}
             >
-              <Stack align="center">
-                <Group
-                  w="100%"
-                  position="apart"
-                >
-                  <Text
-                    color="dark.3"
-                    weight={700}
-                  >
+              <div className="flex flex-col items-center">
+                <div className="flex w-full justify-between items-center">
+                  <span className="text-gray-700 font-bold">
                     {question.model_id}
-                  </Text>
+                  </span>
                   <Badge size="xs">{question.axis_code ?? "N/A"}</Badge>
-                </Group>
+                </div>
 
                 <Badge
                   fullWidth
@@ -107,10 +94,10 @@ export function QuestionListPage() {
                     </tr>
                   </tbody>
                 </Table>
-              </Stack>
+              </div>
             </Paper>
           ))}
       </SimpleGrid>
-    </Stack>
+    </div>
   );
 }

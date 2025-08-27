@@ -1,4 +1,3 @@
-import { Group, Image, ScrollArea, Stack, Text, Title } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { TextOptionButton } from "~/components/OptionButton";
 
@@ -13,32 +12,58 @@ export function QME2x2Text2({ question }: { question: Question }) {
   const qtitle = "Por que a raposa disse que as uvas estavam verdes?";
 
   return (
-    <>
-      <Title color="dark.3" size="2.5vh" weight={500}>
+    <div className="flex flex-col items-center w-full">
+      <h1
+        className="text-gray-700 font-medium mb-6"
+        style={{ fontSize: "2.5vh" }}
+      >
         {title}
-      </Title>
+      </h1>
 
-      <Group noWrap grow spacing={75}>
-        <ScrollArea h={380}>
-          <Stack align="center" p={20}>
-            <Title align="center" color="dark.3" size="2.5vh" weight={500}>
-              {subtitle}
-            </Title>
-            <Text align="center" color="dark.3" size={20} weight={400}>
-              {text}
-            </Text>
-            <Image src={imgUrl} alt="Imagem" width={102} />
-          </Stack>
-        </ScrollArea>
-        <Stack align="center" p={20}>
-          <Title align="center" color="dark.3" size="2.5vh" weight={500}>
+      <div className="flex w-full max-w-5xl gap-[75px]">
+        <div
+          className="overflow-y-auto p-5 flex flex-col items-center"
+          style={{ height: 380 }}
+        >
+          <h2
+            className="text-gray-700 font-medium mb-4 text-center"
+            style={{ fontSize: "2.5vh" }}
+          >
+            {subtitle}
+          </h2>
+          <p
+            className="text-gray-700 font-normal mb-6 text-center"
+            style={{ fontSize: 20 }}
+          >
+            {text}
+          </p>
+          <img
+            src={imgUrl}
+            alt="Imagem"
+            width={102}
+            height="auto"
+          />
+        </div>
+
+        <div className="flex flex-col items-center p-5">
+          <h2
+            className="text-gray-700 font-medium mb-6 text-center"
+            style={{ fontSize: "2.5vh" }}
+          >
             {qtitle}
-          </Title>
-          {question.options.map((option) => (
-            <TextOptionButton>{option.description}</TextOptionButton>
-          ))}
-        </Stack>
-      </Group>
-    </>
+          </h2>
+          <div className="flex flex-col gap-4 w-full max-w-md">
+            {question.options.map((option, index) => (
+              <TextOptionButton
+                key={index}
+                option={option}
+              >
+                {option.description}
+              </TextOptionButton>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

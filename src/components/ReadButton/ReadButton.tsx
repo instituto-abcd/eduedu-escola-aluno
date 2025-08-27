@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Stack } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { Question } from "~/api/exam";
 import { ModelMapper } from "../QuestionLoader/ModelMapper";
-import { lousaWidth } from "~/constants/dimensions";
 import { ButtonRead } from "../Buttons";
 
 type Props = {

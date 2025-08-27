@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { Planet } from "~/api/student";
@@ -32,7 +31,8 @@ export function PlanetView() {
         />
       )}
 
-      <Stack
+      <div
+        className="flex flex-col"
         style={{
           position: "fixed",
           bottom: 20,
@@ -49,7 +49,7 @@ export function PlanetView() {
           total={planet.questions.length}
           onQuestionChange={(i) => setIndex(i)}
         />
-      </Stack>
+      </div>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, Select, Stack } from "@mantine/core";
+import { Button, Select } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Question } from "~/api/exam";
 
@@ -18,7 +18,7 @@ export function QuestionNavigator({
   }, [current]);
 
   return (
-    <Stack align="flex-end">
+    <div className="flex flex-col items-end">
       <Select
         data={questions.map((q, inx) => ({
           label: `${inx} — ${q.model_id}`,
@@ -38,6 +38,6 @@ export function QuestionNavigator({
       >
         Go
       </Button>
-    </Stack>
+    </div>
   );
 }

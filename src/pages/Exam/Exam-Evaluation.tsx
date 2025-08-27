@@ -1,11 +1,4 @@
-import {
-  BackgroundImage,
-  Box,
-  Center,
-  Container,
-  Flex,
-  Loader,
-} from "@mantine/core";
+import { BackgroundImage, Center, Container, Loader } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { useSubmitExamEvaluation } from "~/api/student";
 import bg from "~/assets/bgs/bg-exam-evaluation.jpg";
@@ -30,20 +23,27 @@ export function ExamEvaluationPage() {
   };
 
   return (
-    <BackgroundImage src={bg} h="100vh">
+    <BackgroundImage
+      src={bg}
+      h="100vh"
+    >
       <Center>
-        <Box style={{ color: "#fff", padding: "0px 0", fontSize: 20 }}>
+        <div style={{ color: "#fff", padding: "0px 0", fontSize: 20 }}>
           <Container>
-            <Lottie options={defaultOptions} height={400} width={400} />
-            <Flex direction="column" align="center" justify="center">
+            <Lottie
+              options={defaultOptions}
+              height={400}
+              width={400}
+            />
+            <div className="flex flex-col items-center justify-center">
               <span>Você acabou de concluir a prova.</span>
               <span style={{ paddingBottom: 15 }}>
                 Aguarde enquanto o sistema calcula as suas tarefas.
               </span>
               {true && <Loader />}
-            </Flex>
+            </div>
           </Container>
-        </Box>
+        </div>
       </Center>
     </BackgroundImage>
   );

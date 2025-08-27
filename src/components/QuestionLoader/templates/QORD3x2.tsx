@@ -140,7 +140,7 @@ export function QORD3x2({
       )}
 
       <div className="flex flex-col items-center justify-evenly flex-1 w-full">
-        <div className="flex items-center justify-center w-1/2 h-1/2 p-4">
+        <div className="flex items-center justify-center w-full md:w-2/3 lg:w-1/2 p-4 m-4">
           {answers.map((slot, inx) => {
             return (
               <DroppablePictureCardBasic
@@ -170,7 +170,7 @@ export function QORD3x2({
           })}
         </div>
 
-        <div className="grid grid-cols-3 gap-4 place-content-center place-items-center w-1/2 h-1/2 p-4">
+        <div className="grid grid-cols-3 gap-4 place-content-center place-items-center w-full md:w-2/3 lg:w-1/2 p-4 m-4">
           {question.options.map((option, inx) => (
             <DraggableCardBasic
               id={option.id}

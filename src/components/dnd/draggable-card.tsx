@@ -1,4 +1,3 @@
-import { Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
@@ -54,7 +53,7 @@ export function DraggableCard({
         "lg:max-h-[250px] lg:max-w-[250px]",
         {
           ["w-[105px] md:w-[190px]"]: !size,
-          [`w-[calc(max-content/${size})]`]: !!size,
+          [`w-[calc(max-content/${size || 1})]`]: !!size,
           ["opacity-40 cursor-grabbing"]: isDragging,
           ["pointer-events-none"]: disabled || hidden,
           ["opacity-10"]: hidden,
@@ -81,7 +80,7 @@ export function DraggableCard({
         />
       )}
       {text && !image && (
-        <Text
+        <span
           className={cx(
             "font-bold text-[#228BE6] select-none pointer-events-none",
             "text-4xl xl:text-[70px] xl:leading-[100%]",
@@ -89,7 +88,7 @@ export function DraggableCard({
           )}
         >
           {text}
-        </Text>
+        </span>
       )}
       {onClear && (
         <button

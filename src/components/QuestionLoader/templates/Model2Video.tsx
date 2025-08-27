@@ -1,4 +1,3 @@
-import { SimpleGrid } from "@mantine/core";
 import { produce } from "immer";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
@@ -16,7 +15,7 @@ export function Model2Video({
     question.options.map(() => null)
   );
 
-  const handleDrop = useCallback(function(
+  const handleDrop = useCallback(function (
     item: QuestionOption | null,
     index: number
   ) {
@@ -25,7 +24,8 @@ export function Model2Video({
         draft[index] = item ? { ...item, positionAnswer: index } : item;
       })
     );
-  }, []);
+  },
+  []);
 
   const { videoTitles } = useQuestionHelper(question);
 
@@ -56,10 +56,12 @@ export function Model2Video({
       </div>
 
       <div className="flex flex-col gap-4 md:gap-9 min-w-min">
-        <SimpleGrid
-          cols={question.options.length}
-          style={{ placeItems: "center" }}
-          spacing={20}
+        <div
+          className="grid gap-5"
+          style={{
+            placeItems: "center",
+            gridTemplateColumns: `repeat(${question.options.length}, minmax(0, 1fr))`,
+          }}
         >
           {slots.map((slot, inx) => (
             <DraggableCardSlot
@@ -80,12 +82,14 @@ export function Model2Video({
               }
             />
           ))}
-        </SimpleGrid>
+        </div>
 
-        <SimpleGrid
-          cols={question.options.length}
-          style={{ placeItems: "center" }}
-          spacing={20}
+        <div
+          className="grid gap-5"
+          style={{
+            placeItems: "center",
+            gridTemplateColumns: `repeat(${question.options.length}, minmax(0, 1fr))`,
+          }}
         >
           {question.options.map((item, inx) => (
             <DraggableCard
@@ -98,7 +102,7 @@ export function Model2Video({
               debug={{ debugProperty: "position" }}
             />
           ))}
-        </SimpleGrid>
+        </div>
       </div>
     </div>
   );

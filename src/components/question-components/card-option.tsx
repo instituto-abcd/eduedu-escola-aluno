@@ -1,4 +1,3 @@
-import { cva, VariantProps } from "class-variance-authority";
 import { QuestionOption } from "~/api/exam";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugProps } from "../Debug";
@@ -8,7 +7,7 @@ import { validString } from "~/utils/string";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { IconVolume } from "@tabler/icons-react";
 
-type Props = VariantProps<typeof button> & {
+type Props = {
   option: QuestionOption;
   debug?: DebugProps;
   properties: ("text" | "image" | "audio" | null)[];
@@ -18,28 +17,6 @@ type Props = VariantProps<typeof button> & {
   "disabled" | "onClick" | "className"
 >;
 
-const button = cva(
-  [
-    "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center justify-evenly cursor-pointer select-none overflow-hidden",
-    "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
-  ],
-  {
-    variants: {
-      shape: {
-        contain: "size-full min-h-[160px] sm:min-h-[180px]",
-        square:
-          "w-[138px] h-[120px] lg:h-full lg:w-auto lg:max-h-[250px] lg:max-w-[250px] aspect-square",
-      },
-      selected: {
-        true: "!bg-[#DFFEC5] border border-[#ACE655] !shadow-[0px_5px_0px_0px_#ACE655]",
-      },
-    },
-    defaultVariants: {
-      shape: "square",
-    },
-  }
-);
-
 export function CardOption({
   option,
   debug,
@@ -47,6 +24,7 @@ export function CardOption({
   disabled,
   onClick,
   className,
+  selected,
   ...props
 }: Props) {
   const canDebug = useDebugInfo((s) => s.answer);
@@ -69,9 +47,19 @@ export function CardOption({
 
   return (
     <button
-      className={button({ ...props, className })}
+      className={cx(
+        "shadow-card relative bg-surface rounded-[45px] flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden",
+        "[&:not(:disabled):active]:shadow-card-thin [&:not(:disabled):active]:translate-y-[3px] transition-all [container-type:inline-size]",
+        "size-full min-w-full min-h-full md:max-h-[180px] md:max-w-[180px]",
+        {
+          "!bg-[#DFFEC5] border border-[#ACE655] !shadow-[0px_5px_0px_0px_#ACE655]":
+            selected,
+        },
+        className
+      )}
       onClick={onClickHandler}
       disabled={disabled || isPlaying}
+      {...props}
     >
       <Text neighborImg={showImg}>{option.description}</Text>
 

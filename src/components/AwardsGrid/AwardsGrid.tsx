@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles, Group, Stack } from "@mantine/core";
+import { createStyles } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useGetStudentAwards } from "~/api/student";
 import { AwardImage, AWARDS_IMAGES } from "~/constants/awards";
@@ -53,8 +53,8 @@ export function AwardsGrid() {
   const { classes } = useStyles();
 
   return (
-    <Stack
-      spacing={40}
+    <div
+      className="flex flex-col gap-10"
       style={{ maxHeight: "calc(100vh - 200px)" }}
     >
       <Carousel
@@ -66,9 +66,9 @@ export function AwardsGrid() {
       >
         {gridSlides.map((sl, inx) => (
           <Carousel.Slide key={inx}>
-            <Group
-              position="center"
-              noWrap={breakpoint === "MOBILE"}
+            <div
+              className="flex justify-center"
+              style={{ flexWrap: breakpoint === "MOBILE" ? "nowrap" : "wrap" }}
             >
               {sl.map((award, i) => (
                 <AwardDisplay
@@ -77,7 +77,7 @@ export function AwardsGrid() {
                   onClick={() => handleOpenAward(award)}
                 />
               ))}
-            </Group>
+            </div>
           </Carousel.Slide>
         ))}
       </Carousel>
@@ -88,7 +88,7 @@ export function AwardsGrid() {
           award={selectedAward}
         />
       )}
-    </Stack>
+    </div>
   );
 }
 

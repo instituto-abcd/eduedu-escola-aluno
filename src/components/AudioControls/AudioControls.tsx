@@ -1,4 +1,4 @@
-import { Group, Slider, Stack, createStyles } from "@mantine/core";
+import { Slider, createStyles } from "@mantine/core";
 import {
   IconRotateClockwise,
   IconPlayerPlayFilled,
@@ -10,6 +10,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 import { intervalToDuration, formatDuration } from "date-fns";
 import { boardW, lousaWidth } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
+import { cx } from "~/utils/cx";
 
 const useStyles = createStyles({
   bar: {
@@ -23,6 +24,9 @@ export type AudioControlRef = HTMLDivElement & {
 
 type AudioControlProps = React.AudioHTMLAttributes<HTMLAudioElement> & {
   ref?: React.Ref<{ playPause: () => void }>;
+  iconClassName?: string | undefined;
+  iconWidth?: number | undefined;
+  iconHeight?: number | undefined;
 };
 
 export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
@@ -73,52 +77,55 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
   }));
 
   return (
-    <Stack align="center" spacing="xl">
-      <Group>
+    <div className={cx("flex flex-col items-center gap-8", props.className)}>
+      <div className="flex items-center gap-2">
         <IconButton
           icon={
             <IconRotateClockwise
               style={{ transform: "rotateX(180deg)" }}
-              width={lousaWidth * 0.04}
-              height={lousaWidth * 0.029}
+              width={props.iconWidth || lousaWidth * 0.04}
+              height={props.iconHeight || lousaWidth * 0.029}
             />
           }
           onClick={rewind}
+          className={props.iconClassName}
         />
         <IconButton
           icon={
             sound.playing() ? (
               <IconPlayerPauseFilled
-                width={lousaWidth * 0.04}
-                height={lousaWidth * 0.029}
+                width={props.iconWidth || lousaWidth * 0.04}
+                height={props.iconHeight || lousaWidth * 0.029}
               />
             ) : (
               <IconPlayerPlayFilled
-                width={lousaWidth * 0.04}
-                height={lousaWidth * 0.029}
+                width={props.iconWidth || lousaWidth * 0.04}
+                height={props.iconHeight || lousaWidth * 0.029}
               />
             )
           }
           variant="yellow"
           onClick={playPause}
+          className={props.iconClassName}
         />
         <IconButton
           icon={
             <IconRotate
               style={{ transform: "rotateX(180deg)" }}
-              width={lousaWidth * 0.04}
-              height={lousaWidth * 0.029}
+              width={props.iconWidth || lousaWidth * 0.04}
+              height={props.iconHeight || lousaWidth * 0.029}
             />
           }
           onClick={forward}
+          className={props.iconClassName}
         />
-      </Group>
+      </div>
       <Slider
         value={currentTime}
         onChange={(e) => {
           sound.seek(e);
         }}
-        w={boardW(650)}
+        className="w-full"
         radius="xs"
         classNames={{ bar: classes.bar }}
         thumbSize={30}
@@ -146,6 +153,6 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
           return formatted;
         }}
       />
-    </Stack>
+    </div>
   );
 });

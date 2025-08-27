@@ -7,7 +7,7 @@ import luzRodape from "~/assets/lotties/exam/luz_rodape.json";
 import luzMesa from "~/assets/lotties/exam/luz_mesa.json";
 import vaso1 from "~/assets/lotties/exam/vaso_1.json";
 import vaso2 from "~/assets/lotties/exam/vaso_2.json";
-import { Box, createStyles } from "@mantine/core";
+import { createStyles } from "@mantine/core";
 
 const useStyles = createStyles({
   wrapper: {
@@ -27,13 +27,9 @@ export function LottiesExam() {
   const { classes } = useStyles();
 
   return (
-    <Box className={classes.wrapper}>
-      <Box
-        my={0}
-        p={0}
-        mx="auto"
-        h={190}
-        maw={1080}
+    <div className={classes.wrapper}>
+      <div
+        className="my-0 p-0 mx-auto h-[190px] max-w-[1080px]"
         style={{ position: "relative" }}
       >
         <Lottie
@@ -144,7 +140,7 @@ export function LottiesExam() {
             zIndex: 3,
           }}
         />
-      </Box>
+      </div>
       <Lottie
         options={{
           loop: true,
@@ -162,6 +158,6 @@ export function LottiesExam() {
           height: "auto",
         }}
       />
-    </Box>
+    </div>
   );
 }

@@ -3,9 +3,7 @@ import {
   Divider,
   Group,
   Radio,
-  Stack,
   Title,
-  Text,
   createStyles,
   Textarea,
 } from "@mantine/core";
@@ -42,7 +40,7 @@ const useStyles = createStyles(
       display: "flex",
       flexDirection: "column",
     },
-  }),
+  })
 );
 
 const dimensions: Record<ScreenMode, { w: number; h: number }> = {
@@ -53,30 +51,39 @@ const dimensions: Record<ScreenMode, { w: number; h: number }> = {
 export function SchoolClassSelect() {
   const [screenMode, setSm] = useState<ScreenMode>("wide");
   const [classList, setCl] = useState(
-    ["Infantil", "1ºA", "1ºB", "nomegigantesco", "1ºD", "1ºE"].join("\n"),
+    ["Infantil", "1ºA", "1ºB", "nomegigantesco", "1ºD", "1ºE"].join("\n")
   );
 
   const { classes, cx } = useStyles({ mode: screenMode, nItems: 2 });
 
   return (
     <Container py={24}>
-      <Stack>
+      <div className="flex flex-col">
         <Title>
           Tamanho de tela: {dimensions[screenMode].w}x{dimensions[screenMode].h}
         </Title>
 
         <Group align="flex-start">
-          <ClassListEditor value={classList} onChange={setCl} />
-          <ScreenModeSelect value={screenMode} onChange={setSm} />
+          <ClassListEditor
+            value={classList}
+            onChange={setCl}
+          />
+          <ScreenModeSelect
+            value={screenMode}
+            onChange={setSm}
+          />
         </Group>
 
-        <Divider my="xl" variant="dashed" />
+        <Divider
+          my="xl"
+          variant="dashed"
+        />
         {classes[screenMode] !== undefined && (
           <div className={cx([classes.baseContainer, classes[screenMode]])}>
             {screenMode === "wide" && (
-              <Text size={30} c="white" fw={700} className={classes.title}>
+              <span className="text-white font-bold text-3xl absolute top-11 inset-x-0 z-[99] pointer-events-none select-none text-center">
                 Qual a sua sala?
-              </Text>
+              </span>
             )}
             {classList.split("\n").map((cn) => (
               <OptionBlock
@@ -86,7 +93,7 @@ export function SchoolClassSelect() {
             ))}
           </div>
         )}
-      </Stack>
+      </div>
     </Container>
   );
 }
@@ -158,7 +165,7 @@ const useOptionStyles = createStyles(
       minWidth: orientation === "vertical" ? "50%" : "auto",
       maxWidth: orientation === "vertical" ? "60%" : "auto",
     },
-  }),
+  })
 );
 
 function OptionBlock({ orientation, text }: OptionBlockProps) {
@@ -167,9 +174,9 @@ function OptionBlock({ orientation, text }: OptionBlockProps) {
   return (
     <div className={classes.container}>
       <div className={classes.content}>
-        <Text className={classes.text} color="#F6A313" fw={700}>
+        <span className={`${classes.text} text-[#F6A313] font-bold`}>
           {text}
-        </Text>
+        </span>
         <ClassIcons id={0} />
       </div>
       <img src={bgSelectOption} />
@@ -190,12 +197,19 @@ function ScreenModeSelect({
   };
 
   return (
-    <Radio.Group value={value} onChange={onChange} label="Modo de tela">
-      <Stack spacing="xs">
+    <Radio.Group
+      value={value}
+      onChange={onChange}
+      label="Modo de tela"
+    >
+      <div className="flex flex-col gap-2">
         {Object.keys(screenModes).map((mode) => (
-          <Radio value={mode} label={screenModes[mode as ScreenMode]} />
+          <Radio
+            value={mode}
+            label={screenModes[mode as ScreenMode]}
+          />
         ))}
-      </Stack>
+      </div>
     </Radio.Group>
   );
 }

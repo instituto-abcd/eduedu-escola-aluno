@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { boardW } from "~/constants/dimensions";
@@ -16,13 +15,11 @@ export function Model24({
   const { textTitles, imageTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<number>(-1);
 
-  // Variação de completar o texto
   const varExeptions = ["Texto para completar, exp: a menina perdeu a ____"];
   const isTypeComplete = textTitles
     .filter((title) => !varExeptions.includes(title.placeholder))
     .some((title) => title.placeholder.includes("completar"));
 
-  // Variação de selecionar alternativa
   const isTypeSelect = !isTypeComplete;
   const [singleAnswer, setSingleAnswer] = useState<QuestionOption | null>(null);
 
@@ -65,11 +62,7 @@ export function Model24({
         hasPrimaryIcon={false}
       />
 
-      <Stack
-        my="auto"
-        spacing={boardW(40)}
-        className="w-full"
-      >
+      <div className={`flex flex-col gap-[${boardW(40)}px] w-full my-auto`}>
         {isTypeComplete && (
           <Model24TypeComplete
             textTitles={textTitles}
@@ -92,7 +85,7 @@ export function Model24({
             }
           />
         )}
-      </Stack>
+      </div>
     </>
   );
 }

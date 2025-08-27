@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles, Group, Image } from "@mantine/core";
+import { createStyles, Image } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { type MediaQueryKey } from "~/constants/dimensions";
 import atividades from "~/assets/atividades.png";
@@ -47,16 +47,24 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
         }
       >
         <Carousel.Slide>
-          <Image width={241} height={180} src={atividades} />
+          <Image
+            width={241}
+            height={180}
+            src={atividades}
+          />
         </Carousel.Slide>
         <Carousel.Slide>
-          <Image width={207} height={180} src={conquistas} />
+          <Image
+            width={207}
+            height={180}
+            src={conquistas}
+          />
         </Carousel.Slide>
       </Carousel>
     );
 
   return (
-    <Group position="apart" px={20} py={10}>
+    <div className="flex justify-between px-5 py-2.5">
       <Image
         width={241}
         height={180}
@@ -71,7 +79,7 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
         onClick={() => onModeChanged("awards")}
         className={classes.img}
       />
-    </Group>
+    </div>
   );
 }
 

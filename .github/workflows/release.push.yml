@@ -32,10 +32,9 @@ jobs:
       - name: "Docker auth"
         run: |-
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      - name: Build image
-        run: docker build . --file Dockerfile --tag eduedu-escola-aluno:${{ github.event.inputs.tag }}
-        working-directory: .
+          - name: Build image
+            run: docker build . --file Dockerfile --tag eduedu-escola-aluno:${{ github.event.inputs.tag }} --build-arg API_URL=http://localhost:3000 --build-arg ADMIN_URL=http://localhost:8080
+            working-directory: .
 
       - name: Push image
         run: docker push ${{ env.GAR_LOCATION }}

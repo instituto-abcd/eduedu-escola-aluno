@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: edueduescola-teste
-  REGION: us-east1-docker.pkg.dev
+  REGION: us-east1
   GAR_LOCATION: us-east1-docker.pkg.dev/edueduescola-teste/eduedu-escola-setup
 
 jobs:

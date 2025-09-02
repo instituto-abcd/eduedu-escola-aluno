@@ -34,11 +34,8 @@ jobs:
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build image
-        run: docker build . \
-          --file Dockerfile \
-          --tag ${{ env.GAR_LOCATION }}:${{ github.event.inputs.tag }} \
-          --build-arg API_URL=http://localhost:3000 \
-          --build-arg ADMIN_URL=http://localhost:8080
+        run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}:${{ github.event.inputs.tag }} --build-arg API_URL=http://localhost:3000 --build-arg ADMIN_URL=http://localhost:8080
+        working-directory: .
 
       - name: Push image
         run: docker push ${{ env.GAR_LOCATION }}:${{ github.event.inputs.tag }}

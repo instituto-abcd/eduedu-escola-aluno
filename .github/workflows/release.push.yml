@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag da release que será gerada'
+        description: "Tag da release que será gerada"
         required: true
 
 env:

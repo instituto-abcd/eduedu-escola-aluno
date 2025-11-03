@@ -7,13 +7,14 @@ on:
         required: true
 
 env:
-  PROJECT_ID: edueduescola-teste
-  REGION: us-east1
-  GAR_LOCATION: us-east1-docker.pkg.dev/edueduescola-teste/eduedu-escola-setup/eduedu-escola-aluno
+  PROJECT_ID: eduedu-plus-open-source-prd
+  REGION: southamerica-east1
+  GAR_LOCATION: southamerica-east1-docker.pkg.dev/eduedu-plus-open-source-prd/eduedu-plus-setup/eduedu-plus-aluno
 
 jobs:
   build-push-artifact:
     runs-on: ubuntu-latest
+    environment: os-prd
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v3"

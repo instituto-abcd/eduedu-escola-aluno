@@ -88,8 +88,6 @@ export function QME2x2Audio({
     setIsLocked(true);
     setIsAuxLocked(true);
     init();
-    console.log({ question });
-
     // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão
     if (question.id === 65) {
       setIsFirstModelQuestion(true);

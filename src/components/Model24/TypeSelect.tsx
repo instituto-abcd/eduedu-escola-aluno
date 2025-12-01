@@ -129,7 +129,7 @@ export const Model24TypeSelect = ({
           >
             <div
               className={`flex w-full ${dynamicFlexBehavior} ${
-                question.options.length === 3
+                question.options.length === 3 && question.options[2]?.image_id
                   ? classes.threeButtons
                   : classes.container
               } items-center justify-center gap-4`}

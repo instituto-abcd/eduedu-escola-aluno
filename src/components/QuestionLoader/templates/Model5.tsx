@@ -156,7 +156,7 @@ function GridContainer({
   return (
     <div
       className={cx(
-        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 py-2",
+        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 lg:gap-6 py-2 max-w-[500px]",
         {
           ["lg:aspect-square"]: qtyItems === 4,
           ["md:grid-cols-3 h-full md:h-auto"]: qtyItems > 4 && qtyItems <= 6,

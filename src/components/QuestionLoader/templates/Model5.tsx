@@ -158,7 +158,6 @@ function GridContainer({
   className,
   ...props
 }: GridContainerProps) {
-  console.log({ isText });
   return (
     <div
       className={cx(

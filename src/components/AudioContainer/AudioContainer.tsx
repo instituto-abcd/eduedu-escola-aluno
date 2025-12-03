@@ -54,7 +54,6 @@ export const AudioContainer = ({
             key={inx}
             src={title.file_url ?? ""}
             {...props}
-            ref={audioRef}
           />
         );
       })}

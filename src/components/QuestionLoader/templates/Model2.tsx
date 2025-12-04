@@ -269,7 +269,7 @@ export function Model2({
               />
             ) : (
               <DraggableCard
-                id={item.id}
+                id={item.image_id || item.id}
                 key={inx}
                 optionItem={item}
                 size={cardSize}

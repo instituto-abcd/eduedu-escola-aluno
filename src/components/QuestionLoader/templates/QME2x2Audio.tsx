@@ -20,6 +20,9 @@ export function QME2x2Audio({
 }: ModelProps) {
   const { audioTitles } = useQuestionHelper(question);
   const [answer, setAnswer] = useState<QuestionOption | null>(null);
+  const [isLocked, setIsLocked] = useState(true);
+  const [isAuxLocked, setIsAuxLocked] = useState(true);
+  const [isFirstModelQuestion, setIsFirstModelQuestion] = useState(false);
 
   function getAudioTitle(classification: QuestionTitleClassification) {
     return audioTitles.find((t) => t.classification === classification);
@@ -69,6 +72,7 @@ export function QME2x2Audio({
     ) {
       enunciado.current?.sound.play();
     }
+    setIsLocked(false);
   });
 
   function init() {
@@ -81,7 +85,15 @@ export function QME2x2Audio({
 
   useEffect(() => {
     setAnswer(null);
+    setIsLocked(true);
+    setIsAuxLocked(true);
     init();
+    // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão
+    if (question.id === 65) {
+      setIsFirstModelQuestion(true);
+    } else {
+      setIsFirstModelQuestion(false);
+    }
   }, [question]);
 
   useEffect(() => {
@@ -93,6 +105,16 @@ export function QME2x2Audio({
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
+
+  useEffect(() => {
+    if (!enunciado.current) return;
+
+    const s = enunciado.current.sound;
+
+    s.onEnd(() => {
+      setIsAuxLocked(false);
+    });
+  }, [isAuxLocked, enunciado.current]);
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 
@@ -106,6 +128,7 @@ export function QME2x2Audio({
           )
           .map((title) => (
             <AudioControls
+              disabled={isFirstModelQuestion && (isLocked || isAuxLocked)}
               src={title.file_url ?? ""}
               key={title.file_url}
               ref={story}

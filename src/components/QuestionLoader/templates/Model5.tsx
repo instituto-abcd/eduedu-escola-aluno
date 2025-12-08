@@ -127,7 +127,10 @@ export function Model5({
             }
           )}
         >
-          <GridContainer qtyItems={question.options.length}>
+          <GridContainer
+            qtyItems={question.options.length}
+            isText={!question.options[0].image_id}
+          >
             {question.options.map((option, inx) => (
               <CardOption
                 key={inx}
@@ -146,20 +149,23 @@ export function Model5({
 
 type GridContainerProps = React.HTMLProps<HTMLDivElement> & {
   qtyItems?: number;
+  isText?: boolean;
 };
 
 function GridContainer({
   qtyItems = 4,
+  isText,
   className,
   ...props
 }: GridContainerProps) {
   return (
     <div
       className={cx(
-        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 py-2",
+        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 lg:gap-6 p-2 max-w-[500px]",
         {
           ["lg:aspect-square"]: qtyItems === 4,
-          ["md:grid-cols-3 h-full md:h-auto"]: qtyItems > 4 && qtyItems <= 6,
+          ["h-2/3"]: isText,
+          ["md:grid-cols-3 h-full"]: qtyItems > 4 && qtyItems <= 6,
         },
         className
       )}

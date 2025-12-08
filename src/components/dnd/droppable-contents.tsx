@@ -25,7 +25,7 @@ export function DroppableContents({
     <div
       {...props}
       className={cx(
-        "aspect-square w-[150px] bg-surface shadow-card rounded-[45px] p-2",
+        "aspect-square w-[140px] md:w-[180px] bg-surface shadow-card rounded-[45px] p-4",
         "flex flex-col items-center justify-center gap-1 select-none",
         {
           ["bg-green-300/30"]: isOver,
@@ -42,7 +42,9 @@ export function DroppableContents({
         />
       )}
       {validString(text) && (
-        <p className="font-bold text-text text-2xl">{text}</p>
+        <p className="font-bold text-text text-xl md:text-2xl text-center">
+          {text}
+        </p>
       )}
     </div>
   );

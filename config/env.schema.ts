@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+
+// Nada disso sera utilizado enquanto usamos o config.js na public
 export const envSchema = {
 	VITE_API_URL: z.string().url(),
 	VITE_ADMIN_URL: z.string().url(),

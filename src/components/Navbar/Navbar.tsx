@@ -37,7 +37,7 @@ export function Navbar({ inView, onMouseLeave }: Props) {
     >
       <div
         className={cx(
-          "flex items-center justify-evenly px-4 absolute w-full z-50 bg-white shadow-md h-[50px] transition-transform",
+          "flex items-center justify-evenly md:px-4 px-2 absolute z-50 bg-white shadow-md w-full max-w-[100vw] h-[50px] transition-transform",
           { "translate-y-[-100%]": !isOpen }
         )}
       >
@@ -51,36 +51,39 @@ export function Navbar({ inView, onMouseLeave }: Props) {
           {links.map((link, i) => (
             <div
               key={i}
-              className="flex items-center space-x-2"
+              className={cx("flex items-center md:space-x-2 space-x-1 nowrap", {
+                "hidden md:flex":
+                  link.label !== "Aluno:" && link.label !== "Turma:",
+              })}
             >
               <span className="hidden lg:block text-gray-600 font-semibold text-sm no-underline">
                 {link.label}
               </span>
 
-              <span className="text-sm">{link.value}</span>
+              <span className={"text-sm"}>{link.value}</span>
             </div>
           ))}
-          {student.id && <Logout />}
         </div>
+        {student.id && <Logout />}
+        <button
+          className={cx(
+            "absolute bg-white h-[30px] w-[50px] z-[900] top-[30px] right-[10%] flex items-center justify-center shadow-md rounded-b-[18px] transition-transform",
+            {
+              "translate-y-[20px]": !isOpen,
+              "translate-y-[18px]": isOpen,
+            }
+          )}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <IconChevronDown
+            size={36}
+            color="#000"
+            className={cx("transition-transform", {
+              "rotate-180": isOpen,
+            })}
+          />
+        </button>
       </div>
-      <button
-        className={cx(
-          "absolute bg-white h-[30px] w-[50px] z-50 top-[30px] left-1/2 flex items-center justify-center shadow-md rounded-b-[18px] transition-transform",
-          {
-            "translate-y-[-30px]": !isOpen,
-            "translate-y-[18px]": isOpen,
-          }
-        )}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <IconChevronDown
-          size={36}
-          color="#000"
-          className={cx("transition-transform", {
-            "rotate-180": isOpen,
-          })}
-        />
-      </button>
     </header>
   );
 }

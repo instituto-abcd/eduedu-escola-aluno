@@ -1,0 +1,16 @@
+    .container {
+        display: 'flex';
+        justify-content: "center"; 
+        align-items: "center"; 
+        width: 30;
+        height: 30;
+        border-radius: '50%';
+        position: "absolute"; 
+        bottom: 20; 
+        right: 5; 
+        background-color: "#CCC";
+        border-width: 0;
+        box-shadow: '3px 3px 10px -4px rgba(0,0,0,0.75)';
+        -webkit-box-shadow: '3px 3px 10px -4px rgba(0,0,0,0.75)';
+        -moz-box-shadow: '3px 3px 10px -4px rgba(0,0,0,0.75)';
+    }

@@ -1,5 +1,4 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useGetStudentAwards } from "~/api/student";
 import { AwardImage, AWARDS_IMAGES } from "~/constants/awards";
@@ -8,6 +7,7 @@ import { AwardDisplay } from "../AwardDisplay/AwardDisplay";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { MediaQueryKey } from "~/constants/dimensions";
 import { AwardModal } from "../AwardDisplay/AwardModal";
+import styles from "./AwardsGridStyle.module.css";
 
 export function AwardsGrid() {
   const [awards, setAwards] = useState<AwardImage[]>(AWARDS_IMAGES);
@@ -50,8 +50,6 @@ export function AwardsGrid() {
     setSelectedAward(undefined);
   }
 
-  const { classes } = useStyles();
-
   return (
     <div
       className="flex flex-col gap-10"
@@ -60,7 +58,7 @@ export function AwardsGrid() {
       <Carousel
         getEmblaApi={setEmbla}
         withControls={false}
-        className={classes.carousel}
+        className={styles.carousel}
         orientation={breakpoint === "MOBILE" ? "vertical" : "horizontal"}
         align="start"
       >
@@ -91,11 +89,3 @@ export function AwardsGrid() {
     </div>
   );
 }
-
-const useStyles = createStyles((_) => ({
-  carousel: {
-    maxHeight: "90vh",
-    marginTop: 20,
-    marginBlock: "auto",
-  },
-}));

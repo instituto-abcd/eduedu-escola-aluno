@@ -1,4 +1,3 @@
-import { Title } from "@mantine/core";
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
@@ -122,12 +121,9 @@ export function Model31({
       sensors={sensors}
     >
       <div className="flex flex-col items-center justify-evenly w-full h-full p-4">
-        <Title
-          color="dark.3"
-          className="flex items-center justify-center w-full text-lg font-semibold text-center"
-        >
+        <h2 className="flex items-center justify-center w-full text-lg font-semibold text-center text-dark-3">
           {statement}
-        </Title>
+        </h2>
         <div className="flex flex-col lg:flex-row items-center justify-center w-full h-[60%] lg:h-[50%]">
           {imageTitles
             .filter((title) => title.file_url)

@@ -1,11 +1,9 @@
-import { Box, Group, Image, SimpleGrid, Text } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { OptionButton } from "~/components/OptionButton";
-import { VideoPlayer } from "~/components/VideoPlayer";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import { VideoTitle } from "~/components/question-components";
 
 export function QME2x3Video({
   question,
@@ -45,54 +43,43 @@ export function QME2x3Video({
   }, [conditions]);
 
   return (
-    <>
-      <Group
-        noWrap
-        grow
-        spacing={((lousaHeight * 0.5) / 100).toString() + "vh"}
-        my="auto"
-        pt={((lousaHeight * 0.5) / 100).toString() + "vh"}
-        style={{ minWidth: "70%" }}
-      >
-        <Box maw={(lousaWidth * 50) / 100}>
-          <VideoPlayer
-            src={videoTitles[0]?.file_url ?? ""}
-            autoPlay
-          />
-        </Box>
+    <div className="size-full flex flex-col lg:flex-row items-center justify-evenly p-4">
+      <VideoTitle
+        titles={videoTitles}
+        autoPlay
+        className="max-w-[400px] lg:max-w-[600px]"
+      />
 
-        <Box
-          maw={(lousaWidth * 50) / 100}
-          style={{ minWidth: "30%" }}
-        >
-          <SimpleGrid
-            cols={2}
-            spacing={20}
+      <div className="grid grid-cols-3 gap-4">
+        {question.options.map((option, inx) => (
+          <div
+            className="flex items-center justify-center xl:w-[220px] xl:h-[220px]  md:w-[150px] md:h-[150px] w-[100px] h-[100px]"
+            key={optionArrKey(option, inx)}
           >
-            {question.options.map((option, inx) => (
-              <OptionButton
-                key={optionArrKey(option, inx)}
-                data-selected={
-                  !!selected.find((item) => item.position === option.position)
-                }
-                onClick={() => selectItem(option)}
-                option={option}
-              >
-                {option.image_url && (
-                  <Image
-                    src={option.image_url}
-                    alt={option.description}
-                    width="100%"
-                  />
-                )}
-                {!option.image_url && option.description && (
-                  <Text>{option.description}</Text>
-                )}
-              </OptionButton>
-            ))}
-          </SimpleGrid>
-        </Box>
-      </Group>
-    </>
+            <OptionButton
+              data-selected={
+                !!selected.find((item) => item.position === option.position)
+              }
+              onClick={() => selectItem(option)}
+              option={option}
+              className="w-full h-full"
+            >
+              {option.image_url ? (
+                <img
+                  src={option.image_url}
+                  alt={option.description}
+                  className="w-full"
+                  style={{ objectFit: "contain" }}
+                />
+              ) : (
+                option.description && (
+                  <p className="text-gray-800">{option.description}</p>
+                )
+              )}
+            </OptionButton>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

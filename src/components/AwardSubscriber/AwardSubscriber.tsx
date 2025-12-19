@@ -6,36 +6,41 @@ import { useNewAward } from "~/stores/new-award";
 import { AwardDisplay } from "../AwardDisplay/AwardDisplay";
 
 export function AwardSubscriber() {
-  const { awards, viewRequested, setNewAwards, resetView } = useNewAward();
-  const [isOpen, { open, close }] = useDisclosure();
+	const { awards, viewRequested, setNewAwards, resetView } = useNewAward();
+	const [isOpen, { open, close }] = useDisclosure();
 
-  function onModalClose() {
-    setNewAwards([]);
-    resetView();
-    close();
-  }
+	function onModalClose() {
+		setNewAwards([]);
+		resetView();
+		close();
+	}
 
-  useEffect(() => {
-    if (viewRequested) {
-      open();
-    } else if (!viewRequested && isOpen) {
-      close();
-    }
-  }, [viewRequested]);
+	useEffect(() => {
+		if (viewRequested) {
+			open();
+		} else if (!viewRequested && isOpen) {
+			close();
+		}
+	}, [viewRequested]);
 
-  return (
-    <Modal title="Parabéns!" opened={isOpen} onClose={onModalClose} radius="md">
-      <Title size="h2" mb="md">
-        Você recebeu novas conquistas.
-      </Title>
-      <SimpleGrid cols={awards.length > 1 ? 2 : 1}>
-        {awards.map((n) => {
-          const img = AWARDS_IMAGES.find((img) => img.name === n);
-          if (img) {
-            return <AwardDisplay award={{ ...img, active: true }} key={n} />;
-          }
-        })}
-      </SimpleGrid>
-    </Modal>
-  );
+	return (
+		<Modal title="Parabéns!" opened={isOpen} onClose={onModalClose} radius="md">
+			<Title size="h2" mb="md">
+				Você recebeu novas conquistas.
+			</Title>
+			<SimpleGrid cols={awards.length > 1 ? 2 : 1}>
+				{awards.map((aw) => {
+					const img = AWARDS_IMAGES.find((img) => img.name === aw.name);
+					if (img) {
+						return (
+							<AwardDisplay
+								award={{ ...img, ...aw, active: true }}
+								key={aw.name}
+							/>
+						);
+					}
+				})}
+			</SimpleGrid>
+		</Modal>
+	);
 }

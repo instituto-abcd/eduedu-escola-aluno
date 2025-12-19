@@ -1,4 +1,3 @@
-import { Group } from "@mantine/core";
 import { AudioButton } from "../AudioButton";
 import { IconMessageCircle2, IconRotateClockwise } from "@tabler/icons-react";
 import { useAuxiliarAudio } from "~/hooks/useAuxiliarAudio";
@@ -46,11 +45,7 @@ export const AudioContainer = ({
   };
 
   return (
-    <Group
-      mx="auto"
-      h="50px"
-      className="flex flex-row justify-center md:justify-start items-start w-full"
-    >
+    <div className="mx-auto h-[50px] flex flex-row justify-center md:justify-start items-start w-full">
       {audioTitles.map((title, inx) => {
         const props = buildAudioProps(title);
         return (
@@ -59,11 +54,10 @@ export const AudioContainer = ({
             key={inx}
             src={title.file_url ?? ""}
             {...props}
-            ref={audioRef}
           />
         );
       })}
       {children && children}
-    </Group>
+    </div>
   );
 };

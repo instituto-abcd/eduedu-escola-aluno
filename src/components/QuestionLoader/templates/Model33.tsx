@@ -1,37 +1,9 @@
-import { createStyles, Image, Text } from "@mantine/core";
 import Lottie from "react-lottie";
 import lottieFile from "~/assets/lotties/lottie_speak_up_button.json";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
 import { useEffect } from "react";
-import { useTimeout } from "@mantine/hooks";
 import { AudioContainer } from "~/components/AudioContainer";
-
-const useStyles = createStyles((theme) => {
-  return {
-    container: {
-      img: {
-        width: "419px !important",
-
-        [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "419px !important",
-        },
-        [`@media (max-width: ${theme.breakpoints.sm})`]: {
-          width: "336px !important",
-        },
-      },
-      svg: {
-        width: "200px !important",
-        [`@media (max-width: ${theme.breakpoints.lg})`]: {
-          width: "200px !important",
-        },
-        [`@media (max-width: ${theme.breakpoints.sm})`]: {
-          width: "200px !important",
-        },
-      },
-    },
-  };
-});
 
 export function Model33({ question, onConditionsChange }: ModelProps) {
   const { hasAudioTitle, imageTitles, textTitles } =
@@ -41,11 +13,12 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
   const hasTextOrImage =
     !!illustration || textTitles.some((title) => title.file_url);
 
-  const { start } = useTimeout(() => onConditionsChange([]), 1000);
-  const { classes } = useStyles();
-
   useEffect(() => {
-    start();
+    const timer = setTimeout(() => {
+      onConditionsChange([]);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [question]);
 
   return (
@@ -57,31 +30,35 @@ export function Model33({ question, onConditionsChange }: ModelProps) {
         />
       )}
 
-      <div className="flex flex-col gap-4 md:flex-row items-center justify-center md:justify-evenly size-full mt-auto">
+      <div className="flex flex-col gap-4 md:flex-row items-center justify-center md:justify-evenly w-full mt-auto">
         {hasTextOrImage && (
-          <div className="">
+          <div className="flex flex-col items-center">
             {illustration && (
-              <Image
+              <img
                 src={illustration}
-                className={classes.container}
+                alt="Ilustração"
+                className="
+                  w-[419px] 
+                  lg:w-[419px] 
+                  sm:w-[336px] 
+                  mb-4
+                  "
+                style={{ maxWidth: "100%" }}
               />
             )}
 
             {textTitles.map((title) => (
-              <Text
-                size={50}
-                color="dark.3"
-                weight={500}
+              <p
                 key={title.description}
-                align="center"
+                className="text-[50px] text-gray-700 font-medium text-center"
               >
                 {title.description}
-              </Text>
+              </p>
             ))}
           </div>
         )}
 
-        <div className={classes.container}>
+        <div className="w-[200px] lg:w-[200px] sm:w-[200px]">
           <Lottie
             options={{
               loop: true,

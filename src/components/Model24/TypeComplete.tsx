@@ -1,11 +1,4 @@
-import {
-  createStyles,
-  Flex,
-  Image,
-  SimpleGrid,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { createStyles, Flex, Image, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
 import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
 import { Question, QuestionTitle } from "~/api/exam";
@@ -68,25 +61,25 @@ export const Model24TypeComplete = ({
     >
       {textTitles.find((title) => title.placeholder.includes("completar"))
         ?.description && (
-          <Title
-            dangerouslySetInnerHTML={{
-              __html:
-                textTitles.find((title) =>
-                  title.placeholder.includes("completar")
-                )?.description ?? "",
-            }}
-            size={boardW(24)}
-            weight={500}
-            color="dark.3"
-            align="center"
-          />
-        )}
+        <Title
+          dangerouslySetInnerHTML={{
+            __html:
+              textTitles.find((title) =>
+                title.placeholder.includes("completar")
+              )?.description ?? "",
+          }}
+          size={boardW(24)}
+          weight={500}
+          color="dark.3"
+          align="center"
+        />
+      )}
       <ImageTitle titles={imageTitles} />
 
       {imageTitles.map(
         (title) =>
           title.file_url && (
-            <Stack className={classes.container}>
+            <div className={`flex flex-col ${classes.container}`}>
               <Image
                 key={title.file_url}
                 src={title.file_url}
@@ -97,7 +90,7 @@ export const Model24TypeComplete = ({
                   },
                 }}
               />
-            </Stack>
+            </div>
           )
       )}
       <SimpleGrid

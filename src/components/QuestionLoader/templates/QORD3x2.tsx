@@ -1,89 +1,133 @@
-import { Group, SimpleGrid, Stack, createStyles } from "@mantine/core";
 import { produce } from "immer";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
-import { DraggableLetters } from "~/components/DraggableLetters";
-import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { TextOptionButton } from "~/components/OptionButton";
-import { lousaPaddingTop } from "~/constants/dimensions";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import {
+  DraggableCardBasic,
+  DroppablePictureCardBasic,
+} from "~/components/dnd";
 
-const useStyles = createStyles({
-  letters: {
-    width: 87,
-    maxHeight: 78,
-  },
-});
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
-type Slot = string | null | QuestionOption;
+type OptionWithSound = QuestionOption & {
+  id: string;
+  sound?: Howl;
+};
 
 export function QORD3x2({
   question,
   onAnswerChange,
   onConditionsChange,
 }: ModelProps) {
-  const { classes } = useStyles();
-  const { audioTitles, hasAudioTitle, audioTitleAutoplay, textTitles } =
+  const [answers, setAnswers] = useState<Array<QuestionOption | null>>([
+    null,
+    null,
+  ]);
+
+  const { audioTitles, hasAudioTitle, audioTitleAutoplay, getRule } =
     useQuestionHelper(question);
-  const startingSlots =
-    textTitles.length > 0
-      ? textTitles[0].description
-          .split("")
-          .map((char) => (char === "_" ? null : char))
-      : [null, null];
 
-  const [selected, setSelected] = useState<QuestionOption[]>([]);
+  const auxAutoPlayRule = getRule("auxAutoPlay");
+  const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
 
-  const [slots, setSlots] = useState<Slot[]>(startingSlots);
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+  const auxRef = useRef<AudioButtonRef>(null);
 
-  function handleDrop(item: QuestionOption | null, index: number) {
-    setSlots((state) =>
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function handleDrop(option: OptionWithSound | null, targetIndex: number) {
+    setAnswers((state) =>
       produce(state, (draft) => {
-        draft[index] = item;
+        let opt: QuestionOption | null = null;
+        if (option) {
+          const { id: _id, sound: _sound, ..._option } = option;
+          opt = _option;
+        }
+
+        /* @ts-ignore */
+        draft[targetIndex] = option
+          ? { ...opt, positionAnswer: targetIndex }
+          : null;
       })
     );
+  }
 
-    if (item) {
-      setSelected((state) =>
-        produce(state, (draft) => {
-          draft[index] = {
-            ...item,
-            positionAnswer: index,
-          };
-        })
-      );
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option: OptionWithSound = e.active.data.current.option;
+      if (!option.sound?.playing()) {
+        option.sound?.play();
+      }
+      setActiveDrag(() => option);
     }
   }
 
-  function handleClear(index: number) {
-    handleDrop(null, index);
-    setSelected(selected.filter((_, inx) => inx !== index));
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const targetIndex = Number(e.over.id);
+      const option = (e.active.data.current?.option as QuestionOption) ?? null;
+      handleDrop(option as OptionWithSound, targetIndex);
+    }
   }
 
+  function handleClearAnswer(optionIndex: number) {
+    setAnswers((state) =>
+      produce(state, (draft) => {
+        draft[optionIndex] = null;
+      })
+    );
+  }
+
+  const conditions = useMemo(
+    () => [answers.every((answer) => answer !== null)],
+    [answers]
+  );
+
   useEffect(() => {
-    setSelected([]);
-    setSlots(startingSlots);
+    if (mainAudioRef.current && auxRef.current) {
+      if (shouldPlayAux) {
+        mainAudioRef.current.sound.onEnd(() => {
+          auxRef.current?.sound.play();
+        });
+      }
+    }
+  }, [mainAudioRef, auxRef]);
+
+  useEffect(() => {
+    setAnswers([null, null]);
   }, [question]);
 
   useEffect(() => {
-    onAnswerChange(selected);
-  }, [selected]);
-
-  const conditions = useMemo(
-    () => [slots.filter((item) => item).length === startingSlots.length],
-    [selected]
-  );
+    onAnswerChange(answers.filter((answer) => answer !== null));
+  }, [answers]);
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
   return (
-    <>
+    <DndContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
       {hasAudioTitle && (
-        <Group mx="auto">
+        <div>
           {audioTitles.map((title, inx) => (
             <AudioButton
               index={inx}
@@ -92,51 +136,67 @@ export function QORD3x2({
               key={title.file_url}
             />
           ))}
-        </Group>
+        </div>
       )}
 
-      <Stack pt={lousaPaddingTop} m="auto">
-        <Group mx="auto" mb={20}>
-          {slots.map((slot, inx) => {
-            if (typeof slot === "string")
-              return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
-
+      <div className="flex flex-col items-center justify-evenly flex-1 w-full">
+        <div className="flex items-center justify-center w-full md:w-2/3 lg:w-1/2 p-4 m-4">
+          {answers.map((slot, inx) => {
             return (
-              <DragLetterSlot
+              <DroppablePictureCardBasic
+                id={inx}
                 key={inx}
-                onDrop={(item) => handleDrop(item, inx)}
-                option={slot}
-                onClear={() => handleClear(inx)}
-                className={classes.letters}
+                optionItem={answers[inx] || null}
+                className="flex w-full aspect-video mx-4 items-center justify-center rounded-[20px] bg-[#4c494120]"
+                replaceWith={
+                  answers[inx] && (
+                    <DraggableCardBasic
+                      id={answers[inx].id}
+                      key={answers[inx].id}
+                      optionItem={answers[inx]}
+                      image={answers[inx].image_url}
+                      sound={answers[inx].sound_url}
+                      debug={{
+                        skipDebug: true,
+                      }}
+                      onClear={() => handleClearAnswer(inx)}
+                      className="flex w-full aspect-video mx-4 items-center justify-center rounded-[20px] opacity-1"
+                      disabled
+                    />
+                  )
+                }
               />
             );
           })}
-        </Group>
+        </div>
 
-        <SimpleGrid
-          mx="auto"
-          cols={3}
-          style={{ placeItems: "center" }}
-          spacing={20}
-        >
+        <div className="grid grid-cols-3 gap-4 place-content-center place-items-center w-full md:w-2/3 lg:w-1/2 p-4 m-4">
           {question.options.map((option, inx) => (
-            <DraggableLetters
-              key={`[${inx}]-[${option.position}]:${option.image_url ?? ""}`}
-              option={option}
-              debug={{ size: 10 }}
-              hidden={
-                !!slots.find(
-                  (item) =>
-                    item &&
-                    typeof item !== "string" &&
-                    item.position === option.position
-                )
-              }
-              className={classes.letters}
+            <DraggableCardBasic
+              id={option.id}
+              key={option.id}
+              optionItem={option}
+              image={option.image_url}
+              text={option.description}
+              sound={option.sound_url}
+              debug={{ skipDebug: true }}
+              className="min-w-full aspect-video px-8 py-4 text-center"
             />
           ))}
-        </SimpleGrid>
-      </Stack>
-    </>
+        </div>
+      </div>
+      <DragOverlay>
+        {activeDrag && (
+          <DraggableCardBasic
+            id={activeDrag.id}
+            optionItem={activeDrag}
+            image={activeDrag.image_url}
+            sound={activeDrag.sound_url}
+            debug={{ skipDebug: true }}
+            className="min-w-full aspect-video px-8 py-4 text-center opacity-50"
+          />
+        )}
+      </DragOverlay>
+    </DndContext>
   );
 }

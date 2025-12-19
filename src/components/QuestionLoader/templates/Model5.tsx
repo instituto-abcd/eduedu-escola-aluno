@@ -10,7 +10,6 @@ import { CardOption } from "~/components/question-components/card-option";
 import { cx } from "~/utils/cx";
 import { validString } from "~/utils/string";
 import { TextTitle } from "~/components/question-components/TextTitle";
-import { useMediaQuery } from "@mantine/hooks";
 
 export function Model5({
   question,
@@ -87,8 +86,6 @@ export function Model5({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
-
   return (
     <>
       {(hasAudioTitle || hasSupportText) && (
@@ -120,7 +117,7 @@ export function Model5({
         {/* Options */}
         <div
           className={cx(
-            "size-full grow flex flex-col items-center justify-center max-h-[400px] ",
+            "size-full grow flex flex-col items-center justify-center max-h-[400px]",
             {
               ["overflow-y-auto"]:
                 question.options.length >= 6 &&
@@ -130,7 +127,10 @@ export function Model5({
             }
           )}
         >
-          <GridContainer qtyItems={question.options.length}>
+          <GridContainer
+            qtyItems={question.options.length}
+            isText={!question.options[0].image_id}
+          >
             {question.options.map((option, inx) => (
               <CardOption
                 key={inx}
@@ -138,8 +138,6 @@ export function Model5({
                 selected={getSelectedState(option)}
                 option={option}
                 properties={["image", "text"]}
-                shape={isSmallScreen ? "square" : "contain"}
-                className="max-h-[50%]"
               />
             ))}
           </GridContainer>
@@ -151,21 +149,23 @@ export function Model5({
 
 type GridContainerProps = React.HTMLProps<HTMLDivElement> & {
   qtyItems?: number;
+  isText?: boolean;
 };
 
 function GridContainer({
   qtyItems = 4,
+  isText,
   className,
   ...props
 }: GridContainerProps) {
   return (
     <div
       className={cx(
-        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 max-h-[400px] py-2",
-        "[&>button:nth-child(odd)]:ml-auto [&>button:nth-child(even)]:mr-auto grid-rows-2",
+        "grid grid-cols-2 w-full h-auto justify-items-center items-center gap-3 lg:gap-6 p-2 max-w-[500px]",
         {
           ["lg:aspect-square"]: qtyItems === 4,
-          ["md:grid-cols-3 h-full md:h-auto"]: qtyItems > 4 && qtyItems <= 6,
+          ["h-2/3"]: isText,
+          ["md:grid-cols-3 h-full"]: qtyItems > 4 && qtyItems <= 6,
         },
         className
       )}

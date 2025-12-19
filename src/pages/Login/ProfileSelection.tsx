@@ -5,6 +5,7 @@ import {
 	CharacterStudent,
 	CharacterProfessor,
 } from "~/components/vector/Character";
+import { env } from "~/env";
 
 const useStyles = createStyles(() => ({
 	container: {
@@ -84,9 +85,7 @@ export function ProfileSelection({ onNext }: { onNext: () => void }) {
 
 	function handleSelection(value: Profile) {
 		if (value === "STUDENT") return onNext();
-		if (value === "TEACHER")
-			// TODO: use new env
-			return window.open(import.meta.env.VITE_ADMIN_URL as string);
+		if (value === "TEACHER") return window.open(window.config.ADMIN_URL);
 	}
 
 	return (

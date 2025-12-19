@@ -1,4 +1,4 @@
-import { Text, Anchor, Button, Group, Modal } from "@mantine/core";
+import { Anchor, Button, Group, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { SchoolGrade, SchoolPeriod } from "~/api/school-class";
@@ -11,21 +11,10 @@ export function Logout() {
   const student = useStudent();
   const { mutate, isLoading } = useStudentReserve({
     onSuccess: () => {
+      student.clear();
       handlers.close();
-      student.update({
-        id: "",
-        name: "",
-        registry: "",
-        schoolClassId: "",
-        schoolClassName: "",
-        schoolGrade: "" as SchoolGrade,
-        schoolPeriod: "" as SchoolPeriod,
-        reserved: false,
-        firstAccess: true,
-        examPerformed: false,
-      });
 
-      navigate(PATH.LOGIN);
+      window.location.replace("/login");
     },
   });
 
@@ -45,10 +34,10 @@ export function Logout() {
         onClose={handlers.close}
         title="Confirmação"
       >
-        <Text>
+        <span>
           Deseja realmente deslogar o perfil desse aluno e voltar para a área de
           login?
-        </Text>
+        </span>
         <Group position="right">
           <Button
             variant="outline"

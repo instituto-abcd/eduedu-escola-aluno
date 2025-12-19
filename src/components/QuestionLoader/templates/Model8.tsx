@@ -1,4 +1,3 @@
-import { Title } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
@@ -47,13 +46,10 @@ export function Model8({
 
       <div className="w-full h-full flex flex-col lg:flex-row items-center justify-evenly">
         {textTitles.map((title, inx) => (
-          <Title
-            color="dark.3"
-            size="1.3rem"
-            align="center"
+          <h2
             key={inx}
             dangerouslySetInnerHTML={{ __html: title.description }}
-            className="w-full lg:w-1/2"
+            className="text-[1.3rem] text-center font-semibold text-zinc-700 w-full lg:w-1/2"
           />
         ))}
 

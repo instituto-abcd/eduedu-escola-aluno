@@ -10,7 +10,6 @@ import {
 } from "@dnd-kit/core";
 import { produce } from "immer";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { v4 as uuid } from "uuid";
 import type { QuestionOption } from "~/api/exam";
 import { AudioContainer } from "~/components/AudioContainer";
 import { DraggableLetter, DroppableLetter } from "~/components/dnd";
@@ -99,16 +98,6 @@ export function Model26({
 	}
 
 	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
-
-	/* Map id to options */
-	const options = useMemo(
-		() =>
-			question.options.map((option) => ({
-				...option,
-				id: uuid(),
-			})),
-		[question],
-	);
 
 	return (
 		<DndContext
@@ -209,7 +198,7 @@ export function Model26({
 					)}
 
 					<div className="flex gap-4">
-						{options.map((option) => (
+						{question.options.map((option) => (
 							<DraggableLetter
 								id={option.id}
 								optionItem={option}

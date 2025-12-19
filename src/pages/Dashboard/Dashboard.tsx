@@ -1,4 +1,4 @@
-import { BackgroundImage, Stack, createStyles } from "@mantine/core";
+import { BackgroundImage, createStyles } from "@mantine/core";
 import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
@@ -8,6 +8,7 @@ import { ViewModeToggle, type ViewMode } from "~/components/ViewModeToggle";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import { PlanetsGrid } from "~/components/PlanetsGrid";
+import { PlanetTrackDebug } from "~/components/debug-components";
 
 const useStyles = createStyles({
   bg: {
@@ -18,12 +19,6 @@ const useStyles = createStyles({
     objectFit: "cover",
     overflow: "hidden",
     position: "relative",
-  },
-
-  container: {
-    maxWidth: 900,
-    marginInline: "auto",
-    height: "100%",
   },
 
   controls: {
@@ -74,17 +69,14 @@ export function DashboardPage() {
       src={bg}
       className={classes.bg}
     >
-      <Stack
-        className={classes.container}
-        py="md"
-      >
+      <div className="max-w-[900px] mx-auto h-full py-4 flex flex-col">
         <ViewModeToggle
           onModeChanged={setViewMode}
           mode={viewMode}
         />
-        <Stack
+        <div
+          className="flex flex-col justify-center"
           style={{ height: "100%", maxHeight: "calc(100vh - 200px)" }}
-          justify="center"
         >
           {viewMode === "planets" && <PlanetTrack ref={trackRef} />}
 
@@ -96,8 +88,8 @@ export function DashboardPage() {
               setViewMode={setViewMode}
             />
           )}
-        </Stack>
-      </Stack>
+        </div>
+      </div>
       {["planets", "list"].includes(viewMode) && (
         <div className={classes.controls}>
           <ArrowDownBtn
@@ -113,6 +105,10 @@ export function DashboardPage() {
         </div>
       )}
       <PlanetCompletedFeedback onClose={onFeedbackEnd} />
+
+      <div className="absolute bottom-4 inset-x-0 mx-auto flex gap-4 w-fit">
+        <PlanetTrackDebug />
+      </div>
     </BackgroundImage>
   );
 }

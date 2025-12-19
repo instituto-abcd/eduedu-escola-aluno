@@ -35,7 +35,7 @@ export function DraggableStackItem({
     <div
       {...props}
       className={cx(
-        "aspect-square w-full bg-surface shadow-card rounded-[45px] p-2",
+        "aspect-square w-full bg-surface shadow-card rounded-[45px] p-4",
         "flex flex-col items-center justify-center gap-1 select-none",
         {
           ["opacity-0 pointer-events-none"]: isDragging,
@@ -57,9 +57,10 @@ export function DraggableStackItem({
       )}
       {!imageOnly && validString(optionItem.description) && (
         <div
-          className={cx("font-bold text-text text-5xl text-center", {
-            ["text-2xl"]: small,
-          })}
+          className={cx(
+            "font-bold text-text text-2xl md:text-5xl text-center",
+            {}
+          )}
           dangerouslySetInnerHTML={{ __html: optionItem.description }}
         />
       )}

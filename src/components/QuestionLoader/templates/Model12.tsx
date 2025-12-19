@@ -1,24 +1,23 @@
 import { Image } from "@mantine/core";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { QuestionOption } from "~/api/exam";
+import type { QuestionOption } from "~/api/exam";
 import { AudioButton } from "~/components/AudioButton";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
+import type { ModelProps } from ".";
 import { AudioInterface } from "~/sounds";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   MouseSensor,
   TouchSensor,
-  UniqueIdentifier,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { v4 as uuid } from "uuid";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import type { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import {
   DraggablePictureCardBasic,
   DroppablePictureCardBasic,
@@ -49,7 +48,7 @@ export function Model12({
   ) {
     if (!option) return;
 
-    const { id, sound, ...cleanOption } = option;
+    const { sound, ...cleanOption } = option;
 
     setAnswers((state) => [
       ...state,
@@ -60,9 +59,8 @@ export function Model12({
     ]);
     setStack(
       stack.filter((item) => {
-        const { id, sound, ...cleanItem } = item;
-
-        return JSON.stringify(cleanItem) !== JSON.stringify(cleanOption);
+        const { sound, ...cleanItem } = item;
+        return cleanItem.id !== cleanOption.id;
       })
     );
     handleFeedback(overId, option);
@@ -84,11 +82,10 @@ export function Model12({
     }
   }
 
-  const optionsWithIds = useMemo(
+  const optionsWithSound = useMemo(
     () =>
       question.options.map((option) => ({
         ...option,
-        id: uuid(),
         sound: new Howl({
           src: [option.sound_url ?? ""],
           html5: true,
@@ -111,7 +108,7 @@ export function Model12({
 
   useEffect(() => {
     setAnswers([]);
-    setStack(optionsWithIds);
+    setStack(optionsWithSound);
   }, [question]);
 
   useEffect(() => {

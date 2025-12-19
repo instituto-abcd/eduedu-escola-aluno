@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles, Stack } from "@mantine/core";
+import { createStyles } from "@mantine/core";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useGetPlanetTrack } from "~/api/student";
 import { useGridSlide } from "~/hooks/useGridSlide";
@@ -8,7 +8,6 @@ import { MediaQueryKey } from "~/constants/dimensions";
 import { PlanetCard } from "../PlanetCard/PlanetCard";
 import { Header } from "~/pages/Login/components/Header";
 import { ViewMode } from "../ViewModeToggle";
-import { useUnlockPlanets } from "~/stores/unlock-planets";
 import type { PlanetTrackRef } from "../PlanetTrack";
 
 type Props = {
@@ -17,13 +16,7 @@ type Props = {
 
 export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
   ({ setViewMode }, ref) => {
-    const { unlockAll, unlockLimit } = useUnlockPlanets();
-
-    const { data } = useGetPlanetTrack(undefined, {
-      usePlanetAvailability: !unlockLimit,
-      hideLastPlanets: !unlockAll,
-      canExecuteAnyPlanet: unlockAll,
-    });
+    const { data } = useGetPlanetTrack();
 
     const breakpoint = useCurrentBreakpoint();
     const gridLayoutMap: Record<MediaQueryKey, [number, number]> = {
@@ -51,7 +44,7 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
     }));
 
     return (
-      <Stack spacing={0}>
+      <div className="flex flex-col gap-0">
         <div className={classes.header}>
           <Header
             title=""
@@ -81,7 +74,7 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
             </Carousel.Slide>
           ))}
         </Carousel>
-      </Stack>
+      </div>
     );
   }
 );

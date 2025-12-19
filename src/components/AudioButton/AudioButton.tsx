@@ -33,6 +33,7 @@ export const AudioButton = forwardRef(
         <ButtonReplay
           onClick={sound.play}
           disabled={isPlaying}
+          className="ml-2"
         />
       ) : (
         <ButtonListen

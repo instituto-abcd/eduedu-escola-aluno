@@ -1,14 +1,29 @@
-import { Group, Image, Stack } from "@mantine/core";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
-import { useEffect, useMemo, useState } from "react";
 import { QuestionOption } from "~/api/exam";
-import { AudioButton } from "~/components/AudioButton";
-import { DraggableLetters } from "~/components/DraggableLetters";
-import { DragLetterSlot } from "~/components/DraggableLetters/DragLetterSlot";
-import { TextOptionButton } from "~/components/OptionButton";
-import { lousaHeight, lousaWidth } from "~/constants/dimensions";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { ModelProps } from ".";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { DraggableLetter, DroppableLetter } from "~/components/dnd";
+import { TextTitle } from "~/components/question-components/TextTitle";
+import { ImageTitle } from "~/components/question-components";
+import { AudioButton } from "~/components/AudioButton";
+import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+
+/**
+ * IMPORTANTE: este modelo difere do modelo 18 dos planetas, pois a logica de resposta é diferente.
+ * No modelo 18 padrão as alternativas corretas de letras são ordenadas de acordo com a posição na palavra do enunciado
+ * ja no modelo 18 prova, as alternativas corretas de letras são ordenadas de acordo com a posição no array de resposta.
+ **/
 
 export function Model18Prova({
   question,
@@ -16,11 +31,25 @@ export function Model18Prova({
   onConditionsChange,
 }: ModelProps) {
   const [selected, setSelected] = useState<QuestionOption[]>([]);
-  const { audioTitles, imageTitles, textTitles } = useQuestionHelper(question);
+  const { imageTitles, textTitles, hasAudioTitle, supportText, audioTitles } =
+    useQuestionHelper(question);
 
-  const text = textTitles[0].description;
+  const mainAudioRef = useRef<AudioButtonRef>(null);
+
+  const text = useMemo(
+    () =>
+      textTitles.find(
+        (title) => title.description && title.description.includes("_")
+      )?.description ?? "",
+    [question]
+  );
+
   const [slots, setSlots] = useState<Array<QuestionOption | null | string>>(
-    () => text.split("").map((char) => (char === "_" ? null : char))
+    () =>
+      text
+        .replace(/\s/g, "")
+        .split("")
+        .map((char) => (char === "_" ? null : char))
   );
 
   function handleDrop(item: QuestionOption | null, index: number) {
@@ -29,114 +58,177 @@ export function Model18Prova({
         draft[index] = item;
       })
     );
+
+    if (item) {
+      setSelected((prev) =>
+        prev.concat({
+          ...item,
+          positionAnswer: index,
+        })
+      );
+    }
   }
 
-  function handleClear(index: number, item: QuestionOption | null) {
-    handleDrop(null, index);
-    setSelected(selected.filter((x) => x.description !== item?.description));
+  function handleClear(index: number) {
+    setSlots((state) =>
+      produce(state, (draft) => {
+        draft[index] = null;
+      })
+    );
+    setSelected((prev) => prev.filter((opt) => opt.positionAnswer !== index));
   }
 
   useEffect(() => {
     setSelected([]);
+    setSlots(
+      text
+        .replace(/\s/g, "")
+        .split("")
+        .map((char) => (char === "_" ? null : char))
+    );
   }, [question]);
 
   useEffect(() => {
-    setSlots(text.split("").map((char) => (char === "_" ? null : char)));
-  }, [text]);
+    const respostaOrdenada = slots
+      .filter((slot) => slot && typeof slot !== "string")
+      .map((slot, idx) => ({
+        ...(slot as QuestionOption),
+        positionAnswer: idx,
+      }));
 
-  useEffect(() => {
-    onAnswerChange(selected);
-  }, [selected, text]);
+    onAnswerChange(respostaOrdenada);
+  }, [slots]);
 
   const conditions = useMemo(
-    () => [slots.every((ans) => ans !== null)],
-    [selected, text]
+    () => [slots.every((slot) => slot !== null)],
+    [slots]
   );
 
   useEffect(() => {
     onConditionsChange(conditions);
   }, [conditions]);
 
-  useEffect(() => {
-    const slotsFilter = slots.filter(x => x?.description)
-    setSelected((prevSelected) =>
-      produce(prevSelected, (draft) => {
-        draft.length = 0;
-        slotsFilter.forEach((x, index) => {
-            draft.push({...x, positionAnswer: index});
-        });
-      })
-    );
-  }, [slots]);
+  const textAboveQuestion = textTitles.find((t) =>
+    t.placeholder?.includes("som")
+  );
+
+  const hasSupportText = supportText.some((t) => !!t.description);
+
+  // DND
+  const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
+
+  function onDragStart(e: DragStartEvent) {
+    if (e.active.data.current) {
+      const option: QuestionOption = e.active.data.current.option;
+      setActiveDrag(option);
+    }
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    setActiveDrag(null);
+    if (e.over) {
+      const targetIndex = Number(e.over.id);
+      const option = (e.active.data.current?.option as QuestionOption) ?? null;
+      handleDrop(option, targetIndex);
+    }
+  }
+
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   return (
-    <>
-      <Group mx="auto">
-        {audioTitles.map((title, inx) => (
+    <DndContext
+      sensors={sensors}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
+      {/* Enunciado em áudio (header) */}
+      {hasAudioTitle &&
+        audioTitles.map((title, idx) => (
           <AudioButton
-            index={inx}
+            key={title.file_url}
+            index={idx}
             src={title.file_url ?? ""}
-            key={title.file_name}
             autoPlay
+            ref={mainAudioRef}
           />
         ))}
-      </Group>
-      {imageTitles.map((title) => (
-        <Image
-          src={title.file_url ?? ""}
-          key={title.file_name}
-          height={(lousaHeight * 35) / 100}
-          width="auto"
-          mx="auto"
-        />
-      ))}
 
-      <Stack spacing={20} my="auto">
-        <Group mx="auto">
-          {slots.map((slot, inx) => {
-            if (typeof slot === "string")
-              return <TextOptionButton key={slot}>{slot}</TextOptionButton>;
+      <div className="flex flex-col lg:flex-row items-center justify-evenly grow size-full">
+        {/* Enunciado textual (opcional) */}
+        <div className="flex flex-col w-full h-full items-center justify-center">
+          {textAboveQuestion && (
+            <TextTitle text={textAboveQuestion.description} />
+          )}
+          {/* Imagem enunciado */}
+          <ImageTitle titles={imageTitles} />
+        </div>
 
-            return (
-              <DragLetterSlot
-                onDrop={(item) => handleDrop(item, inx)}
-                option={slot}
-                onClear={() => handleClear(inx, slot)}
-                key={inx}
-                style={{
-                  width: (lousaWidth * 8) / 100,
-                  height: (lousaWidth * 8) / 100,
-                  textAlign: "center",
-                }}
-              />
-            );
-          })}
-        </Group>
-
-        <Group mx="auto">
-          {question.options.map((option) => (
-            <DraggableLetters
-              key={option.description}
-              option={option}
-              hidden={
-                !!slots.find(
-                  (item) =>
-                    item &&
-                    typeof item !== "string" &&
-                    item.position === option.position
-                )
+        <div className="flex flex-col items-center justify-evenly lg:justify-center gap-4 lg:gap-20 w-full h-full">
+          {/* Texto a ser completado */}
+          <div className="flex items-center justify-center gap-1 md:gap-3 w-full">
+            {slots.map((slot, idx) => {
+              if (typeof slot === "string") {
+                return (
+                  <div
+                    key={idx}
+                    className="font-black text-4xl md:text-5xl text-text"
+                  >
+                    {slot}
+                  </div>
+                );
               }
-              style={{
-                width: (lousaWidth * 8) / 100,
-                height: (lousaWidth * 8) / 100,
-                textAlign: "center",
-              }}
-            >
-              {option.description}
-            </DraggableLetters>
-          ))}
-        </Group>
-      </Stack>
-    </>
+              return (
+                <DroppableLetter
+                  key={idx}
+                  id={idx}
+                  replaceWith={
+                    slot && (
+                      <DraggableLetter
+                        id={idx}
+                        optionItem={slot}
+                        disabled
+                        onClear={() => handleClear(idx)}
+                        dropped
+                        compact={slots.length > 4}
+                      />
+                    )
+                  }
+                />
+              );
+            })}
+          </div>
+
+          {/* Alternativas */}
+          <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-4 max-w-[400px]">
+            {question.options.map((option, idx) => (
+              <DraggableLetter
+                key={idx}
+                id={option.id}
+                optionItem={option}
+                hidden={
+                  !!slots.find(
+                    (s) =>
+                      s &&
+                      typeof s !== "string" &&
+                      JSON.stringify(s) === JSON.stringify(option)
+                  )
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Overlay DND */}
+      <DragOverlay>
+        {activeDrag ? (
+          <DraggableLetter
+            id={54321}
+            optionItem={activeDrag}
+            disabled
+          />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

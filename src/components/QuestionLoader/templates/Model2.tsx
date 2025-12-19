@@ -1,17 +1,16 @@
-import { SimpleGrid } from "@mantine/core";
-import { ModelProps } from ".";
+import type { ModelProps } from ".";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { produce } from "immer";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
 import { AudioButton } from "~/components/AudioButton";
-import { QuestionOption } from "~/api/exam";
-import { AudioButtonRef } from "~/components/AudioButton/AudioButton";
+import type { QuestionOption } from "~/api/exam";
+import type { AudioButtonRef } from "~/components/AudioButton/AudioButton";
 import { AuxiliaryVideoModal } from "~/components/AuxiliaryVideoModal";
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   MouseSensor,
   TouchSensor,
   useSensor,
@@ -24,7 +23,6 @@ import {
   DraggablePictureCard,
 } from "~/components/dnd";
 import { VideoTitle } from "~/components/question-components";
-import { v4 as uuid } from "uuid";
 
 type OptionWithSound = QuestionOption & {
   id: string;
@@ -48,8 +46,6 @@ export function Model2({
           const { id: _id, sound: _sound, ..._option } = option;
           opt = _option;
         }
-
-        /* @ts-ignore */
         draft[targetIndex] = option
           ? { ...opt, positionAnswer: targetIndex }
           : null;
@@ -74,7 +70,6 @@ export function Model2({
     videoTitles,
   } = useQuestionHelper(question);
 
-  /* Autoplay Aux Audio Logic */
   const auxAutoPlayRule = getRule("auxAutoPlay");
   const shouldPlayAux = auxAutoPlayRule?.value === "false" ? false : true;
   const noPaddingRule = getRule("noPadding")?.value === "true";
@@ -83,15 +78,12 @@ export function Model2({
   const auxRef = useRef<AudioButtonRef>(null);
 
   useEffect(() => {
-    if (mainAudioRef.current && auxRef.current) {
-      if (shouldPlayAux) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxRef.current?.sound.play();
-        });
-      }
+    if (mainAudioRef.current && auxRef.current && shouldPlayAux) {
+      mainAudioRef.current.sound.onEnd(() => {
+        auxRef.current?.sound.play();
+      });
     }
   }, [mainAudioRef, auxRef]);
-  /* End Aux Logic */
 
   useEffect(() => {
     setAnswers(question.options.map(() => null));
@@ -110,12 +102,10 @@ export function Model2({
     onConditionsChange(conditions);
   }, [conditions]);
 
-  const auxVideo = videoTitles.find((title, index) => index >= 1);
-
+  const auxVideo = videoTitles.find((_, index) => index >= 1);
   const cardSize =
     question.options.length > 3 ? question.options.length : undefined;
 
-  /* Drag Handlers */
   const [activeDrag, setActiveDrag] = useState<QuestionOption | null>(null);
 
   function onDragStart(e: DragStartEvent) {
@@ -158,11 +148,10 @@ export function Model2({
   }
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
-  const optionsWithIds = useMemo(
+  const optionsWithSound = useMemo(
     () =>
       question.options.map((option) => ({
         ...option,
-        id: uuid(),
         sound: new Howl({
           src: [option.sound_url ?? ""],
           html5: true,
@@ -195,6 +184,7 @@ export function Model2({
           )}
         </div>
       )}
+
       <div className="my-auto flex flex-col items-center w-full gap-4 md:gap-9 max-h-[80vh]">
         {textTitles.map((title) => (
           <p
@@ -212,10 +202,13 @@ export function Model2({
           />
         )}
 
+        {/* Respostas - Grid sem padding */}
         {!noPaddingRule && (
-          <SimpleGrid
-            cols={question.options.length}
-            className="xl:place-items-center grid xl:h-[40vh] xl:w-auto max-w-[500px]"
+          <div
+            className="grid xl:place-items-center xl:h-[40vh] xl:w-auto max-w-[500px] gap-4"
+            style={{
+              gridTemplateColumns: `repeat(${question.options.length}, minmax(0, 1fr))`,
+            }}
           >
             {answers.map((slot, inx) => (
               <DroppableCard
@@ -226,7 +219,7 @@ export function Model2({
                 style={{ maxWidth: "150px", maxHeight: "150px" }}
               />
             ))}
-          </SimpleGrid>
+          </div>
         )}
 
         {noPaddingRule && (
@@ -255,12 +248,14 @@ export function Model2({
           </div>
         )}
 
-        <SimpleGrid
-          cols={question.options.length}
-          className="place-items-center max-w-[500px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
+        <div
+          className="grid place-items-center max-w-[500px] xl:min-w-[800px] gap-4 lg:h-[40vh] lg:w-auto"
+          style={{
+            gridTemplateColumns: `repeat(${question.options.length}, minmax(0, 1fr))`,
+          }}
         >
-          {optionsWithIds.map((item, inx) =>
-            !!answers.find((slot) => slot?.position === item.position) ? (
+          {optionsWithSound.map((item, inx) =>
+            answers.find((slot) => slot?.position === item.position) ? (
               <DraggableCard
                 id={Math.random() * 30}
                 key={inx}
@@ -274,7 +269,7 @@ export function Model2({
               />
             ) : (
               <DraggableCard
-                id={item.id}
+                id={item.image_id || item.id}
                 key={inx}
                 optionItem={item}
                 size={cardSize}
@@ -286,7 +281,7 @@ export function Model2({
               />
             )
           )}
-        </SimpleGrid>
+        </div>
       </div>
 
       <DragOverlay>

@@ -1,4 +1,8 @@
-import { Anchor, List, Title, Container, Stack } from "@mantine/core";
+import { Anchor, List, Title, Container } from "@mantine/core";
+import { useState } from "react";
+import { useGetStudentAwards } from "~/api/student";
+import { AwardDisplay } from "~/components/AwardDisplay/AwardDisplay";
+import { AwardImage, AWARDS_IMAGES } from "~/constants/awards";
 
 export function DebugPage() {
   const debugLinks = [
@@ -28,9 +32,22 @@ export function DebugPage() {
     },
   ];
 
+  const [awards, setAwards] = useState<AwardImage[]>(AWARDS_IMAGES);
+  useGetStudentAwards({
+    onSuccess: (data) => {
+      const newawards = AWARDS_IMAGES.map((aw) => {
+        const match = data.find((award) => award.name === aw.name);
+        if (!match) return aw;
+        return { ...aw, ...match, active: true };
+      });
+
+      setAwards(newawards);
+    },
+  });
+
   return (
     <Container>
-      <Stack py={24}>
+      <div className="flex flex-col py-6">
         <Title>Painel de desenvolvedor</Title>
 
         <Title order={2}>Páginas de depuração</Title>
@@ -50,7 +67,13 @@ export function DebugPage() {
             </List.Item>
           ))}
         </List>
-      </Stack>
+
+        <div className="grid grid-cols-6">
+          {awards.map((aw) => (
+            <AwardDisplay award={aw} />
+          ))}
+        </div>
+      </div>
     </Container>
   );
 }

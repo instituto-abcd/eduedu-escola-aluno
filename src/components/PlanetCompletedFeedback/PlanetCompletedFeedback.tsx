@@ -7,8 +7,6 @@ import {
   Modal,
   Notification,
   Rating,
-  Stack,
-  Text,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useSearchParams } from "react-router-dom";
@@ -59,10 +57,14 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
       radius="md"
       centered
     >
-      <Stack align="center" spacing="xl">
+      <div className="flex flex-col items-center gap-8">
         {error && (
           <>
-            <Image src={feedbackLow} width={200} style={{ zIndex: 10 }} />
+            <Image
+              src={feedbackLow}
+              width={200}
+              style={{ zIndex: 10 }}
+            />
             <Notification
               color="red"
               icon={<IconX />}
@@ -72,7 +74,10 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
             >
               {error.message}
             </Notification>
-            <Anchor size="sm" onClick={() => void refetch()}>
+            <Anchor
+              size="sm"
+              onClick={() => void refetch()}
+            >
               Tentar novamente
             </Anchor>
           </>
@@ -97,15 +102,20 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
               size="xl"
               fractions={4}
             />
-            <Text color="dark.3" size="xl">
+            <span className="text-gray-700 text-xl">
               Muito bem! Você terminou o {planetData?.planetName}.
-            </Text>
-            <Button fullWidth color="blue.4" onClick={closeModal} size="md">
+            </span>
+            <Button
+              fullWidth
+              color="blue.4"
+              onClick={closeModal}
+              size="md"
+            >
               Continuar
             </Button>
           </>
         )}
-      </Stack>
+      </div>
     </Modal>
   );
 }

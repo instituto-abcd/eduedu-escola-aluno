@@ -4,8 +4,6 @@ import {
   Group,
   NumberInput,
   Radio,
-  Stack,
-  Text,
 } from "@mantine/core";
 import { useState } from "react";
 
@@ -66,7 +64,7 @@ const useStyles = createStyles(
         },
       },
     },
-  }),
+  })
 );
 
 type ScreenMode = "wide" | "tablet-vertical";
@@ -83,13 +81,19 @@ export function SchoolYearSelect() {
 
   return (
     <section className={classes.section}>
-      <Text size={48}>
+      <span className="text-5xl">
         Tamanho de tela: {dimensions[screenMode].w}x{dimensions[screenMode].h}
-      </Text>
+      </span>
 
       <Group spacing={60}>
-        <ScreenModeSelect value={screenMode} onChange={setScreenMode} />
-        <Divider orientation="vertical" h={80} />
+        <ScreenModeSelect
+          value={screenMode}
+          onChange={setScreenMode}
+        />
+        <Divider
+          orientation="vertical"
+          h={80}
+        />
         <NumberInput
           value={qty}
           onChange={(v) => Number.isInteger(v) && setQty(v as number)}
@@ -101,7 +105,11 @@ export function SchoolYearSelect() {
           {Array(qty)
             .fill(0)
             .map((_, inx) => (
-              <img key={inx} src={screenModeImages[screenMode]} alt="" />
+              <img
+                key={inx}
+                src={screenModeImages[screenMode]}
+                alt=""
+              />
             ))}
         </div>
       )}
@@ -122,12 +130,19 @@ function ScreenModeSelect({
   };
 
   return (
-    <Radio.Group value={value} onChange={onChange} label="Modo de tela">
-      <Stack spacing="xs">
+    <Radio.Group
+      value={value}
+      onChange={onChange}
+      label="Modo de tela"
+    >
+      <div className="flex flex-col gap-2">
         {Object.keys(screenModes).map((mode) => (
-          <Radio value={mode} label={screenModes[mode as ScreenMode]} />
+          <Radio
+            value={mode}
+            label={screenModes[mode as ScreenMode]}
+          />
         ))}
-      </Stack>
+      </div>
     </Radio.Group>
   );
 }

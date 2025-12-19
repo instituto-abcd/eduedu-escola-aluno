@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useDebugModelQuestions } from "~/api/debug";
-import { Stack } from "@mantine/core";
 import { QuestionInfo } from "../components/QuestionInfo";
 import { QuestionLoader } from "~/components/QuestionLoader";
 
@@ -62,7 +61,8 @@ export function ModelView() {
       )}
 
       {currentQuestion !== -1 && data?.[currentQuestion] && (
-        <Stack
+        <div
+          className="flex flex-col"
           style={{
             position: "fixed",
             bottom: 20,
@@ -79,7 +79,7 @@ export function ModelView() {
             total={data.length}
             onQuestionChange={setCurrentQuestion}
           />
-        </Stack>
+        </div>
       )}
     </>
   );

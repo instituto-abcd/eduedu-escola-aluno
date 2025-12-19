@@ -34,98 +34,100 @@ import { QME2x3Video } from "./templates/QMES2x3Video";
 import { QMES5 } from "./templates/QMES5";
 import { QORD3x2 } from "./templates/QORD3x2";
 import { Model8Prova } from "./templates/Model8Prova";
+import { Model18Prova } from "./templates/Model18Prova";
 import { Model35 } from "./templates/Model35";
 import { Model34 } from "./templates/Model34";
 import { Model11Prova } from "./templates/Model11Prova";
+import { Model10Prova } from "./templates/Model10Prova";
 
 export function ModelMapper({ commonProps }: { commonProps: ModelProps }) {
-	switch (commonProps.question.model_id) {
-		case "MODEL2":
-			return <Model2 {...commonProps} />;
-		case "MODEL2-VIDEO":
-			return <Model2 {...commonProps} />;
-		case "MODEL3":
-			return <Model3 {...commonProps} />;
-		case "MODEL4":
-			return <Model4 {...commonProps} />;
-		case "MODEL5":
-			return <Model5 {...commonProps} />;
-		case "MODEL8":
-			return <Model8 {...commonProps} />;
-		case "MODEL8-PROVA":
-			return <Model8Prova {...commonProps} />;
-		case "MODEL10":
-			return <Model10 {...commonProps} />;
-		case "MODEL10-PROVA":
-			return <Model10 {...commonProps} />;
-		case "MODEL11":
-			return <Model11 {...commonProps} />;
-		case "MODEL11-PROVA":
-			return <Model11Prova {...commonProps} />;
-		case "MODEL12":
-			return <Model12 {...commonProps} />;
-		case "MODEL13":
-			return <Model13 {...commonProps} />;
-		case "MODEL14":
-			return <Model14 {...commonProps} />;
-		case "MODEL15":
-			return <Model15 {...commonProps} />;
-		case "MODEL16":
-			return <Model16 {...commonProps} />;
-		case "MODEL18":
-			return <Model18 {...commonProps} />;
-		case "MODEL18-PROVA":
-			return <Model18 {...commonProps} />;
-		case "MODEL19":
-			return <Model19 {...commonProps} />;
-		case "MODEL20":
-			return <Model20 {...commonProps} />;
-		case "MODEL21":
-			return <Model21 {...commonProps} />;
-		case "MODEL22":
-			return <Model22 {...commonProps} />;
-		case "MODEL24":
-			return <Model24 {...commonProps} />;
-		case "MODEL25":
-			return <Model25 {...commonProps} />;
-		case "MODEL26":
-			return <Model26 {...commonProps} />;
-		case "MODEL27":
-			return <Model27 {...commonProps} />;
-		case "MODEL28":
-			return <Model28 {...commonProps} />;
-		case "MODEL29":
-			return <Model29 {...commonProps} />;
-		case "MODEL30":
-			return <Model30 {...commonProps} />;
-		case "MODEL31":
-			return <Model31 {...commonProps} />;
-		case "MODEL32":
-			return <Model32 {...commonProps} />;
-		case "MODEL33":
-			return <Model33 {...commonProps} />;
-		case "MODEL34":
-			return <Model34 {...commonProps} />;
-		case "MODEL35":
-			return <Model35 {...commonProps} />;
+  switch (commonProps.question.model_id) {
+    case "MODEL2":
+      return <Model2 {...commonProps} />;
+    case "MODEL2-VIDEO":
+      return <Model2 {...commonProps} />;
+    case "MODEL3":
+      return <Model3 {...commonProps} />;
+    case "MODEL4":
+      return <Model4 {...commonProps} />;
+    case "MODEL5":
+      return <Model5 {...commonProps} />;
+    case "MODEL8":
+      return <Model8 {...commonProps} />;
+    case "MODEL8-PROVA":
+      return <Model8Prova {...commonProps} />;
+    case "MODEL10":
+      return <Model10 {...commonProps} />;
+    case "MODEL10-PROVA":
+      return <Model10Prova {...commonProps} />;
+    case "MODEL11":
+      return <Model11 {...commonProps} />;
+    case "MODEL11-PROVA":
+      return <Model11Prova {...commonProps} />;
+    case "MODEL12":
+      return <Model12 {...commonProps} />;
+    case "MODEL13":
+      return <Model13 {...commonProps} />;
+    case "MODEL14":
+      return <Model14 {...commonProps} />;
+    case "MODEL15":
+      return <Model15 {...commonProps} />;
+    case "MODEL16":
+      return <Model16 {...commonProps} />;
+    case "MODEL18":
+      return <Model18 {...commonProps} />;
+    case "MODEL18-PROVA":
+      return <Model18Prova {...commonProps} />;
+    case "MODEL19":
+      return <Model19 {...commonProps} />;
+    case "MODEL20":
+      return <Model20 {...commonProps} />;
+    case "MODEL21":
+      return <Model21 {...commonProps} />;
+    case "MODEL22":
+      return <Model22 {...commonProps} />;
+    case "MODEL24":
+      return <Model24 {...commonProps} />;
+    case "MODEL25":
+      return <Model25 {...commonProps} />;
+    case "MODEL26":
+      return <Model26 {...commonProps} />;
+    case "MODEL27":
+      return <Model27 {...commonProps} />;
+    case "MODEL28":
+      return <Model28 {...commonProps} />;
+    case "MODEL29":
+      return <Model29 {...commonProps} />;
+    case "MODEL30":
+      return <Model30 {...commonProps} />;
+    case "MODEL31":
+      return <Model31 {...commonProps} />;
+    case "MODEL32":
+      return <Model32 {...commonProps} />;
+    case "MODEL33":
+      return <Model33 {...commonProps} />;
+    case "MODEL34":
+      return <Model34 {...commonProps} />;
+    case "MODEL35":
+      return <Model35 {...commonProps} />;
 
-		// Orfãos
-		case "QME2x2Audio":
-			return <QME2x2Audio {...commonProps} />;
-		case "QME2x2Text":
-			return <QME2x2Text {...commonProps} />;
-		case "QME2x2Text2":
-			return <QME2x2Text2 {...commonProps} />;
-		case "QMES5":
-			return <QMES5 {...commonProps} />;
-		case "QME2x2Video":
-			return <QME2x2Video {...commonProps} />;
-		case "QMES2x3Video":
-			return <QME2x3Video {...commonProps} />;
-		case "QORD3x2":
-			return <QORD3x2 {...commonProps} />;
+    // Orfãos
+    case "QME2x2Audio":
+      return <QME2x2Audio {...commonProps} />;
+    case "QME2x2Text":
+      return <QME2x2Text {...commonProps} />;
+    case "QME2x2Text2":
+      return <QME2x2Text2 {...commonProps} />;
+    case "QMES5":
+      return <QMES5 {...commonProps} />;
+    case "QME2x2Video":
+      return <QME2x2Video {...commonProps} />;
+    case "QMES2x3Video":
+      return <QME2x3Video {...commonProps} />;
+    case "QORD3x2":
+      return <QORD3x2 {...commonProps} />;
 
-		default:
-			return <h1>Question NULL</h1>;
-	}
+    default:
+      return <h1>Question NULL</h1>;
+  }
 }

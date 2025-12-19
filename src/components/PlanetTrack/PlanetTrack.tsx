@@ -1,42 +1,30 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Carousel, CarouselProps, Embla } from "@mantine/carousel";
-import { Stack, Group, createStyles } from "@mantine/core";
-import { SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
+import { Carousel, type CarouselProps, type Embla } from "@mantine/carousel";
+import { createStyles } from "@mantine/core";
+import { type SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
 import fimProvaLottie from "~/assets/lotties/FIM_PROVA.json";
 import Lottie from "react-lottie";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useGridSlide } from "~/hooks/useGridSlide";
-import { MediaQueryKey } from "~/constants/dimensions";
+import type { MediaQueryKey } from "~/constants/dimensions";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
-import { useToggle } from "@mantine/hooks";
-import { useUnlockPlanets } from "~/stores/unlock-planets";
 
 export type PlanetTrackRef = {
   embla?: Embla;
   track?: SimplifiedPlanet[];
 };
 
-type Props = {};
-
-export const PlanetTrack = forwardRef<PlanetTrackRef, Props>((_, ref) => {
+export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
   const [embla, setEmbla] = useState<Embla>();
-  const [unlockLimit, toggleUnlockLimit] = useToggle();
-  const [unlockAll, toggleUnlockAll] = useToggle();
-
-  const unlockStore = useUnlockPlanets();
 
   useImperativeHandle(ref, () => ({
     embla,
     track: track?.planetTrack,
   }));
 
-  const { data: track, isLoading } = useGetPlanetTrack(undefined, {
-    usePlanetAvailability: !unlockLimit,
-    hideLastPlanets: !unlockAll,
-    canExecuteAnyPlanet: unlockAll,
-  });
+  const { data: track, isLoading } = useGetPlanetTrack();
   const breakpoint = useCurrentBreakpoint();
 
   const gridSlides = useGridSlide({
@@ -73,24 +61,11 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>((_, ref) => {
 
   const { classes } = useStyles();
 
-  const handleUnlockLimit = () => {
-    toggleUnlockLimit();
-    unlockStore.toggleUnlockLimit(true);
-  };
-
-  const handleUnlockAll = () => {
-    toggleUnlockAll();
-    unlockStore.toggleUnlockAll(true);
-  };
-
   if (!isLoading && track?.planetTrack.length === 0)
     return <NoTrackAvailable />;
 
   return (
-    <Stack
-      spacing={40}
-      className={classes.container}
-    >
+    <div className="flex flex-col gap-10 max-h-[calc(100vh-200px)]">
       <Carousel
         getEmblaApi={setEmbla}
         withControls={false}
@@ -101,60 +76,36 @@ export const PlanetTrack = forwardRef<PlanetTrackRef, Props>((_, ref) => {
         {breakpoint === "MOBILE"
           ? gridSlides.map((items, inx) => (
               <Carousel.Slide key={inx}>
-                <Group position="center">
-                  {items.map((planet, i) => (
+                <div className="flex justify-center">
+                  {items.map((planet) => (
                     <PlanetCard
                       planet={planet}
-                      key={i}
-                      size={"small"}
+                      key={planet.planetId}
+                      size="small"
                     />
                   ))}
-                </Group>
+                </div>
               </Carousel.Slide>
             ))
           : track?.planetTrack?.map((planet, i) => (
-              <Carousel.Slide key={i}>
-                <Group position="center">
+              <Carousel.Slide key={planet.planetId}>
+                <div className="flex justify-center">
                   <PlanetCard
                     planet={planet}
                     size={activeSlide === i ? "large" : "medium"}
                   />
-                </Group>
+                </div>
               </Carousel.Slide>
             ))}
       </Carousel>
-
-      <div className="absolute bottom-4 inset-x-0 mx-auto flex gap-4 w-fit">
-        {!unlockLimit && (
-          <button
-            className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-            onClick={handleUnlockLimit}
-          >
-            Remover limite diário
-          </button>
-        )}
-        {!unlockAll && (
-          <button
-            className="p-4 bg-blue-600 font-bold z-20 opacity-100 w-fit rounded text-white"
-            onClick={handleUnlockAll}
-          >
-            Listar todos planetas
-          </button>
-        )}
-      </div>
-    </Stack>
+    </div>
   );
 });
 
 function NoTrackAvailable() {
   const { sound } = useCreateSound({ src: fimProvaAudio, autoPlay: false });
   return (
-    <Stack
-      h="100%"
-      w="100%"
-      align="center"
-      justify="center"
-    >
+    <div className="flex flex-col h-full w-full items-center justify-center">
       <Lottie
         options={{
           loop: false,
@@ -173,7 +124,7 @@ function NoTrackAvailable() {
           },
         ]}
       />
-    </Stack>
+    </div>
   );
 }
 
@@ -183,8 +134,5 @@ const useStyles = createStyles((_) => ({
     marginTop: 20,
     marginBlock: "auto",
     position: "relative",
-  },
-  container: {
-    maxHeight: "calc(100vh - 200px)",
   },
 }));

@@ -1,14 +1,14 @@
 import { produce } from "immer";
 import { useEffect, useMemo, useState } from "react";
-import { QuestionOption, QuestionTitle } from "~/api/exam";
+import type { QuestionOption, QuestionTitle } from "~/api/exam";
 import { useQuestionHelper } from "~/hooks/useQuestionHelper";
-import { ModelProps } from ".";
+import type { ModelProps } from ".";
 import { AudioInterface } from "~/sounds";
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   MouseSensor,
   TouchSensor,
   useSensor,
@@ -22,10 +22,8 @@ import {
 import { TextTitle } from "~/components/question-components/TextTitle";
 import { AudioContainer } from "~/components/AudioContainer";
 import { validString } from "~/utils/string";
-import { v4 as uuid } from "uuid";
 
 type OptionWithSound = QuestionOption & {
-  id: string;
   sound?: Howl;
 };
 
@@ -113,7 +111,6 @@ export function Model13({
     setOptions(
       question.options.map((option) => ({
         ...option,
-        id: uuid(),
         sound: new Howl({
           src: [option.sound_url ?? ""],
           html5: true,
@@ -154,7 +151,7 @@ export function Model13({
       {/* Main content container*/}
       <div className="flex flex-col size-full max-w-screen-lg justify-evenly items-center gap-4 lg:flex-row">
         {/* Top (left) row (targets) */}
-        <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
+        <div className="flex lg:flex-col items-center gap-4 lg:gap-24">
           {targetTitles.slice(2, 4).map((target, inx) => (
             <DroppableContents
               key={inx}
@@ -166,7 +163,7 @@ export function Model13({
         </div>
 
         {/* Card stacks (draggable, question option) */}
-        <div className="flex-none justify-center basis-1/2 w-full">
+        <div className="flex-none justify-center basis-2/6 w-[80%] md:basis-2/5 md:w-full">
           <DraggableStack
             options={options}
             imageOnly={imageOnly}
@@ -174,7 +171,7 @@ export function Model13({
         </div>
 
         {/* Bottom (right) row (targets) */}
-        <div className="flex lg:flex-col flex-1 items-center gap-4 lg:gap-24">
+        <div className="flex lg:flex-col items-center gap-4 lg:gap-24">
           {targetTitles.slice(0, 2).map((target, inx) => (
             <DroppableContents
               key={inx}

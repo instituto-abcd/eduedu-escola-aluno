@@ -1,4 +1,4 @@
-import { createStyles, Title } from "@mantine/core";
+import { createStyles } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { Question, QuestionOption, QuestionTitle } from "~/api/exam";
@@ -98,15 +98,13 @@ export const Model24TypeSelect = ({
           {transformedTextTitles.statements
             .filter((title) => title.description?.length > 0)
             .map((title) => (
-              <Title
+              <h1
                 key={title.description}
                 dangerouslySetInnerHTML={{
                   __html: title.description.replace(/_+/g, dashes),
                 }}
-                size={boardW(40)}
-                weight={500}
-                color="dark.3"
-                align="center"
+                style={{ fontSize: boardW(40) }}
+                className="font-medium text-gray-600 text-center"
               />
             ))}
         </div>
@@ -114,16 +112,13 @@ export const Model24TypeSelect = ({
           {transformedTextTitles.rules
             .filter((title) => title.description?.length > 0)
             .map((title) => (
-              <Title
+              <h1
                 key={title.description}
                 dangerouslySetInnerHTML={{
                   __html: title.description.replace(/_+/g, dashes),
                 }}
-                size={boardW(40)}
-                weight={500}
-                color="dark.3"
-                align="center"
-                className="text-3xl"
+                style={{ fontSize: boardW(40) }}
+                className="font-medium text-gray-600 text-center text-3xl"
               />
             ))}
         </div>
@@ -133,10 +128,11 @@ export const Model24TypeSelect = ({
             className={`flex flex-col md:flex-row items-center justify-center w-full gap-4 mt-4 ${classes.container}`}
           >
             <div
-              className={`flex w-full ${dynamicFlexBehavior} ${question.options.length === 3
+              className={`flex w-full ${dynamicFlexBehavior} ${
+                question.options.length === 3 && question.options[2]?.image_id
                   ? classes.threeButtons
                   : classes.container
-                } items-center justify-center gap-4`}
+              } items-center justify-center gap-4`}
             >
               {question.options.map((option, idx) => (
                 <OptionButton
@@ -146,10 +142,11 @@ export const Model24TypeSelect = ({
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
                   }
-                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${option.description
+                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${
+                    option.description
                       ? classes.descriptionButton
                       : classes.optionButton
-                    }`}
+                  }`}
                 >
                   {option.description}
                   {option.image_url && (

@@ -1,4 +1,4 @@
-import { Tooltip, createStyles, Text } from "@mantine/core";
+import { Tooltip, createStyles } from "@mantine/core";
 import { type AwardImage } from "~/constants/awards";
 
 type Props = {
@@ -20,12 +20,10 @@ export function AwardDisplay({
     <Tooltip
       disabled={!award.active}
       label={
-        <>
-          <Text size="sm" weight={700}>
-            {award.title}
-          </Text>
-          <Text size="sm">{award.description}</Text>
-        </>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-bold">{award.title}</span>
+          <span className="text-sm">{award.description}</span>
+        </div>
       }
       transitionProps={{ transition: "scale", duration: 300 }}
       color="dark.3"
@@ -36,9 +34,11 @@ export function AwardDisplay({
       className={cx(classes.tooltip, tooltipClassName)}
     >
       <img
+        alt={award.title}
         src={award.image}
         className={cx(classes.image, imgClassName)}
         onClick={award.active ? onClick : undefined}
+        onKeyDown={award.active ? onClick : undefined}
       />
     </Tooltip>
   );

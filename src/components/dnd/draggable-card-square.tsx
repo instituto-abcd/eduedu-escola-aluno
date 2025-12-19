@@ -1,4 +1,3 @@
-import { Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
@@ -83,7 +82,7 @@ export function DraggableCardSquare({
                 noPaddingRule,
               ["max-h-full mx-auto w-auto overflow-auto p-2 rounded-[20px] md:rounded-[45px]"]:
                 !noPaddingRule,
-              "max-h-[12cqh]": text
+              "max-h-[12cqh]": text,
             }
           )}
         />

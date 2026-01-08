@@ -1,0 +1,38 @@
+.bg {
+  height: 100vh;
+  max-height: 100vh;
+  width: 100vw;
+  object-position: center;
+  object-fit: cover;
+  overflow: hidden;
+  position: relative;
+}
+
+.controls {
+  display: none;
+  position: absolute;
+  bottom: 15%;
+  cursor: pointer;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .controls {
+    display: flex;
+  }
+}
+
+.controls svg {
+  cursor: pointer;
+  position: absolute;
+}
+
+.controls svg:nth-of-type(1) {
+  transform: rotate(90deg);
+  left: 5%;
+}
+
+.controls svg:nth-of-type(2) {
+  transform: rotate(-90deg);
+  right: 5%;
+}

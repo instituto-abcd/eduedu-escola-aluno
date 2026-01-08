@@ -1,5 +1,6 @@
-import { createStyles } from "@mantine/core";
 import { TextBubble } from "./TextBubble";
+import { cx } from "~/utils/cx";
+import classes from "./TitleBubble.module.css";
 
 type Props = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -7,8 +8,6 @@ type Props = React.DetailedHTMLProps<
 > & { text: string };
 
 export function TitleBubble({ text, className }: Props) {
-  const { cx, classes } = useStyles();
-
   return (
     <TextBubble
       text={text}
@@ -16,10 +15,3 @@ export function TitleBubble({ text, className }: Props) {
     />
   );
 }
-
-const useStyles = createStyles(() => ({
-  bubble: {
-    paddingBlock: 10,
-    paddingInline: 20,
-  },
-}));

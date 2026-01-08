@@ -1,6 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Carousel, type CarouselProps, type Embla } from "@mantine/carousel";
-import { createStyles } from "@mantine/core";
 import { type SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
@@ -10,6 +9,7 @@ import { useCreateSound } from "~/hooks/useCreateSound";
 import { useGridSlide } from "~/hooks/useGridSlide";
 import type { MediaQueryKey } from "~/constants/dimensions";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import classes from "./PlanetTrack.module.css";
 
 export type PlanetTrackRef = {
   embla?: Embla;
@@ -58,8 +58,6 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
   };
 
   const [activeSlide, setActiveSlide] = useState(0);
-
-  const { classes } = useStyles();
 
   if (!isLoading && track?.planetTrack.length === 0)
     return <NoTrackAvailable />;
@@ -127,12 +125,3 @@ function NoTrackAvailable() {
     </div>
   );
 }
-
-const useStyles = createStyles((_) => ({
-  carousel: {
-    maxHeight: "90vh",
-    marginTop: 20,
-    marginBlock: "auto",
-    position: "relative",
-  },
-}));

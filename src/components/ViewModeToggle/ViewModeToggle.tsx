@@ -1,10 +1,11 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles, Image } from "@mantine/core";
+import { Image } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { type MediaQueryKey } from "~/constants/dimensions";
 import atividades from "~/assets/atividades.png";
 import conquistas from "~/assets/conquistas.png";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import classes from "./ViewModeToggle.module.css";
 
 const modeIndex: Record<ViewMode, number> = {
   planets: 0,
@@ -32,8 +33,6 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
       c.scrollTo(modeIndex[mode]);
     });
   }, [carousel]);
-
-  const { classes } = useStyles();
 
   if (breakpoint === "MOBILE")
     return (
@@ -82,13 +81,3 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
     </div>
   );
 }
-
-const useStyles = createStyles({
-  img: {
-    "&:hover": {
-      transform: "scale(1.1)",
-      transition: "all 200ms ease-in-out",
-      cursor: "pointer",
-    },
-  },
-});

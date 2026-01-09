@@ -1,4 +1,5 @@
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useGetPlanetTrack } from "~/api/student";
 import { useGridSlide } from "~/hooks/useGridSlide";
@@ -31,7 +32,7 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
       layout: gridLayoutMap[breakpoint],
     });
 
-    const [carousel, setEmbla] = useState<Embla>();
+    const [carousel, setEmbla] = useState<EmblaCarouselType | null>(null);
     useEffect(() => {
       carousel?.reInit();
     }, [breakpoint]);

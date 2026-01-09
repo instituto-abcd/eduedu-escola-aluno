@@ -1,0 +1,165 @@
+.container {
+  height: calc(100vh - 40px);
+  max-height: calc(100vh - 40px);
+}
+
+.carousel {
+  min-width: 100vw;
+  min-height: 100%;
+}
+
+.itemsContainer {
+  width: 100%;
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .itemsContainer {
+    flex-direction: row;
+    height: 100vh;
+  }
+}
+
+.item {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  overflow: clip;
+  color: #f6a313;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100%;
+  height: var(--item-height);
+}
+
+@media (min-width: 1024px) {
+  .item {
+    width: var(--item-width);
+    height: var(--item-height-desktop);
+    min-width: auto;
+    flex-direction: column;
+    gap: 20%;
+  }
+}
+
+.item:hover .sprite {
+  filter: none;
+  transform: scale(1.1);
+}
+
+.item p {
+  font-size: min(10cqw, 40px);
+  font-weight: bold;
+  max-width: 100%;
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .item p {
+    font-size: min(20cqw, 50px);
+  }
+}
+
+.itemBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  z-index: -2;
+  filter: grayscale(1);
+  transition: filter 150ms ease;
+}
+
+@media (min-width: 1024px) {
+  .itemBg {
+    height: 100vh;
+    width: auto;
+    min-height: auto;
+  }
+}
+
+.item:hover .itemBg {
+  filter: none;
+}
+
+.sprite {
+  filter: grayscale(1);
+  transition: all 150ms ease-in-out;
+  user-select: none;
+  pointer-events: none;
+  width: auto;
+  max-width: 25%;
+  position: absolute;
+  right: 0;
+}
+
+@media (min-width: 1024px) {
+  .sprite {
+    max-height: 20%;
+    max-width: 90%;
+    width: auto;
+    position: relative;
+  }
+}
+
+.control {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  margin: auto;
+}
+
+@media (min-width: 768px) {
+  .control {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+.controlHidden {
+  display: none;
+}
+
+/* LEFT - UP - PREV */
+.controlPrev {
+  rotate: 180deg;
+  margin-top: 0;
+  top: 7%;
+}
+
+@media (min-width: 1024px) {
+  .controlPrev {
+    rotate: 90deg;
+    top: 0;
+    margin-left: 0;
+    margin-block: auto;
+    left: 7%;
+  }
+}
+
+/* RIGHT - DOWN - NEXT */
+.controlNext {
+  margin-bottom: 0;
+  bottom: 7%;
+}
+
+@media (min-width: 1024px) {
+  .controlNext {
+    rotate: -90deg;
+    margin-right: 0;
+    margin-block: auto;
+    right: 7%;
+    bottom: 0;
+  }
+}

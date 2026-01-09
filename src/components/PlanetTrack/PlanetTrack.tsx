@@ -1,5 +1,6 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Carousel, type CarouselProps, type Embla } from "@mantine/carousel";
+import { Carousel, type CarouselProps } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { type SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
@@ -12,12 +13,12 @@ import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import classes from "./PlanetTrack.module.css";
 
 export type PlanetTrackRef = {
-  embla?: Embla;
+  embla?: EmblaCarouselType | null;
   track?: SimplifiedPlanet[];
 };
 
 export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
-  const [embla, setEmbla] = useState<Embla>();
+  const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
 
   useImperativeHandle(ref, () => ({
     embla,

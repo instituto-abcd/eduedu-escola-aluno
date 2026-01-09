@@ -1,31 +1,31 @@
-import { Embla } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { useEffect, useState } from "react";
 
-type Props = Embla | undefined;
-
-export function useCarouselState(c: Props) {
+export function useCarouselState(embla: EmblaCarouselType | null) {
   const [controlState, setControlState] = useState({
     canScrollPrev: true,
     canScrollNext: true,
   });
 
   useEffect(() => {
-    if (c) {
-      c.on("scroll", (_c) => {
-        setControlState({
-          canScrollPrev: _c.canScrollPrev(),
-          canScrollNext: _c.canScrollNext(),
-        });
-      });
+    if (!embla) return;
 
-      c.on("init", (_c) => {
-        setControlState({
-          canScrollPrev: _c.canScrollPrev(),
-          canScrollNext: _c.canScrollNext(),
-        });
+    const updateState = () => {
+      setControlState({
+        canScrollPrev: embla.canScrollPrev(),
+        canScrollNext: embla.canScrollNext(),
       });
-    }
-  }, [c]);
+    };
+
+    updateState();
+    embla.on("scroll", updateState);
+    embla.on("reInit", updateState);
+
+    return () => {
+      embla.off("scroll", updateState);
+      embla.off("reInit", updateState);
+    };
+  }, [embla]);
 
   return controlState;
 }

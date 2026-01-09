@@ -1,0 +1,25 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+}
+
+@media (min-width: 768px) {
+  .content {
+    flex-direction: row;
+    gap: 110px;
+  }
+}
+
+.container img {
+  object-fit: contain;
+  max-width: 80%;
+  width: 295px;
+  max-height: 300px;
+}
+
+@media (min-width: 768px) {
+  .container img {
+    max-width: 90%;
+  }
+}

@@ -1,4 +1,5 @@
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { Image } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { type MediaQueryKey } from "~/constants/dimensions";
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
-  const [carousel, setCarousel] = useState<Embla>();
+  const [carousel, setCarousel] = useState<EmblaCarouselType | null>(null);
   const breakpoint = useCurrentBreakpoint();
 
   useEffect(() => {
@@ -47,15 +48,15 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
       >
         <Carousel.Slide>
           <Image
-            width={241}
-            height={180}
+            w={241}
+            h={180}
             src={atividades}
           />
         </Carousel.Slide>
         <Carousel.Slide>
           <Image
-            width={207}
-            height={180}
+            w={207}
+            h={180}
             src={conquistas}
           />
         </Carousel.Slide>
@@ -65,15 +66,15 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
   return (
     <div className="flex justify-between px-5 py-2.5">
       <Image
-        width={241}
-        height={180}
+        w={241}
+        h={180}
         src={atividades}
         onClick={() => onModeChanged(mode === "planets" ? "list" : "planets")}
         className={classes.img}
       />
       <Image
-        width={207}
-        height={180}
+        w={207}
+        h={180}
         src={conquistas}
         onClick={() => onModeChanged("awards")}
         className={classes.img}

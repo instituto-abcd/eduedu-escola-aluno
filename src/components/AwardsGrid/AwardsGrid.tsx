@@ -1,4 +1,5 @@
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { useEffect, useState } from "react";
 import { useGetStudentAwards } from "~/api/student";
 import { AwardImage, AWARDS_IMAGES } from "~/constants/awards";
@@ -36,7 +37,7 @@ export function AwardsGrid() {
     layout: gridLayoutMap[breakpoint],
   });
 
-  const [carousel, setEmbla] = useState<Embla>();
+  const [carousel, setEmbla] = useState<EmblaCarouselType | null>(null);
   useEffect(() => {
     carousel?.reInit();
   }, [breakpoint]);

@@ -1,6 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import styles from "./FloatingButtonStyle.module.css";
+import styles from "./FloatingButtonStyles.module.css";
 
 const bounceTransition = {
     y: {

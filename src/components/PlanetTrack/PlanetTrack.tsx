@@ -35,26 +35,26 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
 
   const carouselProps: Record<MediaQueryKey, CarouselProps> = {
     MOBILE: {
-      align: "start",
+      emblaOptions: { align: "start" },
       orientation: "vertical",
     },
     TABLET_VERT: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
     TABLET_HORZ: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
     DESKTOP: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
   };
 
@@ -88,12 +88,10 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
             ))
           : track?.planetTrack?.map((planet, i) => (
               <Carousel.Slide key={planet.planetId}>
-                <div className="flex justify-center">
-                  <PlanetCard
-                    planet={planet}
-                    size={activeSlide === i ? "large" : "medium"}
-                  />
-                </div>
+                <PlanetCard
+                  planet={planet}
+                  size={activeSlide === i ? "large" : "medium"}
+                />
               </Carousel.Slide>
             ))}
       </Carousel>

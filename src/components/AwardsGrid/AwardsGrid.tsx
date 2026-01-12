@@ -61,7 +61,7 @@ export function AwardsGrid() {
         withControls={false}
         className={styles.carousel}
         orientation={breakpoint === "MOBILE" ? "vertical" : "horizontal"}
-        align="start"
+        emblaOptions={{ align: "start" }}
       >
         {gridSlides.map((sl, inx) => (
           <Carousel.Slide key={inx}>

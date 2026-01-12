@@ -11,14 +11,24 @@
 .itemsContainer {
   width: 100%;
   height: calc(100vh - 40px);
-  display: flex;
-  flex-direction: column;
 }
 
 @media (min-width: 1024px) {
   .itemsContainer {
-    flex-direction: row;
     height: 100vh;
+  }
+}
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .slide {
+    flex-direction: row;
   }
 }
 
@@ -37,7 +47,7 @@
 
 @media (min-width: 1024px) {
   .item {
-    width: var(--item-width);
+    width: var(--item-width-desktop);
     height: var(--item-height-desktop);
     min-width: auto;
     flex-direction: column;
@@ -104,8 +114,8 @@
 
 @media (min-width: 1024px) {
   .sprite {
-    max-height: 20%;
-    max-width: 90%;
+    max-height: 20vh;
+    max-width: 50%;
     width: auto;
     position: relative;
   }

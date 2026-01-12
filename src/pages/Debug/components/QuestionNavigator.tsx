@@ -31,8 +31,7 @@ export function QuestionNavigator({
       />
       <Button
         onClick={() => value && onNavigate(+value)}
-        size="sm"
-        compact
+        size="compact-sm"
         color="teal"
         fullWidth
       >

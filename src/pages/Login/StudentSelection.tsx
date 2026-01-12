@@ -125,9 +125,11 @@ export function StudentSelection({ onNext, onBack }: Props) {
           getEmblaApi={setHandler}
           slideSize="100%"
           height={carouselHeight}
-          containScroll="trimSnaps"
-          align="start"
-          slidesToScroll={1}
+          emblaOptions={{
+            containScroll: "trimSnaps",
+            align: "start",
+            slidesToScroll: 1,
+          }}
           classNames={{}}
         >
           {slides.map((slide) => {

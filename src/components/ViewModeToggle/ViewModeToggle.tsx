@@ -45,6 +45,7 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
         onSlideChange={(inx) =>
           onModeChanged((["planets", "awards"] as ViewMode[])[inx])
         }
+        emblaOptions={{}}
       >
         <Carousel.Slide>
           <Image

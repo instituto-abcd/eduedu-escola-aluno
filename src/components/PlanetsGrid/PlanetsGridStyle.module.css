@@ -1,13 +1,13 @@
-  .carousel {
-    max-height: 80vh;
-    margin-block: auto;
-    top: 60;
-  }
+.carousel {
+  max-height: 80vh;
+  margin-block: auto;
+  top: 60px;
+}
 
-  .header {
-    position: "absolute";
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 100%;
-  }
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+}

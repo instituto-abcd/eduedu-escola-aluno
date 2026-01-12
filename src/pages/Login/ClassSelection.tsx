@@ -90,11 +90,13 @@ export function ClassSelection({ onNext, onBack }: Props) {
         classNames={{
           root: styles.carousel,
           viewport: styles.itemsContainer,
-          slide: styles.itemsContainer,
+          slide: styles.slide,
         }}
         withControls={false}
-        containScroll="trimSnaps"
-        slidesToScroll={1}
+        emblaOptions={{
+          containScroll: "trimSnaps",
+          slidesToScroll: 1,
+        }}
         getEmblaApi={setCarousel}
         orientation={orientation}
       >
@@ -109,7 +111,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
                   {
                     "--item-width": `calc(100% / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
                     "--item-height": `calc((100vh - 40px) / ${Math.min(MAX_ITEMS, arr.length)})`,
-                    "--item-height-desktop": "100%",
+                    "--item-height-desktop": `calc(100vh / ${Math.min(MAX_ITEMS, arr.length)})`,
                     "--item-width-desktop": `calc(100vw / ${Math.min(MAX_ITEMS, arr.length)})`,
                   } as React.CSSProperties
                 }

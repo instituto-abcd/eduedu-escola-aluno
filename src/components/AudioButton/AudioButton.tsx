@@ -53,28 +53,28 @@ export const AudioButton = forwardRef(
         </HoverCard.Target>
         <HoverCard.Dropdown>
           <Table
-            withBorder
-            fontSize={12}
+            withTableBorder
+            fz={12}
           >
-            <tbody>
-              <tr>
-                <td>Playing?</td>
-                <td>{isPlaying ? "✅" : "❌"}</td>
-              </tr>
-              <tr>
-                <td>Autoplay?</td>
-                <td>{autoPlay ? "✅" : "❌"}</td>
-              </tr>
-            </tbody>
+            <Table.Tbody>
+              <Table.Tr>
+                <Table.Td>Playing?</Table.Td>
+                <Table.Td>{isPlaying ? "✅" : "❌"}</Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Autoplay?</Table.Td>
+                <Table.Td>{autoPlay ? "✅" : "❌"}</Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
           </Table>
           <Button
             onClick={() => sound.stop()}
-            compact
+            size="compact-sm"
             fullWidth
             color="red"
             mt="sm"
             disabled={!isPlaying}
-            leftIcon={<IconPlayerStopFilled size={16} />}
+            leftSection={<IconPlayerStopFilled size={16} />}
           >
             Stop
           </Button>

@@ -57,7 +57,7 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
           withControls={false}
           className={styles.carousel}
           orientation={breakpoint === "MOBILE" ? "vertical" : "horizontal"}
-          align="start"
+          emblaOptions={{ align: "start" }}
           pb={150}
         >
           {gridSlides.map((sl, inx) => (

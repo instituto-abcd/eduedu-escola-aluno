@@ -123,36 +123,36 @@ function Debug({
 				<div>{children}</div>
 			</HoverCard.Target>
 			<HoverCard.Dropdown>
-				<Table withBorder fontSize={12}>
-					<tbody>
-						<tr>
-							<td>Playing?</td>
-							<td>{isPlaying ? "✅" : "❌"}</td>
-						</tr>
-						<tr>
-							<td>Can play?</td>
-							<td>{canPlay ? "✅" : "❌"}</td>
-						</tr>
-					</tbody>
+				<Table withTableBorder fz={12}>
+					<Table.Tbody>
+						<Table.Tr>
+							<Table.Td>Playing?</Table.Td>
+							<Table.Td>{isPlaying ? "✅" : "❌"}</Table.Td>
+						</Table.Tr>
+						<Table.Tr>
+							<Table.Td>Can play?</Table.Td>
+							<Table.Td>{canPlay ? "✅" : "❌"}</Table.Td>
+						</Table.Tr>
+					</Table.Tbody>
 				</Table>
-				<Group noWrap>
+				<Group wrap="nowrap">
 					<Button
 						onClick={stop}
-						compact
+						size="compact-sm"
 						color="red"
 						mt="sm"
 						disabled={!isPlaying}
-						leftIcon={<IconPlayerStopFilled size={16} />}
+						leftSection={<IconPlayerStopFilled size={16} />}
 					>
 						Stop
 					</Button>
 					<Button
 						onClick={pause}
-						compact
+						size="compact-sm"
 						mt="sm"
 						variant="outline"
 						disabled={!isPlaying}
-						leftIcon={<IconPlayerPauseFilled size={16} />}
+						leftSection={<IconPlayerPauseFilled size={16} />}
 					>
 						Pause
 					</Button>

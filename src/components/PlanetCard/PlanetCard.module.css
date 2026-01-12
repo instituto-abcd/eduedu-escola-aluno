@@ -1,0 +1,103 @@
+.container {
+  cursor: initial;
+  opacity: 1;
+  user-select: none;
+  padding-top: 40px;
+  padding-bottom: 10px;
+}
+
+.containerDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.containerMedium {
+  padding-block: 70px;
+}
+
+.wrapper {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+  padding-top: 10px;
+  padding-bottom: 5px;
+  width: 150px;
+  height: 165px;
+  min-height: 165px;
+  border-radius: 20px;
+  transition: all 200ms ease-in-out;
+}
+
+.wrapperMedium {
+  width: 190px;
+  height: 256px;
+  min-height: 256px;
+  padding-bottom: 16px;
+  padding-top: 80px;
+}
+
+.wrapperLarge {
+  width: 290px;
+  height: 405px;
+  min-height: 405px;
+  padding-top: 120px;
+  padding-bottom: 40px;
+}
+
+.name {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  font-weight: 600;
+  transition: all 200ms ease-in-out;
+}
+
+.nameMedium {
+  font-size: 20px;
+}
+
+.nameLarge {
+  font-size: 35px;
+}
+
+.avatar {
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+  z-index: 5;
+  filter: initial;
+  height: 115px;
+  width: auto;
+}
+
+.avatarMedium {
+  height: 140px;
+}
+
+.avatarLarge {
+  height: 220px;
+}
+
+.button {
+  filter: initial;
+}
+
+.buttonLarge {
+  width: 100px;
+  height: 100px;
+}
+
+.lock {
+  width: 30px;
+  height: 48px;
+  filter: grayscale(1);
+}
+
+.lockMedium {
+  width: 40px;
+  height: 58px;
+}
+
+.disabled {
+  filter: grayscale(100%);
+}

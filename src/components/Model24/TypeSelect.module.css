@@ -1,0 +1,23 @@
+.container img {
+  object-fit: contain;
+  max-width: 371px;
+  min-width: 296px;
+}
+
+.threeButtons button.option-group:last-of-type {
+  grid-column: span 2;
+  width: 50%;
+  margin-inline: auto;
+}
+
+.optionButton {
+  width: auto;
+  min-width: 120px;
+  height: auto;
+  min-height: 150px;
+}
+
+.descriptionButton {
+  min-width: 150px;
+  min-height: 70px;
+}

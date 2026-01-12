@@ -64,30 +64,30 @@ export function QuestionInfo({
               </Button>
             )}
           </CopyButton>
-          <Table fontSize={12}>
-            <tbody>
-              <tr>
-                <td>Multipla escolha</td>
-                <td>{question.multiplesAnswer ? "✅" : "❌"}</td>
-              </tr>
-              <tr>
-                <td>Resposta ordenada</td>
-                <td>{question.orderedAnswer ? "✅" : "❌"}</td>
-              </tr>
-              <tr>
-                <td>Títulos</td>
-                <td>{question.titles.length}</td>
-              </tr>
-              <tr>
-                <td>Alternativas</td>
-                <td>{question.options.length}</td>
-              </tr>
-            </tbody>
+          <Table fz={12}>
+            <Table.Tbody>
+              <Table.Tr>
+                <Table.Td>Multipla escolha</Table.Td>
+                <Table.Td>{question.multiplesAnswer ? "✅" : "❌"}</Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Resposta ordenada</Table.Td>
+                <Table.Td>{question.orderedAnswer ? "✅" : "❌"}</Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Títulos</Table.Td>
+                <Table.Td>{question.titles.length}</Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Alternativas</Table.Td>
+                <Table.Td>{question.options.length}</Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
           </Table>
           <Badge variant="dot">{question.status ?? "N/A"}</Badge>
           <Anchor
             onClick={() => console.dir(question)}
-            align="center"
+            ta="center"
             size="xs"
           >
             Logar objeto
@@ -104,7 +104,7 @@ export function QuestionInfo({
               w="100%"
               striped
               color="teal"
-              animate
+              animated
             />
           </div>
 
@@ -144,8 +144,7 @@ export function QuestionInfo({
             />
             <Button
               onClick={() => value && onQuestionChange(+value)}
-              size="sm"
-              compact
+              size="compact-sm"
               color="teal"
               fullWidth
             >
@@ -155,8 +154,8 @@ export function QuestionInfo({
         </div>
       </Drawer>
       <Group
-        position="center"
-        spacing={8}
+        justify="center"
+        gap={8}
       >
         <ActionIcon
           variant="filled"
@@ -169,7 +168,7 @@ export function QuestionInfo({
         <Divider orientation="vertical" />
         <Anchor
           onClick={previous}
-          align="center"
+          ta="center"
           size="xs"
         >
           Anterior
@@ -177,7 +176,7 @@ export function QuestionInfo({
         <Divider orientation="vertical" />
         <Anchor
           onClick={next}
-          align="center"
+          ta="center"
           size="xs"
         >
           Próximo

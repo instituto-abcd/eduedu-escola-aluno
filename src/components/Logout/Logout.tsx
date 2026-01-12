@@ -38,7 +38,7 @@ export function Logout() {
           Deseja realmente deslogar o perfil desse aluno e voltar para a área de
           login?
         </span>
-        <Group position="right">
+        <Group justify="flex-end">
           <Button
             variant="outline"
             color="gray"

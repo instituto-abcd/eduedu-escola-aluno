@@ -1,0 +1,10 @@
+.button {
+  width: auto;
+  height: auto;
+  padding-inline: var(--text-opt-padding-inline);
+  padding-block: var(--text-opt-padding-block);
+  font-size: var(--text-opt-font-size);
+  border-radius: 16px;
+  font-weight: 700;
+  color: #228be6;
+}

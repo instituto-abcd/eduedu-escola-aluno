@@ -1,7 +1,7 @@
-import { type MantineTheme } from "@mantine/core";
+import { Text } from "@mantine/core";
 
-export const TextStyles: MantineTheme["components"]["Text"] = {
+export const TextStyles = Text.extend({
   defaultProps: {
-    color: "dark.5",
+    c: "dark.5",
   },
-};
+});

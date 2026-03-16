@@ -1,32 +1,6 @@
-import { createStyles } from "@mantine/core";
 import { lousaWidth } from "~/constants/dimensions";
-
-const useStyles = createStyles(
-  (_, palette: { bg: string; accent: string; text: string }) => ({
-    button: {
-      all: "unset",
-      cursor: "pointer",
-      width: lousaWidth * 0.05,
-      height: lousaWidth * 0.05,
-      backgroundColor: palette.bg,
-      boxShadow: `0px 8px 0px 0px ${palette.accent}`,
-      display: "grid",
-      placeItems: "center",
-      borderRadius: 6,
-      color: palette.text,
-      ":disabled": {
-        backgroundColor: "#E9E9E9",
-        color: "#C4C4C4",
-        boxShadow: "0px 8px 0px 0px #c4c4c4",
-      },
-      ":not(:disabled):active": {
-        boxShadow: `0px 4px 0px 0px ${palette.accent}`,
-        transform: "translateY(4px)",
-        transition: "all 0.1s ease",
-      },
-    },
-  })
-);
+import { cx } from "~/utils/cx";
+import styles from "./IconButton.module.css";
 
 export type IconButtonProps = {
   icon: JSX.Element;
@@ -36,44 +10,55 @@ export type IconButtonProps = {
   HTMLButtonElement
 >;
 
+const palette = {
+  primary: {
+    bg: "#47cdff",
+    accent: "#25abe6",
+    text: "#FFF",
+  },
+  gray: {
+    bg: "#E9E9E9",
+    accent: "#C4C4C4",
+    text: "#C4C4C4",
+  },
+  black: {
+    bg: "#3f4040",
+    accent: "#111314",
+    text: "#c4c4c4",
+  },
+  yellow: {
+    bg: "#ffb802",
+    accent: "#be8800",
+    text: "#ffe071",
+  },
+  blue: {
+    bg: "#3ACDFF",
+    accent: "#11A8E0",
+    text: "#ffffff",
+  },
+};
+
 export function IconButton({
   icon,
   variant = "primary",
+  style,
   ...props
 }: IconButtonProps) {
-  const palette = {
-    primary: {
-      bg: "#47cdff",
-      accent: "#25abe6",
-      text: "#FFF",
-    },
-    gray: {
-      bg: "#E9E9E9",
-      accent: "#C4C4C4",
-      text: "#C4C4C4",
-    },
-    black: {
-      bg: "#3f4040",
-      accent: "#111314",
-      text: "#c4c4c4",
-    },
-    yellow: {
-      bg: "#ffb802",
-      accent: "#be8800",
-      text: "#ffe071",
-    },
-    blue: {
-      bg: "#3ACDFF",
-      accent: "#11A8E0",
-      text: "#ffffff",
-    },
-  };
+  const colors = palette[variant];
 
-  const { classes, cx } = useStyles(palette[variant]);
+  const dynamicStyle = {
+    "--icon-btn-size": `${lousaWidth * 0.05}px`,
+    "--icon-btn-bg": colors.bg,
+    "--icon-btn-accent": colors.accent,
+    "--icon-btn-text": colors.text,
+    ...style,
+  } as React.CSSProperties;
+
   return (
     <button
       {...props}
-      className={cx(classes.button, props.className)}
+      className={cx(styles.button, props.className)}
+      style={dynamicStyle}
     >
       {icon}
     </button>

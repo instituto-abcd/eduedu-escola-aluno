@@ -9,7 +9,7 @@ export function PlanetList() {
     <div className="min-h-screen flex flex-col items-center p-8">
       <div className="flex flex-col gap-0 justify-center items-center">
         <Title
-          color="dark.4"
+          c="dark.4"
           order={1}
         >
           Planetas
@@ -40,8 +40,8 @@ export function PlanetList() {
               </div>
               <Image
                 src={planet.avatar_url}
-                width={50}
-                height={50}
+                w={50}
+                h={50}
               />
               <div className="flex items-center gap-2">
                 <Badge

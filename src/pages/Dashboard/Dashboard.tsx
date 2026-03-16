@@ -1,4 +1,4 @@
-import { BackgroundImage, createStyles } from "@mantine/core";
+import { BackgroundImage } from "@mantine/core";
 import bg from "~/assets/bg-planet-track.png";
 import { PlanetCompletedFeedback } from "~/components/PlanetCompletedFeedback";
 import { PlanetTrack, PlanetTrackRef } from "~/components/PlanetTrack";
@@ -6,47 +6,9 @@ import { AwardsGrid } from "~/components/AwardsGrid";
 import { useRef, useState } from "react";
 import { ViewModeToggle, type ViewMode } from "~/components/ViewModeToggle";
 import { ArrowDownBtn } from "~/components/icons/ArrowDownBtn";
-import { MEDIA_QUERY } from "~/constants/dimensions";
 import { PlanetsGrid } from "~/components/PlanetsGrid";
 import { PlanetTrackDebug } from "~/components/debug-components";
-
-const useStyles = createStyles({
-  bg: {
-    height: "100vh",
-    maxHeight: "100vh",
-    width: "100vw",
-    objectPosition: "center",
-    objectFit: "cover",
-    overflow: "hidden",
-    position: "relative",
-  },
-
-  controls: {
-    display: "none",
-    position: "absolute",
-    bottom: "15%",
-    cursor: "pointer",
-    width: "100%",
-
-    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      display: "flex",
-    },
-
-    svg: {
-      cursor: "pointer",
-      position: "absolute",
-    },
-
-    "svg:nth-of-type(1)": {
-      transform: "rotate(90deg)",
-      left: "5%",
-    },
-    "svg:nth-of-type(2)": {
-      transform: "rotate(-90deg)",
-      right: "5%",
-    },
-  },
-});
+import classes from "./Dashboard.module.css";
 
 export function DashboardPage() {
   const trackRef = useRef<PlanetTrackRef>(null);
@@ -61,7 +23,6 @@ export function DashboardPage() {
     trackRef.current?.embla?.scrollTo(currentIndex + 1);
   }
 
-  const { classes } = useStyles();
   const [viewMode, setViewMode] = useState<ViewMode>("planets");
 
   return (

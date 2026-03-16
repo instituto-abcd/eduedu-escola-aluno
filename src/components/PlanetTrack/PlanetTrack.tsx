@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Carousel, type CarouselProps, type Embla } from "@mantine/carousel";
-import { createStyles } from "@mantine/core";
+import { Carousel, type CarouselProps } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { type SimplifiedPlanet, useGetPlanetTrack } from "~/api/student";
 import { PlanetCard } from "~/components/PlanetCard/PlanetCard";
 import fimProvaAudio from "~/assets/audio/FIM_PROVA.mp3";
@@ -10,14 +10,15 @@ import { useCreateSound } from "~/hooks/useCreateSound";
 import { useGridSlide } from "~/hooks/useGridSlide";
 import type { MediaQueryKey } from "~/constants/dimensions";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import classes from "./PlanetTrack.module.css";
 
 export type PlanetTrackRef = {
-  embla?: Embla;
+  embla?: EmblaCarouselType | null;
   track?: SimplifiedPlanet[];
 };
 
 export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
-  const [embla, setEmbla] = useState<Embla>();
+  const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
 
   useImperativeHandle(ref, () => ({
     embla,
@@ -34,32 +35,30 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
 
   const carouselProps: Record<MediaQueryKey, CarouselProps> = {
     MOBILE: {
-      align: "start",
+      emblaOptions: { align: "start" },
       orientation: "vertical",
     },
     TABLET_VERT: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
     TABLET_HORZ: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
     DESKTOP: {
       orientation: "horizontal",
-      align: "center",
-      slideSize: "33%",
-      styles: { slide: { marginBlock: "auto" } },
+      emblaOptions: { align: "center", containScroll: false },
+      slideSize: "33.333%",
+      classNames: { slide: classes.slide },
     },
   };
 
   const [activeSlide, setActiveSlide] = useState(0);
-
-  const { classes } = useStyles();
 
   if (!isLoading && track?.planetTrack.length === 0)
     return <NoTrackAvailable />;
@@ -89,12 +88,10 @@ export const PlanetTrack = forwardRef<PlanetTrackRef>((_, ref) => {
             ))
           : track?.planetTrack?.map((planet, i) => (
               <Carousel.Slide key={planet.planetId}>
-                <div className="flex justify-center">
-                  <PlanetCard
-                    planet={planet}
-                    size={activeSlide === i ? "large" : "medium"}
-                  />
-                </div>
+                <PlanetCard
+                  planet={planet}
+                  size={activeSlide === i ? "large" : "medium"}
+                />
               </Carousel.Slide>
             ))}
       </Carousel>
@@ -127,12 +124,3 @@ function NoTrackAvailable() {
     </div>
   );
 }
-
-const useStyles = createStyles((_) => ({
-  carousel: {
-    maxHeight: "90vh",
-    marginTop: 20,
-    marginBlock: "auto",
-    position: "relative",
-  },
-}));

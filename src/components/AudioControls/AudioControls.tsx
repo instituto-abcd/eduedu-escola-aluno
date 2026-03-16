@@ -1,4 +1,4 @@
-import { Slider, createStyles } from "@mantine/core";
+import { Slider } from "@mantine/core";
 import {
   IconRotateClockwise,
   IconPlayerPlayFilled,
@@ -11,12 +11,7 @@ import { intervalToDuration, formatDuration } from "date-fns";
 import { lousaWidth } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { cx } from "~/utils/cx";
-
-const useStyles = createStyles({
-  bar: {
-    backgroundColor: "#6FCAF8",
-  },
-});
+import classes from './AudioControlsStyle.module.css'
 
 export type AudioControlRef = HTMLDivElement & {
   sound: ReturnType<typeof useCreateSound>["sound"];
@@ -79,8 +74,6 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
       requestAnimationFrame(handleProgress);
     }
   }
-
-  const { classes } = useStyles();
 
   useImperativeHandle(ref, () => ({
     sound,

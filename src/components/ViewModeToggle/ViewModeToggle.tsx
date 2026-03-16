@@ -1,10 +1,12 @@
-import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles, Image } from "@mantine/core";
+import { Carousel } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
+import { Image } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { type MediaQueryKey } from "~/constants/dimensions";
 import atividades from "~/assets/atividades.png";
 import conquistas from "~/assets/conquistas.png";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import classes from "./ViewModeToggle.module.css";
 
 const modeIndex: Record<ViewMode, number> = {
   planets: 0,
@@ -21,7 +23,7 @@ type Props = {
 };
 
 export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
-  const [carousel, setCarousel] = useState<Embla>();
+  const [carousel, setCarousel] = useState<EmblaCarouselType | null>(null);
   const breakpoint = useCurrentBreakpoint();
 
   useEffect(() => {
@@ -33,8 +35,6 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
     });
   }, [carousel]);
 
-  const { classes } = useStyles();
-
   if (breakpoint === "MOBILE")
     return (
       <Carousel
@@ -45,18 +45,19 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
         onSlideChange={(inx) =>
           onModeChanged((["planets", "awards"] as ViewMode[])[inx])
         }
+        emblaOptions={{}}
       >
         <Carousel.Slide>
           <Image
-            width={241}
-            height={180}
+            w={241}
+            h={180}
             src={atividades}
           />
         </Carousel.Slide>
         <Carousel.Slide>
           <Image
-            width={207}
-            height={180}
+            w={207}
+            h={180}
             src={conquistas}
           />
         </Carousel.Slide>
@@ -66,15 +67,15 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
   return (
     <div className="flex justify-between px-5 py-2.5">
       <Image
-        width={241}
-        height={180}
+        w={241}
+        h={180}
         src={atividades}
         onClick={() => onModeChanged(mode === "planets" ? "list" : "planets")}
         className={classes.img}
       />
       <Image
-        width={207}
-        height={180}
+        w={207}
+        h={180}
         src={conquistas}
         onClick={() => onModeChanged("awards")}
         className={classes.img}
@@ -82,13 +83,3 @@ export function ViewModeToggle({ mode = "planets", onModeChanged }: Props) {
     </div>
   );
 }
-
-const useStyles = createStyles({
-  img: {
-    "&:hover": {
-      transform: "scale(1.1)",
-      transition: "all 200ms ease-in-out",
-      cursor: "pointer",
-    },
-  },
-});

@@ -1,8 +1,9 @@
-import { createStyles, Flex, Image, SimpleGrid, Title } from "@mantine/core";
+import { Flex, Image, SimpleGrid, Title } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
-import { boardW, MEDIA_QUERY } from "~/constants/dimensions";
+import { boardW } from "~/constants/dimensions";
 import { Question, QuestionTitle } from "~/api/exam";
 import { ImageTitle } from "../question-components";
+import styles from "./TypeComplete.module.css";
 
 interface TypeCompleteProps {
   textTitles: QuestionTitle[];
@@ -12,36 +13,6 @@ interface TypeCompleteProps {
   setAnswer: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const useStyles = createStyles(() => {
-  return {
-    content: {
-      display: "flex",
-      flexDirection: "column",
-      gap: boardW(45),
-
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        flexDirection: "row",
-        gap: boardW(110),
-      },
-    },
-
-    container: {
-      img: {
-        objectFit: "contain",
-        maxWidth: "80%",
-        width: 295,
-        maxHeight: 300,
-      },
-
-      [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-        img: {
-          maxWidth: "90%",
-        },
-      },
-    },
-  };
-});
-
 export const Model24TypeComplete = ({
   textTitles,
   imageTitles,
@@ -49,15 +20,13 @@ export const Model24TypeComplete = ({
   answer,
   setAnswer,
 }: TypeCompleteProps) => {
-  const { classes } = useStyles();
-
   return (
     <Flex
       align="center"
       justify={"center"}
       gap={20}
       wrap="wrap"
-      className={classes.content}
+      className={styles.content}
     >
       {textTitles.find((title) => title.placeholder.includes("completar"))
         ?.description && (
@@ -68,10 +37,10 @@ export const Model24TypeComplete = ({
                 title.placeholder.includes("completar")
               )?.description ?? "",
           }}
-          size={boardW(24)}
-          weight={500}
-          color="dark.3"
-          align="center"
+          fz={boardW(24)}
+          fw={500}
+          c="dark.3"
+          ta="center"
         />
       )}
       <ImageTitle titles={imageTitles} />
@@ -79,24 +48,19 @@ export const Model24TypeComplete = ({
       {imageTitles.map(
         (title) =>
           title.file_url && (
-            <div className={`flex flex-col ${classes.container}`}>
+            <div
+              key={title.file_url}
+              className={`flex flex-col ${styles.container}`}
+            >
               <Image
-                key={title.file_url}
                 src={title.file_url}
                 alt={title.placeholder}
-                styles={{
-                  image: {
-                    marginInline: "auto",
-                  },
-                }}
+                style={{ marginInline: "auto" }}
               />
             </div>
           )
       )}
-      <SimpleGrid
-        mb={20}
-        cols={2}
-      >
+      <SimpleGrid mb={20} cols={2}>
         {question.options.map((option, inx) => (
           <OptionButton
             key={inx}

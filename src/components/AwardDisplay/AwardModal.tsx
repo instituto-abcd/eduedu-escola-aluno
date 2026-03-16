@@ -1,8 +1,8 @@
-import { createStyles, Modal, ModalProps, Title } from "@mantine/core";
+import { Modal, Title, ModalProps } from "@mantine/core";
 import { AwardImage } from "~/constants/awards";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import Lottie from "react-lottie";
-import { MEDIA_QUERY } from "~/constants/dimensions";
+import classes from "./AwardModal.module.css";
 
 type Props = ModalProps & {
   award: AwardImage;
@@ -13,8 +13,6 @@ export function AwardModal({ award, ...props }: Props) {
     src: award.sound ?? "",
     autoPlay: false,
   });
-
-  const { classes } = useStyles();
 
   return (
     <Modal
@@ -42,24 +40,3 @@ export function AwardModal({ award, ...props }: Props) {
     </Modal>
   );
 }
-
-const useStyles = createStyles({
-  lottie: {
-    width: 200,
-    height: "auto",
-  },
-  title: {
-    fontWeight: 500,
-    fontSize: 25,
-    color: "#339af0",
-    textTransform: "capitalize",
-
-    [`@media ${MEDIA_QUERY.TABLET_VERT}`]: {
-      fontSize: 35,
-    },
-  },
-  description: {
-    fontSize: 20,
-    textAlign: "center",
-  },
-});

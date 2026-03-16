@@ -1,0 +1,20 @@
+
+.image {
+  filter: grayscale(100%);
+  cursor: default;
+  width: 150px;
+  height: 150px;
+}
+
+
+.imageActive {
+  cursor: pointer;
+  width: 150px;
+  height: 150px;
+}
+
+
+.tooltip {
+  white-space: pre-line;
+  text-align: center;
+}

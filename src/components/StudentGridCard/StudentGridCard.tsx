@@ -1,33 +1,8 @@
-import { Button, createStyles } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { IconLockOpen } from "@tabler/icons-react";
 import { Student } from "~/api/student";
-
-const useStyles = createStyles(
-  (_, { selected, reserved }: { selected: boolean; reserved: boolean }) => ({
-    lock: {
-      position: "absolute",
-      top: 10,
-      right: 20,
-      zIndex: 1,
-    },
-    button: {
-      display: "flex",
-      height: "100%",
-      width: "100%",
-      maxWidth: 298,
-      padding: "10px 20px",
-      borderRadius: "12px",
-      border: selected ? "1px solid #ACE655" : "1px solid #228BE6",
-      boxShadow: selected ? "0px 3px 0px 0px #ACE655" : "none",
-    },
-    buttonRoot: {
-      background: reserved ? "#E9ECEF" : selected ? "#DFFEC5" : "#FFF",
-      "&:hover": {
-        background: reserved ? "#B8BCC1" : "#E7F5FF",
-      },
-    },
-  })
-);
+import { cx } from "~/utils/cx";
+import styles from "./StudentGridCard.module.css";
 
 type Props = {
   student: Student;
@@ -42,8 +17,6 @@ export function StudentGridCard({
   onSelected,
   selected = false,
 }: Props) {
-  const { classes } = useStyles({ selected, reserved: student.reserved });
-
   function handleClick() {
     if (student.reserved) {
       onLogout(student.id);
@@ -55,17 +28,19 @@ export function StudentGridCard({
   return (
     <div className="relative w-full">
       {student.reserved && (
-        <IconLockOpen
-          color="#228BE6"
-          height={20}
-          className={classes.lock}
-        />
+        <IconLockOpen color="#228BE6" height={20} className={styles.lock} />
       )}
       <Button
         id={student.id}
         onClick={handleClick}
-        className={classes.button}
-        classNames={{ root: classes.buttonRoot }}
+        className={cx(styles.button, selected && styles.buttonSelected)}
+        classNames={{
+          root: cx(
+            styles.buttonRoot,
+            student.reserved && styles.buttonReserved,
+            selected && styles.buttonRootSelected
+          ),
+        }}
         styles={{ inner: { maxWidth: "100%" } }}
       >
         <div className="flex flex-col w-full">

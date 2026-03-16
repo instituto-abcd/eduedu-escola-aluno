@@ -1,0 +1,49 @@
+.letterGrid {
+  width: 100%;
+  max-width: 1300px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  place-items: center;
+  align-items: center;
+  row-gap: 20px;
+}
+
+.letterGrid span {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  background-color: #3B93C4;
+  width: 55px;
+  height: 55px;
+  border-radius: 55px;
+}
+
+.letterGrid span:last-of-type {
+  grid-column: span 5;
+}
+
+@media (min-width: 768px) {
+  .letterGrid {
+    column-gap: 10px;
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  .letterGrid span:last-of-type {
+    grid-column: initial;
+  }
+}
+
+@media (min-width: 1024px) {
+  .letterGrid {
+    grid-template-columns: repeat(13, 1fr);
+  }
+}
+
+.selected {
+  border: 4px solid white;
+}

@@ -1,0 +1,34 @@
+.button {
+  all: unset;
+  cursor: pointer;
+  width: max-content;
+  min-width: var(--edu-btn-min-width);
+  height: var(--edu-btn-height);
+  background-color: #47cdff;
+  box-shadow: 0px 4px 0px 0px #25abe6;
+  padding-block: var(--edu-btn-padding-block);
+  padding-inline: var(--edu-btn-padding-inline);
+  font-size: var(--edu-btn-font-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  gap: 10px;
+  border-radius: 8px;
+  color: #fff;
+  user-select: none;
+}
+
+.button:disabled {
+  background-color: #e9e9e9;
+  color: #c4c4c4;
+  box-shadow: 0px 4px 0px 0px #c4c4c4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.button:active {
+  box-shadow: 0px 4px 0px 0px #25abe6;
+  transform: translateY(2px);
+  transition: all 0.1s ease;
+}

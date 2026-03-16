@@ -18,7 +18,7 @@ export function QuestionListPage() {
     <div className="min-h-screen flex flex-col items-center p-8">
       <div className="flex flex-col gap-0 justify-center items-center">
         <Title
-          color="dark.4"
+          c="dark.4"
           order={1}
         >
           Questões de Prova
@@ -74,25 +74,25 @@ export function QuestionListPage() {
                 >
                   ID: {question.id ?? "N/A"}
                 </Badge>
-                <Table fontSize={12}>
-                  <tbody>
-                    <tr>
-                      <td>Multipla escolha</td>
-                      <td>{question.multiplesAnswer ? "✅" : "❌"}</td>
-                    </tr>
-                    <tr>
-                      <td>Resposta ordenada</td>
-                      <td>{question.orderedAnswer ? "✅" : "❌"}</td>
-                    </tr>
-                    <tr>
-                      <td>Títulos</td>
-                      <td>{question.titles.length}</td>
-                    </tr>
-                    <tr>
-                      <td>Alternativas</td>
-                      <td>{question.options.length}</td>
-                    </tr>
-                  </tbody>
+                <Table fz={12}>
+                  <Table.Tbody>
+                    <Table.Tr>
+                      <Table.Td>Multipla escolha</Table.Td>
+                      <Table.Td>{question.multiplesAnswer ? "✅" : "❌"}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td>Resposta ordenada</Table.Td>
+                      <Table.Td>{question.orderedAnswer ? "✅" : "❌"}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td>Títulos</Table.Td>
+                      <Table.Td>{question.titles.length}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td>Alternativas</Table.Td>
+                      <Table.Td>{question.options.length}</Table.Td>
+                    </Table.Tr>
+                  </Table.Tbody>
                 </Table>
               </div>
             </Paper>

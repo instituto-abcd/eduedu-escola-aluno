@@ -1,17 +1,13 @@
-import { MantineProvider, MantineThemeOverride } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import { TextStyles } from "~/styles";
 
-const theme: MantineThemeOverride = {
+const theme = createTheme({
   components: {
-    TextStyles,
+    Text: TextStyles,
   },
-
-  globalStyles() {
-    return {};
-  },
-};
+});
 
 interface ThemeProviderProps {
   children: React.ReactNode;

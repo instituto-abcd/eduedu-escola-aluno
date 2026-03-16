@@ -1,0 +1,11 @@
+  .wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    height: 190px;
+    margin-inline: auto;
+    margin-top: auto;
+    pointer-events: none;
+  }

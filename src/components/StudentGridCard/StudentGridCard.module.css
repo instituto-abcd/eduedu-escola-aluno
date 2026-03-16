@@ -1,0 +1,42 @@
+.lock {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1;
+}
+
+.button {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  max-width: 298px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid #228be6;
+  box-shadow: none;
+}
+
+.buttonSelected {
+  border: 1px solid #ace655;
+  box-shadow: 0px 3px 0px 0px #ace655;
+}
+
+.buttonRoot {
+  background: #fff;
+}
+
+.buttonRoot:hover {
+  background: #e7f5ff;
+}
+
+.buttonReserved {
+  background: #e9ecef;
+}
+
+.buttonReserved:hover {
+  background: #b8bcc1;
+}
+
+.buttonRootSelected {
+  background: #dffec5;
+}

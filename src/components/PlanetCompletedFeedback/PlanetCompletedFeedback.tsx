@@ -62,7 +62,7 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
           <>
             <Image
               src={feedbackLow}
-              width={200}
+              w={200}
               style={{ zIndex: 10 }}
             />
             <Notification
@@ -93,7 +93,7 @@ export function PlanetCompletedFeedback({ onClose }: Props) {
           <>
             <Image
               src={(planetData?.stars ?? 0) > 0 ? feedbackHigh : feedbackLow}
-              width={200}
+              w={200}
               style={{ zIndex: 10 }}
             />
             <Rating

@@ -62,7 +62,9 @@ class Sound {
       howl.stop();
     };
     this.destroy = () => {
-      howl.stop();
+      if (howl.playing()) {
+        howl.stop();
+      }
       howl.unload();
     };
     this.rewind = (time = 15) => {

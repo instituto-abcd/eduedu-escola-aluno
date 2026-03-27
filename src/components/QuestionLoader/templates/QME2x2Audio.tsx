@@ -97,7 +97,7 @@ export function QME2x2Audio({
     return () => {
       introSound.off("end", onIntroEnd);
     };
-  }, [intro.sound]);
+  }, [intro.sound, storyTitle?.autoplay, enunciadoTitle?.autoplay]);
 
   useEffect(() => {
     setAnswer(null);

@@ -14,16 +14,21 @@ export function useAuxiliarAudio(question: Question) {
   const auxAudioRef = useRef<AudioButtonRef>(null);
 
   useLayoutEffect(() => {
-    if (mainAudioRef.current && auxAudioRef.current) {
-      if (shouldPlay) {
-        mainAudioRef.current.sound.onEnd(() => {
-          auxAudioRef.current!.sound.play();
-        });
-      }
+    const mainSound = mainAudioRef.current?.sound;
+    const auxSound = auxAudioRef.current?.sound;
+
+    if (!mainSound || !auxSound || !shouldPlay) {
+      return () => {
+        auxSound?.destroy();
+      };
     }
 
+    const handler = () => auxSound.play();
+    mainSound.onEnd(handler);
+
     return () => {
-      auxAudioRef.current?.sound.destroy();
+      mainSound.off("end", handler);
+      auxSound.destroy();
     };
   }, [question]);
 

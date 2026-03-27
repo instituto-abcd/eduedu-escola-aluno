@@ -42,14 +42,6 @@ export function QME2x2Audio({
   );
 
   const story = useRef<AudioControlRef>(null);
-  story.current?.sound.onEnd(() => {
-    if (
-      enunciadoTitle?.autoplay &&
-      enunciado.current?.sound.playing() === false
-    ) {
-      enunciado.current?.sound.play();
-    }
-  });
 
   /* Audio de introdução */
   const introTitle = useMemo(
@@ -61,33 +53,56 @@ export function QME2x2Audio({
     autoPlay: introTitle?.autoplay ?? false,
   });
 
-  intro.sound.onEnd(() => {
-    const isPlayingStory = story.current?.sound.playing();
-    if (storyTitle?.autoplay === true && isPlayingStory === false) {
-      story.current?.sound.play();
-    } else if (
-      storyTitle?.autoplay === false &&
-      enunciadoTitle?.autoplay === true &&
-      enunciado.current?.sound.playing() === false
-    ) {
-      enunciado.current?.sound.play();
-    }
-    setIsLocked(false);
-  });
+  useEffect(() => {
+    const storySound = story.current?.sound;
+    const enunciadoSound = enunciado.current?.sound;
 
-  function init() {
-    if (introTitle?.autoplay && intro) {
-      if (intro.sound.playing()) return;
+    const onStoryEnd = () => {
+      if (
+        enunciadoTitle?.autoplay &&
+        enunciadoSound?.playing() === false
+      ) {
+        enunciadoSound?.play();
+      }
+    };
 
-      intro.sound.play();
-    }
-  }
+    storySound?.onEnd(onStoryEnd);
+
+    return () => {
+      storySound?.off("end", onStoryEnd);
+    };
+  }, [question]);
+
+  useEffect(() => {
+    const introSound = intro.sound;
+    const storySound = story.current?.sound;
+    const enunciadoSound = enunciado.current?.sound;
+
+    const onIntroEnd = () => {
+      const isPlayingStory = storySound?.playing();
+      if (storyTitle?.autoplay === true && isPlayingStory === false) {
+        storySound?.play();
+      } else if (
+        storyTitle?.autoplay === false &&
+        enunciadoTitle?.autoplay === true &&
+        enunciadoSound?.playing() === false
+      ) {
+        enunciadoSound?.play();
+      }
+      setIsLocked(false);
+    };
+
+    introSound.onEnd(onIntroEnd);
+
+    return () => {
+      introSound.off("end", onIntroEnd);
+    };
+  }, [intro.sound]);
 
   useEffect(() => {
     setAnswer(null);
     setIsLocked(true);
     setIsAuxLocked(true);
-    init();
     // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão
     if (question.id === 65) {
       setIsFirstModelQuestion(true);
@@ -107,14 +122,16 @@ export function QME2x2Audio({
   }, [conditions]);
 
   useEffect(() => {
-    if (!enunciado.current) return;
+    const s = enunciado.current?.sound;
+    if (!s) return;
 
-    const s = enunciado.current.sound;
+    const handler = () => setIsAuxLocked(false);
+    s.onEnd(handler);
 
-    s.onEnd(() => {
-      setIsAuxLocked(false);
-    });
-  }, [isAuxLocked, enunciado.current]);
+    return () => {
+      s.off("end", handler);
+    };
+  }, [question]);
 
   const cols = question.options.length < 6 ? question.options.length / 2 : 3;
 

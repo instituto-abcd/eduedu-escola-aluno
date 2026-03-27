@@ -40,14 +40,6 @@ export function VideoPlayer({
 	}
 
 	useEffect(() => {
-		return () => {
-			if (audioStatus.isPlaying) {
-				audioStatus.setPlaying(false);
-			}
-		};
-	}, []);
-
-	useEffect(() => {
 		if (autoPlay) {
 			setTimeout(play, 200);
 		}

@@ -49,7 +49,7 @@ class Sound {
   onStop: (callback: () => void) => void;
   onPause: (callback: () => void) => void;
   onSeek: (callback: () => void) => void;
-  off: (event: string) => void;
+  off: (event: string, callback?: () => void) => void;
 
   constructor(howl: Howl) {
     this.play = () => {
@@ -62,6 +62,7 @@ class Sound {
       howl.stop();
     };
     this.destroy = () => {
+      howl.stop();
       howl.unload();
     };
     this.rewind = (time = 15) => {
@@ -100,8 +101,9 @@ class Sound {
     this.onSeek = (callback: () => void) => {
       howl.on("seek", callback);
     };
-    this.off = (event: string) => {
-      howl.off(event);
+    this.off = (event: string, callback?: () => void) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      howl.off(event, callback as any);
     };
   }
 }

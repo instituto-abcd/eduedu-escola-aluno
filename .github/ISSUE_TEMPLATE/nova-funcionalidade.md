@@ -19,4 +19,4 @@ Uma descrição clara e concisa do que você deseja que aconteça.
 Uma descrição clara e concisa de quaisquer soluções ou funcionalidades alternativas que você tenha considerado.
 
 **Capturas de tela:** (Opcional)
-Se aplicável, adicione capturas de tela para ajudar a explicar sua solicitação.
+Se aplicável, adicione capturas de tela para ajudar a explicar sua solicitação. Lembre-se de que imagens anexadas em issues são públicas e evite incluir dados pessoais ou informações sensíveis.

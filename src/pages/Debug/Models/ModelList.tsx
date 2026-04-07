@@ -9,7 +9,7 @@ export function ModelsList() {
     <div className="flex flex-col items-center min-h-screen p-8">
       <div className="flex flex-col justify-center">
         <Title
-          color="dark.4"
+          c="dark.4"
           order={1}
         >
           Modelos

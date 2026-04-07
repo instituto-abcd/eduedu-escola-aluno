@@ -1,4 +1,3 @@
-import { createStyles } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,33 +8,7 @@ import video_768_1024 from "~/assets/video/intro_768x1024.mp4";
 import { MEDIA_QUERY } from "~/constants/dimensions";
 import { PATH } from "~/constants/path";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
-
-const useStyles = createStyles({
-  container: {
-    width: "100vw",
-    height: "100vh",
-    overflow: "clip",
-    position: "relative",
-  },
-
-  video: {
-    minWidth: "100%",
-    height: "auto",
-    minHeight: "100vh",
-    maxHeight: "100%",
-    objectPosition: "center",
-    objectFit: "cover",
-  },
-
-  icon: {
-    cursor: "pointer",
-    opacity: 0.75,
-    position: "absolute",
-    inset: 0,
-    margin: "auto",
-    color: "white",
-  },
-});
+import classes from "./Intro.module.css";
 
 const videosDict: Record<keyof typeof MEDIA_QUERY, string> = {
   MOBILE: video_360_800,
@@ -69,7 +42,6 @@ export function IntroPage() {
     };
   }, []);
 
-  const { classes } = useStyles();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 

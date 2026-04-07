@@ -1,5 +1,5 @@
-import { Carousel, Embla } from "@mantine/carousel";
-import { createStyles } from "@mantine/core";
+import { Carousel } from "@mantine/carousel";
+import type { EmblaCarouselType } from "embla-carousel";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useGetPlanetTrack } from "~/api/student";
 import { useGridSlide } from "~/hooks/useGridSlide";
@@ -9,6 +9,7 @@ import { PlanetCard } from "../PlanetCard/PlanetCard";
 import { Header } from "~/pages/Login/components/Header";
 import { ViewMode } from "../ViewModeToggle";
 import type { PlanetTrackRef } from "../PlanetTrack";
+import styles from "./PlanetsGridStyle.module.css";
 
 type Props = {
   setViewMode: (mode: ViewMode) => void;
@@ -31,12 +32,11 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
       layout: gridLayoutMap[breakpoint],
     });
 
-    const [carousel, setEmbla] = useState<Embla>();
+    const [carousel, setEmbla] = useState<EmblaCarouselType | null>(null);
     useEffect(() => {
       carousel?.reInit();
     }, [breakpoint]);
 
-    const { classes } = useStyles();
 
     useImperativeHandle(ref, () => ({
       embla: carousel,
@@ -45,7 +45,7 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
 
     return (
       <div className="flex flex-col gap-0">
-        <div className={classes.header}>
+        <div className={styles.header}>
           <Header
             title=""
             onClose={() => setViewMode("planets")}
@@ -55,9 +55,9 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
         <Carousel
           getEmblaApi={setEmbla}
           withControls={false}
-          className={classes.carousel}
+          className={styles.carousel}
           orientation={breakpoint === "MOBILE" ? "vertical" : "horizontal"}
-          align="start"
+          emblaOptions={{ align: "start" }}
           pb={150}
         >
           {gridSlides.map((sl, inx) => (
@@ -78,18 +78,3 @@ export const PlanetsGrid = forwardRef<PlanetTrackRef, Props>(
     );
   }
 );
-
-const useStyles = createStyles((_) => ({
-  carousel: {
-    maxHeight: "80vh",
-    marginBlock: "auto",
-    top: 60,
-  },
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 1,
-    width: "100%",
-  },
-}));

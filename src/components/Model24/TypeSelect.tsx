@@ -1,10 +1,11 @@
-import { createStyles } from "@mantine/core";
 import { OptionButton } from "../OptionButton";
 import { boardW } from "~/constants/dimensions";
 import { Question, QuestionOption, QuestionTitle } from "~/api/exam";
 import { IconVolume } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { ImageTitle } from "../question-components";
+import { cx } from "~/utils/cx";
+import classes from "./TypeSelect.module.css";
 
 interface TypeSelectProps {
   textTitles: QuestionTitle[];
@@ -17,33 +18,6 @@ interface TypeSelectProps {
 
 type FlexBehavior = "flex-col" | "grid grid-cols-2" | "flex-row";
 
-const useStyles = createStyles(() => ({
-  container: {
-    img: {
-      objectFit: "contain",
-      maxWidth: 371,
-      minWidth: 296,
-    },
-  },
-  threeButtons: {
-    "button.option-group:last-of-type": {
-      gridColumn: "span 2",
-      width: "50%",
-      marginInline: "auto",
-    },
-  },
-  optionButton: {
-    width: "auto",
-    minWidth: "120px",
-    height: "auto",
-    minHeight: "150px",
-  },
-  descriptionButton: {
-    minWidth: "150px",
-    minHeight: "70px",
-  },
-}));
-
 const MIN_BUTTON_OPTIONS = 3;
 const MIN_DESCRIPTION_LENGTH = 15;
 
@@ -55,8 +29,6 @@ export const Model24TypeSelect = ({
   singleAnswer,
   setSingleAnswer,
 }: TypeSelectProps) => {
-  const { classes } = useStyles();
-
   const dynamicFlexBehavior = useMemo<FlexBehavior>(() => {
     const hasLongDescription = question.options.some(
       (q) => q?.description?.length >= MIN_DESCRIPTION_LENGTH
@@ -125,14 +97,19 @@ export const Model24TypeSelect = ({
 
         <div className="order-4 md:order-4 pr-4">
           <div
-            className={`flex flex-col md:flex-row items-center justify-center w-full gap-4 mt-4 ${classes.container}`}
+            className={cx(
+              "flex flex-col md:flex-row items-center justify-center w-full gap-4 mt-4",
+              classes.container
+            )}
           >
             <div
-              className={`flex w-full ${dynamicFlexBehavior} ${
+              className={cx(
+                "flex w-full items-center justify-center gap-4",
+                dynamicFlexBehavior,
                 question.options.length === 3 && question.options[2]?.image_id
                   ? classes.threeButtons
                   : classes.container
-              } items-center justify-center gap-4`}
+              )}
             >
               {question.options.map((option, idx) => (
                 <OptionButton
@@ -142,11 +119,12 @@ export const Model24TypeSelect = ({
                   data-selected={
                     JSON.stringify(singleAnswer) === JSON.stringify(option)
                   }
-                  className={`flex-1 w-full min-h-16 max-h-36 option-group px-10 ${
+                  className={cx(
+                    "flex-1 w-full min-h-16 max-h-36 option-group px-10",
                     option.description
                       ? classes.descriptionButton
                       : classes.optionButton
-                  }`}
+                  )}
                 >
                   {option.description}
                   {option.image_url && (

@@ -1,5 +1,6 @@
-import { Tooltip, createStyles } from "@mantine/core";
+import { Tooltip } from "@mantine/core";
 import { type AwardImage } from "~/constants/awards";
+import styles from "./AwardDisplayStyle.module.css";
 
 type Props = {
   award: AwardImage;
@@ -8,14 +9,13 @@ type Props = {
   onClick?: () => void;
 };
 
+
 export function AwardDisplay({
   onClick,
   award,
   imgClassName,
   tooltipClassName,
 }: Props) {
-  const { classes, cx } = useStyles(award.active);
-
   return (
     <Tooltip
       disabled={!award.active}
@@ -31,12 +31,15 @@ export function AwardDisplay({
       withArrow
       multiline
       width={200}
-      className={cx(classes.tooltip, tooltipClassName)}
+      className={[styles.tooltip, tooltipClassName].filter(Boolean).join(' ')}
     >
       <img
         alt={award.title}
         src={award.image}
-        className={cx(classes.image, imgClassName)}
+        className={[
+          award.active ? styles.imageActive : styles.image,
+          imgClassName
+        ].filter(Boolean).join(' ')}
         onClick={award.active ? onClick : undefined}
         onKeyDown={award.active ? onClick : undefined}
       />
@@ -44,15 +47,3 @@ export function AwardDisplay({
   );
 }
 
-const useStyles = createStyles((_, active: boolean) => ({
-  image: {
-    filter: active ? "" : "grayScale(100%)",
-    cursor: active ? "pointer" : "default",
-    width: 150,
-    height: 150,
-  },
-  tooltip: {
-    whiteSpace: "pre-line",
-    textAlign: "center",
-  },
-}));

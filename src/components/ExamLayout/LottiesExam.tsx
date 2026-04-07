@@ -7,27 +7,13 @@ import luzRodape from "~/assets/lotties/exam/luz_rodape.json";
 import luzMesa from "~/assets/lotties/exam/luz_mesa.json";
 import vaso1 from "~/assets/lotties/exam/vaso_1.json";
 import vaso2 from "~/assets/lotties/exam/vaso_2.json";
-import { createStyles } from "@mantine/core";
+import styles from "./LottiesExamStyles.module.css";
 
-const useStyles = createStyles({
-  wrapper: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxWidth: screenWidth,
-    height: 190,
-    marginInline: "auto",
-    marginTop: "auto",
-    pointerEvents: "none",
-  },
-});
 
 export function LottiesExam() {
-  const { classes } = useStyles();
 
   return (
-    <div className={classes.wrapper}>
+    <div style={{maxWidth: screenWidth}} className={styles.wrapper}>
       <div
         className="my-0 p-0 mx-auto h-[190px] max-w-[1080px]"
         style={{ position: "relative" }}

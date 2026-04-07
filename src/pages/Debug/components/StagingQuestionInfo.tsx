@@ -52,30 +52,29 @@ ${import.meta.env.MODE} - ${packageJson.version}
         </span>
 
         <Table
-          fontSize={12}
-          withBorder
+          fz={12}
+          withTableBorder
         >
-          <tbody>
-            <tr>
-              <td>Modelo</td>
-              <td>{question.model_id}</td>
-            </tr>
-            <tr>
-              <td>Planeta</td>
-              <td>{question.planetTitle ?? "❌"}</td>
-            </tr>
-          </tbody>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Td>Modelo</Table.Td>
+              <Table.Td>{question.model_id}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>Planeta</Table.Td>
+              <Table.Td>{question.planetTitle ?? "❌"}</Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
         </Table>
         <CopyButton value={copyInfo}>
           {({ copied, copy }) => (
             <Button
               color={copied ? "teal" : "blue"}
               onClick={copy}
-              size="xs"
+              size="compact-xs"
               variant="outline"
-              compact
               w="min-content"
-              leftIcon={
+              leftSection={
                 copied ? <IconCircleCheck size={16} /> : <IconCopy size={16} />
               }
             >

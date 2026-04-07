@@ -1,4 +1,4 @@
-import { createStyles, LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 import { Navbar } from "~/components/Navbar";
 import { Outlet } from "react-router-dom";
 import { AwardSubscriber } from "../AwardSubscriber";
@@ -8,10 +8,9 @@ import { $loading } from "~/stores/loading-overlay.store";
 import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { queryKeyLoadingState } from "~/constants/query-key";
+import classes from "./Layout.module.css";
 
 export function Layout() {
-  const { classes } = useStyles();
-
   const [inView, headerHandler] = useDisclosure(false);
 
   useEffect(() => {
@@ -56,12 +55,3 @@ export function Layout() {
     </div>
   );
 }
-
-const useStyles = createStyles({
-  loader: {
-    minWidth: "100vw",
-    minHeight: "100vh",
-    position: "fixed",
-    inset: 0,
-  },
-});

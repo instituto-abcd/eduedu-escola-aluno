@@ -1,0 +1,22 @@
+.lottie {
+  width: 200px;
+  height: auto;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 25px;
+  color: #339af0;
+  text-transform: capitalize;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 35px;
+  }
+}
+
+.description {
+  font-size: 20px;
+  text-align: center;
+}

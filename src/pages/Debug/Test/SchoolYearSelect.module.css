@@ -1,0 +1,49 @@
+.section {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-block: 40px;
+}
+
+.baseContainer {
+  width: var(--container-width);
+  height: var(--container-height);
+  outline: 8px solid red;
+}
+
+.wide {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.wide img {
+  max-width: var(--item-max-width);
+  object-fit: cover;
+  background-position: center;
+  filter: grayscale(1);
+}
+
+.wide img:hover {
+  filter: none;
+}
+
+.tabletVertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabletVertical img {
+  max-height: var(--item-max-height);
+  object-fit: cover;
+  background-position: center;
+  filter: grayscale(1);
+}
+
+.tabletVertical img:hover {
+  filter: none;
+}

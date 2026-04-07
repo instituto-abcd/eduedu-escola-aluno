@@ -1,4 +1,4 @@
-import { Slider, createStyles } from "@mantine/core";
+import { Slider } from "@mantine/core";
 import {
   IconRotateClockwise,
   IconPlayerPlayFilled,
@@ -6,17 +6,18 @@ import {
   IconPlayerPauseFilled,
 } from "@tabler/icons-react";
 import { IconButton } from "../EduButton";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useState,
+  useEffect,
+} from "react";
 import { intervalToDuration, formatDuration } from "date-fns";
 import { lousaWidth } from "~/constants/dimensions";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { cx } from "~/utils/cx";
-
-const useStyles = createStyles({
-  bar: {
-    backgroundColor: "#6FCAF8",
-  },
-});
+import classes from "./AudioControlsStyle.module.css";
 
 export type AudioControlRef = HTMLDivElement & {
   sound: ReturnType<typeof useCreateSound>["sound"];
@@ -68,19 +69,33 @@ export const AudioControls = forwardRef((props: AudioControlProps, ref) => {
     sound.seek(newSeek);
   }
 
-  sound.onPlay(() => requestAnimationFrame(handleProgress));
-  sound.onSeek(() => requestAnimationFrame(handleProgress));
+  useEffect(() => {
+    let rafId: number;
 
-  function handleProgress() {
-    const seek = sound.seek();
-    setCurrentTime(seek);
-
-    if (sound.playing()) {
-      requestAnimationFrame(handleProgress);
+    function progress() {
+      setCurrentTime(sound.seek());
+      if (sound.playing()) {
+        rafId = requestAnimationFrame(progress);
+      }
     }
-  }
 
-  const { classes } = useStyles();
+    const onPlay = () => {
+      rafId = requestAnimationFrame(progress);
+    };
+    const onSeek = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(progress);
+    };
+
+    sound.onPlay(onPlay);
+    sound.onSeek(onSeek);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      sound.off("play", onPlay);
+      sound.off("seek", onSeek);
+    };
+  }, [sound]);
 
   useImperativeHandle(ref, () => ({
     sound,

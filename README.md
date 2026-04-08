@@ -103,14 +103,6 @@ VITE_API_URL=http://localhost:3000
 VITE_ADMIN_URL=http://localhost:5174
 ```
 
-**Ambientes disponíveis:**
-
-| Ambiente    | API URL                                                      | Admin URL                                                  |
-| ----------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| Local       | `http://localhost:3000/`                                     | `http://localhost:5174/`                                   |
-| Development | `https://dev-eduedu-escola-backend-3djofcpyaq-uc.a.run.app/` | `https://dev-eduedu-escola-admin-3djofcpyaq-uc.a.run.app/` |
-| Staging     | `https://eduedu-escola-backend-3djofcpyaq-uc.a.run.app/`     | `https://eduedu-escola-admin-3djofcpyaq-uc.a.run.app/`     |
-
 ### 4. Inicie o servidor de desenvolvimento
 
 ```bash

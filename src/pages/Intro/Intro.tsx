@@ -52,6 +52,11 @@ export function IntroPage() {
         className={classes.video}
         src={videosDict[dimension]}
         autoPlay={false}
+        playsInline
+        controls={false}
+        disablePictureInPicture
+        disableRemotePlayback
+        controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
         onEnded={() => navigate(PATH.EXAM)}
         onPlay={() => setIsPlaying(true)}
       />

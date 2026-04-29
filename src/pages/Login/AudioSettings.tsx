@@ -69,6 +69,11 @@ export function AudioSettings({ onNext, onBack }: Props) {
           src={videosDict[dimension]}
           autoPlay
           loop
+          playsInline
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
         />
       </div>
     </div>

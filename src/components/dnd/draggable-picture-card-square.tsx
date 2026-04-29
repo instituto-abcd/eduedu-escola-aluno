@@ -1,4 +1,4 @@
-import { IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { QuestionOption } from "~/api/exam";
 import { cx } from "~/utils/cx";
 import { useDraggable } from "@dnd-kit/core";
@@ -65,10 +65,10 @@ export function DraggablePictureCardSquare({
       />
       {onClear && (
         <button
-          className="size-5 bg-red-500 text-white rounded-full grid place-items-center absolute top-0 inset-x-0 mx-auto pointer-events-auto"
+          className="size-6 bg-gray-500 opacity-55 text-white rounded-full grid place-items-center absolute top-0 inset-x-0 mx-auto pointer-events-auto"
           onClick={onClear}
         >
-          <IconX size={16} />
+          <IconTrash size={16} />
         </button>
       )}
     </div>

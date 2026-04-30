@@ -25,6 +25,9 @@ export function VideoPlayer({
 		ref.current && ref.current.videoWidth > ref.current.videoHeight;
 
 	function play() {
+		if (ref.current && ref.current.ended) {
+			ref.current.currentTime = 0;
+		}
 		void ref.current?.play();
 	}
 
@@ -62,7 +65,10 @@ export function VideoPlayer({
 					className,
 				)}
 				controls={false}
+				playsInline
 				disablePictureInPicture
+				disableRemotePlayback
+				controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
 				onLoadedData={() => setIsLoadingData(false)}
 				onPlay={(e) => {
 					props.onPlay?.(e);

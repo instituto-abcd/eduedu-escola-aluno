@@ -109,7 +109,7 @@ export function ClassSelection({ onNext, onBack }: Props) {
           const slideStyle = {
             "--item-width": `calc(100% / ${cols})`,
             "--item-height": `calc((100dvh - 40px) / ${rows})`,
-            "--item-height-desktop": `calc(100dvh / ${rows})`,
+            "--item-height-desktop": `100dvh`,
             "--item-width-desktop": `calc(100vw / ${rows})`,
           } as React.CSSProperties;
 

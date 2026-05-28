@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/banner.png" alt="EduEdu+ Aluno" width="100%" />
+</p>
+
 <h1 align="center">EduEdu+ Aluno</h1>
 
 <p align="center">
@@ -5,16 +9,70 @@
 </p>
 
 <p align="center">
+  <a href="#-demonstração">Demonstração</a> &bull;
+  <a href="#-modelos-de-atividade">Modelos</a> &bull;
   <a href="#sobre-o-projeto">Sobre</a> &bull;
   <a href="#tecnologias">Tecnologias</a> &bull;
   <a href="#pré-requisitos">Pré-requisitos</a> &bull;
   <a href="#instalação">Instalação</a> &bull;
   <a href="#estrutura-do-projeto">Estrutura</a> &bull;
+  <a href="#conceitos-de-domínio">Domínio</a> &bull;
   <a href="#scripts-disponíveis">Scripts</a> &bull;
   <a href="#variáveis-de-ambiente">Ambiente</a> &bull;
+  <a href="#padrões-de-código">Padrões</a> &bull;
   <a href="#contribuindo">Contribuindo</a> &bull;
   <a href="#licença">Licença</a>
 </p>
+
+## 🎬 Demonstração
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/assets/videos/trilha-planetas.gif" alt="Trilha de planetas" width="400" />
+      <br/>
+      <strong>🪐 Trilha de Planetas</strong><br/>
+      <sub>Variedade de atividades educativas organizadas em planetas</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/assets/videos/conquistas.gif" alt="Conquistas" width="400" />
+      <br/>
+      <strong>🏆 Conquistas</strong><br/>
+      <sub>Variedade de badges desbloqueáveis ao longo da jornada</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🧩 Modelos de Atividade
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/assets/videos/demo-modelo12.gif" alt="Modelo 12" width="400" />
+      <br/>
+      <strong>Modelo 12</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/assets/videos/demo-modelo16.gif" alt="Modelo 16" width="400" />
+      <br/>
+      <strong>Modelo 16</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/videos/demo-modelo18.gif" alt="Modelo 18" width="400" />
+      <br/>
+      <strong>Modelo 18</strong>
+    </td>
+    <td align="center">
+      <img src="docs/assets/videos/demo-modelo20.gif" alt="Modelo 20" width="400" />
+      <br/>
+      <strong>Modelo 20</strong>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -100,18 +158,23 @@ Alternativamente, crie um arquivo `.env` na raiz:
 
 ```env
 VITE_API_URL=http://localhost:3000
-VITE_ADMIN_URL=http://localhost:5174
+VITE_ADMIN_URL=http://localhost:5173
 ```
 
 ### 4. Inicie o servidor de desenvolvimento
 
 ```bash
+# Modo local (offline)
+npm run local
+
 # Modo desenvolvimento (conecta ao backend)
 npm run dev
 
+# Modo QA
+npm run qa
 ```
 
-A aplicação estará disponível em `http://localhost:5173`.
+A aplicação tenta a porta `5173` por padrão. Como o **EduEdu+ Escola Admin** já ocupa essa porta, o Vite do aluno cai automaticamente em `http://localhost:5174`. Para fixar a porta, rode `npm run dev -- --port 5174`.
 
 ---
 
@@ -178,7 +241,9 @@ config/
 
 | Comando                  | Descrição                                           |
 | ------------------------ | --------------------------------------------------- |
+| `npm run local`          | Inicia em modo local/offline                        |
 | `npm run dev`            | Inicia em modo desenvolvimento (conecta ao backend) |
+| `npm run qa`             | Inicia em modo QA                                   |
 | `npm run build`          | Compila para produção                               |
 | `npm run preview`        | Preview do build de produção                        |
 | `npm run lint`           | Executa ESLint (max-warnings 0)                     |
@@ -197,6 +262,23 @@ config/
 
 - `development` &mdash; Conecta ao backend configurado
 - `production` &mdash; Build otimizado para produção
+
+---
+
+## Conceitos de Domínio
+
+| Termo          | Descrição                                                   |
+| -------------- | ----------------------------------------------------------- |
+| **Turma**      | Classe escolar com série e período (manhã, tarde, integral) |
+| **Aluno**      | Estudante com acompanhamento de desempenho                  |
+| **Ano Letivo** | Ano acadêmico com estados: Rascunho, Ativo, Inativo         |
+| **Planeta**    | Módulo de aprendizagem gamificado na plataforma EduEdu      |
+| **Prova**      | Avaliação diagnóstica aplicada aos alunos                   |
+| **Eixos**      | Dimensões de aprendizagem avaliadas:                        |
+|                | &bull; **ES** &mdash; Consciência fonológica                |
+|                | &bull; **EA** &mdash; Sistema de escrita alfabética         |
+|                | &bull; **LC** &mdash; Leitura e compreensão de texto        |
+| **Série**      | Infantil, 1º ao 5º Ano do Ensino Fundamental                |
 
 ---
 

@@ -84,7 +84,7 @@ export function PlanetCard({ planet, size }: PlanetCardProps) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: size === "small" ? "flex-end" : "space-between",
+          justifyContent: "space-between",
           gap: "6px",
         }}
       >

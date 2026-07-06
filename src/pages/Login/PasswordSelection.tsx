@@ -7,8 +7,6 @@ import { LockIcon } from "~/components/icons/LockIcon";
 import { LoginLoader } from "./LoginLoader";
 import styles from "./PasswordSelection.module.css";
 
-const MAX_ITEMS = 4;
-
 type Props = { onNext: () => void; onBack: () => void };
 
 export function PasswordSelection({ onBack, onNext }: Props) {
@@ -37,8 +35,7 @@ export function PasswordSelection({ onBack, onNext }: Props) {
             <p>{code.accessKey}</p>
 
             <Sprite
-              set="planets"
-              id={i * MAX_ITEMS + i}
+              id={i}
               className={styles.sprite}
             />
             <img src={bg} alt="" role="presentation" className={styles.itemBg} />

@@ -101,7 +101,7 @@ export function QME2x2Audio({
     setIsLocked(true);
     setIsAuxLocked(true);
     // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão (ZIZI/VINICIUS DE MORAES)
-    if ([65, 70].includes(question.id)) {
+    if ([65, 69].includes(question.id)) {
       setIsFirstModelQuestion(true);
     } else {
       setIsFirstModelQuestion(false);

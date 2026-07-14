@@ -58,10 +58,7 @@ export function QME2x2Audio({
     const enunciadoSound = enunciado.current?.sound;
 
     const onStoryEnd = () => {
-      if (
-        enunciadoTitle?.autoplay &&
-        enunciadoSound?.playing() === false
-      ) {
+      if (enunciadoTitle?.autoplay && enunciadoSound?.playing() === false) {
         enunciadoSound?.play();
       }
     };
@@ -103,8 +100,8 @@ export function QME2x2Audio({
     setAnswer(null);
     setIsLocked(true);
     setIsAuxLocked(true);
-    // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão
-    if (question.id === 65) {
+    // ATENÇÂO: Verifica se é a primeira questão do modelo para bloquear os controles de áudio da história apenas na primeira questão (ZIZI/VINICIUS DE MORAES)
+    if ([65, 69].includes(question.id)) {
       setIsFirstModelQuestion(true);
     } else {
       setIsFirstModelQuestion(false);

@@ -98,7 +98,6 @@ export function DraggableCard({
           )}
           onClick={onClear}
         >
-          asdsad
           <IconTrash className="size-5 xl:size-9" />
         </button>
       )}

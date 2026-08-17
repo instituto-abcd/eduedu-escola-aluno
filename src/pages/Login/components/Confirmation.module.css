@@ -1,4 +1,8 @@
 .container {
+  /* Cor do bg-select-option.png. O overlay precisa ser opaco por conta própria:
+     depender só da imagem deixa a tela anterior aparecendo por tras enquanto ela
+     nao carrega. */
+  background-color: #2296f3;
   transform: scale(0);
   opacity: 0;
   inset: 0;
@@ -29,6 +33,15 @@
   inset: 0;
   z-index: -2;
   transition: all 250ms ease-in-out;
+}
+
+/* O <img> recebe .image e .visible juntas. Como as duas tem a mesma
+   especificidade, o .visible sozinho perdia para o .image declarado depois e o
+   fundo do overlay nunca aparecia. O seletor composto resolve independente da
+   ordem das regras. */
+.image.visible {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .sprite {

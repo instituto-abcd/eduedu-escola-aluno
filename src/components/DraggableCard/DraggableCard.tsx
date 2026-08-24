@@ -1,4 +1,4 @@
-import { IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useCreateSound } from "~/hooks/useCreateSound";
 import { useDebugInfo } from "~/stores/debug-info";
 import { DebugDiv } from "../Debug/DebugDiv";
@@ -105,12 +105,12 @@ export function DraggableCard<T>({
       {onClear && (
         <button
           className={cx(
-            "bg-red-500 text-white rounded-full grid place-items-center",
-            "size-5 xl:size-12 absolute top-0 inset-x-0 mx-auto"
+            "bg-gray-500 opacity-55 text-white rounded-full grid place-items-center",
+            "size-6 xl:size-12 absolute top-0 inset-x-0 mx-auto"
           )}
           onClick={onClear}
         >
-          <IconX className="size-5 xl:size-9" />
+          <IconTrash className="size-4 xl:size-9" />
         </button>
       )}
       {canDebug && !debug?.skipDebug && item && (

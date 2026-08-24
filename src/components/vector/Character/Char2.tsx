@@ -10,28 +10,16 @@ export function Char2(props: SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <mask
-        id="a"
-        style={{
-          maskType: "luminance",
-        }}
-        maskUnits="userSpaceOnUse"
-        x={0}
-        y={0}
-        width={172}
-        height={288}
-      >
-        <path
-          d="M88.87.648C26.509.648.9 38.05.9 84.192V202.09c0 44.5 28.982 81.189 65.909 83.437l32.168 1.958c39.666 2.414 72.923-35.638 72.923-83.435V84.191C170.678 75.944 165.911.649 88.87.649"
-          fill="#fff"
-        />
-      </mask>
-      <g mask="url(#a)">
-        <path
-          d="m171.834-3.385 4.777 293.174L.966 293.934-3.811.759z"
-          fill="url(#b)"
-        />
-      </g>
+      {/* O corpo era um retangulo com gradiente recortado por uma mascara que
+          continha a silhueta. Quando a mascara nao era aplicada, sobrava o
+          retangulo cru e o personagem virava um bloco de cantos retos. A
+          silhueta agora e pintada direto: o gradiente usa gradientUnits
+          "userSpaceOnUse", entao o desenho fica identico sem depender de
+          suporte a mascara. */}
+      <path
+        d="M88.87.648C26.509.648.9 38.05.9 84.192V202.09c0 44.5 28.982 81.189 65.909 83.437l32.168 1.958c39.666 2.414 72.923-35.638 72.923-83.435V84.191C170.678 75.944 165.911.649 88.87.649"
+        fill="url(#b)"
+      />
       <path
         d="M26.594 146.251s17.12 32.792 52.083 38.338 55.457-30.621 57.868-36.891 7.234-32.311-8.921-19.291c0 0-19.048 21.942-49.913 20.255-30.862-1.688-40.507-11.007-40.507-11.007s-11.815-3.942-10.61 8.596"
         fill="#831E60"

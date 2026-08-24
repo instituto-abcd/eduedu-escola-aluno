@@ -2,6 +2,7 @@ import { Button, Group, HoverCard, Loader, Table } from "@mantine/core";
 import { useTimeout } from "@mantine/hooks";
 import {
 	IconPlayerPauseFilled,
+	IconPlayerPlayFilled,
 	IconPlayerStopFilled,
 	IconRotateClockwise,
 } from "@tabler/icons-react";
@@ -20,12 +21,38 @@ export function VideoPlayer({
 	const ref = useRef<HTMLVideoElement>(null);
 	const [isLoadingData, setIsLoadingData] = useState(true);
 
+	// O store de áudio é global e só diz se ALGUMA mídia toca no app; ele não sabe
+	// se este vídeo já foi reproduzido. Sem estado próprio o overlay mostrava o
+	// ícone de "reproduzir novamente" sobre vídeo que nunca tocou.
+	const [playState, setPlayState] = useState<
+		"pending" | "playing" | "paused" | "ended" | "blocked"
+	>("pending");
+
 	const audioStatus = useAudioStatus();
+	// O contador global é de referências: só devolve o decremento quem incrementou.
+	const hasCounted = useRef(false);
+
 	const isHorizontal =
 		ref.current && ref.current.videoWidth > ref.current.videoHeight;
 
+	function setPlaying(playing: boolean) {
+		if (playing === hasCounted.current) return;
+		hasCounted.current = playing;
+		audioStatus.setPlaying(playing);
+	}
+
 	function play() {
-		void ref.current?.play();
+		if (!ref.current) return;
+		if (ref.current.ended) {
+			ref.current.currentTime = 0;
+		}
+		// Em iOS o autoplay de vídeo com som é bloqueado quando a chamada não parte
+		// de um gesto do usuário. A rejeição precisa virar estado, senão o player
+		// fica indistinguível de um vídeo que já foi assistido.
+		ref.current
+			.play()
+			.then(() => setPlayState("playing"))
+			.catch(() => setPlayState("blocked"));
 	}
 
 	function stop() {
@@ -40,12 +67,17 @@ export function VideoPlayer({
 	}
 
 	useEffect(() => {
-		if (autoPlay) {
-			setTimeout(play, 200);
-		}
+		// `VideoTitle` reaproveita a instância entre questões (key por índice), então
+		// o estado precisa voltar ao início a cada src, senão o vídeo novo herda o
+		// "ended" do anterior e nasce com o ícone de replay.
+		setIsLoadingData(true);
+		setPlayState("pending");
+
+		const timer = autoPlay ? setTimeout(play, 200) : undefined;
 
 		return () => {
-			audioStatus.setPlaying(false);
+			if (timer) clearTimeout(timer);
+			setPlaying(false);
 		};
 	}, [props.src]);
 
@@ -62,31 +94,48 @@ export function VideoPlayer({
 					className,
 				)}
 				controls={false}
+				playsInline
 				disablePictureInPicture
+				disableRemotePlayback
+				controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
 				onLoadedData={() => setIsLoadingData(false)}
 				onPlay={(e) => {
 					props.onPlay?.(e);
-					audioStatus.setPlaying(true);
+					setPlayState("playing");
+					setPlaying(true);
 				}}
 				onPause={(e) => {
 					props.onPause?.(e);
-					audioStatus.setPlaying(false);
+					// `pause` pode chegar junto com `ended`; o fim tem precedência.
+					setPlayState((state) => (state === "ended" ? state : "paused"));
+					setPlaying(false);
 				}}
 				onEnded={(e) => {
 					props.onEnded?.(e);
-					audioStatus.setPlaying(false);
+					setPlayState("ended");
+					setPlaying(false);
 				}}
 			></video>
 
 			<div className="absolute inset-0 grid place-items-center z-10 text-white">
 				{isLoadingData && <Loader />}
-				{!audioStatus.isPlaying && !isLoadingData && (
+				{/* Replay só depois de assistir até o fim. */}
+				{!isLoadingData && playState === "ended" && (
 					<IconRotateClockwise
 						size={100}
 						className="pointer opacity-90 stroke-blue-300"
 						onClick={play}
 					/>
 				)}
+				{/* Nunca assistido: autoplay barrado ou pausado no meio. */}
+				{!isLoadingData &&
+					(playState === "blocked" || playState === "paused") && (
+						<IconPlayerPlayFilled
+							size={100}
+							className="pointer opacity-90 fill-blue-300 stroke-blue-300"
+							onClick={play}
+						/>
+					)}
 			</div>
 		</div>
 	);

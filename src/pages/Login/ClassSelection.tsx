@@ -84,7 +84,10 @@ export function ClassSelection({ onNext, onBack }: Props) {
   if (isLoading) return <LoginLoader />;
   return (
     <div className={styles.container}>
-      <Header title="Qual a sua sala?" onClose={onBack} />
+      <Header
+        title="Qual a sua sala?"
+        onClose={onBack}
+      />
 
       <Carousel
         classNames={{
@@ -100,35 +103,41 @@ export function ClassSelection({ onNext, onBack }: Props) {
         getEmblaApi={setCarousel}
         orientation={orientation}
       >
-        {slides.map((items, index) => (
-          <Carousel.Slide key={index}>
-            {items.map((item, i, arr) => (
-              <Box
-                key={i}
-                onClick={() => select(item, index * MAX_ITEMS + i)}
-                className={styles.item}
-                style={
-                  {
-                    "--item-width": `calc(100% / ${qty < MAX_ITEMS ? qty : MAX_ITEMS})`,
-                    "--item-height": `calc((100vh - 40px) / ${Math.min(MAX_ITEMS, arr.length)})`,
-                    "--item-height-desktop": `calc(100vh / ${Math.min(MAX_ITEMS, arr.length)})`,
-                    "--item-width-desktop": `calc(100vw / ${Math.min(MAX_ITEMS, arr.length)})`,
-                  } as React.CSSProperties
-                }
-              >
-                <p>{item.name}</p>
+        {slides.map((items, index) => {
+          const rows = Math.min(MAX_ITEMS, items.length);
+          const cols = Math.min(qty, MAX_ITEMS);
+          const slideStyle = {
+            "--item-width": `calc(100% / ${cols})`,
+            "--item-height": `calc((100dvh - 40px) / ${rows})`,
+            "--item-height-desktop": `100dvh`,
+            "--item-width-desktop": `calc(100vw / ${rows})`,
+          } as React.CSSProperties;
 
-                <Sprite id={index * MAX_ITEMS + i} className={styles.sprite} />
-                <img
-                  src={bg}
-                  alt=""
-                  role="presentation"
-                  className={styles.itemBg}
-                />
-              </Box>
-            ))}
-          </Carousel.Slide>
-        ))}
+          return (
+            <Carousel.Slide key={index}>
+              {items.map((item, i) => (
+                <Box
+                  key={i}
+                  onClick={() => select(item, index * MAX_ITEMS + i)}
+                  className={styles.item}
+                  style={slideStyle}
+                >
+                  <p>{item.name}</p>
+                  <Sprite
+                    id={index * MAX_ITEMS + i}
+                    className={styles.sprite}
+                  />
+                  <img
+                    src={bg}
+                    alt=""
+                    role="presentation"
+                    className={styles.itemBg}
+                  />
+                </Box>
+              ))}
+            </Carousel.Slide>
+          );
+        })}
       </Carousel>
 
       <ArrowDownBtn

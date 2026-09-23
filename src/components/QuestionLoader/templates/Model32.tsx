@@ -38,6 +38,19 @@ export function Model32({
 		onConditionsChange(conditions);
 	}, [conditions]);
 
+	const historia =
+		textTitles.find(
+			(title) => title.classification === QuestionTitleClassification.HISTORIA,
+		)?.description ?? textTitles[0]?.description;
+
+	// Na prova, a instrução geral da questão ("Leia a fábula e responda à
+	// pergunta") vem em um título de texto sem classificação. Os slots de
+	// história e enunciado já estão ocupados pelo texto-base e pela pergunta,
+	// então sem um slot próprio essa instrução nunca chega à tela.
+	const instrucao = textTitles.find(
+		(title) => !title.classification && title.description !== historia,
+	)?.description;
+
 	const textSections: Record<string, undefined | string> = {
 		enunciado: textTitles.find(
 			(title) => title.classification === QuestionTitleClassification.ENUNCIADO,
@@ -50,17 +63,15 @@ export function Model32({
 					(!title.placeholder && title.description),
 			)?.description ?? "",
 
-		historia:
-			textTitles.find(
-				(title) =>
-					title.classification === QuestionTitleClassification.HISTORIA,
-			)?.description ?? textTitles[0]?.description,
+		historia,
 
 		enunciado_alt: textTitles.find(
 			(title) =>
 				title.placeholder?.includes(TEXT_PLACEHOLDERS.ENUNCIADO) ||
 				title.placeholder?.includes(TEXT_PLACEHOLDERS.QUEM_DISSE),
 		)?.description,
+
+		instrucao,
 	} as const;
 
 	const isPlanet =
@@ -79,6 +90,13 @@ export function Model32({
 			<div className="size-full lg:max-w-screen-xl gap-4 md:gap-12 flex flex-col md:flex-row justify-evenly items-center">
 				{(hasImageTitle || hasTextTitle) && (
 					<div className="size-full lg:max-w-screen-md flex flex-col justify-evenly items-center max-h-[30vh] md:max-h-[80vh] overflow-auto">
+						{!isPlanet && textSections.instrucao && (
+							<TextTitle
+								text={textSections.instrucao}
+								className="xl:text-2xl"
+							/>
+						)}
+
 						{hasImageTitle && <ImageTitle titles={imageTitles} />}
 
 						{isPlanet && textSections.campo && (

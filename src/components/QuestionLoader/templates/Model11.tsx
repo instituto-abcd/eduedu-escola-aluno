@@ -18,6 +18,7 @@ import { TextTitle } from "~/components/question-components/TextTitle";
 import { DroppableLetter, DraggableLetter } from "~/components/dnd";
 import { ImageTitle } from "~/components/question-components";
 import { cx } from "~/utils/cx";
+import { groupGapSegments } from "~/utils/gapTextGroups";
 
 // TODO: possibly use nRows rule for word splitting
 
@@ -132,9 +133,10 @@ export function Model11({
 	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
 	const segments = useMemo(() => {
-		const arr = transformString(textToComplete.description.replace(/\\n/g, ""));
+		const text = textToComplete.description.replace(/\\n/g, "");
+		const arr = transformString(text);
 
-		return arr.map((seg, inx) => {
+		const elements = arr.map((seg, inx) => {
 			if (typeof seg === "string") {
 				return (
 					<p
@@ -149,6 +151,7 @@ export function Model11({
 					<DroppableLetter
 						id={seg}
 						key={inx}
+						className="shrink-0 w-[70px]"
 						replaceWith={
 							!!answer[seg] && (
 								<DraggableLetter
@@ -156,12 +159,33 @@ export function Model11({
 									id={seg}
 									disabled
 									compact
+									className="shrink-0"
 									onClear={() => handleAnswer(null, seg)}
 								/>
 							)
 						}
 					/>
 				);
+		});
+
+		// Mantém juntos os segmentos que não podem quebrar linha (ex.: "sábado" + lacuna de pontuação)
+		let offset = 0;
+		return groupGapSegments(
+			text,
+			arr,
+			question.options.map((option) => option.description),
+		).map((group) => {
+			const start = offset;
+			offset += group.length;
+			if (group.length === 1) return elements[start];
+			return (
+				<span
+					key={`group-${start}`}
+					className="flex flex-wrap justify-center items-center gap-x-1 gap-y-2 md:gap-x-2 max-w-full shrink-0"
+				>
+					{elements.slice(start, offset)}
+				</span>
+			);
 		});
 	}, [textToComplete, answer]);
 

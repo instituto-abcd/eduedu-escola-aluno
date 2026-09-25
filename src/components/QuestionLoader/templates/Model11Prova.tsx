@@ -18,6 +18,7 @@ import { TextTitle } from "~/components/question-components/TextTitle";
 import { ImageTitle } from "~/components/question-components";
 import { DraggableLetter, DroppableLetter } from "~/components/dnd";
 import { cx } from "~/utils/cx";
+import { groupGapSegments } from "~/utils/gapTextGroups";
 
 export function Model11Prova({
 	question,
@@ -130,9 +131,10 @@ export function Model11Prova({
 	/* Elements */
 
 	const segments = useMemo(() => {
-		const arr = transformString(textToComplete.description.split("/")[1]);
+		const text = textToComplete.description.split("/")[1];
+		const arr = transformString(text);
 
-		return arr.map((seg, inx) => {
+		const elements = arr.map((seg, inx) => {
 			if (typeof seg === "string") {
 				return (
 					<p key={inx} className="text-text font-black leading-none text-4xl">
@@ -145,6 +147,7 @@ export function Model11Prova({
 						id={seg}
 						key={inx}
 						size={2}
+						className="shrink-0 w-[70px]"
 						replaceWith={
 							!!answer[seg] && (
 								<DraggableLetter
@@ -152,12 +155,33 @@ export function Model11Prova({
 									id={seg}
 									disabled
 									compact
+									className="shrink-0"
 									onClear={() => handleAnswer(null, seg)}
 								/>
 							)
 						}
 					/>
 				);
+		});
+
+		// Mantém juntos os segmentos que não podem quebrar linha (ex.: "V A _ O")
+		let offset = 0;
+		return groupGapSegments(
+			text,
+			arr,
+			question.options.map((option) => option.description),
+		).map((group) => {
+			const start = offset;
+			offset += group.length;
+			if (group.length === 1) return elements[start];
+			return (
+				<span
+					key={`group-${start}`}
+					className="flex flex-wrap justify-center items-center gap-x-1 gap-y-2 md:gap-x-2 max-w-full shrink-0"
+				>
+					{elements.slice(start, offset)}
+				</span>
+			);
 		});
 	}, [textToComplete, answer]);
 
@@ -175,7 +199,7 @@ export function Model11Prova({
 			<div className="flex flex-col lg:flex-row items-center justify-evenly gap-6 size-full">
 				<ImageTitle titles={imageTitles} />
 
-				<div className="flex flex-col gap-6 items-center lg:max-w-[50vw]">
+				<div className="flex flex-col gap-6 items-center w-full lg:max-w-[50vw]">
 					{/* Text to complete */}
 					<div className="p-4 flex items-center justify-center gap-2 flex-wrap w-full max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
 						{...segments}

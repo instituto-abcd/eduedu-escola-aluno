@@ -15,7 +15,7 @@ import {
 } from "@dnd-kit/core";
 import { AudioContainer } from "~/components/AudioContainer";
 import { TextTitle } from "~/components/question-components/TextTitle";
-import { ImageTitle } from "~/components/question-components";
+import { ImageTitle, ScrollArea } from "~/components/question-components";
 import { DraggableLetter, DroppableLetter } from "~/components/dnd";
 import { cx } from "~/utils/cx";
 import { groupGapSegments } from "~/utils/gapTextGroups";
@@ -201,9 +201,9 @@ export function Model11Prova({
 
 				<div className="flex flex-col gap-6 items-center w-full lg:max-w-[50vw]">
 					{/* Text to complete */}
-					<div className="p-4 flex items-center justify-center gap-2 flex-wrap w-full max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
+					<ScrollArea className="p-4 flex items-center justify-center gap-2 flex-wrap w-full max-h-[25vh] md:max-h-[40vh]">
 						{...segments}
-					</div>
+					</ScrollArea>
 
 					{/* Alternativas */}
 					<div

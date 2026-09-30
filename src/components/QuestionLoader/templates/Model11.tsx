@@ -87,14 +87,11 @@ export function Model11({
 		) as QuestionTitle;
 	}
 
-	const slotsQty = textToComplete
-		? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-				1 <=
-			0
-			? 1
-			: textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-				1
-		: 1;
+	// Uma lacuna por sequência de "_", mesma regra do transformString
+	const slotsQty = Math.max(
+		1,
+		textToComplete?.description.match(/_+/g)?.length ?? 0,
+	);
 
 	useEffect(() => {
 		const initialSlots = new Array<null>(slotsQty).fill(null);

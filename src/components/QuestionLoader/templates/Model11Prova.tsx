@@ -83,14 +83,11 @@ export function Model11Prova({
 	}
 
 	/* 🧙 */
-	const slotsQty = textToComplete
-		? textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-				1 <=
-			0
-			? 1
-			: textToComplete.description.split(/_./g).filter((w) => w !== "").length -
-				1
-		: 1;
+	// Uma lacuna por sequência de "_" do texto renderizado, mesma regra do transformString
+	const slotsQty = Math.max(
+		1,
+		textToComplete?.description.split("/")[1]?.match(/_+/g)?.length ?? 0,
+	);
 
 	useEffect(() => {
 		const initialSlots = new Array<null>(slotsQty).fill(null);

@@ -1,6 +1,6 @@
 import { QuestionLoader } from "~/components/QuestionLoader";
 import { useGetFirstExamQuestion } from "~/api/student";
-import { useState } from "react";
+import { useEffect } from "react";
 import type { Question } from "~/api/exam";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
@@ -9,14 +9,28 @@ import { StagingQuestionInfo } from "../Debug/components/StagingQuestionInfo";
 import { AudioInterface } from "~/sounds";
 import { ScreenInfo } from "../Debug/components/ScreenInfo";
 import { env } from "~/env";
+import { useStudent } from "~/stores/student";
+import { questionProgressKey } from "~/stores/question-progress";
+import { usePersistedQuestion } from "~/hooks/usePersistedQuestion";
 
 export function ExamPage() {
   const navigate = useNavigate();
 
-  const [currentQuestion, setCurrentQuestion] = useState<Question>();
+  const studentId = useStudent((state) => state.id);
+  const {
+    question: currentQuestion,
+    setQuestion: setCurrentQuestion,
+    isRestored,
+  } = usePersistedQuestion(questionProgressKey.exam(studentId));
   const updateProgress = useExamProgress((state) => state.setValue);
 
+  useEffect(() => {
+    if (isRestored) updateProgress(currentQuestion?.progress ?? 0);
+  }, []);
+
+  // Ao restaurar, não busca a primeira questão: o backend zeraria as respostas.
   useGetFirstExamQuestion({
+    enabled: !isRestored,
     onSuccess: (question) => {
       if (!currentQuestion) {
         setCurrentQuestion(question);

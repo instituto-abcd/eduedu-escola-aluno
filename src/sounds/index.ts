@@ -42,8 +42,12 @@ class Sound {
   duration: () => number;
   seek: (time?: number) => number;
   playing: () => boolean;
+  state: () => "unloaded" | "loading" | "loaded";
+  load: () => void;
   onLoad: (callback: () => void) => void;
-  onLoadError: (callback: (err: unknown) => void) => void;
+  onceLoad: (callback: () => void) => void;
+  onLoadError: (callback: () => void) => void;
+  onPlayError: (callback: () => void) => void;
   onEnd: (callback: () => void) => void;
   onPlay: (callback: () => void) => void;
   onStop: (callback: () => void) => void;
@@ -82,11 +86,24 @@ class Sound {
     this.playing = () => {
       return howl.playing();
     };
+    this.state = () => {
+      return howl.state();
+    };
+    this.load = () => {
+      howl.load();
+    };
     this.onLoad = (callback: () => void) => {
       howl.on("load", callback);
     };
-    this.onLoadError = (callback: (err: unknown) => void) => {
-      howl.on("loaderror", (_, err) => callback(err));
+    this.onceLoad = (callback: () => void) => {
+      howl.once("load", callback);
+    };
+    // Registra o callback direto (sem embrulhar) para o `off` conseguir removê-lo.
+    this.onLoadError = (callback: () => void) => {
+      howl.on("loaderror", callback);
+    };
+    this.onPlayError = (callback: () => void) => {
+      howl.on("playerror", callback);
     };
     this.onEnd = (callback: () => void) => {
       howl.on("end", callback);

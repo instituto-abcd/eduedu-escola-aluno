@@ -1,9 +1,13 @@
-import { MantineProvider, createTheme } from "@mantine/core";
+import { DEFAULT_THEME, MantineProvider, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import { TextStyles } from "~/styles";
 
+const fontFamily = `'Montserrat Variable', ${DEFAULT_THEME.fontFamily}`;
+
 const theme = createTheme({
+  fontFamily,
+  headings: { fontFamily },
   components: {
     Text: TextStyles,
   },

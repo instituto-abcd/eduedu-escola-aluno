@@ -12,7 +12,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Nunito Sans Variable", ...defaultTheme.fontFamily.sans],
+        sans: ["Montserrat Variable", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         background: "#FFF",

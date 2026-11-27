@@ -46,7 +46,7 @@
   place-items: center;
   padding: 6.5px;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   position: absolute;
   left: 16px;
   margin: auto;

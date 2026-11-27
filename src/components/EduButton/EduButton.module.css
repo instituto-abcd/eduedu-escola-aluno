@@ -1,6 +1,6 @@
 .button {
   all: unset;
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   width: max-content;
   min-width: var(--edu-btn-min-width);
   height: var(--edu-btn-height);

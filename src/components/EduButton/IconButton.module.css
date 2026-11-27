@@ -1,6 +1,6 @@
 .button {
   all: unset;
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
   background-color: var(--icon-btn-bg);

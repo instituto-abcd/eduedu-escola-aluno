@@ -6,6 +6,52 @@ body {
   @apply font-sans;
 }
 
+/*
+ * Cursores do portal do aluno (EEP-107): foguete como cursor padrão e mão
+ * apontando para o que é clicável. Em outros lugares use var(--cursor-default)
+ * ou var(--cursor-pointer) (ou a classe cursor-pointer) em vez de "pointer".
+ */
+@layer base {
+  :root {
+    --cursor-default: url("/cursors/foguete.png") 4 2, auto;
+    --cursor-pointer: url("/cursors/mao.png") 8 0, pointer;
+  }
+
+  html {
+    cursor: var(--cursor-default);
+  }
+
+  /* Mesmos seletores do preflight do Tailwind, para sobrescrevê-lo. */
+  button,
+  [role="button"] {
+    cursor: var(--cursor-pointer);
+  }
+
+  :disabled {
+    cursor: var(--cursor-default);
+  }
+
+  :where(a[href], label[for], summary, select) {
+    cursor: var(--cursor-pointer);
+  }
+
+  :where(
+      input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="file"]),
+      textarea
+    ) {
+    cursor: text;
+  }
+}
+
+/*
+ * O Mantine define "cursor: pointer" nas próprias classes (Button, CloseButton,
+ * controles do Carousel, Anchor...). Fica fora do @layer base porque o Tailwind
+ * descarta ali seletores de classe que não aparecem no código-fonte.
+ */
+:is(button, a)[class*="mantine-"]:not(:disabled, [data-disabled], [data-loading]) {
+  cursor: var(--cursor-pointer);
+}
+
 @layer utilities {
   .scrollbar-none {
     scrollbar-width: none;

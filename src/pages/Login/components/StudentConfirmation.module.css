@@ -71,7 +71,7 @@
 }
 
 .controls > div {
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
 }
 
 .inner {

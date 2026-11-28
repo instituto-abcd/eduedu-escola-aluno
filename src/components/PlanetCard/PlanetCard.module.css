@@ -1,5 +1,5 @@
 .container {
-  cursor: initial;
+  cursor: var(--cursor-default);
   opacity: 1;
   user-select: none;
   padding-top: 40px;

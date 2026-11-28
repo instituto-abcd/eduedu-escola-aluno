@@ -9,7 +9,7 @@
 }
 
 .letterGrid span {
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   font-weight: 700;
   font-size: 30px;
   line-height: 1;

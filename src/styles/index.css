@@ -6,6 +6,78 @@ body {
   @apply font-sans;
 }
 
+/*
+ * Cursores do portal do aluno (EEP-107): foguete como cursor padrão e mão
+ * apontando para o que é clicável, em public/cursors. Em outros lugares use var(--cursor-default)
+ * ou var(--cursor-pointer) (ou a classe cursor-pointer) em vez de "pointer".
+ */
+@layer base {
+  /*
+   * Cursor de 64 px, com o de 32 px como segunda opção: o Chrome e o Edge só
+   * mostram cursor maior que 32 px quando ele cabe inteiro na página (proteção
+   * contra cursor falso sobre a barra do navegador); perto das bordas da
+   * janela eles passam para o de 32 px.
+   * Os arquivos têm a altura em px no nome.
+   */
+  :root {
+    --cursor-default: url("/cursors/foguete-64.png") 10 2, url("/cursors/foguete-32.png") 5 2, auto;
+    --cursor-pointer: url("/cursors/mao-64.png") 16 0, url("/cursors/mao-32.png") 8 0, pointer;
+  }
+
+  /*
+   * Telas com escala (125%, 150%, 200%) usam imagens com o dobro de pixels,
+   * para o cursor não ficar borrado. O teste usa a mesma sintaxe do valor das
+   * variáveis: o navegador que não a entende fica com as de cima em vez de
+   * perder o cursor.
+   */
+  @supports (cursor: -webkit-image-set(url("/cursors/mao-32.png") 1x) 0 0, auto) {
+    :root {
+      --cursor-default:
+        -webkit-image-set(url("/cursors/foguete-64.png") 1x, url("/cursors/foguete-128.png") 2x) 10 2,
+        -webkit-image-set(url("/cursors/foguete-32.png") 1x, url("/cursors/foguete-64.png") 2x) 5 2,
+        auto;
+      --cursor-pointer:
+        -webkit-image-set(url("/cursors/mao-64.png") 1x, url("/cursors/mao-128.png") 2x) 16 0,
+        -webkit-image-set(url("/cursors/mao-32.png") 1x, url("/cursors/mao-64.png") 2x) 8 0,
+        pointer;
+    }
+  }
+
+  html {
+    cursor: var(--cursor-default);
+  }
+
+  /* Mesmos seletores do preflight do Tailwind, para sobrescrevê-lo. */
+  button,
+  [role="button"] {
+    cursor: var(--cursor-pointer);
+  }
+
+  :disabled {
+    cursor: var(--cursor-default);
+  }
+
+  :where(a[href], label[for], summary, select) {
+    cursor: var(--cursor-pointer);
+  }
+
+  :where(
+      input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="file"]),
+      textarea
+    ) {
+    cursor: text;
+  }
+}
+
+/*
+ * O Mantine define "cursor: pointer" nas próprias classes (Button, CloseButton,
+ * controles do Carousel, Anchor...). Fica fora do @layer base porque o Tailwind
+ * descarta ali seletores de classe que não aparecem no código-fonte.
+ */
+:is(button, a)[class*="mantine-"]:not(:disabled, [data-disabled], [data-loading]) {
+  cursor: var(--cursor-pointer);
+}
+
 @layer utilities {
   .scrollbar-none {
     scrollbar-width: none;

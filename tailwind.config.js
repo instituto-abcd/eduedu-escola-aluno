@@ -24,6 +24,9 @@ export default {
         "card-thin": "0px 2px 0px 0px #4c494166",
         "card-medium": "0px 5px 0px 0px #4c494166",
       },
+      cursor: {
+        pointer: "var(--cursor-pointer)",
+      },
       container: {
         type: {
           inline: "inline-size",

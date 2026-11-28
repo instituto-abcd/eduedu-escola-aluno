@@ -1,14 +1,14 @@
 
 .image {
   filter: grayscale(100%);
-  cursor: default;
+  cursor: var(--cursor-default);
   width: 150px;
   height: 150px;
 }
 
 
 .imageActive {
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   width: 150px;
   height: 150px;
 }

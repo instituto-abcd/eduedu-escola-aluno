@@ -13,8 +13,20 @@ body {
  */
 @layer base {
   :root {
-    --cursor-default: url("/cursors/foguete.png") 4 2, auto;
+    --cursor-default: url("/cursors/foguete.png") 5 2, auto;
     --cursor-pointer: url("/cursors/mao.png") 8 0, pointer;
+  }
+
+  /*
+   * Telas com escala (125%, 150%, 200%) usam a imagem 2x, para o cursor não
+   * ficar borrado. O teste usa a mesma sintaxe do valor das variáveis: o
+   * navegador que não a entende fica com o PNG 1x em vez de perder o cursor.
+   */
+  @supports (cursor: -webkit-image-set(url("/cursors/mao.png") 1x) 0 0, auto) {
+    :root {
+      --cursor-default: -webkit-image-set(url("/cursors/foguete.png") 1x, url("/cursors/foguete@2x.png") 2x) 5 2, auto;
+      --cursor-pointer: -webkit-image-set(url("/cursors/mao.png") 1x, url("/cursors/mao@2x.png") 2x) 8 0, pointer;
+    }
   }
 
   html {
